@@ -3,42 +3,27 @@
  */
 
 import { RootState } from '@/stores';
-import { PointType, type Set, SnookerScoringState, TeamDetails, Turn, Point } from '../types';
+import { PointType, type Set, SnookerScoringState, Turn } from '../types';
 import { createSelector } from '@reduxjs/toolkit';
+import { getActiveSet, getActiveTurn, getLastPoint, getLastTurn } from './commonSport';
 
-export const getActiveSet = (sets: Set[]): Set | null => {
-    return sets.length > 0 ? sets[sets.length - 1] : null;
-};
 
-export const getActiveSetIndex = (sets: Set[]): number => {
-    return sets.length > 0 ? sets.length - 1 : -1;
-};
-
-export const getActiveTurn = (set: Set | null): Turn | null => {
-    return set && set.turns.length > 0 ? set.turns[set.turns.length - 1] : null;
-};
-
-export const getLastTurn = (set: Set): Turn | null => {
-    return set.turns.length > 1 ? set.turns[set.turns.length - 2] : null;
+export const getNumberOfRedsFromFormat = (format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED'): number => {
+    switch (format) {
+        case 'SNOOKER_10_RED':
+            return 10;
+            break;
+        case 'SNOOKER_6_RED':
+            return 6;
+            break;
+        case 'SNOOKER_15_RED':
+            return 15;
+            break;
+    }
 }
 
-export const getActiveTurnIndex = (set: Set): number => {
-    return set.turns.length > 0 ? set.turns.length - 1 : -1;
-};
-
-export const getLastPoint = (turn: Turn): Point | null => {
-    return turn.points.length > 0 ? turn.points[turn.points.length - 1]: null;
-}
-
-export const getActiveTeam = (team1: TeamDetails, team2: TeamDetails) => {
-    return ({
-        team1Active: team1.players.some(player => player.isActive === true),
-        team2Active: team2.players.some(player => player.isActive === true)
-    });
-}
-
-export const calculateRedsLeft = (turns: Turn[]): number => {
-    let redCount = 15;
+export const calculateRedsLeft = (turns: Turn[], format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED'): number => {
+    let redCount = getNumberOfRedsFromFormat(format);
     turns.forEach(turn => {
         turn.points.forEach(point => {
             if (point.type === PointType.RED) {
@@ -153,7 +138,7 @@ export const selectNumberAheadAndNumberOn = createSelector(
         const opponentScore = activePlayerTeam === 'team1' ? activeSet.teamTwoScore : activeSet.teamOneScore;
 
         const numberAhead = activePlayerScore - opponentScore;
-        const redsLeft = calculateRedsLeft(activeSet.turns);
+        const redsLeft = calculateRedsLeft(activeSet.turns, snookerState.format);
 
         let numberOn = 0;
 
@@ -165,51 +150,55 @@ export const selectNumberAheadAndNumberOn = createSelector(
             let totalColoredPoints = calculateTotalColoredPoints();
             const lastRedPottedInfo = getLastRedPottedTurnAndPointIndex(activeSet.turns);
 
-            const pottedColoredBalls = new Set<PointType>();
+            let pottedColoredBalls: PointType[] = [];
 
             if (lastRedPottedInfo) {
                 for (let i = lastRedPottedInfo.pointIndex + 1; i < activeSet.turns[lastRedPottedInfo.turnIndex].points.length; i++) {
                     const point = activeSet.turns[lastRedPottedInfo.turnIndex].points[i];
                     if (point.type !== PointType.RED) {
-                        pottedColoredBalls.add(point.type);
+                        pottedColoredBalls.push(point.type);
                     }
-
                 }
 
                 for (let i = lastRedPottedInfo.turnIndex + 1; i < activeSet.turns.length; i++) {
                     const turn = activeSet.turns[i];
                     turn.points.forEach(point => {
                         if (point.type !== PointType.RED) {
-                            pottedColoredBalls.add(point.type);
+                            pottedColoredBalls.push(point.type);
                         }
                     });
                 }
 
-                pottedColoredBalls.forEach(pottedColor => {
-                    switch (pottedColor) {
-                        case PointType.YELLOW:
-                            totalColoredPoints -= 2;
-                            break;
-                        case PointType.GREEN:
-                            totalColoredPoints -= 3;
-                            break;
-                        case PointType.BROWN:
-                            totalColoredPoints -= 4;
-                            break;
-                        case PointType.BLUE:
-                            totalColoredPoints -= 5;
-                            break;
-                        case PointType.PINK:
-                            totalColoredPoints -= 6;
-                            break;
-                        case PointType.BLACK:
-                            totalColoredPoints -= 7;
-                            break;
-                    }
-                });
+                if (pottedColoredBalls.length === 0) {
+                    numberOn = 7 + totalColoredPoints;
+                } else if (pottedColoredBalls.length === 1) {
+                    numberOn = totalColoredPoints;
+                } else if (pottedColoredBalls.length > 1) {
+                    pottedColoredBalls = pottedColoredBalls.slice(1);
+                    pottedColoredBalls.forEach(pottedColor => {
+                        switch (pottedColor) {
+                            case PointType.YELLOW:
+                                totalColoredPoints -= 2;
+                                break;
+                            case PointType.GREEN:
+                                totalColoredPoints -= 3;
+                                break;
+                            case PointType.BROWN:
+                                totalColoredPoints -= 4;
+                                break;
+                            case PointType.BLUE:
+                                totalColoredPoints -= 5;
+                                break;
+                            case PointType.PINK:
+                                totalColoredPoints -= 6;
+                                break;
+                            case PointType.BLACK:
+                                totalColoredPoints -= 7;
+                                break;
+                        }
+                    });
+                }
             }
-
-
 
             numberOn = totalColoredPoints;
         }

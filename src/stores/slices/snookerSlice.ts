@@ -7,7 +7,7 @@ import { PointType, SetPlayerPayloadAction, SnookerScoringState } from '../types
 
 const initialState: SnookerScoringState = {
     format: 'SNOOKER_15_RED',
-    numberOfFrames: 1,
+    numberOfFrames: 3,
     matchId: null,
     team1Score: 0,
     team2Score: 0,

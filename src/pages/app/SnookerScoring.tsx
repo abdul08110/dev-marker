@@ -11,13 +11,14 @@ import { RootState, useAppDispatch } from '@/stores';
 import { toast } from '@/components/ui/use-toast';
 import { Player, PointType } from "@/stores/types";
 import useStartMatch from "@/api/app/useStartMatch";
-import { getActiveTeam, getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores, selectNumberAheadAndNumberOn } from "@/stores/selectors/snookerSelector";
+import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores, selectNumberAheadAndNumberOn } from "@/stores/selectors/snookerSelector";
 import { handleChangeScoreOnTrigger, handleFoulScore, handleFrameCompleted, handleMatchStart, handlePlayerSelectState, handleSelectionOfActiveTeam, handleSettingsStateUpdate, handleUndoScoreClicked } from "@/stores/thunks/snookerThunks";
 import { SnookerFoulDrawer } from "@/components/modals/snookerFoulDrawer";
 import { SnookerFoulData } from "@/components/forms/app/snookerFoul";
 import { SnookerFramesSummary } from "@/components/sections/scoring/snookerFrameSummary";
 import { SnookerPracticeSettingsDrawer } from "@/components/modals/snookerPracticeSettingsDrawer";
 import { SnookerPracticeSettingsData } from "@/components/forms/app/snookerPracticeSettings";
+import { getActiveTeam } from "@/stores/selectors/commonSport";
 
 export function SnookerScoring() {
     // STATE

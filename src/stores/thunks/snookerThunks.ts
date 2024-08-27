@@ -6,8 +6,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '..';
 import { addPlayer, completeSet, createPoint, createSet, createTurn, decrementSetScore, decrementTurnScore, incrementSetScore, incrementTurnScore, setActivePlayer, setMatchId, setTeamPlayer, undoLastPoint, updateFormat, updateNoOfFrames, updateStreaming, updateTimeInMinutes } from '../slices/snookerSlice';
 import { Player, PointType } from '../types';
-import { checkIfLastBallIsFreeBall, getActiveSet, getActiveSetIndex, getActiveTeam, getActiveTurnIndex, getLastPoint } from '../selectors/snookerSelector';
+import { checkIfLastBallIsFreeBall } from '../selectors/snookerSelector';
 import { timeStringToDecimalMinutes } from '@/utils/functions';
+import { getActiveSet, getActiveSetIndex, getActiveTeam, getActiveTurnIndex, getLastPoint } from '../selectors/commonSport';
 
 export const handleSelectionOfActiveTeam = createAsyncThunk<void, { teamIndex: number }, { state: RootState; dispatch: AppDispatch }>(
     'snooker/handleSelectionOfActiveTeam',
@@ -88,11 +89,11 @@ export const handleFrameCompleted = createAsyncThunk<void, {}, { state: RootStat
     'snooker/handleFrameCompleted',
     async ({ }, { dispatch, getState }) => {
         const state = getState();
+        await dispatch(completeSet());
         if (state.snooker.numberOfFrames > state.snooker.scoreHistory.length) {
             await dispatch(createSet());
 
         }
-        await dispatch(completeSet());
     }
 )
 
