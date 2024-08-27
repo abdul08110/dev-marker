@@ -54,9 +54,8 @@ export function PlayerTeamCard(props: PlayerTeamCardProps) {
             </div>
             {
                 props.data.players.map((player, playerIndex) =>
-
                     <Dialog open={openDialogIndex === playerIndex} onOpenChange={(isOpen) => isOpen ? handleDialogOpen(playerIndex) : setOpenDialogIndex(null)} key={playerIndex}>
-                        <DialogTrigger className='p-0'>
+                        <DialogTrigger className='p-0 bg-transparent'>
                             <div className={clsx("flex justify-center items-center px-4 py-1 rounded", {
                                 'bg-lighterSecondary text-white': !isTeamActive,
                                 'bg-white text-black': isTeamActive,

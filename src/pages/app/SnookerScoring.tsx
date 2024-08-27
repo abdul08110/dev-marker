@@ -12,10 +12,12 @@ import { toast } from '@/components/ui/use-toast';
 import { Player, PointType } from "@/stores/types";
 import useStartMatch from "@/api/app/useStartMatch";
 import { getActiveTeam, getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores, selectNumberAheadAndNumberOn } from "@/stores/selectors/snookerSelector";
-import { handleChangeScoreOnTrigger, handleFoulScore, handleFrameCompleted, handleMatchStart, handlePlayerSelectState, handleSelectionOfActiveTeam, handleUndoScoreClicked } from "@/stores/thunks/snookerThunks";
+import { handleChangeScoreOnTrigger, handleFoulScore, handleFrameCompleted, handleMatchStart, handlePlayerSelectState, handleSelectionOfActiveTeam, handleSettingsStateUpdate, handleUndoScoreClicked } from "@/stores/thunks/snookerThunks";
 import { SnookerFoulDrawer } from "@/components/modals/snookerFoulDrawer";
 import { SnookerFoulData } from "@/components/forms/app/snookerFoul";
 import { SnookerFramesSummary } from "@/components/sections/scoring/snookerFrameSummary";
+import { SnookerPracticeSettingsDrawer } from "@/components/modals/snookerPracticeSettingsDrawer";
+import { SnookerPracticeSettingsData } from "@/components/forms/app/snookerPracticeSettings";
 
 export function SnookerScoring() {
     // STATE
@@ -35,6 +37,7 @@ export function SnookerScoring() {
     const timerRef = useRef<TimeManagerHandle>(null);
     const navigate = useNavigate();
     const [openFoulDrawer, setOpenFoulDrawer] = React.useState(false);
+    const [openSettingsDrawer, setOpenSettingsDrawer] = React.useState(false);
 
     // REACT HOOKS
     useEffect(() => {
@@ -48,6 +51,9 @@ export function SnookerScoring() {
         navigate('/');
     };
     const handleSettingsClick = () => {
+        if (snookerScoring.matchId === null) {
+            setOpenSettingsDrawer(true);
+        }
     };
     const startTimer = () => {
         if (timerRef.current) {
@@ -169,18 +175,25 @@ export function SnookerScoring() {
         await dispatch(handleFoulScore(values));
         setOpenFoulDrawer(false);
     }
+    const handleSettingsUpdate = async (values: SnookerPracticeSettingsData) => {
+        await dispatch(handleSettingsStateUpdate(values));
+        setOpenSettingsDrawer(false);
+    }
 
     // PARENT UI
     return (
         <section className="flex flex-col justify-start h-screen gap-6 overflow-y-scroll">
             <ScoringHeader onBackClick={handleBackClick} onSettingsClick={handleSettingsClick} />
-            <TimeManager ref={timerRef} initialTime={snookerScoring.timeInMinutes * 60} onTimerComplete={handleTimerComplete} />
+            <TimeManager ref={timerRef} initialTime={snookerScoring.timeInMinutes} onTimerComplete={handleTimerComplete} />
             <PlayerTeamManager activeTurnScore={activeTurnPointScore} activeTurnPointTypes={activeTurnPointTypes} team1SetScore={team1score} team2SetScore={team2score} onPlayerSelect={handlePlayerSelect} onTeamClick={handleTeamClick} team1={snookerScoring.players.team1} team2={snookerScoring.players.team2} matchId={snookerScoring.matchId} />
             <SnookerFramesSummary team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
             <MaxScore numberAhead={numberAhead} numberOn={numberOn} />
-            <SnookerScoringButtons onButtonClick={handleScoringButtonClick} />
+            <SnookerScoringButtons
+                onButtonClick={handleScoringButtonClick}
+            />
             <MarkerNavigation />
             <SnookerFoulDrawer onSubmit={handleFoulUpdate} open={openFoulDrawer} setOpen={setOpenFoulDrawer} />
+            <SnookerPracticeSettingsDrawer onSubmit={handleSettingsUpdate} open={openSettingsDrawer} setOpen={setOpenSettingsDrawer} />
         </section>
     )
 }

@@ -1,9 +1,11 @@
-import { DialogClose, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
-import { PlayersList } from "../sections/scoring/playersList";
+import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import { Button } from "../ui/button";
 import { SearchPlayerForm } from "../forms/app/searchPlayer";
+import { Player } from "@/stores/types";
+import { PlayerAddModal } from "./playerAddModal";
 
 interface PlayerSearchModalProps {
+    onPlayerConfirm: (player: Player) => void;
 }
 
 export function PlayerSearchModal(props: PlayerSearchModalProps) {
@@ -16,13 +18,19 @@ export function PlayerSearchModal(props: PlayerSearchModalProps) {
                         <span className="text-white font-medium">Search Player</span>
                     </div>
                     <div className="flex flex-col px-3 py-5 bg-[#1F1F1F] gap-4">
-                        <SearchPlayerForm />
+                        <SearchPlayerForm onPlayerConfirm={props.onPlayerConfirm} />
 
                         <div className="grid grid-cols-2 gap-4 mt-6">
                             <DialogClose asChild>
                                 <Button variant={'secondary'}>Cancel</Button>
                             </DialogClose>
-                            <Button variant={'default'}>Add a new Player</Button>
+                            <Dialog>
+                                <DialogTrigger asChild className='p-0 bg-transparent'>
+                                    <Button variant={'default'}>Add a new Player</Button>
+                                </DialogTrigger>
+                                <PlayerAddModal onPlayerConfirm={props.onPlayerConfirm} />
+                            </Dialog>
+
                         </div>
                     </div>
                 </div>

@@ -14,8 +14,8 @@ export const getActiveSetIndex = (sets: Set[]): number => {
     return sets.length > 0 ? sets.length - 1 : -1;
 };
 
-export const getActiveTurn = (set: Set): Turn | null => {
-    return set.turns.length > 0 ? set.turns[set.turns.length - 1] : null;
+export const getActiveTurn = (set: Set | null): Turn | null => {
+    return set && set.turns.length > 0 ? set.turns[set.turns.length - 1] : null;
 };
 
 export const getLastTurn = (set: Set): Turn | null => {
@@ -131,7 +131,6 @@ export const getActiveTurnScore = createSelector(
         }
     }
 )
-
 
 export const selectNumberAheadAndNumberOn = createSelector(
     (state: RootState) => state.snooker,

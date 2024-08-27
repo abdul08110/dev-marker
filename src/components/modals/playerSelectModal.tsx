@@ -47,7 +47,7 @@ export function PlayerSelectModal(props: PlayerSelectModalProps) {
                             <DialogTrigger className='p-0 bg-transparent'>
                                 <Button className="w-full" variant={'default'}>Add Player</Button>
                             </DialogTrigger>
-                            <PlayerSearchModal />
+                            <PlayerSearchModal onPlayerConfirm={props.onPlayerConfirm} />
                         </Dialog>
 
                         <div className="grid grid-cols-2 gap-4 mt-6">

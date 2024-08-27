@@ -65,10 +65,7 @@ export interface SnookerScoringState {
         team1: TeamDetails;
         team2: TeamDetails;
     };
-    handicap: {
-        team1: number;
-        team2: number;
-    };
+    handicap: number;
     streaming: 'PUBLIC' | 'PRIVATE';
     timeInMinutes: number;
     scoreHistory: Set[];

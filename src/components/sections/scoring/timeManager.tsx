@@ -1,50 +1,80 @@
-import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
-
-interface TimeManagerProps {
-    initialTime: number;
-    onTimerComplete: () => void;
-}
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 export interface TimeManagerHandle {
     startTimer: () => void;
+    pauseTimer: () => void;
+    resetTimer: (newTime: number) => void;
+}
+
+interface TimeManagerProps {
+    initialTime: number;
+    onTimerComplete?: () => void;
 }
 
 const TimeManager = forwardRef<TimeManagerHandle, TimeManagerProps>(({ initialTime, onTimerComplete }, ref) => {
-    const [timeLeft, setTimeLeft] = useState(initialTime);
-    const [isActive, setIsActive] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(initialTime * 60);
+    const timerInterval = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        setTimeLeft(initialTime * 60);
+        stopTimer();
+
+        return () => stopTimer();
+    }, [initialTime]);
 
     useImperativeHandle(ref, () => ({
-        startTimer() {
-            setTimeLeft(initialTime);
-            setIsActive(true);
+        startTimer,
+        pauseTimer,
+        resetTimer: (newTime: number) => {
+            setTimeLeft(newTime * 60);
         },
     }));
 
-    useEffect(() => {
-        let timer: NodeJS.Timeout;
+    const startTimer = () => {
+        if (timerInterval.current) return;
+        timerInterval.current = setInterval(() => {
+            setTimeLeft(prevTime => {
+                if (prevTime <= 1) {
+                    stopTimer();
+                    if (onTimerComplete) {
+                        onTimerComplete();
+                    }
+                    return 0;
+                }
+                return prevTime - 1;
+            });
+        }, 1000);
+    };
 
-        if (isActive && timeLeft > 0) {
-            timer = setInterval(() => {
-                setTimeLeft((prevTime) => prevTime - 1);
-            }, 1000);
-        } else if (timeLeft === 0) {
-            setIsActive(false);
-            onTimerComplete();
+    const pauseTimer = () => {
+        if (timerInterval.current) {
+            clearInterval(timerInterval.current);
+            timerInterval.current = null;
         }
+    };
 
-        return () => clearInterval(timer);
-    }, [isActive, timeLeft, onTimerComplete]);
+    const stopTimer = () => {
+        if (timerInterval.current) {
+            clearInterval(timerInterval.current);
+            timerInterval.current = null;
+        }
+    };
 
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
+    const formatTime = (totalSeconds: number) => {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
 
     return (
         <div className="w-full flex justify-center items-center">
             <div className="bg-lightPrimary p-3 text-white">
-                <small>Time Left (min): <strong>{`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`}</strong></small>
+                <small>Time Left (min): <strong>{formatTime(timeLeft)}</strong></small>
             </div>
         </div>
     );
 });
+
+TimeManager.displayName = 'TimeManager';
 
 export default TimeManager;

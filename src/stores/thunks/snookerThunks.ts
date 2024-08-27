@@ -4,9 +4,10 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '..';
-import { completeSet, createPoint, createSet, createTurn, decrementSetScore, decrementTurnScore, incrementSetScore, incrementTurnScore, setActivePlayer, setMatchId, setTeamPlayer, undoLastPoint } from '../slices/snookerSlice';
+import { addPlayer, completeSet, createPoint, createSet, createTurn, decrementSetScore, decrementTurnScore, incrementSetScore, incrementTurnScore, setActivePlayer, setMatchId, setTeamPlayer, undoLastPoint, updateFormat, updateNoOfFrames, updateStreaming, updateTimeInMinutes } from '../slices/snookerSlice';
 import { Player, PointType } from '../types';
 import { checkIfLastBallIsFreeBall, getActiveSet, getActiveSetIndex, getActiveTeam, getActiveTurnIndex, getLastPoint } from '../selectors/snookerSelector';
+import { timeStringToDecimalMinutes } from '@/utils/functions';
 
 export const handleSelectionOfActiveTeam = createAsyncThunk<void, { teamIndex: number }, { state: RootState; dispatch: AppDispatch }>(
     'snooker/handleSelectionOfActiveTeam',
@@ -135,5 +136,21 @@ export const handleFoulScore = createAsyncThunk<void, { penalty: number, missCal
         const activeTeam = getActiveTeam(state.snooker.players.team1, state.snooker.players.team2);
         await dispatch(createPoint({ score: 0, type: PointType.FOUL, penalty, ballsLost: redsLost, missCalled, freeBall }));
         await dispatch(incrementSetScore({ score: penalty, teamIndex: activeTeam.team1Active ? 1 : 0 }));
+    }
+)
+
+export const handleSettingsStateUpdate = createAsyncThunk<void, { format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED', numberOfFrames: number, durationInMinutes: string, noOfPlayers: '2' | '4', streaming: 'PUBLIC' | 'PRIVATE', handicap: number }, { state: RootState; dispatch: AppDispatch }>(
+    'snooker/handleSettingsUpdate',
+    async ({ format, numberOfFrames, durationInMinutes, noOfPlayers, streaming, handicap }, { dispatch, getState }) => {
+        await dispatch(updateFormat({ format }));
+        await dispatch(updateNoOfFrames({ numberOfFrames }));
+        await dispatch(updateTimeInMinutes({ timeInMinutes: timeStringToDecimalMinutes(durationInMinutes) }));
+        await dispatch(updateFormat({ format: format }));
+        await dispatch(updateStreaming({ streaming }));
+        
+        if (noOfPlayers === '4') {
+            await dispatch(addPlayer({ teamIndex: 0 }));
+            await dispatch(addPlayer({ teamIndex: 1 }));
+        }
     }
 )

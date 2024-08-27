@@ -6,6 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useSearchPlayers from "@/api/app/useSearchPlayer";
+import { Player } from "@/stores/types";
 
 const formSchema = z.object({
   phoneNumber: z
@@ -14,7 +15,12 @@ const formSchema = z.object({
     .regex(/^\d{10}$/, { message: "Phone number must be a 10-digit number" }),
 });
 
-export function SearchPlayerForm() {
+interface PlayerSearchProps {
+  onPlayerConfirm: (player: Player) => void;
+}
+
+
+export function SearchPlayerForm(props: PlayerSearchProps) {
   const { getPlayers, loading, player, error } = useSearchPlayers();
   const [searchAttempted, setSearchAttempted] = useState<boolean>(false);
 
@@ -52,7 +58,7 @@ export function SearchPlayerForm() {
         {loading && <p className="text-gray-500">Searching...</p>}
 
         {!loading && player && searchAttempted && (
-          <div className="mt-2 bg-[#3B3B3B] rounded flex gap-4 p-2">
+          <div onClick={() => props.onPlayerConfirm(player)} className="mt-2 bg-[#3B3B3B] rounded flex gap-4 p-2">
             <img
               src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.png'}
               alt={player.name}

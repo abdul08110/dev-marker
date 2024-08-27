@@ -31,10 +31,7 @@ const initialState: SnookerScoringState = {
             score: 0
         }
     },
-    handicap: {
-        team1: 0,
-        team2: 0,
-    },
+    handicap: 0,
     streaming: 'PUBLIC',
     timeInMinutes: 30,
     scoreHistory: [],
@@ -116,9 +113,33 @@ const snookerSlice = createSlice({
         },
         undoLastPoint(state, action: PayloadAction<{ setIndex: number, turnIndex: number }>) {
            state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].points.pop();
+        },
+        updateNoOfFrames(state, action: PayloadAction<{ numberOfFrames: number }>) {
+            state.numberOfFrames = action.payload.numberOfFrames;
+        },
+        updateHandicap(state, action: PayloadAction<{ handicap: number }>) {
+            state.handicap = action.payload.handicap;
+        },
+        updateTimeInMinutes(state, action: PayloadAction<{ timeInMinutes: number }>) {
+            state.timeInMinutes = action.payload.timeInMinutes;
+        },
+        updateFormat(state, action: PayloadAction<{ format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' }>) {
+            state.format = action.payload.format;
+        },
+        updateStreaming(state, action: PayloadAction<{ streaming: 'PUBLIC' | 'PRIVATE' }>) {
+            state.streaming = action.payload.streaming;
+        },
+        addPlayer(state, action: PayloadAction<{ teamIndex: number }>) {
+            const teamName = action.payload.teamIndex === 0 ? 'team1' : 'team2';
+            state.players[teamName].players[1] = {
+                playerName: 'Player 2',
+                isActive: false,
+                id: null,
+                playerImage: null
+            }
         }
     }
 });
 
-export const { setTeamPlayer, setMatchId, setActivePlayer, createSet, createTurn, createPoint, incrementTurnScore, incrementSetScore, completeSet, decrementTurnScore, decrementSetScore, undoLastPoint } = snookerSlice.actions;
+export const { updateNoOfFrames, updateHandicap, updateTimeInMinutes, updateFormat, updateStreaming, setTeamPlayer, setMatchId, setActivePlayer, createSet, createTurn, createPoint, incrementTurnScore, incrementSetScore, completeSet, decrementTurnScore, decrementSetScore, undoLastPoint, addPlayer } = snookerSlice.actions;
 export default snookerSlice.reducer;
