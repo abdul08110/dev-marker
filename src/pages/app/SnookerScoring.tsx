@@ -11,23 +11,31 @@ import { RootState, useAppDispatch } from '@/stores';
 import { toast } from '@/components/ui/use-toast';
 import { Player, PointType } from "@/stores/types";
 import useStartMatch from "@/api/app/useStartMatch";
-import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores, selectNumberAheadAndNumberOn } from "@/stores/selectors/snookerSelector";
-import { handleChangeScoreOnTrigger, handleFoulScore, handleFrameCompleted, handleMatchStart, handlePlayerSelectState, handleSelectionOfActiveTeam, handleSettingsStateUpdate, handleUndoScoreClicked } from "@/stores/thunks/snookerThunks";
+import { calculateTeamPOSN, getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores, selectHighestTurnScores } from "@/stores/selectors/snookerSelector";
+import { handleChangeScoreOnTrigger, handleFoulScore, handleMatchStart, handleNewSet, handlePlayerSelectState, handleSelectionOfActiveTeam, handleSettingsStateUpdate, handleUndoScoreClicked } from "@/stores/thunks/snookerThunks";
 import { SnookerFoulDrawer } from "@/components/modals/snookerFoulDrawer";
 import { SnookerFoulData } from "@/components/forms/app/snookerFoul";
 import { SnookerFramesSummary } from "@/components/sections/scoring/snookerFrameSummary";
 import { SnookerPracticeSettingsDrawer } from "@/components/modals/snookerPracticeSettingsDrawer";
 import { SnookerPracticeSettingsData } from "@/components/forms/app/snookerPracticeSettings";
-import { getActiveTeam } from "@/stores/selectors/commonSport";
+import { getActiveSet, getActiveTeam } from "@/stores/selectors/commonSport";
+import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs"
+import { resetTimer, startTimer, stopTimer } from "@/stores/slices/snookerSlice";
+import { TextHeader } from "@/components/sections/scoring/textHeader";
+import { Statistics } from "@/components/sections/scoring/statistics";
+import { Breaks } from "@/components/sections/scoring/breaks";
+
 
 export function SnookerScoring() {
     // STATE
     const snookerScoring = useSelector((state: RootState) => state.snooker);
     const clubs = useSelector((state: RootState) => state.club);
-    const { numberAhead, numberOn } = useSelector(selectNumberAheadAndNumberOn);
     const { team1score, team2score } = useSelector(getTeamSetScores);
     const activeTurnPointTypes = useSelector(getActiveTurnPointTypes);
     const activeTurnPointScore = useSelector(getActiveTurnScore);
+    const posnScores = useSelector(calculateTeamPOSN);
+    const { team1HighestTurnScores, team2HighestTurnScores } = useSelector(selectHighestTurnScores);
+
 
     const dispatch = useAppDispatch();
 
@@ -47,6 +55,14 @@ export function SnookerScoring() {
         }
     }, [clubs.activeClub, navigate]);
 
+    useEffect(() => {
+        if (snookerScoring.isTimerRunning && timerRef.current) {
+            timerRef.current.startTimer();
+        } else if (!snookerScoring.isTimerRunning && timerRef.current) {
+            timerRef.current.pauseTimer();
+        }
+    }, [snookerScoring.isTimerRunning]);
+
     // HANDLERS
     const handleBackClick = () => {
         navigate('/');
@@ -56,17 +72,41 @@ export function SnookerScoring() {
             setOpenSettingsDrawer(true);
         }
     };
-    const startTimer = () => {
+    const handleStartTimer = () => {
+        dispatch(startTimer());
         if (timerRef.current) {
             timerRef.current.startTimer();
         }
     };
+    const handlePauseTimer = () => {
+        dispatch(stopTimer());
+        if (timerRef.current) {
+            timerRef.current.pauseTimer();
+        }
+    };
+
+    const handleResetTimer = () => {
+        dispatch(resetTimer());
+        if (timerRef.current) {
+            timerRef.current.resetTimer(snookerScoring.timeInMinutes);
+        }
+    };
+
     const handleTimerComplete = () => {
     };
     const handleTeamClick = async (teamIndex: number) => {
         await dispatch(handleSelectionOfActiveTeam({ teamIndex }));
     }
     const handleScoringButtonExecution = async (point: number, type: PointType) => {
+        if (getActiveSet(snookerScoring.scoreHistory)?.status === 'COMPLETED') {
+            toast({
+                title: "Frame completed",
+                description: "Please click on start frame to begin",
+                variant: "destructive",
+            });
+            return
+        }
+
         const activeTeams = getActiveTeam(snookerScoring.players.team1, snookerScoring.players.team2);
         if (activeTeams.team1Active === false && activeTeams.team2Active === false) {
             toast({
@@ -77,14 +117,6 @@ export function SnookerScoring() {
             return
         } else {
             await dispatch(handleChangeScoreOnTrigger({ point, type }));
-
-            if (numberOn === 0) {
-                toast({
-                    title: "Frame Completed",
-                    className: 'bg-white'
-                });
-                await dispatch(handleFrameCompleted({}));
-            }
         }
 
     }
@@ -93,13 +125,6 @@ export function SnookerScoring() {
             toast({
                 title: "Error",
                 description: "Please Select Player First",
-                variant: "destructive",
-            });
-            return;
-        }
-        if (snookerScoring.scoreHistory.length > 0 && snookerScoring.scoreHistory[snookerScoring.scoreHistory.length - 1].status === 'COMPLETED') {
-            toast({
-                title: "Match Completed",
                 variant: "destructive",
             });
             return;
@@ -124,9 +149,20 @@ export function SnookerScoring() {
 
                     if (matchId) {
                         await dispatch(handleMatchStart({ matchId }));
-                        startTimer();
+                        handleStartTimer();
                     }
                     break;
+                } else {
+                    const activeSet = getActiveSet(snookerScoring.scoreHistory);
+                    if (activeSet && activeSet.status === 'COMPLETED') {
+                        await dispatch(handleNewSet({}));
+                    } else {
+                        toast({
+                            title: "Error",
+                            description: "Complete ongoing frame",
+                            variant: "destructive",
+                        });
+                    }
                 }
                 break;
             case SnookerScoringButtonEnum.RED:
@@ -183,18 +219,39 @@ export function SnookerScoring() {
 
     // PARENT UI
     return (
-        <section className="flex flex-col justify-start h-screen gap-6 overflow-y-scroll">
-            <ScoringHeader onBackClick={handleBackClick} onSettingsClick={handleSettingsClick} />
-            <TimeManager ref={timerRef} initialTime={snookerScoring.timeInMinutes} onTimerComplete={handleTimerComplete} />
-            <PlayerTeamManager activeTurnScore={activeTurnPointScore} activeTurnPointTypes={activeTurnPointTypes} team1SetScore={team1score} team2SetScore={team2score} onPlayerSelect={handlePlayerSelect} onTeamClick={handleTeamClick} team1={snookerScoring.players.team1} team2={snookerScoring.players.team2} matchId={snookerScoring.matchId} />
-            <SnookerFramesSummary team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
-            <MaxScore numberAhead={numberAhead} numberOn={numberOn} />
-            <SnookerScoringButtons
-                onButtonClick={handleScoringButtonClick}
-            />
-            <MarkerNavigation />
-            <SnookerFoulDrawer onSubmit={handleFoulUpdate} open={openFoulDrawer} setOpen={setOpenFoulDrawer} />
-            <SnookerPracticeSettingsDrawer onSubmit={handleSettingsUpdate} open={openSettingsDrawer} setOpen={setOpenSettingsDrawer} />
+        <section>
+            <Tabs defaultValue="scoring" className="flex flex-col justify-start h-screen gap-6 overflow-y-scroll">
+                <TabsContent value="scoring" className="h-[90%]">
+                    <div className="flex flex-col gap-6 h-full">
+                        <ScoringHeader onBackClick={handleBackClick} onSettingsClick={handleSettingsClick} />
+                        <TimeManager ref={timerRef} initialTime={snookerScoring.timeInMinutes} onTimerComplete={handleTimerComplete} />
+                        <PlayerTeamManager activeTurnScore={activeTurnPointScore} activeTurnPointTypes={activeTurnPointTypes} team1SetScore={team1score} team2SetScore={team2score} onPlayerSelect={handlePlayerSelect} onTeamClick={handleTeamClick} team1={snookerScoring.players.team1} team2={snookerScoring.players.team2} matchId={snookerScoring.matchId} />
+                        <SnookerFramesSummary team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
+                        <MaxScore numberAhead={snookerScoring.numberAhead} numberOn={snookerScoring.numberOn} />
+                        <SnookerScoringButtons
+                            onButtonClick={handleScoringButtonClick}
+                        />
+                        <SnookerFoulDrawer onSubmit={handleFoulUpdate} open={openFoulDrawer} setOpen={setOpenFoulDrawer} />
+                        <SnookerPracticeSettingsDrawer onSubmit={handleSettingsUpdate} open={openSettingsDrawer} setOpen={setOpenSettingsDrawer} />
+                    </div>
+                </TabsContent>
+                <TabsContent value="stats" className="h-[90%]">
+                    <div className="flex flex-col gap-6 h-full">
+                        <TextHeader name="STATISTICS" />
+                        <Statistics teamOnePOSN={posnScores.team1POSN} teamTwoPOSM={posnScores.team2POSN} teamOneAverage={`${posnScores.team1PottedBalls}/${posnScores.team1TotalBallsPlayed}`} teamTwoAverage={`${posnScores.team2PottedBalls}/${posnScores.team2TotalBallsPlayed}`} />
+                    </div>
+
+                </TabsContent>
+                <TabsContent value="breaks" className="h-[90%]">
+                    <div className="flex flex-col gap-6 h-full">
+                        <TextHeader name="BREAKS" />
+                        <Breaks team1Breaks={team1HighestTurnScores} team2Breaks={team2HighestTurnScores} />
+                    </div>
+                </TabsContent>
+                <TabsList className="h-auto bg-transparent">
+                    <MarkerNavigation />
+                </TabsList>
+            </Tabs>
         </section>
     )
 }

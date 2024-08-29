@@ -11,8 +11,9 @@ const NumberOfPlayersSelector: React.FC<NumberOfPlayersSelectorProps> = ({ value
         <div className="flex space-x-4">
             {/* Button for 2 Players */}
             <Button
+                type="button"
                 onClick={() => onChange('2')}
-                className={`flex items-center p-4 space-x-2 rounded-md border ${value === '2' ? 'border-purple-500 bg-black text-white' : 'border-gray-300 bg-gray-800 text-white'
+                className={`flex items-center p-4 space-x-2 rounded-md border text-white ${value === '2' ? 'bg-primary' : 'bg-secondary'
                     }`}
             >
                 <span>2 Players</span>
@@ -20,8 +21,9 @@ const NumberOfPlayersSelector: React.FC<NumberOfPlayersSelectorProps> = ({ value
 
             {/* Button for 4 Players */}
             <Button
+                type="button"
                 onClick={() => onChange('4')}
-                className={`flex items-center p-4 space-x-2 rounded-md border ${value === '4' ? 'border-purple-500 bg-black text-white' : 'border-gray-300 bg-gray-800 text-white'
+                className={`flex items-center p-4 space-x-2 rounded-md border text-white ${value === '4' ? 'bg-primary' : 'bg-secondary'
                     }`}
             >
                 <span>4 Players</span>

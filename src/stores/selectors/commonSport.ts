@@ -25,6 +25,13 @@ export const getLastPoint = (turn: Turn): Point | null => {
     return turn.points.length > 0 ? turn.points[turn.points.length - 1] : null;
 }
 
+export const getTeamFromPlayerId = (id: string, team1: TeamDetails, team2: TeamDetails) => {
+    return ({
+        team1Player: team1.players.some(player => player.id === id),
+        team2Player: team2.players.some(player => player.id === id)
+    });
+}
+
 export const getActiveTeam = (team1: TeamDetails, team2: TeamDetails) => {
     return ({
         team1Active: team1.players.some(player => player.isActive === true),

@@ -11,6 +11,8 @@ const initialState: SnookerScoringState = {
     matchId: null,
     team1Score: 0,
     team2Score: 0,
+    numberAhead: 0,
+    numberOn: 0,
     players: {
         team1: {
             players: [{
@@ -31,6 +33,9 @@ const initialState: SnookerScoringState = {
             score: 0
         }
     },
+    elapsedTime: 0,
+    isTimerRunning: false,
+    startTime: null,
     handicap: 0,
     streaming: 'PUBLIC',
     timeInMinutes: 30,
@@ -99,6 +104,13 @@ const snookerSlice = createSlice({
             const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
             state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].score += action.payload.score;
         },
+        incrementTotalScore(state, action: PayloadAction<{ score: number, teamIndex: number }>) {
+            if (action.payload.teamIndex === 0) {
+                state.team1Score += action.payload.score;
+            } else {
+                state.team2Score += action.payload.score;
+            }
+        },
         incrementSetScore(state, action: PayloadAction<{ score: number, teamIndex: number }>) {
             const teamName = action.payload.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
             state.scoreHistory[state.scoreHistory.length - 1][teamName] += action.payload.score;
@@ -112,7 +124,7 @@ const snookerSlice = createSlice({
             state.scoreHistory[state.scoreHistory.length - 1][teamName] -= action.payload.score;
         },
         undoLastPoint(state, action: PayloadAction<{ setIndex: number, turnIndex: number }>) {
-           state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].points.pop();
+            state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].points.pop();
         },
         updateNoOfFrames(state, action: PayloadAction<{ numberOfFrames: number }>) {
             state.numberOfFrames = action.payload.numberOfFrames;
@@ -137,9 +149,44 @@ const snookerSlice = createSlice({
                 id: null,
                 playerImage: null
             }
-        }
+        },
+        changeAheadNumber(state, action: PayloadAction<{ value: number }>) {
+            state.numberAhead = action.payload.value;
+        },
+        changeOnNumber(state, action: PayloadAction<{ value: number }>) {
+            state.numberOn = action.payload.value;
+        },
+        removeTurn(state, action: PayloadAction<{ turnIndex: number, setIndex: number }>) {
+            state.scoreHistory[action.payload.setIndex].turns.splice(action.payload.turnIndex, 1)
+        },
+        makeAllPlayersInactive(state) {
+            state.players.team1.players.forEach(value => value.isActive = false);
+            state.players.team2.players.forEach(value => value.isActive = false);
+        },
+        startTimer(state) {
+            state.isTimerRunning = true;
+            state.startTime = Date.now();
+        },
+        stopTimer(state) {
+            state.isTimerRunning = false;
+            if (state.startTime) {
+                state.elapsedTime += (Date.now() - state.startTime) / 1000; // update elapsed time in seconds
+            }
+            state.startTime = null;
+        },
+        resetTimer(state) {
+            state.isTimerRunning = false;
+            state.elapsedTime = 0;
+            state.startTime = null;
+        },
+        updateTimer(state) {
+            if (state.isTimerRunning && state.startTime) {
+                state.elapsedTime += (Date.now() - state.startTime) / 1000; // update elapsed time in seconds
+                state.startTime = Date.now(); // reset start time for the next update
+            }
+        },
     }
 });
 
-export const { updateNoOfFrames, updateHandicap, updateTimeInMinutes, updateFormat, updateStreaming, setTeamPlayer, setMatchId, setActivePlayer, createSet, createTurn, createPoint, incrementTurnScore, incrementSetScore, completeSet, decrementTurnScore, decrementSetScore, undoLastPoint, addPlayer } = snookerSlice.actions;
+export const { updateNoOfFrames, updateHandicap, updateTimeInMinutes, updateFormat, updateStreaming, setTeamPlayer, setMatchId, setActivePlayer, createSet, createTurn, createPoint, incrementTurnScore, incrementSetScore, completeSet, decrementTurnScore, decrementSetScore, undoLastPoint, addPlayer, changeAheadNumber, changeOnNumber, removeTurn, makeAllPlayersInactive, incrementTotalScore, startTimer, stopTimer, resetTimer, updateTimer } = snookerSlice.actions;
 export default snookerSlice.reducer;

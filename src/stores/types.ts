@@ -69,6 +69,11 @@ export interface SnookerScoringState {
     streaming: 'PUBLIC' | 'PRIVATE';
     timeInMinutes: number;
     scoreHistory: Set[];
+    numberOn: number;
+    numberAhead: number;
+    elapsedTime: number;
+    isTimerRunning: boolean;
+    startTime: number | null;
 }
 
 
