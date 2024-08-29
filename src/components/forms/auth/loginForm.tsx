@@ -19,7 +19,7 @@ const formSchema = z.object({
 })
 
 export function LoginForm() {
-    const { login, loading, error } = useLogin();
+    const { login, loading } = useLogin();
     const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof formSchema>>({

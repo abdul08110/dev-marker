@@ -78,19 +78,7 @@ export function SnookerScoring() {
             timerRef.current.startTimer();
         }
     };
-    const handlePauseTimer = () => {
-        dispatch(stopTimer());
-        if (timerRef.current) {
-            timerRef.current.pauseTimer();
-        }
-    };
 
-    const handleResetTimer = () => {
-        dispatch(resetTimer());
-        if (timerRef.current) {
-            timerRef.current.resetTimer(snookerScoring.timeInMinutes);
-        }
-    };
 
     const handleTimerComplete = () => {
     };

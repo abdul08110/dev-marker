@@ -40,7 +40,7 @@ export const handleSelectionOfActiveTeam = createAsyncThunk<void, { teamIndex: n
         const activeSet = getActiveSet(state.snooker.scoreHistory)!;
         const activeTurn = getActiveTurn(activeSet)!;
 
-        const numberAhead = await getNumberAhead(activeSet, activeTurn, teamIndex === 0 ? 'team1' : 'team2');
+        const numberAhead = await getNumberAhead(activeSet, teamIndex === 0 ? 'team1' : 'team2');
         const numberOn = await getNumberOnTableOfTheCurrentFrame(activeSet, state.snooker.format);
 
         await dispatch(changeAheadNumber({ value: numberAhead }));
@@ -80,7 +80,7 @@ export const handleChangeScoreOnTrigger = createAsyncThunk<void, { point: number
         const activeTurn = getActiveTurn(activeSet)!;
 
 
-        const numberAhead = await getNumberAhead(activeSet, activeTurn, activeTeam.team1Active ? 'team1' : 'team2');
+        const numberAhead = await getNumberAhead(activeSet, activeTeam.team1Active ? 'team1' : 'team2');
         const numberOn = await getNumberOnTableOfTheCurrentFrame(activeSet, state.snooker.format);
 
         await dispatch(changeAheadNumber({ value: numberAhead }));

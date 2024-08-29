@@ -90,7 +90,7 @@ export const getNumberOnTableOfTheCurrentFrame = async (activeSet: Set, format: 
     return numberOn;
 }
 
-export const getNumberAhead = async (activeSet: Set, activeTurn: Turn, activeTeam: 'team1' | 'team2') => {
+export const getNumberAhead = async (activeSet: Set, activeTeam: 'team1' | 'team2') => {
     const activePlayerScore = activeTeam === 'team1' ? activeSet.teamOneScore : activeSet.teamTwoScore;
     const opponentScore = activeTeam === 'team1' ? activeSet.teamTwoScore : activeSet.teamOneScore;
 
