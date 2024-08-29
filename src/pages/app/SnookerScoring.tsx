@@ -20,10 +20,10 @@ import { SnookerPracticeSettingsDrawer } from "@/components/modals/snookerPracti
 import { SnookerPracticeSettingsData } from "@/components/forms/app/snookerPracticeSettings";
 import { getActiveSet, getActiveTeam } from "@/stores/selectors/commonSport";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs"
-import { resetTimer, startTimer, stopTimer } from "@/stores/slices/snookerSlice";
 import { TextHeader } from "@/components/sections/scoring/textHeader";
 import { Statistics } from "@/components/sections/scoring/statistics";
 import { Breaks } from "@/components/sections/scoring/breaks";
+import { startTimer } from "@/stores/slices/snookerSlice";
 
 
 export function SnookerScoring() {
