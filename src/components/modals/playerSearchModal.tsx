@@ -10,7 +10,7 @@ interface PlayerSearchModalProps {
 
 export function PlayerSearchModal(props: PlayerSearchModalProps) {
     return (
-        <DialogContent className="top-0 left-0 absolute h-full bg-transparent w-full flex justify-center items-center">
+        <DialogContent className="top-0 left-0 absolute h-full bg-black/60 w-full flex justify-center items-center">
             <DialogTitle></DialogTitle>
             <div className="container">
                 <div className="flex flex-col rounded-md overflow-hidden gap-0">

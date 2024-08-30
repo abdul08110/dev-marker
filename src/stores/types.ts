@@ -14,6 +14,7 @@ export interface Player {
     name: string;
     profilePhoto?: string;
     id: string;
+    phoneNumber?: string;
 }
 
 export enum PointType {

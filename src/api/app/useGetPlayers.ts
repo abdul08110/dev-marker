@@ -7,6 +7,7 @@ import { Player } from '@/stores/types';
 
 interface GetPlayersProps {
     id: string;
+    search?: string;
 }
 
 interface GetPlayersResponse {
@@ -16,17 +17,21 @@ interface GetPlayersResponse {
 const useGetPlayers = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [players, setPlayers] = useState<Player[] | null>(null);
+    const [players, setPlayers] = useState<Player[]>([]);
 
-    const getPlayers = async ({ id }: GetPlayersProps): Promise<GetPlayersResponse | null> => {
+    const getPlayers = async ({ id, search }: GetPlayersProps): Promise<GetPlayersResponse | null> => {
         setLoading(true);
         setError(null);
 
         try {
+            let url = `user/marker/club-players/${id}`;
+            if (search) url = url + `?q=${search}`;
+
             const data = await handleApiResponse(
-                axiosInstance.get<ApiResponse<GetPlayersResponse>>(`user/marker/club-players/${id}`)
+                axiosInstance.get<ApiResponse<GetPlayersResponse>>(url)
             );
             setPlayers(data.results);
+
             return data;
         } catch (err: any) {
             setError(err.message);

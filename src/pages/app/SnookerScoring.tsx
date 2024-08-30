@@ -24,6 +24,7 @@ import { TextHeader } from "@/components/sections/scoring/textHeader";
 import { Statistics } from "@/components/sections/scoring/statistics";
 import { Breaks } from "@/components/sections/scoring/breaks";
 import { startTimer } from "@/stores/slices/snookerSlice";
+import { PlayerSelectModal } from "@/components/modals/playerSelectModal";
 
 
 export function SnookerScoring() {
@@ -47,6 +48,9 @@ export function SnookerScoring() {
     const navigate = useNavigate();
     const [openFoulDrawer, setOpenFoulDrawer] = React.useState(false);
     const [openSettingsDrawer, setOpenSettingsDrawer] = React.useState(false);
+    const [openPlayerSelectCard, setOpenPlayerSelectCard] = React.useState(false);
+    const [selectedTeamIndex, setSelectedTeamIndex] = React.useState(0);
+    const [selectedPlayerIndex, setSelectedPlayerIndex] = React.useState(0);
 
     // REACT HOOKS
     useEffect(() => {
@@ -191,8 +195,13 @@ export function SnookerScoring() {
                 return;
         }
     }
-    const handlePlayerSelect = async (player: Player, playerIndex: number, teamIndex: number) => {
-        await dispatch(handlePlayerSelectState({ player, playerIndex, teamIndex }));
+    const handlePlayerSelect = async (playerIndex: number, teamIndex: number) => {
+        setSelectedTeamIndex(teamIndex);
+        setSelectedPlayerIndex(playerIndex);
+        setOpenPlayerSelectCard(true);
+    }
+    const handlePlayerConfirm = async (player: Player) => {
+        await dispatch(handlePlayerSelectState({ player, playerIndex: selectedPlayerIndex, teamIndex: selectedTeamIndex }));
     }
     const handleFoulUpdate = async (values: SnookerFoulData) => {
         await dispatch(handleFoulScore(values));
@@ -211,7 +220,7 @@ export function SnookerScoring() {
                     <div className="flex flex-col gap-6 h-full">
                         <ScoringHeader onBackClick={handleBackClick} onSettingsClick={handleSettingsClick} />
                         <TimeManager ref={timerRef} initialTime={snookerScoring.timeInMinutes} onTimerComplete={handleTimerComplete} />
-                        <PlayerTeamManager activeTurnScore={activeTurnPointScore} activeTurnPointTypes={activeTurnPointTypes} team1SetScore={team1score} team2SetScore={team2score} onPlayerSelect={handlePlayerSelect} onTeamClick={handleTeamClick} team1={snookerScoring.players.team1} team2={snookerScoring.players.team2} matchId={snookerScoring.matchId} />
+                        <PlayerTeamManager onPlayerButtonClick={handlePlayerSelect} activeTurnScore={activeTurnPointScore} activeTurnPointTypes={activeTurnPointTypes} team1SetScore={team1score} team2SetScore={team2score} onTeamClick={handleTeamClick} team1={snookerScoring.players.team1} team2={snookerScoring.players.team2} matchId={snookerScoring.matchId} />
                         <SnookerFramesSummary maxRounds={snookerScoring.numberOfFrames} team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
                         <MaxScore numberAhead={snookerScoring.numberAhead} numberOn={snookerScoring.numberOn} />
                         <SnookerScoringButtons
@@ -219,6 +228,7 @@ export function SnookerScoring() {
                         />
                         <SnookerFoulDrawer onSubmit={handleFoulUpdate} open={openFoulDrawer} setOpen={setOpenFoulDrawer} />
                         <SnookerPracticeSettingsDrawer onSubmit={handleSettingsUpdate} open={openSettingsDrawer} setOpen={setOpenSettingsDrawer} />
+                        <PlayerSelectModal onPlayerConfirm={handlePlayerConfirm} clubId={clubs.activeClub?.clubId!} teamIndex={selectedTeamIndex} playerIndex={selectedPlayerIndex} isModalOpen={openPlayerSelectCard} />
                     </div>
                 </TabsContent>
                 <TabsContent value="stats">
