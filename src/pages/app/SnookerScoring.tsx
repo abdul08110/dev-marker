@@ -68,9 +68,7 @@ export function SnookerScoring() {
         navigate('/');
     };
     const handleSettingsClick = () => {
-        if (snookerScoring.matchId === null) {
-            setOpenSettingsDrawer(true);
-        }
+        setOpenSettingsDrawer(true);
     };
     const handleStartTimer = () => {
         dispatch(startTimer());
@@ -208,13 +206,13 @@ export function SnookerScoring() {
     // PARENT UI
     return (
         <section>
-            <Tabs defaultValue="scoring" className="flex flex-col justify-start h-screen gap-6 overflow-y-scroll">
-                <TabsContent value="scoring" className="h-[90%]">
+            <Tabs defaultValue="scoring" className="flex flex-col justify-start h-screen overflow-y-scroll">
+                <TabsContent value="scoring" className="flex-grow">
                     <div className="flex flex-col gap-6 h-full">
                         <ScoringHeader onBackClick={handleBackClick} onSettingsClick={handleSettingsClick} />
                         <TimeManager ref={timerRef} initialTime={snookerScoring.timeInMinutes} onTimerComplete={handleTimerComplete} />
                         <PlayerTeamManager activeTurnScore={activeTurnPointScore} activeTurnPointTypes={activeTurnPointTypes} team1SetScore={team1score} team2SetScore={team2score} onPlayerSelect={handlePlayerSelect} onTeamClick={handleTeamClick} team1={snookerScoring.players.team1} team2={snookerScoring.players.team2} matchId={snookerScoring.matchId} />
-                        <SnookerFramesSummary team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
+                        <SnookerFramesSummary maxRounds={snookerScoring.numberOfFrames} team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
                         <MaxScore numberAhead={snookerScoring.numberAhead} numberOn={snookerScoring.numberOn} />
                         <SnookerScoringButtons
                             onButtonClick={handleScoringButtonClick}
@@ -223,20 +221,20 @@ export function SnookerScoring() {
                         <SnookerPracticeSettingsDrawer onSubmit={handleSettingsUpdate} open={openSettingsDrawer} setOpen={setOpenSettingsDrawer} />
                     </div>
                 </TabsContent>
-                <TabsContent value="stats" className="h-[90%]">
+                <TabsContent value="stats">
                     <div className="flex flex-col gap-6 h-full">
                         <TextHeader name="STATISTICS" />
                         <Statistics teamOnePOSN={posnScores.team1POSN} teamTwoPOSM={posnScores.team2POSN} teamOneAverage={`${posnScores.team1PottedBalls}/${posnScores.team1TotalBallsPlayed}`} teamTwoAverage={`${posnScores.team2PottedBalls}/${posnScores.team2TotalBallsPlayed}`} />
                     </div>
 
                 </TabsContent>
-                <TabsContent value="breaks" className="h-[90%]">
+                <TabsContent value="breaks">
                     <div className="flex flex-col gap-6 h-full">
                         <TextHeader name="BREAKS" />
                         <Breaks team1Breaks={team1HighestTurnScores} team2Breaks={team2HighestTurnScores} />
                     </div>
                 </TabsContent>
-                <TabsList className="h-auto bg-transparent">
+                <TabsList className="h-auto bg-transparent mt-auto">
                     <MarkerNavigation />
                 </TabsList>
             </Tabs>

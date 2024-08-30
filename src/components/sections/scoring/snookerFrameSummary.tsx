@@ -1,6 +1,7 @@
 interface SnookerFramesSummaryProps {
     team1Score: number;
     team2Score: number;
+    maxRounds: number;
 }
 
 export function SnookerFramesSummary(props: SnookerFramesSummaryProps) {
@@ -8,6 +9,7 @@ export function SnookerFramesSummary(props: SnookerFramesSummaryProps) {
         <div className="w-full container">
             <div className="flex justify-between bg-black p-2 text-white">
                 <span>({props.team1Score})</span>
+                <span>({props.maxRounds})</span>
                 <span>({props.team2Score})</span>
             </div>
         </div>

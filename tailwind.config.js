@@ -11,9 +11,12 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
+      padding: {
+        DEFAULT: '0.9rem',
+        sm: '0.9rem',
+        lg: '1rem',
+        xl: '1rem',
+        '2xl': '6rem',
       },
     },
     extend: {
