@@ -10,6 +10,7 @@ interface PlayerSelectModalProps {
     teamIndex: number;
     playerIndex: number;
     isModalOpen: boolean;
+    closeModal: () => void;
 }
 
 export function PlayerSelectModal(props: PlayerSelectModalProps) {
@@ -35,9 +36,7 @@ export function PlayerSelectModal(props: PlayerSelectModalProps) {
                             </Dialog>
 
                             <div className="grid grid-cols-2 gap-4 mt-6">
-                                <DialogClose asChild>
-                                    <Button variant={'secondary'}>Cancel</Button>
-                                </DialogClose>
+                                <Button onClick={props.closeModal} variant={'secondary'}>Cancel</Button>
                             </div>
                         </div>
                     </div>

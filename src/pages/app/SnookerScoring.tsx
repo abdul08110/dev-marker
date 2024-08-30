@@ -28,7 +28,7 @@ import { PlayerSelectModal } from "@/components/modals/playerSelectModal";
 
 
 export function SnookerScoring() {
-    // STATE
+    // REDUX STATE
     const snookerScoring = useSelector((state: RootState) => state.snooker);
     const clubs = useSelector((state: RootState) => state.club);
     const { team1score, team2score } = useSelector(getTeamSetScores);
@@ -202,6 +202,13 @@ export function SnookerScoring() {
     }
     const handlePlayerConfirm = async (player: Player) => {
         await dispatch(handlePlayerSelectState({ player, playerIndex: selectedPlayerIndex, teamIndex: selectedTeamIndex }));
+        setOpenPlayerSelectCard(false);
+
+        if (snookerScoring.players.team2.players[0].id === null && selectedTeamIndex === 0) {
+            setTimeout(() => {
+                handlePlayerSelect(0, 1);
+            }, 500);
+        }
     }
     const handleFoulUpdate = async (values: SnookerFoulData) => {
         await dispatch(handleFoulScore(values));
@@ -228,7 +235,7 @@ export function SnookerScoring() {
                         />
                         <SnookerFoulDrawer onSubmit={handleFoulUpdate} open={openFoulDrawer} setOpen={setOpenFoulDrawer} />
                         <SnookerPracticeSettingsDrawer onSubmit={handleSettingsUpdate} open={openSettingsDrawer} setOpen={setOpenSettingsDrawer} />
-                        <PlayerSelectModal onPlayerConfirm={handlePlayerConfirm} clubId={clubs.activeClub?.clubId!} teamIndex={selectedTeamIndex} playerIndex={selectedPlayerIndex} isModalOpen={openPlayerSelectCard} />
+                        <PlayerSelectModal closeModal={() => setOpenPlayerSelectCard(false)} onPlayerConfirm={handlePlayerConfirm} clubId={clubs.activeClub?.clubId!} teamIndex={selectedTeamIndex} playerIndex={selectedPlayerIndex} isModalOpen={openPlayerSelectCard} />
                     </div>
                 </TabsContent>
                 <TabsContent value="stats">
