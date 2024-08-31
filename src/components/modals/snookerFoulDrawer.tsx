@@ -15,6 +15,7 @@ interface SnookerFoulDrawerProps {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     onSubmit: (values: SnookerFoulData) => void;
+    redsOnTable: number;
 }
 
 export function SnookerFoulDrawer(props: SnookerFoulDrawerProps) {
@@ -25,7 +26,7 @@ export function SnookerFoulDrawer(props: SnookerFoulDrawerProps) {
                     <DrawerTitle className="text-2xl">Foul</DrawerTitle>
                 </DrawerHeader>
                 <div className="px-4 h-full">
-                    <SnookerFoulForm onSubmit={props.onSubmit} />
+                    <SnookerFoulForm redsOnTable={props.redsOnTable} onSubmit={props.onSubmit} />
                 </div>
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>

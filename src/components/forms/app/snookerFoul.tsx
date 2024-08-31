@@ -23,6 +23,7 @@ const formSchema = z.object({
 
 interface SnookerFoulFormProps {
     onSubmit: (values: z.infer<typeof formSchema>) => void;
+    redsOnTable: number;
 }
 
 
@@ -40,7 +41,7 @@ export function SnookerFoulForm(props: SnookerFoulFormProps) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(props.onSubmit)} className="flex flex-col gap-2 h-full">
-                
+
                 <FormField
                     control={form.control}
                     name="penalty"
@@ -55,26 +56,30 @@ export function SnookerFoulForm(props: SnookerFoulFormProps) {
                         </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="redsLost"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 mt-4">
-                            <FormLabel className="text-white text-base">
-                                Reds Lost:
-                            </FormLabel>
-                            <FormControl>
-                                <SpinButton
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    min={0}
-                                    max={10}
-                                    step={1}
-                                />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
+                {
+                    props.redsOnTable > 0 ?
+                        <FormField
+                            control={form.control}
+                            name="redsLost"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center space-x-3 space-y-0 mt-4">
+                                    <FormLabel className="text-white text-base">
+                                        Reds Lost:
+                                    </FormLabel>
+                                    <FormControl>
+                                        <SpinButton
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            min={0}
+                                            max={props.redsOnTable}
+                                            step={1}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        /> : <></>
+                }
+
                 <FormField
                     control={form.control}
                     name="missCalled"
@@ -115,7 +120,7 @@ export function SnookerFoulForm(props: SnookerFoulFormProps) {
 
                         </FormItem>
                     )} />
-                <Button type="submit" className="mt-auto">Save changes</Button>
+                <Button type="submit" className="mt-auto">OK</Button>
             </form>
         </Form>
     )

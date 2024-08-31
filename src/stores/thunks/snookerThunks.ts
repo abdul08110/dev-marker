@@ -4,12 +4,11 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '..';
-import { addPlayer, changeAheadNumber, changeOnNumber, completeSet, createPoint, createSet, createTurn, decrementSetScore, decrementTurnScore, incrementSetScore, incrementTotalScore, incrementTurnScore, makeAllPlayersInactive, removeTurn, setActivePlayer, setMatchId, setTeamPlayer, undoLastPoint, updateFormat, updateHandicap, updateNoOfFrames, updateStreaming, updateTimeInMinutes } from '../slices/snookerSlice';
+import { addPlayer, changeAheadNumber, changeOnNumber, completeSet, createPoint, createSet, createTurn, decrementSetScore, decrementTurnScore, incrementSetScore, incrementTotalScore, incrementTurnScore, makeAllPlayersInactive, removeTurn, reverseTeamPlayers, setActivePlayer, setMatchId, setTeamPlayer, undoLastPoint, updateFormat, updateHandicap, updateNoOfFrames, updateStreaming, updateTimeInMinutes } from '../slices/snookerSlice';
 import { Player, PointType } from '../types';
 import { checkIfLastBallIsFreeBall, getNumberAhead, getNumberOnTableOfTheCurrentFrame } from '../selectors/snookerSelector';
 import { timeStringToDecimalMinutes } from '@/utils/functions';
-import { getActiveSet, getActiveSetIndex, getActiveTeam, getActiveTurn, getActiveTurnIndex, getLastPoint } from '../selectors/commonSport';
-import { toast } from '@/components/ui/use-toast';
+import { getActivePlayer, getActiveSet, getActiveSetIndex, getActiveTeam, getActiveTurn, getActiveTurnIndex, getLastPoint } from '../selectors/commonSport';
 
 export const handleSelectionOfActiveTeam = createAsyncThunk<void, { teamIndex: number }, { state: RootState; dispatch: AppDispatch }>(
     'snooker/handleSelectionOfActiveTeam',
@@ -33,17 +32,20 @@ export const handleSelectionOfActiveTeam = createAsyncThunk<void, { teamIndex: n
         }
 
         await dispatch(setActivePlayer({ playerId }))
-        await dispatch(createTurn({ playerId }))
 
-        state = getState();
+        if (state.snooker.matchId) {
+            await dispatch(createTurn({ playerId }))
 
-        const activeSet = getActiveSet(state.snooker.scoreHistory)!;
+            state = getState();
 
-        const numberAhead = await getNumberAhead(activeSet, teamIndex === 0 ? 'team1' : 'team2');
-        const numberOn = await getNumberOnTableOfTheCurrentFrame(activeSet, state.snooker.format);
+            const activeSet = getActiveSet(state.snooker.scoreHistory)!;
 
-        await dispatch(changeAheadNumber({ value: numberAhead }));
-        await dispatch(changeOnNumber({ value: numberOn }));
+            const numberAhead = await getNumberAhead(activeSet, teamIndex === 0 ? 'team1' : 'team2');
+            const numberOn = await getNumberOnTableOfTheCurrentFrame(activeSet, state.snooker.format);
+
+            await dispatch(changeAheadNumber({ value: numberAhead }));
+            await dispatch(changeOnNumber({ value: numberOn }));
+        }
     }
 )
 
@@ -83,40 +85,27 @@ export const handleChangeScoreOnTrigger = createAsyncThunk<void, { point: number
 
         await dispatch(changeAheadNumber({ value: numberAhead }));
         await dispatch(changeOnNumber({ value: numberOn }));
-
-        if (numberOn === 0) {
-            toast({
-                title: "Frame Completed",
-                className: 'bg-white',
-            });
-
-            await dispatch(incrementTotalScore({ score: 1, teamIndex: activeTeam.team1Active ? 0 : 1 }))
-            await dispatch(completeSet());
-            await dispatch(makeAllPlayersInactive());
-            await dispatch(changeAheadNumber({ value: 0 }));
-            await dispatch(changeOnNumber({ value: 0 }));
-        }
     }
 )
 
 export const handleMatchStart = createAsyncThunk<void, { matchId: string }, { state: RootState; dispatch: AppDispatch }>(
     'snooker/handleMatchStart',
-    async ({ matchId }, { dispatch }) => {
+    async ({ matchId }, { dispatch, getState }) => {
+        const state = getState();
+
         await dispatch(setMatchId({
             matchId: matchId
         }));
-        await dispatch(handleNewSet({}));
-    }
-)
-
-export const handleNewSet = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
-    'snooker/handleNewSet',
-    async ({ }, { dispatch }) => {
+        await dispatch(handleBreakOff({}));
         await dispatch(createSet());
         await dispatch(changeAheadNumber({ value: 0 }));
         await dispatch(changeOnNumber({ value: 0 }));
+
+        const activePlayer = getActivePlayer(state.snooker.players.team1, state.snooker.players.team2);
+        await dispatch(createTurn({ playerId: activePlayer!.id! }));
     }
 )
+
 
 export const handlePlayerSelectState = createAsyncThunk<void, { player: Player, playerIndex: number, teamIndex: number }, { state: RootState; dispatch: AppDispatch }>(
     'snooker/handlePlayerSelect',
@@ -126,6 +115,25 @@ export const handlePlayerSelectState = createAsyncThunk<void, { player: Player, 
             playerIndex: playerIndex,
             teamIndex: teamIndex
         }))
+    }
+)
+
+export const handleBreakOff = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
+    'snooker/handlePlayerBreak',
+    async ({ }, { dispatch, getState }) => {
+        const state = getState();
+
+        const activeTeam = getActiveTeam(state.snooker.players.team1, state.snooker.players.team2);
+
+        if (activeTeam.team1Active) return
+        else {
+            await dispatch(reverseTeamPlayers());
+
+            if (state.snooker.handicap) {
+                await dispatch(updateHandicap({ handicap: -state.snooker.handicap }));
+            }
+
+        }
     }
 )
 
@@ -146,7 +154,6 @@ export const handleUndoScoreClicked = createAsyncThunk<void, {}, { state: RootSt
                     await dispatch(removeTurn({ setIndex: currentSetIndex, turnIndex: currentTurnIndex }));
                     const state = getState();
                     currentSet = getActiveSet(state.snooker.scoreHistory);
-                    console.log(currentSet?.turns);
                     currentTurn = getActiveTurn(currentSet);
                     if (currentTurn) {
                         const playerId = currentTurn.turnPlayerId;
@@ -163,7 +170,9 @@ export const handleUndoScoreClicked = createAsyncThunk<void, {}, { state: RootSt
                         await dispatch(decrementTurnScore({ score }));
                         await dispatch(decrementSetScore({ score, teamIndex: team.team1Active ? 0 : 1 }));
                     }
-                    await dispatch(undoLastPoint({ setIndex: getActiveSetIndex(state.snooker.scoreHistory), turnIndex: getActiveTurnIndex(currentSet) }))
+
+                    await dispatch(undoLastPoint({ setIndex: getActiveSetIndex(state.snooker.scoreHistory), turnIndex: getActiveTurnIndex(currentSet!) }))
+
                 }
             }
         }
@@ -179,6 +188,7 @@ export const handleFoulScore = createAsyncThunk<void, { penalty: number, missCal
         const activeTeam = getActiveTeam(state.snooker.players.team1, state.snooker.players.team2);
         await dispatch(createPoint({ score: 0, type: PointType.FOUL, penalty, ballsLost: redsLost, missCalled, freeBall }));
         await dispatch(incrementSetScore({ score: penalty, teamIndex: activeTeam.team1Active ? 1 : 0 }));
+        await dispatch(handleSelectionOfActiveTeam({ teamIndex: activeTeam.team1Active ? 1 : 0 }));
     }
 )
 
@@ -195,6 +205,40 @@ export const handleSettingsStateUpdate = createAsyncThunk<void, { format: 'SNOOK
         if (noOfPlayers === '4') {
             await dispatch(addPlayer({ teamIndex: 0 }));
             await dispatch(addPlayer({ teamIndex: 1 }));
+        }
+    }
+)
+
+export const handleEndFrame = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
+    'snooker/handleEndFrame',
+    async ({ }, { dispatch, getState }) => {
+        const state = getState();
+        let activeSet = getActiveSet(state.snooker.scoreHistory);
+
+        if (!activeSet) return
+        const winningTeamIndex = activeSet?.teamOneScore > activeSet?.teamTwoScore ? 0 : 1;
+        await dispatch(incrementTotalScore({ teamIndex: winningTeamIndex, score: 1 }));
+        await dispatch(completeSet());
+        
+        if (state.snooker.numberOfFrames > state.snooker.scoreHistory.length) {
+            await dispatch(createSet());
+            const state = getState();
+
+            activeSet = getActiveSet(state.snooker.scoreHistory);
+
+            const isSetEvenOrOdd = (state.snooker.scoreHistory.length) % 2;
+            const activeTeam = isSetEvenOrOdd === 0 ? 'team2' :  'team1';
+            const activePlayer = state.snooker.players[activeTeam].players[0].id!;
+
+            await dispatch(setActivePlayer({ playerId: activePlayer }));
+            await dispatch(createTurn({ playerId: activePlayer }));
+
+
+            const numberAhead = await getNumberAhead(activeSet!, activeTeam);
+            const numberOn = await getNumberOnTableOfTheCurrentFrame(activeSet, state.snooker.format);
+
+            await dispatch(changeAheadNumber({ value: numberAhead }));
+            await dispatch(changeOnNumber({ value: numberOn }));
         }
     }
 )

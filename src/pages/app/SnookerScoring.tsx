@@ -11,8 +11,8 @@ import { RootState, useAppDispatch } from '@/stores';
 import { toast } from '@/components/ui/use-toast';
 import { Player, PointType } from "@/stores/types";
 import useStartMatch from "@/api/app/useStartMatch";
-import { calculateTeamPOSN, getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores, selectHighestTurnScores } from "@/stores/selectors/snookerSelector";
-import { handleChangeScoreOnTrigger, handleFoulScore, handleMatchStart, handleNewSet, handlePlayerSelectState, handleSelectionOfActiveTeam, handleSettingsStateUpdate, handleUndoScoreClicked } from "@/stores/thunks/snookerThunks";
+import { calculateTeamPOSN, getActiveTurnPointTypes, getActiveTurnScore, getNumberOfRedsLeft, getTeamSetScores, selectHighestTurnScores, snookerButtonsDisabledState } from "@/stores/selectors/snookerSelector";
+import { handleChangeScoreOnTrigger, handleEndFrame, handleFoulScore, handleMatchStart, handlePlayerSelectState, handleSelectionOfActiveTeam, handleSettingsStateUpdate, handleUndoScoreClicked } from "@/stores/thunks/snookerThunks";
 import { SnookerFoulDrawer } from "@/components/modals/snookerFoulDrawer";
 import { SnookerFoulData } from "@/components/forms/app/snookerFoul";
 import { SnookerFramesSummary } from "@/components/sections/scoring/snookerFrameSummary";
@@ -36,6 +36,8 @@ export function SnookerScoring() {
     const activeTurnPointScore = useSelector(getActiveTurnScore);
     const posnScores = useSelector(calculateTeamPOSN);
     const { team1HighestTurnScores, team2HighestTurnScores } = useSelector(selectHighestTurnScores);
+    const snookerButtonDisabledState = useSelector(snookerButtonsDisabledState);
+    const numberOfRedsOnTable = useSelector(getNumberOfRedsLeft);
 
 
     const dispatch = useAppDispatch();
@@ -85,6 +87,7 @@ export function SnookerScoring() {
     const handleTimerComplete = () => {
     };
     const handleTeamClick = async (teamIndex: number) => {
+        console.log(teamIndex)
         await dispatch(handleSelectionOfActiveTeam({ teamIndex }));
     }
     const handleScoringButtonExecution = async (point: number, type: PointType) => {
@@ -121,38 +124,47 @@ export function SnookerScoring() {
         }
         switch (buttonType) {
             case SnookerScoringButtonEnum.START_FRAME:
-                console.log('start frame clicked clicked');
                 if (!snookerScoring.matchId) {
-                    const matchId = await startMatchHook.startMatch({
-                        expectedEndTimeDate: new Date(new Date(new Date().getTime() + 30 * 60000).toISOString()),
-                        clubId: clubs.activeClub!.clubId,
-                        sport: 'SNOOKER',
-                        sportType: snookerScoring.format,
-                        venueId: clubs.activeClub!.venueId,
-                        sideOnePlayerOneId: snookerScoring.players.team1.players[0].id,
-                        sideOnePlayerTwoId: snookerScoring.players.team1.players[1] && snookerScoring.players.team1.players[1].id ? snookerScoring.players.team1.players[1]!.id : undefined,
-                        sideTwoPlayerOneId: snookerScoring.players.team2.players[0].id,
-                        sideTwoPlayerTwoId: snookerScoring.players.team2.players[1] && snookerScoring.players.team2.players[1].id ? snookerScoring.players.team2.players[1]!.id : undefined,
-                        streamingType: snookerScoring.streaming,
-                        noOfSets: snookerScoring.numberOfFrames
-                    })
+                    const activeTeamInfo = getActiveTeam(snookerScoring.players.team1, snookerScoring.players.team2);
 
-                    if (matchId) {
-                        await dispatch(handleMatchStart({ matchId }));
-                        handleStartTimer();
-                    }
-                    break;
-                } else {
-                    const activeSet = getActiveSet(snookerScoring.scoreHistory);
-                    if (activeSet && activeSet.status === 'COMPLETED') {
-                        await dispatch(handleNewSet({}));
+                    if (activeTeamInfo.team1Active || activeTeamInfo.team2Active) {
+                        const matchId = await startMatchHook.startMatch({
+                            expectedEndTimeDate: new Date(new Date(new Date().getTime() + 30 * 60000).toISOString()),
+                            clubId: clubs.activeClub!.clubId,
+                            sport: 'SNOOKER',
+                            sportType: snookerScoring.format,
+                            venueId: clubs.activeClub!.venueId,
+                            sideOnePlayerOneId: snookerScoring.players.team1.players[0].id,
+                            sideOnePlayerTwoId: snookerScoring.players.team1.players[1] && snookerScoring.players.team1.players[1].id ? snookerScoring.players.team1.players[1]!.id : undefined,
+                            sideTwoPlayerOneId: snookerScoring.players.team2.players[0].id,
+                            sideTwoPlayerTwoId: snookerScoring.players.team2.players[1] && snookerScoring.players.team2.players[1].id ? snookerScoring.players.team2.players[1]!.id : undefined,
+                            streamingType: snookerScoring.streaming,
+                            noOfSets: snookerScoring.numberOfFrames
+                        })
+
+                        if (matchId) {
+                            await dispatch(handleMatchStart({ matchId }));
+                            handleStartTimer();
+                        }
                     } else {
                         toast({
                             title: "Error",
-                            description: "Complete ongoing frame",
+                            description: "Select Team to Break",
                             variant: "destructive",
                         });
                     }
+                    break;
+                } else {
+                    // const activeSet = getActiveSet(snookerScoring.scoreHistory);
+                    // if (activeSet && activeSet.status === 'COMPLETED') {
+                    //     await dispatch(handleNewSet({}));
+                    // } else {
+                    //     toast({
+                    //         title: "Error",
+                    //         description: "Complete ongoing frame",
+                    //         variant: "destructive",
+                    //     });
+                    // }
                 }
                 break;
             case SnookerScoringButtonEnum.RED:
@@ -191,6 +203,10 @@ export function SnookerScoring() {
                 console.log('Foul Clicked');
                 setOpenFoulDrawer(true);
                 break;
+            case SnookerScoringButtonEnum.END_FRAME:
+                console.log('End Frame Clicked');
+                await dispatch(handleEndFrame({}));
+                break;
             default:
                 return;
         }
@@ -223,7 +239,7 @@ export function SnookerScoring() {
     return (
         <section>
             <Tabs defaultValue="scoring" className="flex flex-col justify-start h-screen overflow-y-scroll">
-                <TabsContent value="scoring" className="flex-grow">
+                <TabsContent value="scoring" className="flex-grow mt-0">
                     <div className="flex flex-col gap-6 h-full">
                         <ScoringHeader onBackClick={handleBackClick} onSettingsClick={handleSettingsClick} />
                         <TimeManager ref={timerRef} initialTime={snookerScoring.timeInMinutes} onTimerComplete={handleTimerComplete} />
@@ -231,21 +247,23 @@ export function SnookerScoring() {
                         <SnookerFramesSummary maxRounds={snookerScoring.numberOfFrames} team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
                         <MaxScore numberAhead={snookerScoring.numberAhead} numberOn={snookerScoring.numberOn} />
                         <SnookerScoringButtons
+                            isBreakOff={snookerScoring.scoreHistory.length === 0}
+                            disabledState={snookerButtonDisabledState}
                             onButtonClick={handleScoringButtonClick}
                         />
-                        <SnookerFoulDrawer onSubmit={handleFoulUpdate} open={openFoulDrawer} setOpen={setOpenFoulDrawer} />
+                        <SnookerFoulDrawer redsOnTable={numberOfRedsOnTable} onSubmit={handleFoulUpdate} open={openFoulDrawer} setOpen={setOpenFoulDrawer} />
                         <SnookerPracticeSettingsDrawer onSubmit={handleSettingsUpdate} open={openSettingsDrawer} setOpen={setOpenSettingsDrawer} />
                         <PlayerSelectModal closeModal={() => setOpenPlayerSelectCard(false)} onPlayerConfirm={handlePlayerConfirm} clubId={clubs.activeClub?.clubId!} teamIndex={selectedTeamIndex} playerIndex={selectedPlayerIndex} isModalOpen={openPlayerSelectCard} />
                     </div>
                 </TabsContent>
-                <TabsContent value="stats">
+                <TabsContent value="stats" className="mt-0">
                     <div className="flex flex-col gap-6 h-full">
                         <TextHeader name="STATISTICS" />
                         <Statistics teamOnePOSN={posnScores.team1POSN} teamTwoPOSM={posnScores.team2POSN} teamOneAverage={`${posnScores.team1PottedBalls}/${posnScores.team1TotalBallsPlayed}`} teamTwoAverage={`${posnScores.team2PottedBalls}/${posnScores.team2TotalBallsPlayed}`} />
                     </div>
 
                 </TabsContent>
-                <TabsContent value="breaks">
+                <TabsContent value="breaks" className="mt-0">
                     <div className="flex flex-col gap-6 h-full">
                         <TextHeader name="BREAKS" />
                         <Breaks team1Breaks={team1HighestTurnScores} team2Breaks={team2HighestTurnScores} />

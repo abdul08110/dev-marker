@@ -17,14 +17,8 @@ export function PlayerTeamCard(props: PlayerTeamCardProps) {
     const activePlayer = props.data.players.find(player => player.isActive) || props.data.players[0];
     const isTeamActive = props.data.players.some(player => player.isActive);
 
-    const handlePlayerTeamCardSelect = () => {
-        if (props.matchId) {
-            props.onPlayerTeamCardSelect();
-        }
-    }
-
     return (
-        <div onClick={handlePlayerTeamCardSelect} className={clsx("rounded-md p-4 flex flex-col items-center gap-4 w-full", {
+        <div onClick={props.onPlayerTeamCardSelect} className={clsx("rounded-md p-4 flex flex-col items-center gap-4 w-full", {
             'bg-lightSecondary': !isTeamActive,
             'bg-primary': isTeamActive,
         })}>

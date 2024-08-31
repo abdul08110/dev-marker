@@ -170,7 +170,7 @@ const snookerSlice = createSlice({
         stopTimer(state) {
             state.isTimerRunning = false;
             if (state.startTime) {
-                state.elapsedTime += (Date.now() - state.startTime) / 1000; // update elapsed time in seconds
+                state.elapsedTime += (Date.now() - state.startTime) / 1000;
             }
             state.startTime = null;
         },
@@ -181,12 +181,19 @@ const snookerSlice = createSlice({
         },
         updateTimer(state) {
             if (state.isTimerRunning && state.startTime) {
-                state.elapsedTime += (Date.now() - state.startTime) / 1000; // update elapsed time in seconds
-                state.startTime = Date.now(); // reset start time for the next update
+                state.elapsedTime += (Date.now() - state.startTime) / 1000;
+                state.startTime = Date.now();
             }
         },
+        reverseTeamPlayers(state) {
+            const teamOnePlayers = state.players.team1.players;
+            const teamTwoPlayers = state.players.team2.players;
+
+            state.players.team1.players = teamTwoPlayers;
+            state.players.team2.players = teamOnePlayers;
+        }
     }
 });
 
-export const { updateNoOfFrames, updateHandicap, updateTimeInMinutes, updateFormat, updateStreaming, setTeamPlayer, setMatchId, setActivePlayer, createSet, createTurn, createPoint, incrementTurnScore, incrementSetScore, completeSet, decrementTurnScore, decrementSetScore, undoLastPoint, addPlayer, changeAheadNumber, changeOnNumber, removeTurn, makeAllPlayersInactive, incrementTotalScore, startTimer, stopTimer, resetTimer, updateTimer } = snookerSlice.actions;
+export const { updateNoOfFrames, updateHandicap, updateTimeInMinutes, updateFormat, updateStreaming, setTeamPlayer, setMatchId, setActivePlayer, createSet, createTurn, createPoint, incrementTurnScore, incrementSetScore, completeSet, decrementTurnScore, decrementSetScore, undoLastPoint, addPlayer, changeAheadNumber, changeOnNumber, removeTurn, makeAllPlayersInactive, incrementTotalScore, startTimer, stopTimer, resetTimer, updateTimer, reverseTeamPlayers } = snookerSlice.actions;
 export default snookerSlice.reducer;
