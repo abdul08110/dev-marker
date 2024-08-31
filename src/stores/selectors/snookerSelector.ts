@@ -5,7 +5,7 @@
 import { RootState } from '@/stores';
 import { PointType, type Set, SnookerScoringState, Turn } from '../types';
 import { createSelector } from '@reduxjs/toolkit';
-import { getActiveSet, getActiveTurn, getLastPoint, getLastPointPlayedInTheSet, getLastTurn } from './commonSport';
+import { getActiveSet, getActiveTurn, getLastPoint, getLastPointPlayedInTheSet } from './commonSport';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 
 

@@ -1,4 +1,4 @@
-import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import { PlayersList } from "../sections/scoring/playersList";
 import { Button } from "../ui/button";
 import { PlayerSearchModal } from "./playerSearchModal";

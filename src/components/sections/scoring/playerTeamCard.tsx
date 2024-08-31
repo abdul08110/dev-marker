@@ -14,7 +14,7 @@ interface PlayerTeamCardProps {
 }
 
 export function PlayerTeamCard(props: PlayerTeamCardProps) {
-    const activePlayer = props.data.players.find(player => player.isActive) || props.data.players[0];
+    // const activePlayer = props.data.players.find(player => player.isActive) || props.data.players[0];
     const isTeamActive = props.data.players.some(player => player.isActive);
 
     return (

@@ -4,7 +4,7 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '..';
-import { addPlayer, changeAheadNumber, changeOnNumber, completeSet, createPoint, createSet, createTurn, decrementSetScore, decrementTurnScore, incrementSetScore, incrementTotalScore, incrementTurnScore, makeAllPlayersInactive, removeTurn, reverseTeamPlayers, setActivePlayer, setMatchId, setTeamPlayer, undoLastPoint, updateFormat, updateHandicap, updateNoOfFrames, updateStreaming, updateTimeInMinutes } from '../slices/snookerSlice';
+import { addPlayer, changeAheadNumber, changeOnNumber, completeSet, createPoint, createSet, createTurn, decrementSetScore, decrementTurnScore, incrementSetScore, incrementTotalScore, incrementTurnScore, removeTurn, reverseTeamPlayers, setActivePlayer, setMatchId, setTeamPlayer, undoLastPoint, updateFormat, updateHandicap, updateNoOfFrames, updateStreaming, updateTimeInMinutes } from '../slices/snookerSlice';
 import { Player, PointType } from '../types';
 import { checkIfLastBallIsFreeBall, getNumberAhead, getNumberOnTableOfTheCurrentFrame } from '../selectors/snookerSelector';
 import { timeStringToDecimalMinutes } from '@/utils/functions';
