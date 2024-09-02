@@ -64,7 +64,7 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
                     className={clsx("col-span-1 bg-markerButton", commonClasses)}
                     onClick={() => props.onButtonClick(SnookerScoringButtonEnum.UNDO_SCORE)}
                 >
-                    Undo Score
+                    Undo
                 </button>
                 <button
                     disabled={props.disabledState[SnookerScoringButtonEnum.START_FRAME]}
@@ -103,7 +103,7 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
                 </button>
                 <button
                     disabled={props.disabledState[SnookerScoringButtonEnum.BROWN]}
-                    className={clsx("col-span-1 bg-orange-500 aspect-square", commonClasses)}
+                    className={clsx("col-span-1 bg-[#964B00] aspect-square", commonClasses)}
                     onClick={() => props.onButtonClick(SnookerScoringButtonEnum.BROWN)}
                 >
                     &nbsp;

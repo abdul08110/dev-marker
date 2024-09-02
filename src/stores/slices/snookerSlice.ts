@@ -6,194 +6,213 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PointType, SetPlayerPayloadAction, SnookerScoringState } from '../types';
 
 const initialState: SnookerScoringState = {
-    format: 'SNOOKER_15_RED',
-    numberOfFrames: 3,
-    matchId: null,
-    team1Score: 0,
-    team2Score: 0,
-    numberAhead: 0,
-    numberOn: 0,
-    players: {
-        team1: {
-            players: [{
-                playerName: 'Player 1',
-                isActive: false,
-                id: null,
-                playerImage: null
-            }],
-            score: 0
+  format: 'SNOOKER_15_RED',
+  numberOfFrames: 3,
+  matchId: null,
+  team1Score: 0,
+  team2Score: 0,
+  numberAhead: 0,
+  numberOn: 0,
+  players: {
+    team1: {
+      players: [
+        {
+          playerName: 'Player 1',
+          isActive: false,
+          id: null,
+          playerImage: null,
         },
-        team2: {
-            players: [{
-                playerName: 'Player 1',
-                isActive: false,
-                id: null,
-                playerImage: null
-            }],
-            score: 0
-        }
+      ],
+      score: 0,
     },
-    elapsedTime: 0,
-    isTimerRunning: false,
-    startTime: null,
-    handicap: 0,
-    streaming: 'PUBLIC',
-    timeInMinutes: 30,
-    scoreHistory: [],
+    team2: {
+      players: [
+        {
+          playerName: 'Player 1',
+          isActive: false,
+          id: null,
+          playerImage: null,
+        },
+      ],
+      score: 0,
+    },
+  },
+  handicap: 0,
+  streaming: 'PUBLIC',
+  timeInMinutes: 30,
+  scoreHistory: [],
+  startTimeDate: null,
 };
 
 const snookerSlice = createSlice({
-    name: 'snooker',
-    initialState,
-    reducers: {
-        setTeamPlayer(state, action: PayloadAction<SetPlayerPayloadAction>) {
-            const team = action.payload.teamIndex === 0 ? 'team1' : 'team2'
-            state.players[team].players[action.payload.playerIndex] = {
-                playerName: action.payload.player.name,
-                isActive: false,
-                playerImage: action.payload.player.profilePhoto ? action.payload.player.profilePhoto : null,
-                id: action.payload.player.id
-            };
-        },
-        setMatchId(state, action: PayloadAction<{ matchId: string }>) {
-            state.matchId = action.payload.matchId;
-        },
-        setActivePlayer(state, action: PayloadAction<{ playerId: string }>) {
-            const id = action.payload.playerId;
+  name: 'snooker',
+  initialState,
+  reducers: {
+    setTeamPlayer(state, action: PayloadAction<SetPlayerPayloadAction>) {
+      const team = action.payload.teamIndex === 0 ? 'team1' : 'team2';
+      state.players[team].players[action.payload.playerIndex] = {
+        playerName: action.payload.player.name,
+        isActive: false,
+        playerImage: action.payload.player.profilePhoto ? action.payload.player.profilePhoto : null,
+        id: action.payload.player.id,
+      };
+    },
+    setMatchId(state, action: PayloadAction<{ matchId: string }>) {
+      state.matchId = action.payload.matchId;
+    },
+    setActivePlayer(state, action: PayloadAction<{ playerId: string }>) {
+      const id = action.payload.playerId;
 
-            state.players.team1.players.forEach(player => {
-                player.isActive = player.id === id;
-            });
-            state.players.team2.players.forEach(player => {
-                player.isActive = player.id === id;
-            });
-        },
-        createSet(state) {
-            if (state.numberOfFrames > state.scoreHistory.length) {
-                state.scoreHistory.push({
-                    id: null,
-                    teamOneScore: 0,
-                    teamTwoScore: 0,
-                    turns: [],
-                    status: 'ONGOING'
-                })
-            }
-        },
-        completeSet(state) {
-            state.scoreHistory[state.scoreHistory.length - 1].status = 'COMPLETED';
-        },
-        createTurn(state, action: PayloadAction<{ playerId: string }>) {
-            const id = action.payload.playerId;
-            state.scoreHistory[state.scoreHistory.length - 1].turns.push({
-                id: null,
-                timeScored: new Date().toISOString(),
-                turnPlayerId: id,
-                score: 0,
-                points: []
-            })
-        },
-        createPoint(state, action: PayloadAction<{ score: number, type: PointType, penalty: number, ballsLost: number, missCalled: boolean, freeBall: boolean }>) {
-            const data = action.payload;
-            const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
-            state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].points.push({
-                ...data,
-                timeScored: new Date().toISOString(),
-            })
-        },
-        incrementTurnScore(state, action: PayloadAction<{ score: number }>) {
-            const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
-            state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].score += action.payload.score;
-        },
-        incrementTotalScore(state, action: PayloadAction<{ score: number, teamIndex: number }>) {
-            if (action.payload.teamIndex === 0) {
-                state.team1Score += action.payload.score;
-            } else {
-                state.team2Score += action.payload.score;
-            }
-        },
-        incrementSetScore(state, action: PayloadAction<{ score: number, teamIndex: number }>) {
-            const teamName = action.payload.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
-            state.scoreHistory[state.scoreHistory.length - 1][teamName] += action.payload.score;
-        },
-        decrementTurnScore(state, action: PayloadAction<{ score: number }>) {
-            const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
-            state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].score -= action.payload.score;
-        },
-        decrementSetScore(state, action: PayloadAction<{ score: number, teamIndex: number }>) {
-            const teamName = action.payload.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
-            state.scoreHistory[state.scoreHistory.length - 1][teamName] -= action.payload.score;
-        },
-        undoLastPoint(state, action: PayloadAction<{ setIndex: number, turnIndex: number }>) {
-            state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].points.pop();
-        },
-        updateNoOfFrames(state, action: PayloadAction<{ numberOfFrames: number }>) {
-            state.numberOfFrames = action.payload.numberOfFrames;
-        },
-        updateHandicap(state, action: PayloadAction<{ handicap: number }>) {
-            state.handicap = action.payload.handicap;
-        },
-        updateTimeInMinutes(state, action: PayloadAction<{ timeInMinutes: number }>) {
-            state.timeInMinutes = action.payload.timeInMinutes;
-        },
-        updateFormat(state, action: PayloadAction<{ format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' }>) {
-            state.format = action.payload.format;
-        },
-        updateStreaming(state, action: PayloadAction<{ streaming: 'PUBLIC' | 'PRIVATE' }>) {
-            state.streaming = action.payload.streaming;
-        },
-        addPlayer(state, action: PayloadAction<{ teamIndex: number }>) {
-            const teamName = action.payload.teamIndex === 0 ? 'team1' : 'team2';
-            state.players[teamName].players[1] = {
-                playerName: 'Player 2',
-                isActive: false,
-                id: null,
-                playerImage: null
-            }
-        },
-        changeAheadNumber(state, action: PayloadAction<{ value: number }>) {
-            state.numberAhead = action.payload.value;
-        },
-        changeOnNumber(state, action: PayloadAction<{ value: number }>) {
-            state.numberOn = action.payload.value;
-        },
-        removeTurn(state, action: PayloadAction<{ turnIndex: number, setIndex: number }>) {
-            state.scoreHistory[action.payload.setIndex].turns.splice(action.payload.turnIndex, 1)
-        },
-        makeAllPlayersInactive(state) {
-            state.players.team1.players.forEach(value => value.isActive = false);
-            state.players.team2.players.forEach(value => value.isActive = false);
-        },
-        startTimer(state) {
-            state.isTimerRunning = true;
-            state.startTime = Date.now();
-        },
-        stopTimer(state) {
-            state.isTimerRunning = false;
-            if (state.startTime) {
-                state.elapsedTime += (Date.now() - state.startTime) / 1000;
-            }
-            state.startTime = null;
-        },
-        resetTimer(state) {
-            state.isTimerRunning = false;
-            state.elapsedTime = 0;
-            state.startTime = null;
-        },
-        updateTimer(state) {
-            if (state.isTimerRunning && state.startTime) {
-                state.elapsedTime += (Date.now() - state.startTime) / 1000;
-                state.startTime = Date.now();
-            }
-        },
-        reverseTeamPlayers(state) {
-            const teamOnePlayers = state.players.team1.players;
-            const teamTwoPlayers = state.players.team2.players;
+      state.players.team1.players.forEach((player) => {
+        player.isActive = player.id === id;
+      });
+      state.players.team2.players.forEach((player) => {
+        player.isActive = player.id === id;
+      });
+    },
+    createSet(state) {
+      if (state.numberOfFrames > state.scoreHistory.length) {
+        state.scoreHistory.push({
+          id: null,
+          teamOneScore: 0,
+          teamTwoScore: 0,
+          turns: [],
+          status: 'ONGOING',
+        });
+      }
+    },
+    completeSet(state) {
+      state.scoreHistory[state.scoreHistory.length - 1].status = 'COMPLETED';
+    },
+    createTurn(state, action: PayloadAction<{ playerId: string }>) {
+      const id = action.payload.playerId;
+      state.scoreHistory[state.scoreHistory.length - 1].turns.push({
+        id: null,
+        timeScored: new Date().toISOString(),
+        turnPlayerId: id,
+        score: 0,
+        points: [],
+      });
+    },
+    createPoint(
+      state,
+      action: PayloadAction<{
+        score: number;
+        type: PointType;
+        penalty: number;
+        ballsLost: number;
+        missCalled: boolean;
+        freeBall: boolean;
+      }>,
+    ) {
+      const data = action.payload;
+      const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
+      state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].points.push({
+        ...data,
+        timeScored: new Date().toISOString(),
+      });
+    },
+    incrementTurnScore(state, action: PayloadAction<{ score: number }>) {
+      const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
+      state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].score += action.payload.score;
+    },
+    incrementTotalScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
+      if (action.payload.teamIndex === 0) {
+        state.team1Score += action.payload.score;
+      } else {
+        state.team2Score += action.payload.score;
+      }
+    },
+    incrementSetScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
+      const teamName = action.payload.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
+      state.scoreHistory[state.scoreHistory.length - 1][teamName] += action.payload.score;
+    },
+    decrementTurnScore(state, action: PayloadAction<{ score: number }>) {
+      const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
+      state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].score -= action.payload.score;
+    },
+    decrementSetScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
+      const teamName = action.payload.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
+      state.scoreHistory[state.scoreHistory.length - 1][teamName] -= action.payload.score;
+    },
+    undoLastPoint(state, action: PayloadAction<{ setIndex: number; turnIndex: number }>) {
+      state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].points.pop();
+    },
+    updateNoOfFrames(state, action: PayloadAction<{ numberOfFrames: number }>) {
+      state.numberOfFrames = action.payload.numberOfFrames;
+    },
+    updateHandicap(state, action: PayloadAction<{ handicap: number }>) {
+      state.handicap = action.payload.handicap;
+    },
+    updateTimeInMinutes(state, action: PayloadAction<{ timeInMinutes: number }>) {
+      state.timeInMinutes = action.payload.timeInMinutes;
+    },
+    updateFormat(state, action: PayloadAction<{ format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' }>) {
+      state.format = action.payload.format;
+    },
+    updateStreaming(state, action: PayloadAction<{ streaming: 'PUBLIC' | 'PRIVATE' }>) {
+      state.streaming = action.payload.streaming;
+    },
+    addPlayer(state, action: PayloadAction<{ teamIndex: number }>) {
+      const teamName = action.payload.teamIndex === 0 ? 'team1' : 'team2';
+      state.players[teamName].players[1] = {
+        playerName: 'Player 2',
+        isActive: false,
+        id: null,
+        playerImage: null,
+      };
+    },
+    changeAheadNumber(state, action: PayloadAction<{ value: number }>) {
+      state.numberAhead = action.payload.value;
+    },
+    changeOnNumber(state, action: PayloadAction<{ value: number }>) {
+      state.numberOn = action.payload.value;
+    },
+    removeTurn(state, action: PayloadAction<{ turnIndex: number; setIndex: number }>) {
+      state.scoreHistory[action.payload.setIndex].turns.splice(action.payload.turnIndex, 1);
+    },
+    makeAllPlayersInactive(state) {
+      state.players.team1.players.forEach((value) => (value.isActive = false));
+      state.players.team2.players.forEach((value) => (value.isActive = false));
+    },
+    reverseTeamPlayers(state) {
+      const teamOnePlayers = state.players.team1.players;
+      const teamTwoPlayers = state.players.team2.players;
 
-            state.players.team1.players = teamTwoPlayers;
-            state.players.team2.players = teamOnePlayers;
-        }
-    }
+      state.players.team1.players = teamTwoPlayers;
+      state.players.team2.players = teamOnePlayers;
+    },
+    updateMatchStartedTimeDateUtc(state, action: PayloadAction<{ startTimeDate: string }>) {
+      state.startTimeDate = action.payload.startTimeDate;
+    },
+  },
 });
 
-export const { updateNoOfFrames, updateHandicap, updateTimeInMinutes, updateFormat, updateStreaming, setTeamPlayer, setMatchId, setActivePlayer, createSet, createTurn, createPoint, incrementTurnScore, incrementSetScore, completeSet, decrementTurnScore, decrementSetScore, undoLastPoint, addPlayer, changeAheadNumber, changeOnNumber, removeTurn, makeAllPlayersInactive, incrementTotalScore, startTimer, stopTimer, resetTimer, updateTimer, reverseTeamPlayers } = snookerSlice.actions;
+export const {
+  updateNoOfFrames,
+  updateHandicap,
+  updateTimeInMinutes,
+  updateFormat,
+  updateStreaming,
+  setTeamPlayer,
+  setMatchId,
+  setActivePlayer,
+  createSet,
+  createTurn,
+  createPoint,
+  incrementTurnScore,
+  incrementSetScore,
+  completeSet,
+  decrementTurnScore,
+  decrementSetScore,
+  undoLastPoint,
+  addPlayer,
+  changeAheadNumber,
+  changeOnNumber,
+  removeTurn,
+  makeAllPlayersInactive,
+  incrementTotalScore,
+  reverseTeamPlayers,
+  updateMatchStartedTimeDateUtc,
+} = snookerSlice.actions;
 export default snookerSlice.reducer;

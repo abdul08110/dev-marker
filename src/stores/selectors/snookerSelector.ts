@@ -8,341 +8,361 @@ import { createSelector } from '@reduxjs/toolkit';
 import { getActiveSet, getActiveTurn, getLastPoint, getLastPointPlayedInTheSet } from './commonSport';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 
-
 export const getNumberOfRedsFromFormat = (format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED'): number => {
-    switch (format) {
-        case 'SNOOKER_10_RED':
-            return 10;
-            break;
-        case 'SNOOKER_6_RED':
-            return 6;
-            break;
-        case 'SNOOKER_15_RED':
-            return 15;
-            break;
-    }
-}
+  switch (format) {
+    case 'SNOOKER_10_RED':
+      return 10;
+      break;
+    case 'SNOOKER_6_RED':
+      return 6;
+      break;
+    case 'SNOOKER_15_RED':
+      return 15;
+      break;
+  }
+};
 
 export const getPottedColorBallsAfterAllReds = (turns: Turn[]) => {
-    const lastRedPottedInfo = getLastRedPottedTurnAndPointIndex(turns);
+  const lastRedPottedInfo = getLastRedPottedTurnAndPointIndex(turns);
+  let pottedColoredBalls: PointType[] = [];
+
+  if (lastRedPottedInfo) {
+    for (let i = lastRedPottedInfo.pointIndex + 1; i < turns[lastRedPottedInfo.turnIndex].points.length; i++) {
+      const point = turns[lastRedPottedInfo.turnIndex].points[i];
+      if (point.type !== PointType.RED && point.type !== PointType.FOUL) {
+        pottedColoredBalls.push(point.type);
+      }
+    }
+
+    for (let i = lastRedPottedInfo.turnIndex + 1; i < turns.length; i++) {
+      const turn = turns[i];
+      turn.points.forEach((point) => {
+        if (point.type !== PointType.RED && point.type !== PointType.FOUL) {
+          pottedColoredBalls.push(point.type);
+        }
+      });
+    }
+  }
+
+  return pottedColoredBalls;
+};
+
+export const getNumberOnTableOfTheCurrentFrame = (
+  activeSet: Set | null,
+  format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED',
+) => {
+  if (!activeSet) return 0;
+
+  const redsLeft = calculateRedsLeft(activeSet.turns, format);
+  let numberOn = 0;
+
+  if (redsLeft > 0) {
+    const pointsFromReds = redsLeft * 7 + redsLeft;
+    const pointsFromColoredBalls = calculateTotalColoredPoints();
+
+    numberOn = pointsFromReds + pointsFromColoredBalls;
+  } else {
+    let totalColoredPoints = calculateTotalColoredPoints();
+    const lastRedPottedInfo = getLastRedPottedTurnAndPointIndex(activeSet.turns);
+
     let pottedColoredBalls: PointType[] = [];
 
     if (lastRedPottedInfo) {
-        for (let i = lastRedPottedInfo.pointIndex + 1; i < turns[lastRedPottedInfo.turnIndex].points.length; i++) {
-            const point = turns[lastRedPottedInfo.turnIndex].points[i];
-            if (point.type !== PointType.RED && point.type !== PointType.FOUL) {
-                pottedColoredBalls.push(point.type);
-            }
+      for (
+        let i = lastRedPottedInfo.pointIndex + 1;
+        i < activeSet.turns[lastRedPottedInfo.turnIndex].points.length;
+        i++
+      ) {
+        const point = activeSet.turns[lastRedPottedInfo.turnIndex].points[i];
+        if (point.type !== PointType.RED) {
+          pottedColoredBalls.push(point.type);
         }
+      }
 
-        for (let i = lastRedPottedInfo.turnIndex + 1; i < turns.length; i++) {
-            const turn = turns[i];
-            turn.points.forEach(point => {
-                if (point.type !== PointType.RED && point.type !== PointType.FOUL) {
-                    pottedColoredBalls.push(point.type);
-                }
-            });
-        }
-    }
+      for (let i = lastRedPottedInfo.turnIndex + 1; i < activeSet.turns.length; i++) {
+        const turn = activeSet.turns[i];
+        turn.points.forEach((point) => {
+          if (point.type !== PointType.RED) {
+            pottedColoredBalls.push(point.type);
+          }
+        });
+      }
 
-    return pottedColoredBalls;
-}
-
-export const getNumberOnTableOfTheCurrentFrame = (activeSet: Set | null, format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED') => {
-    if (!activeSet) return 0;
-
-    const redsLeft = calculateRedsLeft(activeSet.turns, format);
-    let numberOn = 0;
-
-    if (redsLeft > 0) {
-        const pointsFromReds = (redsLeft * 7) + redsLeft;
-        const pointsFromColoredBalls = calculateTotalColoredPoints();
-
-        numberOn = pointsFromReds + pointsFromColoredBalls;
-    } else {
-        let totalColoredPoints = calculateTotalColoredPoints();
-        const lastRedPottedInfo = getLastRedPottedTurnAndPointIndex(activeSet.turns);
-
-        let pottedColoredBalls: PointType[] = [];
-
-        if (lastRedPottedInfo) {
-            for (let i = lastRedPottedInfo.pointIndex + 1; i < activeSet.turns[lastRedPottedInfo.turnIndex].points.length; i++) {
-                const point = activeSet.turns[lastRedPottedInfo.turnIndex].points[i];
-                if (point.type !== PointType.RED) {
-                    pottedColoredBalls.push(point.type);
-                }
-            }
-
-            for (let i = lastRedPottedInfo.turnIndex + 1; i < activeSet.turns.length; i++) {
-                const turn = activeSet.turns[i];
-                turn.points.forEach(point => {
-                    if (point.type !== PointType.RED) {
-                        pottedColoredBalls.push(point.type);
-                    }
-                });
-            }
-
-            if (pottedColoredBalls.length === 0) {
-                numberOn = 7 + totalColoredPoints;
-            } else if (pottedColoredBalls.length === 1) {
-                numberOn = totalColoredPoints;
-            } else if (pottedColoredBalls.length > 1) {
-                pottedColoredBalls = pottedColoredBalls.slice(1);
-                pottedColoredBalls.forEach(pottedColor => {
-                    switch (pottedColor) {
-                        case PointType.YELLOW:
-                            totalColoredPoints -= 2;
-                            break;
-                        case PointType.GREEN:
-                            totalColoredPoints -= 3;
-                            break;
-                        case PointType.BROWN:
-                            totalColoredPoints -= 4;
-                            break;
-                        case PointType.BLUE:
-                            totalColoredPoints -= 5;
-                            break;
-                        case PointType.PINK:
-                            totalColoredPoints -= 6;
-                            break;
-                        case PointType.BLACK:
-                            totalColoredPoints -= 7;
-                            break;
-                    }
-                });
-            }
-        }
+      if (pottedColoredBalls.length === 0) {
+        numberOn = 7 + totalColoredPoints;
+      } else if (pottedColoredBalls.length === 1) {
         numberOn = totalColoredPoints;
+      } else if (pottedColoredBalls.length > 1) {
+        pottedColoredBalls = pottedColoredBalls.slice(1);
+        pottedColoredBalls.forEach((pottedColor) => {
+          switch (pottedColor) {
+            case PointType.YELLOW:
+              totalColoredPoints -= 2;
+              break;
+            case PointType.GREEN:
+              totalColoredPoints -= 3;
+              break;
+            case PointType.BROWN:
+              totalColoredPoints -= 4;
+              break;
+            case PointType.BLUE:
+              totalColoredPoints -= 5;
+              break;
+            case PointType.PINK:
+              totalColoredPoints -= 6;
+              break;
+            case PointType.BLACK:
+              totalColoredPoints -= 7;
+              break;
+          }
+        });
+      }
     }
+    numberOn = totalColoredPoints;
+  }
 
-    return numberOn;
-}
+  return numberOn;
+};
 
 export const getNumberAhead = async (activeSet: Set, activeTeam: 'team1' | 'team2') => {
-    const activePlayerScore = activeTeam === 'team1' ? activeSet.teamOneScore : activeSet.teamTwoScore;
-    const opponentScore = activeTeam === 'team1' ? activeSet.teamTwoScore : activeSet.teamOneScore;
+  const activePlayerScore = activeTeam === 'team1' ? activeSet.teamOneScore : activeSet.teamTwoScore;
+  const opponentScore = activeTeam === 'team1' ? activeSet.teamTwoScore : activeSet.teamOneScore;
 
-    const numberAhead = activePlayerScore - opponentScore;
-    return numberAhead;
-}
+  const numberAhead = activePlayerScore - opponentScore;
+  return numberAhead;
+};
 
+export const calculateRedsLeft = (
+  turns: Turn[],
+  format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED',
+): number => {
+  let redCount = getNumberOfRedsFromFormat(format);
+  turns.forEach((turn) => {
+    turn.points.forEach((point) => {
+      if (point.type === PointType.RED) {
+        redCount--;
+      }
 
-export const calculateRedsLeft = (turns: Turn[], format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED'): number => {
-    let redCount = getNumberOfRedsFromFormat(format);
-    turns.forEach(turn => {
-        turn.points.forEach(point => {
-            if (point.type === PointType.RED) {
-                redCount--;
-            }
-
-            if (point.type === PointType.FOUL && point.ballsLost > 0) {
-                redCount -= point.ballsLost;
-            }
-        });
+      if (point.type === PointType.FOUL && point.ballsLost > 0) {
+        redCount -= point.ballsLost;
+      }
     });
-    return redCount;
+  });
+  return redCount;
 };
 
 export const calculateTotalColoredPoints = (): number => {
-    return 2 + 3 + 4 + 5 + 6 + 7;
+  return 2 + 3 + 4 + 5 + 6 + 7;
 };
 
-export const getLastRedPottedTurnAndPointIndex = (turns: Turn[]): { turnIndex: number, pointIndex: number } | null => {
-    for (let i = turns.length - 1; i >= 0; i--) {
-        const turn = turns[i];
-        for (let j = turn.points.length - 1; j >= 0; j--) {
-            if (turn.points[j].type === PointType.RED) {
-                return { turnIndex: i, pointIndex: j };
-            }
-        }
+export const getLastRedPottedTurnAndPointIndex = (turns: Turn[]): { turnIndex: number; pointIndex: number } | null => {
+  for (let i = turns.length - 1; i >= 0; i--) {
+    const turn = turns[i];
+    for (let j = turn.points.length - 1; j >= 0; j--) {
+      if (turn.points[j].type === PointType.RED) {
+        return { turnIndex: i, pointIndex: j };
+      }
     }
-    return null;
+  }
+  return null;
 };
 
 export const checkIfLastBallIsFreeBall = (sets: Set[]): boolean => {
-    const activeSet = getActiveSet(sets);
-    const lastPointPlayed = getLastPointPlayedInTheSet(activeSet);
+  const activeSet = getActiveSet(sets);
+  const lastPointPlayed = getLastPointPlayedInTheSet(activeSet);
 
-    if (lastPointPlayed && lastPointPlayed.freeBall) return true
-    else return false;
-}
+  if (lastPointPlayed && lastPointPlayed.freeBall) return true;
+  else return false;
+};
 
 export const getTeamSetScores = createSelector(
-    (state: RootState) => state.snooker,
-    (snookerState: SnookerScoringState) => {
-
-        const activeSet = getActiveSet(snookerState.scoreHistory);
-        return ({
-            team1score: activeSet ? activeSet.teamOneScore : 0,
-            team2score: activeSet ? activeSet.teamTwoScore : 0,
-        })
-    }
-)
-
-export const getActiveTurnPointTypes = createSelector(
-    (state: RootState) => state.snooker,
-    (snookerState: SnookerScoringState) => {
-        const activeSet = getActiveSet(snookerState.scoreHistory);
-        if (activeSet) {
-            const activeTurn = getActiveTurn(activeSet);
-            if (activeTurn) {
-                return activeTurn.points.map(value => value.type);
-            } else {
-                return ([])
-            }
-        } else {
-            return ([])
-        }
-    }
-)
-
-export const calculateTeamPOSN = createSelector(
-    (state: { snooker: SnookerScoringState }) => state.snooker,
-    (snookerState) => {
-        const pointTypesToBeConsidered = [
-            PointType.RED,
-            PointType.YELLOW,
-            PointType.GREEN,
-            PointType.BROWN,
-            PointType.BLUE,
-            PointType.PINK,
-            PointType.BLACK
-        ];
-
-        const { scoreHistory } = snookerState;
-
-        let team1PottedBalls = 0;
-        let team2PottedBalls = 0;
-        let team1TotalBallsPlayed = 0;
-        let team2TotalBallsPlayed = 0;
-
-        const activeSet = getActiveSet(scoreHistory);
-
-        if (activeSet) {
-            activeSet.turns.forEach((turn) => {
-                const pottedBalls = turn.points.filter(point => pointTypesToBeConsidered.includes(point.type)).length;
-                const totalBallsPlayed = turn.points.length;
-
-                if (snookerState.players.team1.players.some(player => player.id === turn.turnPlayerId)) {
-                    team1PottedBalls += pottedBalls;
-                    team1TotalBallsPlayed += totalBallsPlayed;
-                } else if (snookerState.players.team2.players.some(player => player.id === turn.turnPlayerId)) {
-                    team2PottedBalls += pottedBalls;
-                    team2TotalBallsPlayed += totalBallsPlayed;
-                }
-            });
-        }
-
-        const team1POSN = team1TotalBallsPlayed > 0 ? (team1PottedBalls / team1TotalBallsPlayed) * 100 : 0;
-        const team2POSN = team2TotalBallsPlayed > 0 ? (team2PottedBalls / team2TotalBallsPlayed) * 100 : 0;
-
-        return {
-            team1POSN,
-            team2POSN,
-            team1PottedBalls,
-            team1TotalBallsPlayed,
-            team2PottedBalls,
-            team2TotalBallsPlayed
-        };
-    }
+  (state: RootState) => state.snooker,
+  (snookerState: SnookerScoringState) => {
+    const activeSet = getActiveSet(snookerState.scoreHistory);
+    return {
+      team1score: activeSet ? activeSet.teamOneScore : 0,
+      team2score: activeSet ? activeSet.teamTwoScore : 0,
+    };
+  },
 );
 
+export const getActiveTurnPointTypes = createSelector(
+  (state: RootState) => state.snooker,
+  (snookerState: SnookerScoringState) => {
+    const activeSet = getActiveSet(snookerState.scoreHistory);
+    if (activeSet) {
+      const activeTurn = getActiveTurn(activeSet);
+      if (activeTurn) {
+        return activeTurn.points.map((value) => value.type);
+      } else {
+        return [];
+      }
+    } else {
+      return [];
+    }
+  },
+);
+
+export const calculateTeamPOSN = createSelector(
+  (state: { snooker: SnookerScoringState }) => state.snooker,
+  (snookerState) => {
+    const pointTypesToBeConsidered = [
+      PointType.RED,
+      PointType.YELLOW,
+      PointType.GREEN,
+      PointType.BROWN,
+      PointType.BLUE,
+      PointType.PINK,
+      PointType.BLACK,
+    ];
+
+    const { scoreHistory } = snookerState;
+
+    let team1PottedBalls = 0;
+    let team2PottedBalls = 0;
+    let team1TotalBallsPlayed = 0;
+    let team2TotalBallsPlayed = 0;
+
+    const activeSet = getActiveSet(scoreHistory);
+
+    if (activeSet) {
+      activeSet.turns.forEach((turn) => {
+        const pottedBalls = turn.points.filter((point) => pointTypesToBeConsidered.includes(point.type)).length;
+        const totalBallsPlayed = turn.points.length;
+
+        if (snookerState.players.team1.players.some((player) => player.id === turn.turnPlayerId)) {
+          team1PottedBalls += pottedBalls;
+          team1TotalBallsPlayed += totalBallsPlayed;
+        } else if (snookerState.players.team2.players.some((player) => player.id === turn.turnPlayerId)) {
+          team2PottedBalls += pottedBalls;
+          team2TotalBallsPlayed += totalBallsPlayed;
+        }
+      });
+    }
+
+    const team1POSN = team1TotalBallsPlayed > 0 ? Math.round((team1PottedBalls / team1TotalBallsPlayed) * 100) : 0;
+    const team2POSN = team2TotalBallsPlayed > 0 ? Math.round((team2PottedBalls / team2TotalBallsPlayed) * 100) : 0;
+
+    return {
+      team1POSN,
+      team2POSN,
+      team1PottedBalls,
+      team1TotalBallsPlayed,
+      team2PottedBalls,
+      team2TotalBallsPlayed,
+    };
+  },
+);
 
 export const getActiveTurnScore = createSelector(
-    (state: RootState) => state.snooker,
-    (snookerState: SnookerScoringState) => {
-        const activeSet = getActiveSet(snookerState.scoreHistory);
-        if (activeSet) {
-            const activeTurn = getActiveTurn(activeSet);
-            if (activeTurn) {
-                return activeTurn.points.reduce((totalScore, point) => totalScore + point.score, 0);
-            } else {
-                return 0
-            }
-        } else {
-            return 0
-        }
+  (state: RootState) => state.snooker,
+  (snookerState: SnookerScoringState) => {
+    const activeSet = getActiveSet(snookerState.scoreHistory);
+    if (activeSet) {
+      const activeTurn = getActiveTurn(activeSet);
+      if (activeTurn) {
+        return activeTurn.points.reduce((totalScore, point) => totalScore + point.score, 0);
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
     }
-)
+  },
+);
 
 export const selectHighestTurnScores = createSelector(
-    (state: { snooker: SnookerScoringState }) => state.snooker,
-    (snookerState) => {
-        const { scoreHistory } = snookerState;
+  (state: { snooker: SnookerScoringState }) => state.snooker,
+  (snookerState) => {
+    const { scoreHistory } = snookerState;
 
-        const activeSet = getActiveSet(scoreHistory);
+    const activeSet = getActiveSet(scoreHistory);
 
-        let team1TurnScores: number[] = [];
-        let team2TurnScores: number[] = [];
+    let team1TurnScores: number[] = [];
+    let team2TurnScores: number[] = [];
 
-        if (activeSet) {
-            activeSet.turns.forEach((turn) => {
-                const turnScore = turn.points.reduce((acc, point) => acc + point.score, 0);
+    if (activeSet) {
+      activeSet.turns.forEach((turn) => {
+        const turnScore = turn.points.reduce((acc, point) => acc + point.score, 0);
 
-                if (snookerState.players.team1.players.some(player => player.id === turn.turnPlayerId)) {
-                    team1TurnScores.push(turnScore);
-                } else if (snookerState.players.team2.players.some(player => player.id === turn.turnPlayerId)) {
-                    team2TurnScores.push(turnScore);
-                }
-            });
+        if (snookerState.players.team1.players.some((player) => player.id === turn.turnPlayerId)) {
+          team1TurnScores.push(turnScore);
+        } else if (snookerState.players.team2.players.some((player) => player.id === turn.turnPlayerId)) {
+          team2TurnScores.push(turnScore);
         }
-
-        team1TurnScores.sort((a, b) => b - a);
-        team2TurnScores.sort((a, b) => b - a);
-
-        return {
-            team1HighestTurnScores: team1TurnScores,
-            team2HighestTurnScores: team2TurnScores
-        };
+      });
     }
+
+    team1TurnScores.sort((a, b) => b - a);
+    team2TurnScores.sort((a, b) => b - a);
+
+    return {
+      team1HighestTurnScores: team1TurnScores,
+      team2HighestTurnScores: team2TurnScores,
+    };
+  },
 );
 
 export const snookerButtonsDisabledState = createSelector(
-    (state: { snooker: SnookerScoringState }) => state.snooker,
-    (snookerState) => {
-        const activeSet = getActiveSet(snookerState.scoreHistory);
-        const activeTurn = getActiveTurn(activeSet);
-        const lastPoint = getLastPoint(activeTurn);
-        const turns = activeSet ? activeSet.turns : [];
-        const redsLeftOnTheTable = calculateRedsLeft(turns, snookerState.format);
-        const pottedColorBallsAfterRed = getPottedColorBallsAfterAllReds(turns);
-        const isFreeBall = checkIfLastBallIsFreeBall(snookerState.scoreHistory);
-        const pointsOnTable = getNumberOnTableOfTheCurrentFrame(activeSet, snookerState.format);
-        const lastPointPlayedInTheSet = getLastPointPlayedInTheSet(activeSet);
-        const isMatchOngoing = snookerState.matchId !== null;
-        const isFrameCompleted = activeSet?.status === 'COMPLETED';
-        const allFramesPlayed = snookerState.numberOfFrames === snookerState.scoreHistory.length;
-        const noActiveTurn = !activeTurn;
+  (state: { snooker: SnookerScoringState }) => state.snooker,
+  (snookerState) => {
+    const activeSet = getActiveSet(snookerState.scoreHistory);
+    const noOfSets = snookerState.scoreHistory.length;
+    const activeTurn = getActiveTurn(activeSet);
+    const lastPoint = getLastPoint(activeTurn);
+    const turns = activeSet ? activeSet.turns : [];
+    const redsLeftOnTheTable = calculateRedsLeft(turns, snookerState.format);
+    const pottedColorBallsAfterRed = getPottedColorBallsAfterAllReds(turns);
+    const colorBallsOnTableAfterRed = getPottedColorBallsAfterAllReds(turns).slice(1);
+    const isFreeBall = checkIfLastBallIsFreeBall(snookerState.scoreHistory);
+    const pointsOnTable = getNumberOnTableOfTheCurrentFrame(activeSet, snookerState.format);
+    const isMatchOngoing = snookerState.matchId !== null;
+    const isFrameCompleted = activeSet?.status === 'COMPLETED';
+    const allFramesPlayed = snookerState.numberOfFrames === snookerState.scoreHistory.length;
+    const noActiveTurn = !activeTurn;
 
-        const shouldDisableColorButton = (colorValue: number) => {
-            return noActiveTurn ||
-                (lastPoint?.type !== PointType.RED && redsLeftOnTheTable > 0 && !isFreeBall) ||
-                (redsLeftOnTheTable === 0 && pottedColorBallsAfterRed.length !== colorValue && pottedColorBallsAfterRed.length !== 0);
-        };
+    const shouldDisableColorButton = (colorValue: number, colorName: PointType) => {
+      if (isFreeBall && redsLeftOnTheTable === 0) {
+        console.log(colorBallsOnTableAfterRed);
+        console.log(pottedColorBallsAfterRed);
+        return colorBallsOnTableAfterRed.includes(colorName);
+      }
 
-        return {
-            [SnookerScoringButtonEnum.START_FRAME]: isMatchOngoing,
-            [SnookerScoringButtonEnum.UNDO_SCORE]: noActiveTurn || !lastPointPlayedInTheSet || (allFramesPlayed && isFrameCompleted),
-            [SnookerScoringButtonEnum.END_FRAME]: !isMatchOngoing || pointsOnTable > 0 || (allFramesPlayed && isFrameCompleted),
-            [SnookerScoringButtonEnum.BLACK]: shouldDisableColorButton(6),
-            [SnookerScoringButtonEnum.BLUE]: shouldDisableColorButton(4),
-            [SnookerScoringButtonEnum.BROWN]: shouldDisableColorButton(3),
-            [SnookerScoringButtonEnum.GREEN]: shouldDisableColorButton(2),
-            [SnookerScoringButtonEnum.PINK]: shouldDisableColorButton(5),
-            [SnookerScoringButtonEnum.YELLOW]: shouldDisableColorButton(1),
-            [SnookerScoringButtonEnum.RED]: noActiveTurn || redsLeftOnTheTable === 0,
-            [SnookerScoringButtonEnum.END_GAME]: snookerState.numberOfFrames !== snookerState.scoreHistory.length || (activeSet !== null && activeSet.status !== 'COMPLETED'),
-            [SnookerScoringButtonEnum.FOUL]: noActiveTurn || pointsOnTable === 0 || !lastPointPlayedInTheSet
-        };
-    }
+      return (
+        noActiveTurn ||
+        (lastPoint?.type !== PointType.RED && redsLeftOnTheTable > 0 && !isFreeBall) ||
+        (redsLeftOnTheTable === 0 &&
+          pottedColorBallsAfterRed.length !== colorValue &&
+          pottedColorBallsAfterRed.length !== 0)
+      );
+    };
+
+    return {
+      [SnookerScoringButtonEnum.START_FRAME]:
+        (isMatchOngoing && !isFrameCompleted) ||
+        allFramesPlayed ||
+        (!isMatchOngoing && noOfSets > 0 && !isFrameCompleted),
+      [SnookerScoringButtonEnum.UNDO_SCORE]: !isMatchOngoing,
+      [SnookerScoringButtonEnum.END_FRAME]: !isMatchOngoing || isFrameCompleted,
+      [SnookerScoringButtonEnum.BLACK]: shouldDisableColorButton(6, PointType.BLACK),
+      [SnookerScoringButtonEnum.BLUE]: shouldDisableColorButton(4, PointType.BLUE),
+      [SnookerScoringButtonEnum.BROWN]: shouldDisableColorButton(3, PointType.BROWN),
+      [SnookerScoringButtonEnum.GREEN]: shouldDisableColorButton(2, PointType.GREEN),
+      [SnookerScoringButtonEnum.PINK]: shouldDisableColorButton(5, PointType.PINK),
+      [SnookerScoringButtonEnum.YELLOW]: shouldDisableColorButton(1, PointType.YELLOW),
+      [SnookerScoringButtonEnum.RED]: noActiveTurn || redsLeftOnTheTable === 0,
+      [SnookerScoringButtonEnum.END_GAME]: !isMatchOngoing,
+      [SnookerScoringButtonEnum.FOUL]: noActiveTurn || pointsOnTable === 0,
+    };
+  },
 );
 
 export const getNumberOfRedsLeft = createSelector(
-    (state: { snooker: SnookerScoringState }) => state.snooker,
-    (snookerState) => {
-        const activeSet = getActiveSet(snookerState.scoreHistory);
-        const redsLeftOnTheTable = calculateRedsLeft(activeSet ? activeSet.turns : [], snookerState.format);
+  (state: { snooker: SnookerScoringState }) => state.snooker,
+  (snookerState) => {
+    const activeSet = getActiveSet(snookerState.scoreHistory);
+    const redsLeftOnTheTable = calculateRedsLeft(activeSet ? activeSet.turns : [], snookerState.format);
 
-        return redsLeftOnTheTable
-    }
-)
+    return redsLeftOnTheTable;
+  },
+);

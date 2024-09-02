@@ -72,9 +72,7 @@ export interface SnookerScoringState {
     scoreHistory: Set[];
     numberOn: number;
     numberAhead: number;
-    elapsedTime: number;
-    isTimerRunning: boolean;
-    startTime: number | null;
+    startTimeDate: string | null;
 }
 
 

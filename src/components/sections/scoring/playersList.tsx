@@ -23,9 +23,10 @@ import useDebounce from "@/hooks/useDebounce";
 interface PlayersListProps {
     clubId: string;
     onPlayerSelect: (player: Player) => void;
+    disabledPlayerList: (string | null)[]
 }
 
-export function PlayersList({ clubId, onPlayerSelect }: PlayersListProps) {
+export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: PlayersListProps) {
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState<Player | null>(null);
     const [searchQuery, setSearchQuery] = React.useState<string>("");
@@ -88,7 +89,7 @@ export function PlayersList({ clubId, onPlayerSelect }: PlayersListProps) {
                         )}
                         <CommandGroup>
                             {players?.map((player) => (
-                                <CommandItem
+                                disabledPlayerList.includes(player.id) ? <></> : <CommandItem
                                     key={player.id}
                                     value={player.id}
                                     onSelect={() => handleSelect(player.id)}

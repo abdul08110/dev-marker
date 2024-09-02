@@ -11,6 +11,7 @@ interface PlayerSelectModalProps {
     playerIndex: number;
     isModalOpen: boolean;
     closeModal: () => void;
+    disabledPlayerList: (string | null)[];
 }
 
 export function PlayerSelectModal(props: PlayerSelectModalProps) {
@@ -24,7 +25,7 @@ export function PlayerSelectModal(props: PlayerSelectModalProps) {
                             <span className="text-white font-medium">Select Team {props.teamIndex + 1} player {props.playerIndex + 1}</span>
                         </div>
                         <div className="flex flex-col px-3 py-5 bg-[#1F1F1F] gap-4">
-                            <PlayersList onPlayerSelect={props.onPlayerConfirm} clubId={props.clubId} />
+                            <PlayersList disabledPlayerList={props.disabledPlayerList} onPlayerSelect={props.onPlayerConfirm} clubId={props.clubId} />
 
                             <p className="text-white">OR</p>
 
