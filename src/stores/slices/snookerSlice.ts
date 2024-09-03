@@ -81,8 +81,14 @@ const snookerSlice = createSlice({
         });
       }
     },
+    deleteSet(state) {
+      state.scoreHistory.pop();
+    },
     completeSet(state) {
       state.scoreHistory[state.scoreHistory.length - 1].status = 'COMPLETED';
+    },
+    changeSetStatus(state, action: PayloadAction<{ setIndex: number, status: 'COMPLETED' | 'ONGOING' }>) {
+      state.scoreHistory[action.payload.setIndex].status = action.payload.status;
     },
     createTurn(state, action: PayloadAction<{ playerId: string }>) {
       const id = action.payload.playerId;
@@ -121,6 +127,13 @@ const snookerSlice = createSlice({
         state.team1Score += action.payload.score;
       } else {
         state.team2Score += action.payload.score;
+      }
+    },
+    decrementTotalScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
+      if (action.payload.teamIndex === 0) {
+        state.team1Score -= action.payload.score;
+      } else {
+        state.team2Score -= action.payload.score;
       }
     },
     incrementSetScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
@@ -214,5 +227,8 @@ export const {
   incrementTotalScore,
   reverseTeamPlayers,
   updateMatchStartedTimeDateUtc,
+  deleteSet,
+  decrementTotalScore,
+  changeSetStatus
 } = snookerSlice.actions;
 export default snookerSlice.reducer;

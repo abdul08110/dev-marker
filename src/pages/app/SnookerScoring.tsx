@@ -48,6 +48,8 @@ import { Statistics } from '@/components/sections/scoring/statistics';
 import { Breaks } from '@/components/sections/scoring/breaks';
 import { PlayerSelectModal } from '@/components/modals/playerSelectModal';
 import useTimer from '@/hooks/useTimer';
+import { EndGameModal } from '@/components/modals/endGameModal';
+import { GoBackGameModal } from '@/components/modals/goBackGameModal';
 
 export function SnookerScoring() {
   // REDUX STATE
@@ -73,6 +75,8 @@ export function SnookerScoring() {
   const [openPlayerSelectCard, setOpenPlayerSelectCard] = React.useState(false);
   const [selectedTeamIndex, setSelectedTeamIndex] = React.useState(0);
   const [selectedPlayerIndex, setSelectedPlayerIndex] = React.useState(0);
+  const [showEndGameModal, setShowEndGameModal] = React.useState(false);
+  const [goBackGameModal, setGoBackGameModal] = React.useState(false);
 
   // REACT HOOKS
   useEffect(() => {
@@ -88,7 +92,7 @@ export function SnookerScoring() {
 
   // HANDLERS
   const handleBackClick = () => {
-    navigate('/');
+    setGoBackGameModal(true);
   };
   const handleSettingsClick = () => {
     setOpenSettingsDrawer(true);
@@ -132,30 +136,32 @@ export function SnookerScoring() {
     }
     switch (buttonType) {
       case SnookerScoringButtonEnum.START_FRAME:
-        if (!snookerScoring.matchId) {
+        if (snookerScoring.scoreHistory.length === 0) {
           const activeTeamInfo = getActiveTeam(snookerScoring.players.team1, snookerScoring.players.team2);
 
           if (activeTeamInfo.team1Active || activeTeamInfo.team2Active) {
-            const matchId = await startMatchHook.startMatch({
-              expectedEndTimeDate: new Date(new Date(new Date().getTime() + 30 * 60000).toISOString()),
-              clubId: clubs.activeClub!.clubId,
-              sport: 'SNOOKER',
-              sportType: snookerScoring.format,
-              venueId: clubs.activeClub!.venueId,
-              sideOnePlayerOneId: snookerScoring.players.team1.players[0].id,
-              sideOnePlayerTwoId:
-                snookerScoring.players.team1.players[1] && snookerScoring.players.team1.players[1].id
-                  ? snookerScoring.players.team1.players[1]!.id
-                  : undefined,
-              sideTwoPlayerOneId: snookerScoring.players.team2.players[0].id,
-              sideTwoPlayerTwoId:
-                snookerScoring.players.team2.players[1] && snookerScoring.players.team2.players[1].id
-                  ? snookerScoring.players.team2.players[1]!.id
-                  : undefined,
-              streamingType: snookerScoring.streaming,
-              noOfSets: snookerScoring.numberOfFrames,
-            });
-
+            let matchId = snookerScoring.matchId;
+            if (!matchId) {
+              matchId = await startMatchHook.startMatch({
+                expectedEndTimeDate: new Date(new Date(new Date().getTime() + 30 * 60000).toISOString()),
+                clubId: clubs.activeClub!.clubId,
+                sport: 'SNOOKER',
+                sportType: snookerScoring.format,
+                venueId: clubs.activeClub!.venueId,
+                sideOnePlayerOneId: snookerScoring.players.team1.players[0].id,
+                sideOnePlayerTwoId:
+                  snookerScoring.players.team1.players[1] && snookerScoring.players.team1.players[1].id
+                    ? snookerScoring.players.team1.players[1]!.id
+                    : undefined,
+                sideTwoPlayerOneId: snookerScoring.players.team2.players[0].id,
+                sideTwoPlayerTwoId:
+                  snookerScoring.players.team2.players[1] && snookerScoring.players.team2.players[1].id
+                    ? snookerScoring.players.team2.players[1]!.id
+                    : undefined,
+                streamingType: snookerScoring.streaming,
+                noOfSets: snookerScoring.numberOfFrames,
+              });
+            }
             if (matchId) {
               await dispatch(handleMatchStart({ matchId }));
               handleStartTimer();
@@ -167,7 +173,6 @@ export function SnookerScoring() {
               variant: 'destructive',
             });
           }
-          break;
         } else {
           await dispatch(handleStartNewFrame({}));
         }
@@ -212,6 +217,10 @@ export function SnookerScoring() {
         console.log('End Frame Clicked');
         await dispatch(handleEndFrame({}));
         break;
+      case SnookerScoringButtonEnum.END_GAME:
+        console.log('End game Clicked');
+        setShowEndGameModal(true);
+        break;
       default:
         return;
     }
@@ -247,10 +256,23 @@ export function SnookerScoring() {
     await dispatch(handleSettingsStateUpdate(values));
     setOpenSettingsDrawer(false);
   };
+  const handleGoToHome = () => {
+    navigate('/');
+  };
 
   // PARENT UI
   return (
     <section>
+      <EndGameModal
+        isModalOpen={showEndGameModal}
+        confirmModal={() => handleGoToHome()}
+        closeModal={() => setShowEndGameModal(false)}
+      />
+      <GoBackGameModal
+        isModalOpen={goBackGameModal}
+        confirmModal={() => handleGoToHome()}
+        closeModal={() => setGoBackGameModal(false)}
+      />
       <Tabs defaultValue="scoring" className="flex flex-col justify-start h-screen overflow-y-scroll">
         <TabsContent value="scoring" className="flex-grow mt-0">
           <div className="flex flex-col gap-6 h-full">

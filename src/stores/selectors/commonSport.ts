@@ -1,64 +1,61 @@
 import { type Set, TeamDetails, Turn, Point } from '../types';
 
-export const getActiveSet = (sets: Set[]): Set | null => {
-  return sets.length > 0 ? sets[sets.length - 1] : null;
-};
+const getLastElement = <T>(array: T[]): T | null => (array.length > 0 ? array[array.length - 1] : null);
 
-export const getActiveSetIndex = (sets: Set[]): number => {
-  return sets.length > 0 ? sets.length - 1 : -1;
-};
+const getSecondLastElement = <T>(array: T[]): T | null => (array.length > 1 ? array[array.length - 2] : null);
 
-export const getActiveTurn = (set: Set | null): Turn | null => {
-  return set && set.turns.length > 0 ? set.turns[set.turns.length - 1] : null;
-};
+export const getActiveSet = (sets: Set[]): Set | null => getLastElement(sets);
 
-export const getLastTurn = (set: Set): Turn | null => {
-  return set.turns.length > 1 ? set.turns[set.turns.length - 2] : null;
-};
+export const getLastSet = (sets: Set[]): Set | null => getSecondLastElement(sets);
 
-export const getActiveTurnIndex = (set: Set): number => {
-  return set.turns.length > 0 ? set.turns.length - 1 : -1;
-};
+export const getActiveSetIndex = (sets: Set[]): number => (sets.length > 0 ? sets.length - 1 : -1);
 
-export const getLastPoint = (turn: Turn | null): Point | null => {
-  return turn && turn.points.length > 0 ? turn.points[turn.points.length - 1] : null;
-};
+export const getActiveTurn = (set: Set | null): Turn | null => (set ? getLastElement(set.turns) : null);
 
-export const getTeamFromPlayerId = (id: string, team1: TeamDetails, team2: TeamDetails) => {
-  return {
-    team1Player: team1.players.some((player) => player.id === id),
-    team2Player: team2.players.some((player) => player.id === id),
-  };
-};
+export const getLastTurn = (set: Set): Turn | null => getSecondLastElement(set.turns);
 
-export const getActiveTeam = (team1: TeamDetails, team2: TeamDetails) => {
-  return {
-    team1Active: team1.players.some((player) => player.isActive === true),
-    team2Active: team2.players.some((player) => player.isActive === true),
-  };
-};
+export const getActiveTurnIndex = (set: Set): number => (set.turns.length > 0 ? set.turns.length - 1 : -1);
+
+export const getLastPoint = (turn: Turn | null): Point | null => (turn ? getLastElement(turn.points) : null);
+
+export const getSecondLastPoint = (turn: Turn | null): Point | null => getSecondLastElement(turn?.points ?? []);
+
+export const getLastSetIndex = (sets: Set[]): number => (sets.length > 0 ? sets.length - 2 : -1);
+
+export const getTeamFromPlayerId = (id: string, team1: TeamDetails, team2: TeamDetails) => ({
+  team1Player: team1.players.some((player) => player.id === id),
+  team2Player: team2.players.some((player) => player.id === id),
+});
+
+export const getActiveTeam = (team1: TeamDetails, team2: TeamDetails) => ({
+  team1Active: team1.players.some((player) => player.isActive),
+  team2Active: team2.players.some((player) => player.isActive),
+});
 
 export const getActivePlayer = (team1: TeamDetails, team2: TeamDetails) => {
-  const activePlayerTeamOne = team1.players.find((value) => value.isActive);
-  const activePlayerTeamTwo = team2.players.find((value) => value.isActive);
-
-  if (activePlayerTeamOne) return activePlayerTeamOne;
-  if (activePlayerTeamTwo) return activePlayerTeamTwo;
-
-  return null;
+  return team1.players.find((player) => player.isActive) || team2.players.find((player) => player.isActive) || null;
 };
 
-export const getLastPointPlayedInTheSet = (currentSet: Set | null) => {
+export const getLastPointPlayedInTheSet = (currentSet: Set | null): Point | null => {
   if (!currentSet) return null;
-  else {
-    const activeTurn = getActiveTurn(currentSet);
-    if (activeTurn && activeTurn.points.length > 0) return getLastPoint(activeTurn);
-    else {
-      const lastTurn = getLastTurn(currentSet);
-      if (lastTurn && lastTurn.points.length > 0) return getLastPoint(lastTurn);
-    }
-    return null;
+
+  const activeTurn = getActiveTurn(currentSet);
+  if (activeTurn && activeTurn.points.length > 0) return getLastPoint(activeTurn);
+
+  const lastTurn = getLastTurn(currentSet);
+  return getLastPoint(lastTurn);
+};
+
+export const getSecondLastPointPlayedInTheSet = (currentSet: Set | null): Point | null => {
+  if (!currentSet) return null;
+
+  const activeTurn = getActiveTurn(currentSet);
+  if (activeTurn) {
+    if (activeTurn.points.length > 1) return getSecondLastPoint(activeTurn);
+    if (activeTurn.points.length === 1) return getLastPoint(getLastTurn(currentSet));
   }
+
+  return getSecondLastPoint(getLastTurn(currentSet));
 };
 
 export const getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex = (
@@ -67,11 +64,34 @@ export const getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex = 
   teamIndex: number,
   playerIndex: number,
 ) => {
-  const opponentTeamPlayerIds =
-    teamIndex === 0 ? team2.players.map((value) => value.id) : team1.players.map((value) => value.id);
-  const currentTeamPlayerIds =
-    teamIndex === 0 ? team1.players.map((value) => value.id) : team2.players.map((value) => value.id);
+  const opponentTeamPlayers = teamIndex === 0 ? team2.players : team1.players;
+  const currentTeamPlayers = teamIndex === 0 ? team1.players : team2.players;
+
+  const currentTeamPlayerIds = currentTeamPlayers.map((player) => player.id);
+  const opponentTeamPlayerIds = opponentTeamPlayers.map((player) => player.id);
 
   currentTeamPlayerIds.splice(playerIndex, 1);
+
   return [...opponentTeamPlayerIds, ...currentTeamPlayerIds];
+};
+
+export const getAllPointsAfter = (turns: Turn[], startTurnIndex: number, startPointIndex: number) => {
+  let points: Point[] = [];
+  for (let i = startTurnIndex; i < turns.length; i++) {
+    const start = i === startTurnIndex ? startPointIndex + 1 : 0;
+    points = points.concat(turns[i].points.slice(start));
+  }
+  return points;
+};
+
+export const getLastTurnPlayerIndex = (turns: Turn[], playerId: string): number => {
+  return turns.map((turn) => turn.turnPlayerId).lastIndexOf(playerId);
+};
+
+export const isActiveTeam = (activeTeam: any, teamIndex: number): boolean => {
+  return (activeTeam.team1Active && teamIndex === 0) || (activeTeam.team2Active && teamIndex === 1);
+};
+
+export const getTeamKey = (teamIndex: number): string => {
+  return teamIndex === 0 ? 'team1' : 'team2';
 };
