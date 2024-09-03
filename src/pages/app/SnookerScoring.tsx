@@ -86,7 +86,7 @@ export function SnookerScoring() {
   }, [clubs.activeClub, navigate]);
 
   // TIMER HOOKS
-  const { timeLeft, startTimer, pauseTimer, resetTimer } = useTimer(snookerScoring.timeInMinutes, () => {
+  const { timeLeft, startTimer } = useTimer(snookerScoring.timeInMinutes, () => {
     // Logic to handle when timer completes
   });
 

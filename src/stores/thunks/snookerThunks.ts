@@ -34,7 +34,7 @@ import {
   updateStreaming,
   updateTimeInMinutes,
 } from '../slices/snookerSlice';
-import { Player, PointType, Set, Turn } from '../types';
+import { Player, PointType, Turn } from '../types';
 import {
   adjustColorBallsPottedWithFreeBall,
   ballsToPointsEnum,
@@ -53,8 +53,6 @@ import {
   getActiveTurn,
   getActiveTurnIndex,
   getLastPoint,
-  getLastSet,
-  getLastSetIndex,
 } from '../selectors/commonSport';
 
 export const handleSelectionOfActiveTeam = createAsyncThunk<
@@ -252,7 +250,7 @@ export const handleUndoScoreClicked = createAsyncThunk<void, {}, { state: RootSt
     if (currentTurn.points.length === 0) {
       await handleEmptyTurn(dispatch, getState, currentSetIndex, currentTurnIndex);
     } else {
-      await handleLastPoint(dispatch, currentSet, currentTurn, activeTeam, currentSetIndex, currentTurnIndex, getState);
+      await handleLastPoint(dispatch, currentTurn, activeTeam, currentSetIndex, currentTurnIndex, getState);
     }
   },
 );
@@ -316,7 +314,6 @@ async function handleEmptyTurn(dispatch: AppDispatch, getState: () => RootState,
 
 async function handleLastPoint(
   dispatch: AppDispatch,
-  currentSet: Set | null,
   currentTurn: Turn | null,
   activeTeam: { team1Active: boolean; team2Active: boolean },
   setIndex: number,
