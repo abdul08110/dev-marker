@@ -3,39 +3,37 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PointType, SetPlayerPayloadAction, SnookerScoringState } from '../types';
+import { Player, SnookerPoint, SnookerScoringState } from '../types';
+import { getTeamKey } from '../selectors/commonSport';
 
 const initialState: SnookerScoringState = {
   format: 'SNOOKER_15_RED',
-  numberOfFrames: 3,
   matchId: null,
   team1Score: 0,
   team2Score: 0,
   numberAhead: 0,
   numberOn: 0,
-  players: {
-    team1: {
-      players: [
-        {
-          playerName: 'Player 1',
-          isActive: false,
-          id: null,
-          playerImage: null,
-        },
-      ],
-      score: 0,
-    },
-    team2: {
-      players: [
-        {
-          playerName: 'Player 1',
-          isActive: false,
-          id: null,
-          playerImage: null,
-        },
-      ],
-      score: 0,
-    },
+  team1: {
+    players: [
+      {
+        name: 'Player 1',
+        isActive: false,
+        id: null,
+        profilePhoto: null,
+      },
+    ],
+    score: 0,
+  },
+  team2: {
+    players: [
+      {
+        name: 'Player 2',
+        isActive: false,
+        id: null,
+        profilePhoto: null,
+      },
+    ],
+    score: 0,
   },
   handicap: 0,
   streaming: 'PUBLIC',
@@ -48,13 +46,11 @@ const snookerSlice = createSlice({
   name: 'snooker',
   initialState,
   reducers: {
-    setTeamPlayer(state, action: PayloadAction<SetPlayerPayloadAction>) {
-      const team = action.payload.teamIndex === 0 ? 'team1' : 'team2';
-      state.players[team].players[action.payload.playerIndex] = {
-        playerName: action.payload.player.name,
+    setTeamPlayer(state, action: PayloadAction<{ teamIndex: number; playerIndex: number; player: Player }>) {
+      const team = getTeamKey(action.payload.teamIndex);
+      state[team].players[action.payload.playerIndex] = {
+        ...action.payload.player,
         isActive: false,
-        playerImage: action.payload.player.profilePhoto ? action.payload.player.profilePhoto : null,
-        id: action.payload.player.id,
       };
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
@@ -63,64 +59,61 @@ const snookerSlice = createSlice({
     setActivePlayer(state, action: PayloadAction<{ playerId: string }>) {
       const id = action.payload.playerId;
 
-      state.players.team1.players.forEach((player) => {
+      state.team1.players.forEach((player) => {
         player.isActive = player.id === id;
       });
-      state.players.team2.players.forEach((player) => {
+      state.team2.players.forEach((player) => {
         player.isActive = player.id === id;
       });
     },
-    createSet(state) {
-      if (state.numberOfFrames > state.scoreHistory.length) {
-        state.scoreHistory.push({
-          id: null,
-          teamOneScore: 0,
-          teamTwoScore: 0,
-          turns: [],
-          status: 'ONGOING',
-        });
-      }
+    setState(state, action: PayloadAction<{ data: SnookerScoringState }>) {
+      Object.assign(state, action.payload.data);
     },
-    deleteSet(state) {
-      state.scoreHistory.pop();
+    createSet(state, action: PayloadAction<{ setId: string | null, scoreOrder: string[] }>) {
+      const setId = action.payload.setId;
+      const scoreOrder = action.payload.scoreOrder;
+
+      state.scoreHistory.push({
+        id: setId ? setId : null,
+        teamOneScore: state.handicap > 0 ? state.handicap : 0,
+        teamTwoScore: state.handicap < 0 ? Math.abs(state.handicap) : 0,
+        turns: [],
+        status: 'ONGOING',
+        corrections: [],
+        scoreOrder: scoreOrder,
+      });
     },
-    completeSet(state) {
-      state.scoreHistory[state.scoreHistory.length - 1].status = 'COMPLETED';
+    deleteSet(state, action: PayloadAction<{ setIndex: number }>) {
+      state.scoreHistory.splice(action.payload.setIndex, 1);
     },
-    changeSetStatus(state, action: PayloadAction<{ setIndex: number, status: 'COMPLETED' | 'ONGOING' }>) {
+    completeSet(state, action: PayloadAction<{ setIndex: number }>) {
+      state.scoreHistory[action.payload.setIndex].status = 'COMPLETED';
+    },
+    changeSetStatus(state, action: PayloadAction<{ setIndex: number; status: 'COMPLETED' | 'ONGOING' | 'CONCEDED' }>) {
       state.scoreHistory[action.payload.setIndex].status = action.payload.status;
     },
-    createTurn(state, action: PayloadAction<{ playerId: string }>) {
+    createTurn(state, action: PayloadAction<{ turnId: string | null; setIndex: number; playerId: string }>) {
       const id = action.payload.playerId;
-      state.scoreHistory[state.scoreHistory.length - 1].turns.push({
-        id: null,
+      const turnId = action.payload.turnId;
+
+      state.scoreHistory[action.payload.setIndex].turns.push({
+        id: turnId,
         timeScored: new Date().toISOString(),
         turnPlayerId: id,
         score: 0,
         points: [],
       });
     },
-    createPoint(
-      state,
-      action: PayloadAction<{
-        score: number;
-        type: PointType;
-        penalty: number;
-        ballsLost: number;
-        missCalled: boolean;
-        freeBall: boolean;
-      }>,
-    ) {
+    createPoint(state, action: PayloadAction<{ point: SnookerPoint; turnIndex: number; setIndex: number, pointId: null | string }>) {
       const data = action.payload;
-      const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
-      state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].points.push({
-        ...data,
+      state.scoreHistory[data.setIndex].turns[data.turnIndex].points.push({
+        id: data.pointId,
+        ...data.point,
         timeScored: new Date().toISOString(),
       });
     },
-    incrementTurnScore(state, action: PayloadAction<{ score: number }>) {
-      const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
-      state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].score += action.payload.score;
+    incrementTurnScore(state, action: PayloadAction<{ setIndex: number; turnIndex: number; score: number }>) {
+      state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].score += action.payload.score;
     },
     incrementTotalScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
       if (action.payload.teamIndex === 0) {
@@ -136,23 +129,18 @@ const snookerSlice = createSlice({
         state.team2Score -= action.payload.score;
       }
     },
-    incrementSetScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
+    incrementSetScore(state, action: PayloadAction<{ score: number; teamIndex: number; setIndex: number }>) {
       const teamName = action.payload.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
-      state.scoreHistory[state.scoreHistory.length - 1][teamName] += action.payload.score;
+      state.scoreHistory[action.payload.setIndex][teamName] += action.payload.score;
     },
-    decrementTurnScore(state, action: PayloadAction<{ score: number }>) {
-      const turns = state.scoreHistory[state.scoreHistory.length - 1].turns;
-      state.scoreHistory[state.scoreHistory.length - 1].turns[turns.length - 1].score -= action.payload.score;
+    decrementTurnScore(state, action: PayloadAction<{ score: number; setIndex: number; turnIndex: number }>) {
+      const data = action.payload;
+      state.scoreHistory[data.setIndex].turns[data.turnIndex].score -= action.payload.score;
     },
-    decrementSetScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
-      const teamName = action.payload.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
-      state.scoreHistory[state.scoreHistory.length - 1][teamName] -= action.payload.score;
-    },
-    undoLastPoint(state, action: PayloadAction<{ setIndex: number; turnIndex: number }>) {
-      state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].points.pop();
-    },
-    updateNoOfFrames(state, action: PayloadAction<{ numberOfFrames: number }>) {
-      state.numberOfFrames = action.payload.numberOfFrames;
+    decrementSetScore(state, action: PayloadAction<{ score: number; teamIndex: number; setIndex: number }>) {
+      const data = action.payload;
+      const teamName = data.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
+      state.scoreHistory[data.setIndex][teamName] -= action.payload.score;
     },
     updateHandicap(state, action: PayloadAction<{ handicap: number }>) {
       state.handicap = action.payload.handicap;
@@ -167,12 +155,12 @@ const snookerSlice = createSlice({
       state.streaming = action.payload.streaming;
     },
     addPlayer(state, action: PayloadAction<{ teamIndex: number }>) {
-      const teamName = action.payload.teamIndex === 0 ? 'team1' : 'team2';
-      state.players[teamName].players[1] = {
-        playerName: 'Player 2',
+      const team = getTeamKey(action.payload.teamIndex);
+      state[team].players[1] = {
+        name: 'Player 2',
         isActive: false,
         id: null,
-        playerImage: null,
+        profilePhoto: null,
       };
     },
     changeAheadNumber(state, action: PayloadAction<{ value: number }>) {
@@ -181,19 +169,16 @@ const snookerSlice = createSlice({
     changeOnNumber(state, action: PayloadAction<{ value: number }>) {
       state.numberOn = action.payload.value;
     },
-    removeTurn(state, action: PayloadAction<{ turnIndex: number; setIndex: number }>) {
-      state.scoreHistory[action.payload.setIndex].turns.splice(action.payload.turnIndex, 1);
-    },
     makeAllPlayersInactive(state) {
-      state.players.team1.players.forEach((value) => (value.isActive = false));
-      state.players.team2.players.forEach((value) => (value.isActive = false));
+      state.team1.players.forEach((value) => (value.isActive = false));
+      state.team2.players.forEach((value) => (value.isActive = false));
     },
     reverseTeamPlayers(state) {
-      const teamOnePlayers = state.players.team1.players;
-      const teamTwoPlayers = state.players.team2.players;
+      const teamOnePlayers = state.team1.players;
+      const teamTwoPlayers = state.team2.players;
 
-      state.players.team1.players = teamTwoPlayers;
-      state.players.team2.players = teamOnePlayers;
+      state.team1.players = teamTwoPlayers;
+      state.team2.players = teamOnePlayers;
     },
     updateMatchStartedTimeDateUtc(state, action: PayloadAction<{ startTimeDate: string }>) {
       state.startTimeDate = action.payload.startTimeDate;
@@ -202,7 +187,6 @@ const snookerSlice = createSlice({
 });
 
 export const {
-  updateNoOfFrames,
   updateHandicap,
   updateTimeInMinutes,
   updateFormat,
@@ -210,7 +194,6 @@ export const {
   setTeamPlayer,
   setMatchId,
   setActivePlayer,
-  createSet,
   createTurn,
   createPoint,
   incrementTurnScore,
@@ -218,17 +201,17 @@ export const {
   completeSet,
   decrementTurnScore,
   decrementSetScore,
-  undoLastPoint,
   addPlayer,
   changeAheadNumber,
   changeOnNumber,
-  removeTurn,
   makeAllPlayersInactive,
   incrementTotalScore,
   reverseTeamPlayers,
   updateMatchStartedTimeDateUtc,
   deleteSet,
   decrementTotalScore,
-  changeSetStatus
+  changeSetStatus,
+  createSet,
+  setState,
 } = snookerSlice.actions;
 export default snookerSlice.reducer;

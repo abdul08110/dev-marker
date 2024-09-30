@@ -1,8 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
     Command,
     CommandEmpty,
@@ -11,11 +9,6 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
 import useGetPlayers from "@/api/app/useGetPlayers";
 import { Player } from "@/stores/types";
 import useDebounce from "@/hooks/useDebounce";
@@ -27,7 +20,6 @@ interface PlayersListProps {
 }
 
 export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: PlayersListProps) {
-    const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState<Player | null>(null);
     const [searchQuery, setSearchQuery] = React.useState<string>("");
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -56,57 +48,45 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
         if (player) {
             setValue(player);
             onPlayerSelect(player);
-            setOpen(false);
         }
     };
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild className="w-full">
-                <Button
-                    variant={"select"}
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-full justify-between"
-                >
-                    {value ? value.name : "Select player..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-                <Command shouldFilter={false} className="w-[300px]">
-                    <CommandInput
-                        className="text-black w-full"
-                        placeholder="Search player..."
-                        value={searchQuery}
-                        onValueChange={handleSearchChange}
-                    />
-                    <CommandList>
-                        {loading && <CommandEmpty>Loading players...</CommandEmpty>}
-                        {error && <CommandEmpty>Error loading players</CommandEmpty>}
-                        {!loading && !error && players && players.length === 0 && (
-                            <CommandEmpty>No player found.</CommandEmpty>
-                        )}
-                        <CommandGroup>
-                            {players?.map((player) => (
-                                disabledPlayerList.includes(player.id) ? <></> : <CommandItem
+        <div className="w-full">
+            <Command shouldFilter={false} className="w-full mt-2 bg-transparent text-white">
+                <CommandInput
+                    className="text-white w-full"
+                    placeholder="Search player..."
+                    value={searchQuery}
+                    onValueChange={handleSearchChange}
+                />
+                <CommandList>
+                    {loading && <CommandEmpty>Loading players...</CommandEmpty>}
+                    {error && <CommandEmpty>Error loading players</CommandEmpty>}
+                    {!loading && !error && players && players.length === 0 && (
+                        <CommandEmpty>No player found.</CommandEmpty>
+                    )}
+                    <CommandGroup>
+                        {players?.map((player) => (
+                            disabledPlayerList.includes(player.id) ? null : (
+                                <CommandItem
                                     key={player.id}
-                                    value={player.id}
-                                    onSelect={() => handleSelect(player.id)}
+                                    value={player.id!}
+                                    onSelect={() => handleSelect(player.id!)}
                                 >
                                     <div className="flex gap-2 items-center">
                                         <img src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.png'} className="h-8 w-8 rounded-full object-cover" />
                                         <div className="flex flex-col justify-between">
-                                            <span>{player.name}</span>
-                                            <small className="text-gray-500/70">{player.phoneNumber}</small>
+                                            <span className="text-white">{player.name}</span>
+                                            <small className="text-white/70">{player.phoneNumber}</small>
                                         </div>
                                     </div>
                                 </CommandItem>
-                            ))}
-                        </CommandGroup>
-                    </CommandList>
-                </Command>
-            </PopoverContent>
-        </Popover>
+                            )
+                        ))}
+                    </CommandGroup>
+                </CommandList>
+            </Command>
+        </div>
     );
 }

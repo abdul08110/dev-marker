@@ -1,16 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 import clubReducer from './slices/clubSlice';
 import snookerReducer from './slices/snookerSlice';
+import undoReducer from './slices/undoSlice';
 import { useDispatch } from 'react-redux';
 
 export const store = configureStore({
   reducer: {
     club: clubReducer,
     snooker: snookerReducer,
+    undo: undoReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-    thunk: true,
-  }),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      thunk: true,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

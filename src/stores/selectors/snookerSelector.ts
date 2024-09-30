@@ -3,16 +3,9 @@
  */
 
 import { RootState } from '@/stores';
-import { PointType, type Set, SnookerScoringState, Turn, Point } from '../types';
+import { SnookerPointType, type Set, SnookerScoringState, Turn, SnookerPoint, Point } from '../types';
 import { createSelector } from '@reduxjs/toolkit';
-import {
-  getActiveSet,
-  getActiveTurn,
-  getAllPointsAfter,
-  getLastPoint,
-  getLastPointPlayedInTheSet,
-  getSecondLastPointPlayedInTheSet,
-} from './commonSport';
+import { getActivePoint, getActiveSet, getActiveTurn, getAllPointsAfter, getLastPointPlayedInSet } from './commonSport';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 
 const RED_POINTS = 1;
@@ -25,23 +18,25 @@ const formatToRedsCount = {
 };
 
 export const colorPointsOrder = [
-  PointType.YELLOW,
-  PointType.GREEN,
-  PointType.BROWN,
-  PointType.BLUE,
-  PointType.PINK,
-  PointType.BLACK,
+  SnookerPointType.YELLOW,
+  SnookerPointType.GREEN,
+  SnookerPointType.BROWN,
+  SnookerPointType.BLUE,
+  SnookerPointType.PINK,
+  SnookerPointType.BLACK,
 ];
 
-export const ballsToPointsEnum: Record<PointType, number> = {
-  [PointType.RED]: 1,
-  [PointType.YELLOW]: 2,
-  [PointType.GREEN]: 3,
-  [PointType.BROWN]: 4,
-  [PointType.BLUE]: 5,
-  [PointType.PINK]: 6,
-  [PointType.BLACK]: 7,
-  [PointType.FOUL]: 0,
+export const ballsToPointsEnum: Record<SnookerPointType, number> = {
+  [SnookerPointType.RED]: 1,
+  [SnookerPointType.YELLOW]: 2,
+  [SnookerPointType.GREEN]: 3,
+  [SnookerPointType.BROWN]: 4,
+  [SnookerPointType.BLUE]: 5,
+  [SnookerPointType.PINK]: 6,
+  [SnookerPointType.BLACK]: 7,
+  [SnookerPointType.FOUL]: 0,
+  [SnookerPointType.MISSED_POT]: 0,
+  [SnookerPointType.PLAY_SAFE]: 0,
 };
 
 const calculateTotalColoredPoints = (): number => ALL_COLORED_POINTS;
@@ -53,7 +48,7 @@ const getNumberOfRedsFromFormat = (format: keyof typeof formatToRedsCount): numb
 const getLastRedPottedTurnAndPointIndex = (turns: Turn[]): { turnIndex: number; pointIndex: number } | null => {
   for (let i = turns.length - 1; i >= 0; i--) {
     for (let j = turns[i].points.length - 1; j >= 0; j--) {
-      if (turns[i].points[j].type === PointType.RED) {
+      if (turns[i].points[j].type === SnookerPointType.RED) {
         return { turnIndex: i, pointIndex: j };
       }
     }
@@ -66,24 +61,25 @@ export const getAllPointsAfterAllRedsHaveLeftTheTable = (turns: Turn[]) => {
   return lastRedInfo ? getAllPointsAfter(turns, lastRedInfo.turnIndex, lastRedInfo.pointIndex) : [];
 };
 
-export const getPottedColorBallsAfterAllReds = (turns: Turn[]) => {
+export const getPottedColorBallsAfterAllReds = (turns: Turn[]): SnookerPointType[] => {
   return getAllPointsAfterAllRedsHaveLeftTheTable(turns)
-    .filter((point) => point.type !== PointType.RED && point.type !== PointType.FOUL)
-    .map((point) => point.type);
+    .filter((point) => 'type' in point && point.type !== SnookerPointType.RED && point.type !== SnookerPointType.FOUL)
+    .map((point) => ('type' in point ? point.type : undefined))
+    .filter((type): type is SnookerPointType => type !== undefined);
 };
 
 export const calculateRedsLeft = (turns: Turn[], format: keyof typeof formatToRedsCount): number => {
   const totalReds = getNumberOfRedsFromFormat(format);
   return turns.reduce((redsLeft, turn) => {
     return turn.points.reduce((count, point) => {
-      if (point.type === PointType.RED) count--;
-      if (point.type === PointType.FOUL && point.ballsLost > 0) count -= point.ballsLost;
+      if (point.type === SnookerPointType.RED) count--;
+      if (point.type === SnookerPointType.FOUL && point.ballsLost > 0) count -= point.ballsLost;
       return count;
     }, redsLeft);
   }, totalReds);
 };
 
-export const adjustColorBallsPottedWithFreeBall = (activeSet: Set): PointType[] => {
+export const adjustColorBallsPottedWithFreeBall = (activeSet: Set): SnookerPointType[] => {
   const pottedColorsAfterAllReds = getPottedColorBallsAfterAllReds(activeSet ? activeSet.turns : []);
   const pointsAfterAllRedsArePotted = getAllPointsAfterAllRedsHaveLeftTheTable(activeSet ? activeSet!.turns : []);
 
@@ -92,7 +88,7 @@ export const adjustColorBallsPottedWithFreeBall = (activeSet: Set): PointType[] 
   const pottedPoints = pointsAfterAllRedsArePotted.slice(1);
 
   const freeBallIndexes = pottedPoints
-    .map((point, index) => (point.freeBall ? index : -1))
+    .map((point, index) => ('freeBall' in point && point.freeBall ? index : -1))
     .filter((index) => index !== -1);
 
   freeBallIndexes.forEach((freeBallIndex) => {
@@ -137,16 +133,13 @@ export const getNumberAhead = (activeSet: Set, activeTeam: 'team1' | 'team2') =>
   return activeScore - opponentScore;
 };
 
-export const checkIfFreeBallPlayed = (sets: Set[], pointCheckFn: (set: Set) => Point | null) => {
+export const checkIfFreeBallPlayed = (sets: Set[], pointCheckFn: (set: Set) => Point | SnookerPoint | null) => {
   const activeSet = getActiveSet(sets);
   const point = pointCheckFn(activeSet!);
-  return point ? point.freeBall : false;
+  return point && 'freeBall' in point ? point.freeBall : false;
 };
 
-export const checkIfLastBallIsFreeBall = (sets: Set[]) => checkIfFreeBallPlayed(sets, getLastPointPlayedInTheSet);
-
-export const checkIfSecondLastBallIsFreeBall = (sets: Set[]) =>
-  checkIfFreeBallPlayed(sets, getSecondLastPointPlayedInTheSet);
+export const checkIfLastBallIsFreeBall = (sets: Set[]) => checkIfFreeBallPlayed(sets, getLastPointPlayedInSet);
 
 export const getTeamSetScores = createSelector(
   (state: RootState) => state.snooker,
@@ -173,13 +166,13 @@ export const calculateTeamPOSN = createSelector(
   (snookerState) => {
     const activeSet = getActiveSet(snookerState.scoreHistory);
     const pointTypes = [
-      PointType.RED,
-      PointType.YELLOW,
-      PointType.GREEN,
-      PointType.BROWN,
-      PointType.BLUE,
-      PointType.PINK,
-      PointType.BLACK,
+      SnookerPointType.RED,
+      SnookerPointType.YELLOW,
+      SnookerPointType.GREEN,
+      SnookerPointType.BROWN,
+      SnookerPointType.BLUE,
+      SnookerPointType.PINK,
+      SnookerPointType.BLACK,
     ];
 
     let [team1Potted, team2Potted] = [0, 0];
@@ -188,10 +181,10 @@ export const calculateTeamPOSN = createSelector(
     activeSet?.turns.forEach((turn) => {
       const potted = turn.points.filter((point) => pointTypes.includes(point.type)).length;
       const totalPlayed = turn.points.length;
-      if (snookerState.players.team1.players.some((player) => player.id === turn.turnPlayerId)) {
+      if (snookerState.team1.players.some((player) => player.id === turn.turnPlayerId)) {
         team1Potted += potted;
         team1Played += totalPlayed;
-      } else if (snookerState.players.team2.players.some((player) => player.id === turn.turnPlayerId)) {
+      } else if (snookerState.team2.players.some((player) => player.id === turn.turnPlayerId)) {
         team2Potted += potted;
         team2Played += totalPlayed;
       }
@@ -226,7 +219,7 @@ export const selectHighestTurnScores = createSelector(
     const getTeamTurnScores = (team: 'team1' | 'team2') => {
       return (
         activeSet?.turns
-          .filter((turn) => snookerState.players[team].players.some((player) => player.id === turn.turnPlayerId))
+          .filter((turn) => snookerState[team].players.some((player) => player.id === turn.turnPlayerId))
           .map((turn) => turn.points.reduce((total, point) => total + point.score, 0))
           .sort((a, b) => b - a) || []
       );
@@ -244,17 +237,16 @@ export const snookerButtonsDisabledState = createSelector(
   (snookerState) => {
     const activeSet = getActiveSet(snookerState.scoreHistory);
     const activeTurn = activeSet ? getActiveTurn(activeSet) : null;
-    const lastPoint = getLastPoint(activeTurn);
+    const lastPoint = getActivePoint(activeTurn);
     const turns = activeSet ? activeSet.turns : [];
     const redsLeft = calculateRedsLeft(turns, snookerState.format);
     const pottedColorsAfterAllReds = getPottedColorBallsAfterAllReds(turns);
     const isLastBallFreeBall = checkIfLastBallIsFreeBall(snookerState.scoreHistory);
-    const pointsOnTable = getNumberOnTableOfTheCurrentFrame(activeSet, snookerState.format);
+    const pointsOnTable = getNumberOnTableOfTheCurrentFrame(activeSet ? activeSet : null, snookerState.format);
     const isMatchOngoing = snookerState.scoreHistory.length > 0;
     const isFrameCompleted = activeSet?.status === 'COMPLETED';
-    const allFramesPlayed = snookerState.numberOfFrames === snookerState.scoreHistory.length;
 
-    const shouldDisableColorButton = (colorIndex: number, colorName: PointType) => {
+    const shouldDisableColorButton = (colorIndex: number, colorName: SnookerPointType) => {
       const pottedColors = adjustColorBallsPottedWithFreeBall(activeSet!);
 
       if (isLastBallFreeBall && redsLeft === 0) {
@@ -263,24 +255,32 @@ export const snookerButtonsDisabledState = createSelector(
 
       return (
         !activeTurn ||
-        (lastPoint?.type !== PointType.RED && redsLeft > 0 && !isLastBallFreeBall) ||
+        (lastPoint &&
+          'type' in lastPoint &&
+          lastPoint?.type !== SnookerPointType.RED &&
+          redsLeft > 0 &&
+          !isLastBallFreeBall) ||
         (redsLeft === 0 && pottedColors.length !== colorIndex && pottedColorsAfterAllReds.length !== 0)
       );
     };
 
     return {
-      [SnookerScoringButtonEnum.START_FRAME]: (isMatchOngoing && !isFrameCompleted) || allFramesPlayed,
+      [SnookerScoringButtonEnum.START_FRAME]: isMatchOngoing && !isFrameCompleted,
       [SnookerScoringButtonEnum.UNDO_SCORE]: !isMatchOngoing,
       [SnookerScoringButtonEnum.END_FRAME]: !isMatchOngoing || isFrameCompleted,
       [SnookerScoringButtonEnum.RED]: !activeTurn || redsLeft === 0,
-      [SnookerScoringButtonEnum.YELLOW]: shouldDisableColorButton(0, PointType.YELLOW),
-      [SnookerScoringButtonEnum.GREEN]: shouldDisableColorButton(1, PointType.GREEN),
-      [SnookerScoringButtonEnum.BROWN]: shouldDisableColorButton(2, PointType.BROWN),
-      [SnookerScoringButtonEnum.BLUE]: shouldDisableColorButton(3, PointType.BLUE),
-      [SnookerScoringButtonEnum.PINK]: shouldDisableColorButton(4, PointType.PINK),
-      [SnookerScoringButtonEnum.BLACK]: shouldDisableColorButton(5, PointType.BLACK),
+      [SnookerScoringButtonEnum.YELLOW]: shouldDisableColorButton(0, SnookerPointType.YELLOW),
+      [SnookerScoringButtonEnum.GREEN]: shouldDisableColorButton(1, SnookerPointType.GREEN),
+      [SnookerScoringButtonEnum.BROWN]: shouldDisableColorButton(2, SnookerPointType.BROWN),
+      [SnookerScoringButtonEnum.BLUE]: shouldDisableColorButton(3, SnookerPointType.BLUE),
+      [SnookerScoringButtonEnum.PINK]: shouldDisableColorButton(4, SnookerPointType.PINK),
+      [SnookerScoringButtonEnum.BLACK]: shouldDisableColorButton(5, SnookerPointType.BLACK),
       [SnookerScoringButtonEnum.END_GAME]: !isMatchOngoing,
       [SnookerScoringButtonEnum.FOUL]: !activeTurn || pointsOnTable === 0,
+      [SnookerScoringButtonEnum.BREAK_OFF]: activeSet !== undefined,
+      [SnookerScoringButtonEnum.PLAY_SAFE]: !activeTurn && activeSet === undefined,
+      [SnookerScoringButtonEnum.MISSED_POT]: !activeTurn && activeSet === undefined,
+      [SnookerScoringButtonEnum.LONG_SHOT]: !activeTurn && activeSet === undefined,
     };
   },
 );

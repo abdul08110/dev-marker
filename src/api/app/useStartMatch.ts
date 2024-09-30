@@ -14,7 +14,6 @@ interface MatchStartDataProps {
     sideTwoPlayerOneId: string,
     sideTwoPlayerTwoId?: string,
     streamingType: 'PUBLIC' | 'PRIVATE',
-    noOfSets: number,
 }
 
 interface MatchStartResponse {
