@@ -112,8 +112,8 @@ const snookerSlice = createSlice({
         timeScored: new Date().toISOString(),
       });
     },
-    incrementTurnScore(state, action: PayloadAction<{ setIndex: number; turnIndex: number; score: number }>) {
-      state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].score += action.payload.score;
+    changeTurnScore(state, action: PayloadAction<{ setIndex: number; turnIndex: number; score: number }>) {
+      state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].score = action.payload.score;
     },
     incrementTotalScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
       if (action.payload.teamIndex === 0) {
@@ -129,9 +129,9 @@ const snookerSlice = createSlice({
         state.team2Score -= action.payload.score;
       }
     },
-    incrementSetScore(state, action: PayloadAction<{ score: number; teamIndex: number; setIndex: number }>) {
+    changeSetScore(state, action: PayloadAction<{ score: number; teamIndex: number; setIndex: number }>) {
       const teamName = action.payload.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
-      state.scoreHistory[action.payload.setIndex][teamName] += action.payload.score;
+      state.scoreHistory[action.payload.setIndex][teamName] = action.payload.score;
     },
     decrementTurnScore(state, action: PayloadAction<{ score: number; setIndex: number; turnIndex: number }>) {
       const data = action.payload;
@@ -196,8 +196,8 @@ export const {
   setActivePlayer,
   createTurn,
   createPoint,
-  incrementTurnScore,
-  incrementSetScore,
+  changeTurnScore,
+  changeSetScore,
   completeSet,
   decrementTurnScore,
   decrementSetScore,

@@ -1,8 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export enum UndoSnookerTypes {
+  MATCH_START = 'MATCH_START',
+  POINT = 'POINT',
+  FOUL = 'FOUL',
+  END_FRAME = 'END_FRAME',
+  START_FRAME = 'START_FRAME',
+}
+
 interface UndoEntry {
   sliceName: string;
   previousState: any;
+  type: UndoSnookerTypes;
 }
 
 interface UndoState {

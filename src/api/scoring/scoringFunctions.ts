@@ -43,10 +43,13 @@ interface AddCorrectionProps {
 }
 
 interface universalDeleteProps {
-  setIds: string[],
-  turnIds: string[],
-  pointIds: string[],
-  snookerCorrectionIds: string[],
+  matchId: string;
+  data: {
+    setIds: string[],
+    turnIds: string[],
+    pointIds: string[],
+    snookerCorrectionIds: string[],
+  }
 }
 
 interface CrateSetResponse {
@@ -143,7 +146,7 @@ export const createSnookerPointRequest = async (props: CreateSnookerPointProps):
   }
 };
 
-export const changeTurnScore = async (props: ChangeTurnScoreRequestProps): Promise<boolean> => {
+export const changeTurnScoreRequest = async (props: ChangeTurnScoreRequestProps): Promise<boolean> => {
   try {
     const response = await handleApiResponse(
       axiosInstance.post<ApiResponse<boolean>>(`match/marker/handle-turn-score-change/`, props),
@@ -155,7 +158,7 @@ export const changeTurnScore = async (props: ChangeTurnScoreRequestProps): Promi
   }
 };
 
-export const changeSetScore = async (props: ChangeSetScoreRequestProps): Promise<boolean> => {
+export const changeSetScoreRequest = async (props: ChangeSetScoreRequestProps): Promise<boolean> => {
   try {
     const response = await handleApiResponse(
       axiosInstance.post<ApiResponse<boolean>>(`match/marker/handle-set-score-change/`, props),
@@ -179,10 +182,10 @@ export const createCorrection = async (props: AddCorrectionProps): Promise<strin
   }
 };
 
-export const universalDelele = async (props: AddCorrectionProps): Promise<string | null> => {
+export const universalDelele = async (props: universalDeleteProps): Promise<string | null> => {
   try {
     const response = await handleApiResponse(
-      axiosInstance.post<ApiResponse<CreateCorrectionResponse>>(`match/marker/handle-snooker-corrections/`, props),
+      axiosInstance.post<ApiResponse<CreateCorrectionResponse>>(`match/marker/match-items-delete/${props.matchId}`, props.data),
     );
     return response.correctionId;
   } catch (error: any) {

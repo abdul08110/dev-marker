@@ -28,6 +28,7 @@ import { getActiveTeam, getActiveSet } from '@/stores/selectors/commonSport';
 import useTimer from '@/hooks/useTimer';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 import useOnlineStatus from './useOnlineStatus';
+import { SnookerFoulData } from '@/components/forms/app/snookerFoul';
 
 const useSnookerScoring = () => {
   // REDUX STATE
@@ -162,6 +163,7 @@ const useSnookerScoring = () => {
         break;
       case 'FOUL':
         setOpenFoulDrawer(true);
+        setShowLoadingModal(false);
         break;
       case 'END_FRAME':
         await dispatch(handleEndFrame({}));
@@ -252,7 +254,7 @@ const useSnookerScoring = () => {
     }
   };
 
-  const handleFoulUpdate = async (values: any) => {
+  const handleFoulUpdate = async (values: SnookerFoulData) => {
     await dispatch(handleFoulScore(values));
     setOpenFoulDrawer(false);
   };
