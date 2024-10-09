@@ -127,6 +127,8 @@ export const createTurnRequest = async (props: CreateTurnProps): Promise<string 
 export const setActivePlayerRequest = async (props: SetActivePlayerProps): Promise<boolean> => {
   try {
     const response = await handleApiResponse(axiosInstance.post(`match/marker/set-active-player/`, props));
+
+    console.log(response);
     return true;
   } catch (error: any) {
     console.error('Error creating turn:', error.message);
@@ -151,6 +153,7 @@ export const changeTurnScoreRequest = async (props: ChangeTurnScoreRequestProps)
     const response = await handleApiResponse(
       axiosInstance.post<ApiResponse<boolean>>(`match/marker/handle-turn-score-change/`, props),
     );
+    console.log(response);
     return true;
   } catch (error: any) {
     console.error('Error creating turn:', error.message);
@@ -163,6 +166,7 @@ export const changeSetScoreRequest = async (props: ChangeSetScoreRequestProps): 
     const response = await handleApiResponse(
       axiosInstance.post<ApiResponse<boolean>>(`match/marker/handle-set-score-change/`, props),
     );
+    console.log(response);
     return true;
   } catch (error: any) {
     console.error('Error creating turn:', error.message);

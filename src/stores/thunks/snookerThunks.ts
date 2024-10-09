@@ -195,6 +195,8 @@ export const handleFoulScore = createAsyncThunk<
   const state = getState();
   const activeTeam = getActiveTeam(state.snooker.team1, state.snooker.team2);
 
+  console.log(activeTeam);
+
   await dispatch(
     handleCreatePoint({
       score: 0,
@@ -281,8 +283,8 @@ export const handleUndoScoreClicked = createAsyncThunk<void, {}, { state: RootSt
   async ({}, { dispatch, getState }) => {
     const state = getState();
     const newState = state.undo.undoStack[state.undo.undoStack.length - 2].previousState;
-    const previousStateAction = state.undo.undoStack[state.undo.undoStack.length - 1].type;
-    const previousState = state.undo.undoStack[state.undo.undoStack.length - 1].type;
+    // const previousStateAction = state.undo.undoStack[state.undo.undoStack.length - 1].type;
+    // const previousState = state.undo.undoStack[state.undo.undoStack.length - 1].type;
 
     if (!newState) return;
 
