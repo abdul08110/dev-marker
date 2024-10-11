@@ -45,6 +45,7 @@ function useTimer(initialTime: number, onTimerComplete?: () => void) {
 
     return {
         timeLeft,
+        setTimeLeft,
         startTimer,
         pauseTimer,
         resetTimer,

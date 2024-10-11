@@ -1,7 +1,11 @@
 import useLogout from "@/api/auth/useLogout";
+import useMarkerGetLiveMatchByVenue from "@/api/home/useGetLiveMatchByVenueId";
 import useMarkerClubs from "@/api/home/useMarkerClubs";
 import { HomeLoading } from "@/components/loading/homeLoading";
+import { LiveMatchGoToScoreBoardOrMarkerModal } from "@/components/modals/liveMatchGoToScoreBoardOrMarkerModal";
 import { setActiveClub, setClubs } from "@/stores/slices/clubSlice";
+import { resetState } from "@/stores/slices/snookerSlice";
+import { clearUndoStack } from "@/stores/slices/undoSlice";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -10,11 +14,16 @@ import { useNavigate } from 'react-router-dom';
 export function Home() {
     const dispatch = useDispatch();
     const { getMarkerClubs, data } = useMarkerClubs();
+    const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLiveMatchModalOpen, setIsLiveMatchModalOpen] = useState<boolean>(false);
+    const [liveMatchId, setLiveMatchId] = useState<string | null>(null);
     const { logout } = useLogout();
     const navigate = useNavigate();
 
     useEffect(() => {
+        dispatch(resetState());
+        dispatch(clearUndoStack());
         const fetchData = async () => {
             const result = await getMarkerClubs();
             if (result) {
@@ -25,11 +34,20 @@ export function Home() {
 
                 dispatch(setClubs(formattedData))
                 dispatch(setActiveClub(formattedData[0]))
+
+                const liveMatchByVenueResponse = await getMarkerLiveMatchesByVenueHookData.getMarkerLiveMatchesByVenue(formattedData[0].venueId);
+
+                if (liveMatchByVenueResponse && liveMatchByVenueResponse.matchId !== null) {
+                    setLiveMatchId(liveMatchByVenueResponse.matchId)
+                    setIsLiveMatchModalOpen(true);
+                }
+
                 setIsLoading(false);
             }
         };
 
         fetchData();
+
     }, []);
 
     if (isLoading) {
@@ -93,6 +111,7 @@ export function Home() {
                         </div>
                     </div>
                 </div>
+                <LiveMatchGoToScoreBoardOrMarkerModal matchId={liveMatchId} isModalOpen={isLiveMatchModalOpen}  />
             </section>
         )
     }

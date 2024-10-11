@@ -28,47 +28,45 @@ export enum SnookerPointType {
 }
 
 export interface Set {
-  id: string | null;
   teamOneScore: number;
   teamTwoScore: number;
   scoreOrder: string[];
   turns: Turn[];
   status: 'COMPLETED' | 'ONGOING' | 'CONCEDED';
-  corrections: Correction[];
+  snookerCorrections: SnookerCorrection[];
+  setConcededTo: 0 | 1 | null;
 }
 
-export interface Correction {
-  correctionId: string;
+export interface SnookerCorrection {
   teamOneScore: number;
   teamTwoScore: number;
   redsRemaining: number;
+  timeScored: string;
 }
 
 export interface Turn {
-  id: string | null;
   turnPlayerId: string;
   score: number;
   timeScored: string;
-  points: (Point & SnookerPoint)[];
-}
-
-export interface SnookerPoint {
-  ballsLost: number;
-  missCalled: boolean;
-  freeBall: boolean;
-  isLong: boolean;
-  type: SnookerPointType;
-  penalty: number;
-  score: number;
-  timeScored: string;
+  points: Point[];
 }
 
 export interface Point {
-  id: string | null;
+  snookerPoint: {
+    redsLost: number;
+    missCalled: boolean;
+    freeBall: boolean;
+    isLongShot: boolean;
+    type: SnookerPointType;
+    penalty: number;
+    score: number;
+  };
+  timeScored: string;
 }
 
 export interface GeneralScoringState {
   matchId: null | string;
+  isBackendUpdated: boolean;
   team1Score: number;
   team2Score: number;
   team1: TeamDetails;

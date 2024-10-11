@@ -3,12 +3,13 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Player, SnookerPoint, SnookerScoringState } from '../types';
+import { Player, Point, SnookerScoringState } from '../types';
 import { getTeamKey } from '../selectors/commonSport';
 
 const initialState: SnookerScoringState = {
   format: 'SNOOKER_15_RED',
   matchId: null,
+  isBackendUpdated: true,
   team1Score: 0,
   team2Score: 0,
   numberAhead: 0,
@@ -53,6 +54,44 @@ const snookerSlice = createSlice({
         isActive: false,
       };
     },
+    resetState(state) {
+      Object.assign(state, {
+        format: 'SNOOKER_15_RED',
+        matchId: null,
+        isBackendUpdated: true,
+        team1Score: 0,
+        team2Score: 0,
+        numberAhead: 0,
+        numberOn: 0,
+        team1: {
+          players: [
+            {
+              name: 'Player 1',
+              isActive: false,
+              id: null,
+              profilePhoto: null,
+            },
+          ],
+          score: 0,
+        },
+        team2: {
+          players: [
+            {
+              name: 'Player 2',
+              isActive: false,
+              id: null,
+              profilePhoto: null,
+            },
+          ],
+          score: 0,
+        },
+        handicap: 0,
+        streaming: 'PUBLIC',
+        timeInMinutes: 30,
+        scoreHistory: [],
+        startTimeDate: null,
+      });
+    },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
       state.matchId = action.payload.matchId;
     },
@@ -69,19 +108,47 @@ const snookerSlice = createSlice({
     setState(state, action: PayloadAction<{ data: SnookerScoringState }>) {
       Object.assign(state, action.payload.data);
     },
-    createSet(state, action: PayloadAction<{ setId: string | null, scoreOrder: string[] }>) {
-      const setId = action.payload.setId;
+    createSet(state, action: PayloadAction<{ scoreOrder: string[] }>) {
       const scoreOrder = action.payload.scoreOrder;
 
       state.scoreHistory.push({
-        id: setId ? setId : null,
         teamOneScore: state.handicap > 0 ? state.handicap : 0,
         teamTwoScore: state.handicap < 0 ? Math.abs(state.handicap) : 0,
         turns: [],
         status: 'ONGOING',
-        corrections: [],
+        snookerCorrections: [],
         scoreOrder: scoreOrder,
+        setConcededTo: null,
       });
+    },
+    createCorrection(
+      state,
+      action: PayloadAction<{
+        setIndex: number;
+        correctionId: string | null;
+        teamOneScore: number;
+        teamTwoScore: number;
+        redsRemaining: number;
+      }>,
+    ) {
+      const data = action.payload;
+      state.scoreHistory[data.setIndex].snookerCorrections.push({
+        teamOneScore: data.teamOneScore,
+        teamTwoScore: data.teamTwoScore,
+        redsRemaining: data.redsRemaining,
+        timeScored: new Date().toISOString(),
+      });
+    },
+    concedeSet(
+      state,
+      action: PayloadAction<{
+        setIndex: number;
+        winningTeamIndex: 0 | 1;
+      }>,
+    ) {
+      const data = action.payload;
+      state.scoreHistory[data.setIndex].setConcededTo = data.winningTeamIndex;
+      state.scoreHistory[data.setIndex].status = 'CONCEDED';
     },
     deleteSet(state, action: PayloadAction<{ setIndex: number }>) {
       state.scoreHistory.splice(action.payload.setIndex, 1);
@@ -92,28 +159,31 @@ const snookerSlice = createSlice({
     changeSetStatus(state, action: PayloadAction<{ setIndex: number; status: 'COMPLETED' | 'ONGOING' | 'CONCEDED' }>) {
       state.scoreHistory[action.payload.setIndex].status = action.payload.status;
     },
-    createTurn(state, action: PayloadAction<{ turnId: string | null; setIndex: number; playerId: string }>) {
+    createTurn(state, action: PayloadAction<{ setIndex: number; playerId: string }>) {
       const id = action.payload.playerId;
-      const turnId = action.payload.turnId;
 
       state.scoreHistory[action.payload.setIndex].turns.push({
-        id: turnId,
         timeScored: new Date().toISOString(),
         turnPlayerId: id,
         score: 0,
         points: [],
       });
     },
-    createPoint(state, action: PayloadAction<{ point: SnookerPoint; turnIndex: number; setIndex: number, pointId: null | string }>) {
+    createPoint(state, action: PayloadAction<{ point: Point; turnIndex: number; setIndex: number }>) {
       const data = action.payload;
       state.scoreHistory[data.setIndex].turns[data.turnIndex].points.push({
-        id: data.pointId,
         ...data.point,
         timeScored: new Date().toISOString(),
       });
     },
     changeTurnScore(state, action: PayloadAction<{ setIndex: number; turnIndex: number; score: number }>) {
       state.scoreHistory[action.payload.setIndex].turns[action.payload.turnIndex].score = action.payload.score;
+    },
+    handleResetSet(state, action: PayloadAction<{ setIndex: number }>) {
+      state.scoreHistory[action.payload.setIndex].snookerCorrections = [];
+      state.scoreHistory[action.payload.setIndex].teamOneScore = 0;
+      state.scoreHistory[action.payload.setIndex].teamTwoScore = 0;
+      state.scoreHistory[action.payload.setIndex].turns = [];
     },
     incrementTotalScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
       if (action.payload.teamIndex === 0) {
@@ -183,6 +253,9 @@ const snookerSlice = createSlice({
     updateMatchStartedTimeDateUtc(state, action: PayloadAction<{ startTimeDate: string }>) {
       state.startTimeDate = action.payload.startTimeDate;
     },
+    handleBackendUpdatedState(state, action: PayloadAction<{ value: boolean }>) {
+      state.isBackendUpdated = action.payload.value;
+    },
   },
 });
 
@@ -213,5 +286,10 @@ export const {
   changeSetStatus,
   createSet,
   setState,
+  createCorrection,
+  concedeSet,
+  handleResetSet,
+  handleBackendUpdatedState,
+  resetState
 } = snookerSlice.actions;
 export default snookerSlice.reducer;

@@ -20,12 +20,12 @@ export function PlayerTeamCard(props: PlayerTeamCardProps) {
   return (
     <div
       onClick={props.onPlayerTeamCardSelect}
-      className={clsx('rounded-md p-4 flex flex-col items-center gap-4 w-full', {
+      className={clsx('rounded-md p-2 flex flex-col items-center gap-2 w-full', {
         'bg-lightSecondary': !isTeamActive,
         'bg-primary': isTeamActive,
       })}
     >
-      <div className="flex-grow flex flex-col justify-start items-center gap-4 min-h-24">
+      <div className="flex-grow flex flex-col justify-start items-center gap-2 min-h-24">
         <h3 className="text-white text-6xl">{props.teamSetScore}</h3>
         {isTeamActive ? <SnookerPointTypeDisplay activeTurnPointTypes={props.activeTurnPointTypes} /> : <></>}
         {isTeamActive && props.activeTurnScore > 0 ? (

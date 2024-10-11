@@ -3,10 +3,6 @@ import clsx from 'clsx';
 
 export enum SnookerScoringButtonEnum {
   BREAK_OFF = 'BREAK_OFF',
-  START_FRAME = 'START_FRAME',
-  END_GAME = 'END_GAME',
-  END_FRAME = 'END_FRAME',
-  UNDO_SCORE = 'UNDO_SCORE',
   YELLOW = 'YELLOW',
   GREEN = 'GREEN',
   RED = 'RED',
@@ -22,9 +18,6 @@ export enum SnookerScoringButtonEnum {
 
 interface SnookerScoringDisabledState {
   BREAK_OFF: boolean;
-  START_FRAME: boolean;
-  UNDO_SCORE: boolean;
-  END_FRAME: boolean;
   BLACK: boolean;
   BLUE: boolean;
   BROWN: boolean;
@@ -32,7 +25,6 @@ interface SnookerScoringDisabledState {
   PINK: boolean;
   YELLOW: boolean;
   RED: boolean;
-  END_GAME: boolean;
   FOUL: boolean;
   PLAY_SAFE: boolean;
   MISSED_POT: boolean;
@@ -71,28 +63,7 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
           <small className="bg-black p-1 text-center absolute text-white text-xs">LONG</small>
         </button>
       </div>
-      <div className="grid grid-cols-5 grid-rows-3 gap-2">
-        <button
-          disabled={props.disabledState[SnookerScoringButtonEnum.END_GAME]}
-          className={clsx('col-span-1 bg-markerButton relative', commonClasses)}
-          onClick={() => props.onButtonClick(SnookerScoringButtonEnum.END_GAME)}
-        >
-          End Game
-        </button>
-        <button
-          disabled={props.disabledState[SnookerScoringButtonEnum.END_FRAME]}
-          className={clsx('col-span-1 bg-markerButton relative', commonClasses)}
-          onClick={() => props.onButtonClick(SnookerScoringButtonEnum.END_FRAME)}
-        >
-          End Frame
-        </button>
-        <button
-          disabled={props.disabledState[SnookerScoringButtonEnum.UNDO_SCORE]}
-          className={clsx('col-span-1 bg-markerButton relative', commonClasses)}
-          onClick={() => props.onButtonClick(SnookerScoringButtonEnum.UNDO_SCORE)}
-        >
-          Undo
-        </button>
+      <div className="grid grid-cols-5 grid-rows-2 gap-2">
         {props.isBreakOff ? (
           <button
             disabled={props.disabledState[SnookerScoringButtonEnum.BREAK_OFF]}
@@ -102,28 +73,24 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
             Break Off
           </button>
         ) : (
-          <button
-            disabled={props.disabledState[SnookerScoringButtonEnum.START_FRAME]}
-            className={clsx('col-span-2 bg-markerButton relative', commonClasses)}
-            onClick={() => props.onButtonClick(SnookerScoringButtonEnum.START_FRAME)}
-          >
-            Start Frame
-          </button>
+          <div className="col-span-2 grid grid-cols-2 gap-2 ">
+            <button
+              disabled={props.disabledState[SnookerScoringButtonEnum.PLAY_SAFE]}
+              className={clsx(' bg-markerButton relative', commonClasses)}
+              onClick={() => props.onButtonClick(SnookerScoringButtonEnum.PLAY_SAFE)}
+            >
+              Play Safe
+            </button>
+            <button
+              disabled={props.disabledState[SnookerScoringButtonEnum.MISSED_POT]}
+              className={clsx(' bg-markerButton relative', commonClasses)}
+              onClick={() => props.onButtonClick(SnookerScoringButtonEnum.MISSED_POT)}
+            >
+              Missed Pot
+            </button>
+          </div>
         )}
-        <button
-          disabled={props.disabledState[SnookerScoringButtonEnum.PLAY_SAFE]}
-          className={clsx('col-span-1 bg-markerButton relative', commonClasses)}
-          onClick={() => props.onButtonClick(SnookerScoringButtonEnum.PLAY_SAFE)}
-        >
-          Play Safe
-        </button>
-        <button
-          disabled={props.disabledState[SnookerScoringButtonEnum.MISSED_POT]}
-          className={clsx('col-span-1 bg-markerButton relative', commonClasses)}
-          onClick={() => props.onButtonClick(SnookerScoringButtonEnum.MISSED_POT)}
-        >
-          Missed Pot
-        </button>
+
         <button
           disabled={props.disabledState[SnookerScoringButtonEnum.RED]}
           className={clsx('col-span-1 bg-[#E93323] relative', commonClasses)}

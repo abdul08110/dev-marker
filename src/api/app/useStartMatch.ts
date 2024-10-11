@@ -14,6 +14,7 @@ interface MatchStartDataProps {
     sideTwoPlayerOneId: string,
     sideTwoPlayerTwoId?: string,
     streamingType: 'PUBLIC' | 'PRIVATE',
+    handicap: number;
 }
 
 interface MatchStartResponse {

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '@/stores';
 import { toast } from '@/components/ui/use-toast';
@@ -15,20 +15,31 @@ import {
   snookerButtonsDisabledState,
 } from '@/stores/selectors/snookerSelector';
 import {
+  handleBackendUpdateOfData,
+  handleBreakOff,
   handleChangeScoreOnTrigger,
-  handleEndFrame,
+  handleConcedeFrame,
+  handleCorrectionState,
   handleFoulScore,
   handleMatchStart,
   handlePlayerSelectState,
+  handleRerackState,
   handleSelectionOfBreakOffTeam,
   handleSettingsStateUpdate,
   handleUndoScoreClicked,
+  matchSyncDataFromBackend,
 } from '@/stores/thunks/snookerThunks';
 import { getActiveTeam, getActiveSet } from '@/stores/selectors/commonSport';
 import useTimer from '@/hooks/useTimer';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 import useOnlineStatus from './useOnlineStatus';
 import { SnookerFoulData } from '@/components/forms/app/snookerFoul';
+import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
+import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
+import useInterval from './useInterval';
+import { matchEndGameRequest } from '@/api/scoring/scoringFunctions';
+import useGetMatchLiveData from '@/api/app/useGetMatchData';
+import { getTimeLeftInMinutes } from '@/utils/functions';
 
 const useSnookerScoring = () => {
   // REDUX STATE
@@ -42,18 +53,24 @@ const useSnookerScoring = () => {
   const snookerButtonDisabledState = useSelector(snookerButtonsDisabledState);
   const numberOfRedsOnTable = useSelector(getNumberOfRedsLeft);
 
-  // HANDLER WHEN BACK ONLINE
-  const handleUpdateOnAppBackOnline = async () => {};
+  // HANDLER TO UPDATE BACKEND WITH THE LATEST DATA ON STATE
+  const handleUpdateToServer = async () => {
+    if (isOnline && snookerScoring.matchId !== null) {
+      await dispatch(handleBackendUpdateOfData({}));
+    }
+  };
 
   // HOOKS
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const isOnline = useOnlineStatus({
-    onOnline: handleUpdateOnAppBackOnline,
-  });
+  const isOnline = useOnlineStatus();
+  useInterval(handleUpdateToServer, 3000);
+  const [searchParams] = useSearchParams();
+  const matchId = searchParams.get('matchId');
 
   // API
   const startMatchHook = useStartMatch();
+  const getLiveMatchHook = useGetMatchLiveData();
 
   // LOCAL STATE
   const [openFoulDrawer, setOpenFoulDrawer] = React.useState(false);
@@ -66,11 +83,51 @@ const useSnookerScoring = () => {
   const [isLongActive, setIsLongActive] = React.useState(false);
   const [showLoadingModal, setShowLoadingModal] = React.useState(false);
   const [showPlayerOrderModal, setShowPlayerOrderModal] = React.useState(false);
+  const [showMenuDrawer, setShowMenuDrawer] = React.useState(false);
+  const [showCorrectionDrawer, setShowCorrectionDrawer] = React.useState(false);
+  const [showConcedeFrameDrawer, setShowConcedeFrameDrawer] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   // TIMER HOOKS
-  const { timeLeft, startTimer } = useTimer(snookerScoring.timeInMinutes, () => {
+  const { timeLeft, startTimer, setTimeLeft } = useTimer(snookerScoring.timeInMinutes, () => {
     // Logic to handle when timer completes
   });
+
+  useEffect(() => {
+    const fetchMatchData = async () => {
+      if (matchId) {
+        setLoading(true);
+        try {
+          const res = await getLiveMatchHook.getLiveMatchData({ matchId });
+
+          if (res !== null) {
+            setOpenPlayerSelectCard(false);
+            await dispatch(matchSyncDataFromBackend({ data: res }));
+            setTimeLeft(Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60));
+            startTimer();
+          } else {
+            toast({
+              title: 'Error',
+              description: 'Failed to load match data. Please try again.',
+              variant: 'destructive',
+            });
+          }
+        } catch (error) {
+          toast({
+            title: 'Error',
+            description: 'Failed to load match data. Please try again.',
+            variant: 'destructive',
+          });
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchMatchData();
+  }, [matchId, dispatch]);
 
   // SIDE EFFECTS
   useEffect(() => {
@@ -80,11 +137,9 @@ const useSnookerScoring = () => {
   }, [clubs.activeClub, navigate]);
 
   // HANDLERS
-  const handleBackClick = () => setGoBackGameModal(true);
+  const handleBackClick = () => handleGoToHome();
 
   const handleSettingsClick = () => setOpenSettingsDrawer(true);
-
-  // const handleStartTimer = () => startTimer();
 
   const handleTeamClick = async (teamIndex: number) => {
     const activeSet = getActiveSet(snookerScoring.scoreHistory);
@@ -109,6 +164,7 @@ const useSnookerScoring = () => {
       sportType: snookerScoring.format,
       streamingType: snookerScoring.streaming,
       venueId: clubs.activeClub!.venueId,
+      handicap: snookerScoring.handicap,
     });
 
     if (matchId) {
@@ -128,6 +184,10 @@ const useSnookerScoring = () => {
     }
   };
 
+  const handleUndoButtonClick = async () => {
+    await dispatch(handleUndoScoreClicked({}));
+  };
+
   const handleScoringButtonClick = async (buttonType: SnookerScoringButtonEnum) => {
     setShowLoadingModal(true);
     if (snookerScoring.team1.players[0].id === null || snookerScoring.team2.players[0].id === null) {
@@ -140,8 +200,6 @@ const useSnookerScoring = () => {
       return;
     }
     switch (buttonType) {
-      case 'START_FRAME':
-        break;
       case 'RED':
       case 'YELLOW':
       case 'GREEN':
@@ -157,19 +215,9 @@ const useSnookerScoring = () => {
         setIsLongActive(false);
         setShowLoadingModal(false);
         break;
-      case 'UNDO_SCORE':
-        await dispatch(handleUndoScoreClicked({}));
-        setShowLoadingModal(false);
-        break;
       case 'FOUL':
         setOpenFoulDrawer(true);
         setShowLoadingModal(false);
-        break;
-      case 'END_FRAME':
-        await dispatch(handleEndFrame({}));
-        break;
-      case 'END_GAME':
-        setShowEndGameModal(true);
         break;
       case 'BREAK_OFF':
         if (snookerScoring.scoreHistory.length === 0) {
@@ -196,6 +244,19 @@ const useSnookerScoring = () => {
             return;
           }
         } else {
+          const activeTeamInfo = getActiveTeam(snookerScoring.team1, snookerScoring.team2);
+          if (snookerScoring.team1.players.length === 1 && snookerScoring.team2.players.length === 1) {
+            await dispatch(
+              handleBreakOff({
+                scoreOrder: [
+                  activeTeamInfo === 0 ? snookerScoring.team1.players[0].id : snookerScoring.team2.players[0].id,
+                  activeTeamInfo === 0 ? snookerScoring.team2.players[0].id : snookerScoring.team1.players[0].id,
+                ],
+              }),
+            );
+          } else {
+            setShowPlayerOrderModal(true);
+          }
           setShowLoadingModal(false);
           return;
         }
@@ -226,6 +287,8 @@ const useSnookerScoring = () => {
 
     if (snookerScoring.scoreHistory.length === 0) {
       await handleMatchCreation(playerOrder);
+    } else {
+      await dispatch(handleBreakOff({ scoreOrder: playerOrder }));
     }
 
     setShowLoadingModal(false);
@@ -266,6 +329,41 @@ const useSnookerScoring = () => {
 
   const handleGoToHome = () => {
     navigate('/');
+  };
+
+  const handleEndGame = async () => {
+    const res = await matchEndGameRequest({ id: snookerScoring.matchId! });
+    if (res === true) {
+      await handleGoToHome();
+    }
+  };
+
+  const handleConcedeFrameSelection = async (values: SnookerConcedeFrameData) => {
+    setShowLoadingModal(true);
+    setShowConcedeFrameDrawer(false);
+    setShowMenuDrawer(false);
+
+    await dispatch(handleConcedeFrame({ values }));
+    setShowLoadingModal(false);
+  };
+
+  const handleRerack = async () => {
+    setShowLoadingModal(true);
+    setShowMenuDrawer(false);
+
+    await dispatch(handleRerackState({}));
+
+    setShowLoadingModal(false);
+  };
+
+  const handleCorrection = async (values: SnookerScoreCorrectionData) => {
+    setShowLoadingModal(true);
+    setShowCorrectionDrawer(false);
+    setShowMenuDrawer(false);
+
+    await dispatch(handleCorrectionState({ values }));
+
+    setShowLoadingModal(false);
   };
 
   return {
@@ -310,6 +408,19 @@ const useSnookerScoring = () => {
     handlePlayerOrderSelect,
     setShowPlayerOrderModal,
     getActiveTeam,
+    showMenuDrawer,
+    setShowMenuDrawer,
+    getActiveSet,
+    handleUndoButtonClick,
+    handleEndGame,
+    handleConcedeFrameSelection,
+    handleRerack,
+    handleCorrection,
+    showCorrectionDrawer,
+    setShowCorrectionDrawer,
+    showConcedeFrameDrawer,
+    setShowConcedeFrameDrawer,
+    loading,
   };
 };
 

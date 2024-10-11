@@ -11,9 +11,9 @@ export function MarkerNavigation() {
     );
 
     return (
-        <div className="w-full py-5">
+        <div className="w-full mt-5 bg-black">
             <div className="container">
-                <nav className="bg-black rounded-lg py-5 grid grid-cols-3 w-full">
+                <nav className="rounded-lg py-5 grid grid-cols-3 w-full">
                     <TabsTrigger value="scoring" className={tabTriggerClassName}>
                         <MatchLogo className="h-5 w-5" />
                         <small>Match</small>

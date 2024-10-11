@@ -64,18 +64,19 @@ export function SnookerScoreCorrectionForm(props: SnookerScoreCorrectionProps) {
             </FormItem>
           )}
         />
-        <FormField
+        { props.redsOnTable > 0 ? <FormField
           control={form.control}
           name="redsRemaining"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center space-x-3 space-y-0 mt-4">
               <FormLabel className="text-white text-base">Red's Remaining</FormLabel>
               <FormControl>
-                <SpinButton value={field.value} onChange={field.onChange} min={0} max={props.redsOnTable} step={1} />
+                <SpinButton value={field.value} onChange={field.onChange} min={0} max={props.maxReds} step={1} />
               </FormControl>
             </FormItem>
           )}
-        />
+        /> : <></> }
+        
         <Button type="submit" className="mt-auto">
           OK
         </Button>

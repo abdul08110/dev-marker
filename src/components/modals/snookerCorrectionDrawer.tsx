@@ -5,20 +5,19 @@ import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerT
 import { PlayerDetails } from '@/stores/types';
 import { SnookerScoreCorrectionData, SnookerScoreCorrectionForm } from '../forms/app/snookerScoreCorrection';
 
-interface SnookerFoulDrawerProps {
+interface SnookerCorrectionDrawerProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onSubmit: (values: SnookerScoreCorrectionData) => void;
   redsOnTable: number;
-  foulByPlayerName: PlayerDetails | null;
   teamOneScore: number;
   teamTwoScore: number;
-  teamOne: PlayerDetails;
-  teamTwo: PlayerDetails;
+  teamOne: PlayerDetails[];
+  teamTwo: PlayerDetails[];
   maxReds: number;
 }
 
-export function SnookerScoreCorrectionDrawer(props: SnookerFoulDrawerProps) {
+export function SnookerScoreCorrectionDrawer(props: SnookerCorrectionDrawerProps) {
   return (
     <Drawer open={props.open} onOpenChange={props.setOpen}>
       <DrawerContent className="border-0 h-3/5">
@@ -27,8 +26,8 @@ export function SnookerScoreCorrectionDrawer(props: SnookerFoulDrawerProps) {
         </DrawerHeader>
         <div className="px-4 h-full">
           <SnookerScoreCorrectionForm
-            teamOneName={`${props.teamOne.name} 's`}
-            teamTwoName={`${props.teamTwo.name} 's`}
+            teamOneName={props.teamOne.length === 1 ? `${props.teamOne[0].name}` : 'Team 1'}
+            teamTwoName={props.teamTwo.length === 1 ? `${props.teamTwo[0].name}` : 'Team 2'}
             teamOneScore={props.teamOneScore}
             teamTwoScore={props.teamTwoScore}
             redsOnTable={props.redsOnTable}

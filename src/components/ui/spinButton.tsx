@@ -32,6 +32,7 @@ export function SpinButton({ value, onChange, min = 0, max = 100, step = 1 }: Sp
                 )}
                 onClick={decrement}
                 disabled={value <= min}
+                type={'button'}
             >
                 -
             </Button>

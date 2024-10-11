@@ -35,7 +35,6 @@ export function AddPlayerForm(props: AddPlayerFormProps) {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const response = await addPlayer(values);
         if (response) {
-            console.log(response);
             await props.onPlayerConfirm(response.result);
         }
     }

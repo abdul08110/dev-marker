@@ -1,4 +1,4 @@
-import { type Set, TeamDetails, Turn, Point, SnookerPoint } from '../types';
+import { type Set, TeamDetails, Turn, Point } from '../types';
 
 const getLastElement = <T>(array: T[]): T | null => (array.length > 0 ? array[array.length - 1] : null);
 
@@ -25,17 +25,17 @@ export const getActiveTurnIndex = (set: Set | null): number =>
 
 // POINTS
 
-export const getActivePoint = (turn: Turn | null): Point | SnookerPoint | null =>
+export const getActivePoint = (turn: Turn | null): Point | null =>
   turn ? getLastElement(turn.points) : null;
 
-export const getSecondLastPoint = (turn: Turn | null): Point | SnookerPoint | null =>
+export const getSecondLastPoint = (turn: Turn | null): Point | null =>
   getSecondLastElement(turn?.points ?? []);
 
 export const getAllPointsAfter = (
   turns: Turn[],
   startTurnIndex: number,
   startPointIndex: number,
-): Point[] | SnookerPoint[] => {
+): Point[] => {
   let points: Point[] = [];
   for (let i = startTurnIndex; i < turns.length; i++) {
     const start = i === startTurnIndex ? startPointIndex + 1 : 0;
@@ -44,7 +44,7 @@ export const getAllPointsAfter = (
   return points;
 };
 
-export const getLastPointPlayedInSet = (set: Set): Point | SnookerPoint | null => {
+export const getLastPointPlayedInSet = (set: Set): Point | null => {
   const activeTurn = getActiveTurn(set);
   if (!activeTurn) return null;
   const activePoint = getActivePoint(activeTurn);
