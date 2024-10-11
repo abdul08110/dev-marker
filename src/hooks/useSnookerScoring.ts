@@ -40,6 +40,7 @@ import useInterval from './useInterval';
 import { matchEndGameRequest } from '@/api/scoring/scoringFunctions';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { getTimeLeftInMinutes } from '@/utils/functions';
+import useBackButtonHandler from './useOnBackButtonClick';
 
 const useSnookerScoring = () => {
   // REDUX STATE
@@ -60,6 +61,11 @@ const useSnookerScoring = () => {
     }
   };
 
+  // HANDLER ON MANUAL BACK BUTTOON CLICK
+  const handleBackButtonClick = async () => {
+    console.log('back button pressed');
+  }
+
   // HOOKS
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -67,6 +73,7 @@ const useSnookerScoring = () => {
   useInterval(handleUpdateToServer, 3000);
   const [searchParams] = useSearchParams();
   const matchId = searchParams.get('matchId');
+  useBackButtonHandler(handleBackButtonClick);
 
   // API
   const startMatchHook = useStartMatch();
