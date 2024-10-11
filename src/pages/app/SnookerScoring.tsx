@@ -108,7 +108,7 @@ export function SnookerScoring() {
                   onUndoClick={() => handleUndoButtonClick()}
                 />
                 <OnlineOfflineIndicator isOnline={isOnline} />
-                <TimeManager timeLeft={timeLeft} />
+                <TimeManager timeLeft={timeLeft} size={'small'} />
                 <PlayerTeamManager
                   onPlayerButtonClick={handlePlayerSelect}
                   activeTurnScore={activeTurnPointScore}

@@ -25,7 +25,7 @@ export function LiveMatchGoToScoreBoardOrMarkerModal(props: goToScoreBoardOrMark
                   <h3 className="text-white text-xl">Marker</h3>
                 </div>
                 <div
-                  onClick={() => navigate('/app/billiyards')}
+                  onClick={() => navigate(`/app/scoreboard?matchId=${props.matchId!}`)}
                   className="bg-[url('/images/billiards.png')] p-5 flex justify-center items-end aspect-[4/3] h-44 bg-cover rounded-lg w-full"
                 >
                   <h3 className="text-white text-xl">Scoreboard</h3>
