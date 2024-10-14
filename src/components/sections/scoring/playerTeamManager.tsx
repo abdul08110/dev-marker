@@ -9,8 +9,9 @@ interface PlayerTeamManageProps {
   matchId: string | null;
   team1SetScore: number;
   team2SetScore: number;
-  activeTurnPointTypes: SnookerPointType[];
+  activeTurnPointTypes: SnookerPointType[] | null;
   activeTurnScore: number;
+  showBilliardsButtons: boolean;
 }
 
 export function PlayerTeamManager(props: PlayerTeamManageProps) {
@@ -24,6 +25,7 @@ export function PlayerTeamManager(props: PlayerTeamManageProps) {
           onPlayerTeamCardSelect={() => props.onTeamClick(0)}
           onPlayerCardClick={(index) => props.onPlayerButtonClick(index, 0)}
           data={props.team1}
+          showBilliardsBalls={props.showBilliardsButtons ? 'YELLOW' : null}
           matchId={props.matchId}
         />
         <PlayerTeamCard
@@ -34,6 +36,7 @@ export function PlayerTeamManager(props: PlayerTeamManageProps) {
           onPlayerCardClick={(index) => props.onPlayerButtonClick(index, 1)}
           data={props.team2}
           matchId={props.matchId}
+          showBilliardsBalls={props.showBilliardsButtons ? 'WHITE' : null}
         />
       </div>
     </div>

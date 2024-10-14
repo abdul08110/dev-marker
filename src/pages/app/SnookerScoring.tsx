@@ -81,6 +81,7 @@ export function SnookerScoring() {
     showConcedeFrameDrawer,
     setShowConcedeFrameDrawer,
     loading,
+    handleEndFrameButton
   } = useSnookerScoring();
 
   // PARENT UI
@@ -119,9 +120,10 @@ export function SnookerScoring() {
                   team1={snookerScoring.team1}
                   team2={snookerScoring.team2}
                   matchId={snookerScoring.matchId}
+                  showBilliardsButtons={false}
                 />
                 <SnookerFramesSummary team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
-                <MaxScore numberAhead={snookerScoring.numberAhead} numberOn={snookerScoring.numberOn} />
+                <MaxScore numberAhead={snookerScoring.numberAhead!} numberOn={snookerScoring.numberOn!} />
                 <SnookerScoringButtons
                   isLongEnabled={isLongActive}
                   onLongClick={() => setIsLongActive(!isLongActive)}
@@ -170,14 +172,13 @@ export function SnookerScoring() {
                   showCorrection={getActiveSet(snookerScoring.scoreHistory) !== undefined}
                   showConcedeFrame={getActiveSet(snookerScoring.scoreHistory) !== undefined}
                   showRerack={getActiveSet(snookerScoring.scoreHistory) !== undefined}
-                  showEndGame={
-                    snookerScoring.matchId !== null &&
-                    getActiveSet(snookerScoring.scoreHistory) === undefined
-                  }
+                  showEndFrame={true}
+                  showEndGame={true}
                   onConcedeFrame={() => setShowConcedeFrameDrawer(true)}
                   onEndGame={handleEndGame}
                   onRerack={handleRerack}
                   onCorrection={() => setShowCorrectionDrawer(true)}
+                  onEndFrame={handleEndFrameButton}
                 />
                 <SnookerScoreCorrectionDrawer
                   setOpen={(value) => setShowCorrectionDrawer(value)}

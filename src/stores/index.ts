@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import clubReducer from './slices/clubSlice';
-import snookerReducer from './slices/snookerSlice';
+import sportReducer from './slices/sportSlice';
 import undoReducer from './slices/undoSlice';
 import { useDispatch } from 'react-redux';
 
 export const store = configureStore({
   reducer: {
     club: clubReducer,
-    snooker: snookerReducer,
+    sport: sportReducer,
     undo: undoReducer,
   },
   middleware: (getDefaultMiddleware) =>

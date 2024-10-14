@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 interface goToScoreBoardOrMarkerViewProps {
   isModalOpen: boolean;
   matchId: string | null;
+  sport: 'BILLIARDS' | 'SNOOKER' | null;
 }
 
 export function LiveMatchGoToScoreBoardOrMarkerModal(props: goToScoreBoardOrMarkerViewProps) {
@@ -19,7 +20,7 @@ export function LiveMatchGoToScoreBoardOrMarkerModal(props: goToScoreBoardOrMark
               <h2 className="text-white text-center mt-4">Go to Live Match</h2>
               <div className="w-full p-4 grid grid-cols-2 gap-4 items-center justify-center h-56">
                 <div
-                  onClick={() => navigate(`/app/snooker?matchId=${props.matchId!}`)}
+                  onClick={() => navigate(props.sport! === 'SNOOKER' ? `/app/snooker?matchId=${props.matchId!}` : `/app/billiards?matchId=${props.matchId!}`)}
                   className="bg-[url('/images/snooker.png')] p-5 flex justify-center items-end aspect-[4/3] h-44 bg-cover rounded-lg w-full"
                 >
                   <h3 className="text-white text-xl">Marker</h3>

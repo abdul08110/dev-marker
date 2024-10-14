@@ -9,8 +9,9 @@ interface PlayerTeamCardProps {
   onPlayerCardClick: (playerIndex: number) => void;
   onPlayerTeamCardSelect: () => void;
   teamSetScore: number;
-  activeTurnPointTypes: SnookerPointType[];
+  activeTurnPointTypes: SnookerPointType[] | null;
   activeTurnScore: number;
+  showBilliardsBalls: 'WHITE' | 'YELLOW' | null;
 }
 
 export function PlayerTeamCard(props: PlayerTeamCardProps) {
@@ -27,7 +28,11 @@ export function PlayerTeamCard(props: PlayerTeamCardProps) {
     >
       <div className="flex-grow flex flex-col justify-start items-center gap-2 min-h-24">
         <h3 className="text-white text-6xl">{props.teamSetScore}</h3>
-        {isTeamActive ? <SnookerPointTypeDisplay activeTurnPointTypes={props.activeTurnPointTypes} /> : <></>}
+        {isTeamActive && props.activeTurnPointTypes ? (
+          <SnookerPointTypeDisplay activeTurnPointTypes={props.activeTurnPointTypes} />
+        ) : (
+          <></>
+        )}
         {isTeamActive && props.activeTurnScore > 0 ? (
           <SnookerBreakScoreDisplay breakScore={props.activeTurnScore} />
         ) : (
@@ -45,6 +50,14 @@ export function PlayerTeamCard(props: PlayerTeamCardProps) {
             'text-black': isTeamActive && activePlayer.id === player.id,
           })}
         >
+          {props.matchId && props.showBilliardsBalls !== null ? (
+            <img
+              className="h-6 w-6 object-contain"
+              src={props.showBilliardsBalls === 'YELLOW' ? '/images/yellow-ball.png' : '/images/white-ball.png'}
+            />
+          ) : (
+            <></>
+          )}
           {player.name}
         </button>
       ))}

@@ -20,6 +20,7 @@ import {
   handleChangeScoreOnTrigger,
   handleConcedeFrame,
   handleCorrectionState,
+  handleEndFrame,
   handleFoulScore,
   handleMatchStart,
   handlePlayerSelectState,
@@ -28,7 +29,7 @@ import {
   handleSettingsStateUpdate,
   handleUndoScoreClicked,
   matchSyncDataFromBackend,
-} from '@/stores/thunks/snookerThunks';
+} from '@/stores/thunks/sportThunks';
 import { getActiveTeam, getActiveSet } from '@/stores/selectors/commonSport';
 import useTimer from '@/hooks/useTimer';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
@@ -44,7 +45,7 @@ import useBackButtonHandler from './useOnBackButtonClick';
 
 const useSnookerScoring = () => {
   // REDUX STATE
-  const snookerScoring = useSelector((state: RootState) => state.snooker);
+  const snookerScoring = useSelector((state: RootState) => state.sport);
   const clubs = useSelector((state: RootState) => state.club);
   const { team1score, team2score } = useSelector(getTeamSetScores);
   const activeTurnPointTypes = useSelector(getActiveTurnPointTypes);
@@ -64,7 +65,7 @@ const useSnookerScoring = () => {
   // HANDLER ON MANUAL BACK BUTTOON CLICK
   const handleBackButtonClick = async () => {
     console.log('back button pressed');
-  }
+  };
 
   // HOOKS
   const dispatch = useAppDispatch();
@@ -172,6 +173,8 @@ const useSnookerScoring = () => {
       streamingType: snookerScoring.streaming,
       venueId: clubs.activeClub!.venueId,
       handicap: snookerScoring.handicap,
+      maxScorePerSet: snookerScoring.maxScorePerSet,
+      noOfSets: snookerScoring.noOfSets,
     });
 
     if (matchId) {
@@ -338,11 +341,30 @@ const useSnookerScoring = () => {
     navigate('/');
   };
 
+  const handleEndFrameButton = async () => {
+    setShowLoadingModal(true);
+
+    const activeSet = getActiveSet(snookerScoring.scoreHistory);
+    if (activeSet && activeSet.status === 'ONGOING') {
+      await dispatch(handleEndFrame({ updateUndoStack: true }));
+    }
+
+    setShowLoadingModal(false);
+  };
+
   const handleEndGame = async () => {
+    setShowLoadingModal(true);
+    const activeSet = getActiveSet(snookerScoring.scoreHistory);
+    if (activeSet && activeSet.status === 'ONGOING') {
+      await dispatch(handleEndFrame({ updateUndoStack: true }));
+    }
+
     const res = await matchEndGameRequest({ id: snookerScoring.matchId! });
     if (res === true) {
       await handleGoToHome();
     }
+
+    setShowLoadingModal(false);
   };
 
   const handleConcedeFrameSelection = async (values: SnookerConcedeFrameData) => {
@@ -428,6 +450,7 @@ const useSnookerScoring = () => {
     showConcedeFrameDrawer,
     setShowConcedeFrameDrawer,
     loading,
+    handleEndFrameButton
   };
 };
 

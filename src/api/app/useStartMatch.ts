@@ -7,7 +7,7 @@ interface MatchStartDataProps {
     expectedEndTimeDate: Date,
     clubId: string,
     sport: 'BILLIARDS' | 'SNOOKER',
-    sportType: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED',
+    sportType: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED',
     venueId: string,
     sideOnePlayerOneId: string,
     sideOnePlayerTwoId?: string,
@@ -15,6 +15,8 @@ interface MatchStartDataProps {
     sideTwoPlayerTwoId?: string,
     streamingType: 'PUBLIC' | 'PRIVATE',
     handicap: number;
+    maxScorePerSet: number | null,
+    noOfSets: number | null
 }
 
 interface MatchStartResponse {

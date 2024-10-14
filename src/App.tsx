@@ -7,6 +7,7 @@ import ProtectedRoute from './components/common/protectedRoute';
 import { Home } from './pages/app/Home';
 import { SnookerScoring } from './pages/app/SnookerScoring';
 import { ScoreBoard } from './pages/app/ScoreBoard';
+import { BilliardsScoring } from './pages/app/billiardsScoring';
 
 
 const App: React.FC = () => {
@@ -22,6 +23,7 @@ const App: React.FC = () => {
         <Route element={<ProtectedRoute />}>
           <Route path="/app/home" element={<Home />} />
           <Route path="/app/snooker" element={<SnookerScoring />} />
+          <Route path="/app/billiards" element={<BilliardsScoring />} />
           <Route path="/app/scoreboard" element={<ScoreBoard />} />
         </Route>
         <Route path="/login" element={<Login />} />

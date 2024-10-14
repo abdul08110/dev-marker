@@ -1,3 +1,4 @@
+
 import { type Set, TeamDetails, Turn, Point } from '../types';
 
 const getLastElement = <T>(array: T[]): T | null => (array.length > 0 ? array[array.length - 1] : null);
@@ -16,7 +17,7 @@ export const getLastSetIndex = (sets: Set[]): number => (sets.length > 0 ? sets.
 
 // TURNS
 
-export const getActiveTurn = (set: Set | null): Turn | null => (set ? getLastElement(set.turns) : null);
+export const getActiveTurn = (set: Set | null | undefined): Turn | null => (set ? getLastElement(set.turns) : null);
 
 export const getLastTurn = (set: Set): Turn | null => getSecondLastElement(set.turns);
 

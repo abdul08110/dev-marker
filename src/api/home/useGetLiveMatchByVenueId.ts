@@ -6,6 +6,7 @@ import { ApiResponse } from '@/types';
 
 interface MarkerMatchByVenueResponse {
     matchId: string | null;
+    sport: 'BILLIARDS' | 'SNOOKER' | null;
 }
 
 const useMarkerGetLiveMatchByVenue = () => {

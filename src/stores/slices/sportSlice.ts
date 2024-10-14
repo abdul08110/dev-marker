@@ -1,15 +1,18 @@
 /**
- * DEFINES SNOOKER SCORING STATE AND DISPATCH FUNCTIONS
+ *  SPORT SLICER
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Player, Point, SnookerScoringState } from '../types';
+import { GeneralScoringState, Player, Point } from '../types';
 import { getTeamKey } from '../selectors/commonSport';
 
-const initialState: SnookerScoringState = {
+const initialState: GeneralScoringState = {
   format: 'SNOOKER_15_RED',
   matchId: null,
   isBackendUpdated: true,
+  noOfSets: null,
+  maxScorePerSet: null,
+  sport: 'SNOOKER',
   team1Score: 0,
   team2Score: 0,
   numberAhead: 0,
@@ -43,8 +46,8 @@ const initialState: SnookerScoringState = {
   startTimeDate: null,
 };
 
-const snookerSlice = createSlice({
-  name: 'snooker',
+const sportSlice = createSlice({
+  name: 'sport',
   initialState,
   reducers: {
     setTeamPlayer(state, action: PayloadAction<{ teamIndex: number; playerIndex: number; player: Player }>) {
@@ -54,11 +57,12 @@ const snookerSlice = createSlice({
         isActive: false,
       };
     },
-    resetState(state) {
+    resetStateSnooker(state) {
       Object.assign(state, {
         format: 'SNOOKER_15_RED',
         matchId: null,
         isBackendUpdated: true,
+        sport: 'SNOOKER',
         team1Score: 0,
         team2Score: 0,
         numberAhead: 0,
@@ -90,6 +94,49 @@ const snookerSlice = createSlice({
         timeInMinutes: 30,
         scoreHistory: [],
         startTimeDate: null,
+        noOfSets: null,
+        maxScorePerSet: null,
+      });
+    },
+    resetStateBilliards(state) {
+      Object.assign(state, {
+        format: 'BILLIARDS_TIME_BASED',
+        matchId: null,
+        isBackendUpdated: true,
+        sport: 'BILLIARDS',
+        team1Score: 0,
+        team2Score: 0,
+        numberAhead: 0,
+        numberOn: 0,
+        team1: {
+          players: [
+            {
+              name: 'Player 1',
+              isActive: false,
+              id: null,
+              profilePhoto: null,
+            },
+          ],
+          score: 0,
+        },
+        team2: {
+          players: [
+            {
+              name: 'Player 2',
+              isActive: false,
+              id: null,
+              profilePhoto: null,
+            },
+          ],
+          score: 0,
+        },
+        handicap: 0,
+        streaming: 'PUBLIC',
+        timeInMinutes: 30,
+        scoreHistory: [],
+        startTimeDate: null,
+        noOfSets: null,
+        maxScorePerSet: null,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
@@ -105,7 +152,7 @@ const snookerSlice = createSlice({
         player.isActive = player.id === id;
       });
     },
-    setState(state, action: PayloadAction<{ data: SnookerScoringState }>) {
+    setState(state, action: PayloadAction<{ data: GeneralScoringState }>) {
       Object.assign(state, action.payload.data);
     },
     createSet(state, action: PayloadAction<{ scoreOrder: string[] }>) {
@@ -117,15 +164,15 @@ const snookerSlice = createSlice({
         turns: [],
         status: 'ONGOING',
         snookerCorrections: [],
+        billiardsCorrections: [],
         scoreOrder: scoreOrder,
         setConcededTo: null,
       });
     },
-    createCorrection(
+    createSnookerCorrection(
       state,
       action: PayloadAction<{
         setIndex: number;
-        correctionId: string | null;
         teamOneScore: number;
         teamTwoScore: number;
         redsRemaining: number;
@@ -181,6 +228,7 @@ const snookerSlice = createSlice({
     },
     handleResetSet(state, action: PayloadAction<{ setIndex: number }>) {
       state.scoreHistory[action.payload.setIndex].snookerCorrections = [];
+      state.scoreHistory[action.payload.setIndex].billiardsCorrections = [];
       state.scoreHistory[action.payload.setIndex].teamOneScore = 0;
       state.scoreHistory[action.payload.setIndex].teamTwoScore = 0;
       state.scoreHistory[action.payload.setIndex].turns = [];
@@ -192,25 +240,9 @@ const snookerSlice = createSlice({
         state.team2Score += action.payload.score;
       }
     },
-    decrementTotalScore(state, action: PayloadAction<{ score: number; teamIndex: number }>) {
-      if (action.payload.teamIndex === 0) {
-        state.team1Score -= action.payload.score;
-      } else {
-        state.team2Score -= action.payload.score;
-      }
-    },
     changeSetScore(state, action: PayloadAction<{ score: number; teamIndex: number; setIndex: number }>) {
       const teamName = action.payload.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
       state.scoreHistory[action.payload.setIndex][teamName] = action.payload.score;
-    },
-    decrementTurnScore(state, action: PayloadAction<{ score: number; setIndex: number; turnIndex: number }>) {
-      const data = action.payload;
-      state.scoreHistory[data.setIndex].turns[data.turnIndex].score -= action.payload.score;
-    },
-    decrementSetScore(state, action: PayloadAction<{ score: number; teamIndex: number; setIndex: number }>) {
-      const data = action.payload;
-      const teamName = data.teamIndex === 0 ? 'teamOneScore' : 'teamTwoScore';
-      state.scoreHistory[data.setIndex][teamName] -= action.payload.score;
     },
     updateHandicap(state, action: PayloadAction<{ handicap: number }>) {
       state.handicap = action.payload.handicap;
@@ -218,8 +250,14 @@ const snookerSlice = createSlice({
     updateTimeInMinutes(state, action: PayloadAction<{ timeInMinutes: number }>) {
       state.timeInMinutes = action.payload.timeInMinutes;
     },
-    updateFormat(state, action: PayloadAction<{ format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' }>) {
+    updateFormat(state, action: PayloadAction<{ format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED' }>) {
       state.format = action.payload.format;
+    },
+    updateNoOfSets(state, action: PayloadAction<{ no: number }>) {
+      state.noOfSets = action.payload.no;
+    },
+    updateMaxScorePerSet(state, action: PayloadAction<{ maxScorePerSet: number }>) {
+      state.maxScorePerSet = action.payload.maxScorePerSet;
     },
     updateStreaming(state, action: PayloadAction<{ streaming: 'PUBLIC' | 'PRIVATE' }>) {
       state.streaming = action.payload.streaming;
@@ -272,8 +310,6 @@ export const {
   changeTurnScore,
   changeSetScore,
   completeSet,
-  decrementTurnScore,
-  decrementSetScore,
   addPlayer,
   changeAheadNumber,
   changeOnNumber,
@@ -282,14 +318,15 @@ export const {
   reverseTeamPlayers,
   updateMatchStartedTimeDateUtc,
   deleteSet,
-  decrementTotalScore,
   changeSetStatus,
   createSet,
   setState,
-  createCorrection,
+  createSnookerCorrection,
   concedeSet,
   handleResetSet,
   handleBackendUpdatedState,
-  resetState
-} = snookerSlice.actions;
-export default snookerSlice.reducer;
+  resetStateSnooker,
+  updateNoOfSets,
+  updateMaxScorePerSet
+} = sportSlice.actions;
+export default sportSlice.reducer;

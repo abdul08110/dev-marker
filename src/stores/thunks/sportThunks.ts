@@ -12,7 +12,7 @@ import {
   changeTurnScore,
   completeSet,
   concedeSet,
-  createCorrection,
+  createSnookerCorrection,
   createPoint,
   createSet,
   createTurn,
@@ -29,8 +29,10 @@ import {
   updateMatchStartedTimeDateUtc,
   updateStreaming,
   updateTimeInMinutes,
-} from '../slices/snookerSlice';
-import { Player, SnookerPointType, SnookerScoringState } from '../types';
+  updateNoOfSets,
+  updateMaxScorePerSet,
+} from '../slices/sportSlice';
+import { BilliardPointType, Player, SnookerPointType } from '../types';
 import {
   adjustColorBallsPottedWithFreeBall,
   ballsToPointsEnum,
@@ -51,19 +53,21 @@ import {
   getActiveTurnIndex,
   getTeamKey,
 } from '../selectors/commonSport';
-import { UndoSnookerTypes, clearUndoStack, popFromUndoStack, pushToUndoStack } from '../slices/undoSlice';
+import { clearUndoStack, popFromUndoStack, pushToUndoStack } from '../slices/undoSlice';
 import { matchUpdateDataRequest, reversePlayersRequest } from '@/api/scoring/scoringFunctions';
 import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
 import { MatchStartResponse } from '@/api/app/useGetMatchData';
+import { ballsToPointsEnumBilliards } from '../selectors/billiardsSelector';
 
 // HANDLE SCORE UPDATE FROM THE BACKEND.
 export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStartResponse }, { dispatch: AppDispatch }>(
-  'snooker/matchSyncDataFromBackend',
+  'sport/matchSyncDataFromBackend',
   async ({ data }, { dispatch }) => {
     let newState = {
       format: data.sportType,
       matchId: data.id,
+      sport: data.sport,
       isBackendUpdated: true,
       team1Score: data.teamOneScore,
       team2Score: data.teamTwoScore,
@@ -96,6 +100,8 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       timeInMinutes: 30,
       scoreHistory: data.sets,
       startTimeDate: data.actualStartTimeDate,
+      noOfSets: null,
+      maxScorePerSet: null,
     };
 
     if (data.sideTwoPlayerTwo !== null) {
@@ -124,7 +130,9 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       }),
     );
 
-    await dispatch(handleSelectionOfOnAndAheadScores({}));
+    if (data.sport === 'SNOOKER') {
+      await dispatch(handleSelectionOfOnAndAheadScores({}));
+    }
   },
 );
 
@@ -134,10 +142,10 @@ export const handleMatchStart = createAsyncThunk<
   void,
   { matchId: string; scoreOrder: string[] },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleMatchStart', async ({ matchId, scoreOrder }, { dispatch, getState }) => {
+>('sport/handleMatchStart', async ({ matchId, scoreOrder }, { dispatch, getState }) => {
   const state = getState();
-  const activePlayer = getActivePlayer(state.snooker.team1, state.snooker.team2);
-  const activeTeam = getActiveTeam(state.snooker.team1, state.snooker.team2);
+  const activePlayer = getActivePlayer(state.sport.team1, state.sport.team2);
+  const activeTeam = getActiveTeam(state.sport.team1, state.sport.team2);
 
   if (!activePlayer || !activePlayer.id || activeTeam === null) return;
 
@@ -149,40 +157,43 @@ export const handleMatchStart = createAsyncThunk<
   );
   await dispatch(updateMatchStartedTimeDateUtc({ startTimeDate: new Date().toISOString() }));
 
-  if (activeTeam === 1) await dispatch(handleReversePlayers({ matchId }));
+  if (activeTeam === 1 && state.sport.sport === 'SNOOKER') await dispatch(handleReversePlayers({ matchId }));
   await dispatch(handleCreateSet({ matchId, scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
-  await dispatch(handleSelectionOfOnAndAheadScores({}));
+
+  if (state.sport.sport === 'SNOOKER') {
+    await dispatch(handleSelectionOfOnAndAheadScores({}));
+  }
 
   await dispatch(changeBackendUpdatedState({ value: false }));
-  await dispatch(pushToUndoStackSnooker({ actionType: UndoSnookerTypes.MATCH_START }));
+  await dispatch(pushToUndoStackSnooker({}));
 });
 
 export const handleBreakOff = createAsyncThunk<
   void,
   { scoreOrder: string[] },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleBreakOff', async ({ scoreOrder }, { dispatch, getState }) => {
+>('sport/handleBreakOff', async ({ scoreOrder }, { dispatch, getState }) => {
   const state = getState();
 
   await dispatch(setActivePlayer({ playerId: scoreOrder[0] }));
-  await dispatch(handleCreateSet({ matchId: state.snooker.matchId!, scoreOrder: scoreOrder }));
-  await dispatch(handleCreateTurn({ setIndex: state.snooker.scoreHistory.length, playerId: scoreOrder[0] }));
+  await dispatch(handleCreateSet({ matchId: state.sport.matchId!, scoreOrder: scoreOrder }));
+  await dispatch(handleCreateTurn({ setIndex: state.sport.scoreHistory.length, playerId: scoreOrder[0] }));
   await dispatch(handleSelectionOfOnAndAheadScores({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
-  await dispatch(pushToUndoStackSnooker({ actionType: UndoSnookerTypes.MATCH_START }));
+  await dispatch(pushToUndoStackSnooker({}));
 });
 
 export const handleConcedeFrame = createAsyncThunk<
   void,
   { values: SnookerConcedeFrameData },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleConcedeFrame', async ({ values }, { dispatch, getState }) => {
+>('sport/handleConcedeFrame', async ({ values }, { dispatch, getState }) => {
   let state = getState();
 
-  const activeSet = getActiveSet(state.snooker.scoreHistory);
-  const activeSetIndex = getActiveSetIndex(state.snooker.scoreHistory);
+  const activeSet = getActiveSet(state.sport.scoreHistory);
+  const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
 
   if (!activeSet) return;
 
@@ -194,16 +205,16 @@ export const handleConcedeFrame = createAsyncThunk<
   await dispatch(changeOnNumber({ value: 0 }));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
-  await dispatch(pushToUndoStackSnooker({ actionType: UndoSnookerTypes.MATCH_START }));
+  await dispatch(pushToUndoStackSnooker({}));
 });
 
 export const handleRerackState = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
-  'snooker/handleConcedeFrame',
+  'sport/handleConcedeFrame',
   async ({}, { dispatch, getState }) => {
     let state = getState();
 
-    const activeSet = getActiveSet(state.snooker.scoreHistory);
-    const activeSetIndex = getActiveSetIndex(state.snooker.scoreHistory);
+    const activeSet = getActiveSet(state.sport.scoreHistory);
+    const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
 
     if (!activeSet) return;
 
@@ -213,7 +224,7 @@ export const handleRerackState = createAsyncThunk<void, {}, { state: RootState; 
     await dispatch(handleSelectionOfOnAndAheadScores({}));
 
     await dispatch(changeBackendUpdatedState({ value: false }));
-    await dispatch(pushToUndoStackSnooker({ actionType: UndoSnookerTypes.MATCH_START }));
+    await dispatch(pushToUndoStackSnooker({}));
   },
 );
 
@@ -221,16 +232,15 @@ export const handleCorrectionState = createAsyncThunk<
   void,
   { values: SnookerScoreCorrectionData },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleCorrection', async ({ values }, { dispatch, getState }) => {
+>('sport/handleCorrection', async ({ values }, { dispatch, getState }) => {
   let state = getState();
-  const activeSet = getActiveSet(state.snooker.scoreHistory);
-  const activeSetIndex = getActiveSetIndex(state.snooker.scoreHistory);
+  const activeSet = getActiveSet(state.sport.scoreHistory);
+  const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
 
   if (!activeSet) return;
 
   await dispatch(
-    createCorrection({
-      correctionId: null,
+    createSnookerCorrection({
       redsRemaining: values.redsRemaining,
       setIndex: activeSetIndex,
       teamOneScore: values.teamOneScore,
@@ -243,31 +253,90 @@ export const handleCorrectionState = createAsyncThunk<
   await dispatch(handleSelectionOfOnAndAheadScores({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
-  await dispatch(pushToUndoStackSnooker({ actionType: UndoSnookerTypes.MATCH_START }));
+  await dispatch(pushToUndoStackSnooker({}));
+});
+
+export const handleBilliardsPointTrigger = createAsyncThunk<
+  void,
+  { buttonType: BilliardPointType },
+  { state: RootState; dispatch: AppDispatch }
+>('sport/handleBilliardsPointTrigger', async ({ buttonType }, { dispatch, getState }) => {
+  let state = getState();
+
+  let point = buttonType === BilliardPointType.FOUL ? 0 : ballsToPointsEnumBilliards[buttonType];
+  let penalty = buttonType === BilliardPointType.FOUL ? ballsToPointsEnumBilliards[buttonType] : 0;
+
+  const activeTeam = getActiveTeam(state.sport.team1, state.sport.team2);
+  const activeSet = getActiveSet(state.sport.scoreHistory);
+  const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
+  const activeTurn = getActiveTurn(activeSet ? activeSet : null);
+  const activeTurnIndex = getActiveTurnIndex(activeSet ? activeSet : null);
+
+  if (!activeSet || !activeTurn || activeTeam === null) return;
+
+  await dispatch(
+    handleCreateBilliardsPoint({
+      score: point,
+      penalty: penalty,
+      type: buttonType,
+    }),
+  );
+  await dispatch(
+    handleChangeTurnScore({
+      setIndex: activeSetIndex,
+      turnIndex: activeTurnIndex,
+      score: activeTurn.score + point,
+    }),
+  );
+
+  if (penalty > 0) {
+    await dispatch(
+      handleChangeSetScore({
+        score: activeTeam === 0 ? penalty + activeSet.teamTwoScore : penalty + activeSet.teamOneScore,
+        teamIndex: activeTeam === 0 ? 1 : 0,
+        setIndex: activeSetIndex,
+      }),
+    );
+
+    await dispatch(handleTeamSwitch({}));
+  } else {
+    await dispatch(
+      handleChangeSetScore({
+        score: activeTeam === 0 ? point + activeSet.teamOneScore : point + activeSet.teamTwoScore,
+        teamIndex: activeTeam,
+        setIndex: activeSetIndex,
+      }),
+    );
+  }
+
+  await dispatch(handleBilliardsChangeScoreCompletetion({}));
+
+  await dispatch(changeBackendUpdatedState({ value: false }));
+  await dispatch(pushToUndoStackSnooker({}));
 });
 
 export const handleChangeScoreOnTrigger = createAsyncThunk<
   void,
   { pointType: SnookerPointType; isLongShot: boolean },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleChangeScore', async ({ pointType, isLongShot }, { dispatch, getState }) => {
+>('sport/handleChangeScore', async ({ pointType, isLongShot }, { dispatch, getState }) => {
   let state = getState();
   let point = ballsToPointsEnum[pointType];
 
-  const activeTeam = getActiveTeam(state.snooker.team1, state.snooker.team2);
-  const activeSet = getActiveSet(state.snooker.scoreHistory);
-  const activeSetIndex = getActiveSetIndex(state.snooker.scoreHistory);
+  const activeTeam = getActiveTeam(state.sport.team1, state.sport.team2);
+  const activeSet = getActiveSet(state.sport.scoreHistory);
+  const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
   const activeTurn = getActiveTurn(activeSet ? activeSet : null);
   const activeTurnIndex = getActiveTurnIndex(activeSet ? activeSet : null);
 
   if (!activeSet || !activeTurn || activeTeam === null) return;
 
-  const isFreeBall = checkIfLastBallIsFreeBall(state.snooker.scoreHistory);
+  const isFreeBall = checkIfLastBallIsFreeBall(state.sport.scoreHistory);
 
   if (isFreeBall) {
     const redsLeft = calculateRedsLeft(
       activeSet ? activeSet.turns : [],
-      state.snooker.format,
+      state.sport.format,
       activeSet && activeSet.snookerCorrections ? activeSet.snookerCorrections : [],
     );
     if (redsLeft === 0) {
@@ -319,18 +388,18 @@ export const handleChangeScoreOnTrigger = createAsyncThunk<
 
   await dispatch(changeBackendUpdatedState({ value: false }));
   await dispatch(handleSelectionOfOnAndAheadScores({}));
-  await dispatch(pushToUndoStackSnooker({ actionType: UndoSnookerTypes.POINT }));
+  await dispatch(pushToUndoStackSnooker({}));
 });
 
 export const handleSelectionOfBreakOffTeam = createAsyncThunk<
   void,
   { teamIndex: number },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleSelectionOfBreakOffTeam', async ({ teamIndex }, { dispatch, getState }) => {
+>('sport/handleSelectionOfBreakOffTeam', async ({ teamIndex }, { dispatch, getState }) => {
   const state = getState();
   const teamKey = getTeamKey(teamIndex);
 
-  const playerId = state.snooker[teamKey].players[0].id!;
+  const playerId = state.sport[teamKey].players[0].id!;
   await dispatch(setActivePlayer({ playerId }));
 });
 
@@ -338,7 +407,7 @@ export const handlePlayerSelectState = createAsyncThunk<
   void,
   { player: Player; playerIndex: number; teamIndex: number },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handlePlayerSelect', async ({ player, playerIndex, teamIndex }, { dispatch }) => {
+>('sport/handlePlayerSelect', async ({ player, playerIndex, teamIndex }, { dispatch }) => {
   await dispatch(
     setTeamPlayer({
       player: player,
@@ -352,11 +421,11 @@ export const handleFoulScore = createAsyncThunk<
   void,
   { penalty: number; missCalled: boolean; freeBall: boolean; redsLost: number },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleFoulScore', async ({ penalty, missCalled, freeBall, redsLost }, { dispatch, getState }) => {
+>('sport/handleFoulScore', async ({ penalty, missCalled, freeBall, redsLost }, { dispatch, getState }) => {
   const state = getState();
-  const activeTeam = getActiveTeam(state.snooker.team1, state.snooker.team2);
-  const activeSet = getActiveSet(state.snooker.scoreHistory);
-  const activeSetIndex = getActiveSetIndex(state.snooker.scoreHistory);
+  const activeTeam = getActiveTeam(state.sport.team1, state.sport.team2);
+  const activeSet = getActiveSet(state.sport.scoreHistory);
+  const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
 
   if (!activeSet || activeTeam === null) return;
 
@@ -384,7 +453,7 @@ export const handleFoulScore = createAsyncThunk<
   await dispatch(handleSelectionOfOnAndAheadScores({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
-  await dispatch(pushToUndoStackSnooker({ actionType: UndoSnookerTypes.FOUL }));
+  await dispatch(pushToUndoStackSnooker({}));
 });
 
 export const handleSettingsStateUpdate = createAsyncThunk<
@@ -398,9 +467,8 @@ export const handleSettingsStateUpdate = createAsyncThunk<
   },
   { state: RootState; dispatch: AppDispatch }
 >(
-  'snooker/handleSettingsUpdate',
+  'sport/handleSettingsUpdate',
   async ({ format, durationInMinutes, noOfPlayers, streaming, handicap }, { dispatch }) => {
-    await dispatch(updateFormat({ format }));
     await dispatch(updateTimeInMinutes({ timeInMinutes: timeStringToDecimalMinutes(durationInMinutes) }));
     await dispatch(updateFormat({ format: format }));
     await dispatch(updateStreaming({ streaming }));
@@ -413,12 +481,38 @@ export const handleSettingsStateUpdate = createAsyncThunk<
   },
 );
 
-export const handleEndFrame = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
-  'snooker/handleEndFrame',
-  async ({}, { dispatch, getState }) => {
+export const handleSettingsStateUpdateBilliards = createAsyncThunk<
+  void,
+  {
+    format: 'BILLIARDS_TIME_BASED' | 'BILLIARDS_RACE_TO';
+    durationInMinutes: string;
+    noOfFrames: number;
+    maxPointsPerFrame: number;
+    streaming: 'PUBLIC' | 'PRIVATE';
+    handicap: number;
+  },
+  { state: RootState; dispatch: AppDispatch }
+>(
+  'sport/handleSettingsUpdateBilliards',
+  async ({ format, durationInMinutes, noOfFrames, maxPointsPerFrame, streaming, handicap }, { dispatch }) => {
+    await dispatch(updateFormat({ format }));
+    await dispatch(updateTimeInMinutes({ timeInMinutes: timeStringToDecimalMinutes(durationInMinutes) }));
+    await dispatch(updateStreaming({ streaming }));
+    await dispatch(updateHandicap({ handicap }));
+
+    if (format === 'BILLIARDS_RACE_TO') {
+      await dispatch(updateNoOfSets({ no: noOfFrames }));
+      await dispatch(updateMaxScorePerSet({ maxScorePerSet: maxPointsPerFrame }));
+    }
+  },
+);
+
+export const handleEndFrame = createAsyncThunk<void, { updateUndoStack: boolean }, { state: RootState; dispatch: AppDispatch }>(
+  'sport/handleEndFrame',
+  async ({ updateUndoStack }, { dispatch, getState }) => {
     const state = getState();
-    const activeSet = getActiveSet(state.snooker.scoreHistory);
-    const activeSetIndex = getActiveSetIndex(state.snooker.scoreHistory);
+    const activeSet = getActiveSet(state.sport.scoreHistory);
+    const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
 
     if (!activeSet) return;
 
@@ -426,18 +520,24 @@ export const handleEndFrame = createAsyncThunk<void, {}, { state: RootState; dis
     await dispatch(incrementTotalScore({ teamIndex: winningTeamIndex, score: 1 }));
     await dispatch(completeSet({ setIndex: activeSetIndex }));
     await dispatch(setActivePlayer({ playerId: activeSet.scoreOrder[1] }));
+
+    if (updateUndoStack) {
+      await dispatch(pushToUndoStackSnooker({}));
+    }
+
+    await dispatch(changeBackendUpdatedState({ value: false }));
   },
 );
 
 export const handleUndoScoreClicked = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
-  'snooker/handleUndoScoreClicked',
+  'sport/handleUndoScoreClicked',
   async ({}, { dispatch, getState }) => {
     const state = getState();
     const newState = state.undo.undoStack[state.undo.undoStack.length - 2].previousState;
 
     if (!newState) return;
 
-    await dispatch(setState({ data: newState as any as SnookerScoringState }));
+    await dispatch(setState({ data: newState }));
     await dispatch(popFromUndoStack());
 
     await dispatch(changeBackendUpdatedState({ value: false }));
@@ -445,20 +545,20 @@ export const handleUndoScoreClicked = createAsyncThunk<void, {}, { state: RootSt
 );
 
 export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
-  'snooker/handleBackendUpdateOfData',
+  'sport/handleBackendUpdateOfData',
   async ({}, { dispatch, getState }) => {
     const state = getState();
 
-    if (state.snooker.isBackendUpdated === false) {
-      const activePlayer = getActivePlayer(state.snooker.team1, state.snooker.team2);
-      const activeSet = getActiveSet(state.snooker.scoreHistory);
+    if (state.sport.isBackendUpdated === false) {
+      const activePlayer = getActivePlayer(state.sport.team1, state.sport.team2);
+      const activeSet = getActiveSet(state.sport.scoreHistory);
 
       const res = await matchUpdateDataRequest({
-        matchId: state.snooker.matchId!,
+        matchId: state.sport.matchId!,
         activePlayerId: activePlayer ? activePlayer.id : null,
-        sets: state.snooker.scoreHistory,
-        teamOneScore: state.snooker.team1Score,
-        teamTwoScore: state.snooker.team2Score,
+        sets: state.sport.scoreHistory,
+        teamOneScore: state.sport.team1Score,
+        teamTwoScore: state.sport.team2Score,
         currentSetTeamOneScore: activeSet ? activeSet.teamOneScore : 0,
         currentSetTeamTwoScore: activeSet ? activeSet.teamTwoScore : 0,
       });
@@ -476,10 +576,10 @@ export const handleSelectionOfOnAndAheadScores = createAsyncThunk<
   void,
   {},
   { state: RootState; dispatch: AppDispatch }
->('snooker/updateAheadAndOnScores', async ({}, { dispatch, getState }) => {
+>('sport/updateAheadAndOnScores', async ({}, { dispatch, getState }) => {
   let state = getState();
-  const activeSet = getActiveSet(state.snooker.scoreHistory);
-  const activeTeam = getActiveTeam(state.snooker.team1, state.snooker.team2);
+  const activeSet = getActiveSet(state.sport.scoreHistory);
+  const activeTeam = getActiveTeam(state.sport.team1, state.sport.team2);
 
   if (!activeSet) return;
 
@@ -488,10 +588,10 @@ export const handleSelectionOfOnAndAheadScores = createAsyncThunk<
 
   if (activeSet.status === 'ONGOING') {
     numberAhead = await getNumberAhead(activeSet, activeTeam === 0 ? 'team1' : 'team2');
-    numberOn = await getNumberOnTableOfTheCurrentFrame(activeSet, state.snooker.format);
+    numberOn = await getNumberOnTableOfTheCurrentFrame(activeSet, state.sport.format);
 
     if (numberOn === 0) {
-      await dispatch(handleEndFrame({}));
+      await dispatch(handleEndFrame({ updateUndoStack: false }));
     }
   }
 
@@ -499,28 +599,26 @@ export const handleSelectionOfOnAndAheadScores = createAsyncThunk<
   await dispatch(changeOnNumber({ value: numberOn }));
 });
 
-export const pushToUndoStackSnooker = createAsyncThunk<
-  void,
-  { actionType: UndoSnookerTypes },
-  { state: RootState; dispatch: AppDispatch }
->('snooker/pushToUndoStackSnooker', async ({ actionType }, { dispatch, getState }) => {
-  let state = getState();
-  const data = {
-    sliceName: 'snooker',
-    previousState: state.snooker,
-    type: actionType,
-  };
-  await dispatch(pushToUndoStack(data));
-});
+export const pushToUndoStackSnooker = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
+  'sport/pushToUndoStackSnooker',
+  async ({}, { dispatch, getState }) => {
+    let state = getState();
+    const data = {
+      sliceName: 'sport',
+      previousState: state.sport,
+    };
+    await dispatch(pushToUndoStack(data));
+  },
+);
 
 export const handleTeamSwitch = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
-  'snooker/handleTeamSwitch',
+  'sport/handleTeamSwitch',
   async ({}, { dispatch, getState }) => {
     const state = getState();
-    const matchId = state.snooker.matchId;
-    const activePlayer = getActivePlayer(state.snooker.team1, state.snooker.team2);
-    const activeSet = getActiveSet(state.snooker.scoreHistory);
-    const activeSetIndex = getActiveSetIndex(state.snooker.scoreHistory);
+    const matchId = state.sport.matchId;
+    const activePlayer = getActivePlayer(state.sport.team1, state.sport.team2);
+    const activeSet = getActiveSet(state.sport.scoreHistory);
+    const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
 
     if (!activeSet || !activePlayer || !matchId) return;
 
@@ -538,22 +636,18 @@ export const handleReversePlayers = createAsyncThunk<
   void,
   { matchId: string },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleReversePlayers', async ({ matchId }, { dispatch, getState }) => {
-  const state = getState();
+>('sport/handleReversePlayers', async ({ matchId }, { dispatch }) => {
 
   await reversePlayersRequest({ id: matchId });
-  await dispatch(reverseTeamPlayers());
 
-  if (state.snooker.handicap) {
-    await dispatch(updateHandicap({ handicap: -state.snooker.handicap }));
-  }
+  await dispatch(handleReversePlayersState({}));
 });
 
 export const handleCreateSet = createAsyncThunk<
   void,
   { matchId: string; scoreOrder: string[] },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleCreateSet', async ({ scoreOrder }, { dispatch }) => {
+>('sport/handleCreateSet', async ({ scoreOrder }, { dispatch }) => {
   await dispatch(createSet({ scoreOrder }));
 });
 
@@ -561,7 +655,7 @@ export const handleCreateTurn = createAsyncThunk<
   void,
   { setIndex: number; playerId: string },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleCreateTurn', async ({ setIndex, playerId }, { dispatch }) => {
+>('sport/handleCreateTurn', async ({ setIndex, playerId }, { dispatch }) => {
   await dispatch(createTurn({ setIndex: setIndex, playerId: playerId }));
 });
 
@@ -578,16 +672,16 @@ export const handleCreatePoint = createAsyncThunk<
   },
   { state: RootState; dispatch: AppDispatch }
 >(
-  'snooker/handleCreatePoint',
+  'sport/handleCreatePoint',
   async ({ score, penalty, type, isLongShot, missCalled, freeBall, redsLost }, { dispatch, getState }) => {
     const state = getState();
-    const activeSet = getActiveSet(state.snooker.scoreHistory);
+    const activeSet = getActiveSet(state.sport.scoreHistory);
     if (!activeSet) return;
     const activeTurn = getActiveTurn(activeSet);
     if (!activeTurn) return;
 
     const activeTurnIndex = getActiveTurnIndex(activeSet);
-    const activeSetIndex = getActiveSetIndex(state.snooker.scoreHistory);
+    const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
 
     await dispatch(
       createPoint({
@@ -610,11 +704,45 @@ export const handleCreatePoint = createAsyncThunk<
   },
 );
 
+export const handleCreateBilliardsPoint = createAsyncThunk<
+  void,
+  {
+    score: number;
+    penalty: number;
+    type: BilliardPointType;
+  },
+  { state: RootState; dispatch: AppDispatch }
+>('sport/handleCreateBilliardsPoint', async ({ score, penalty, type }, { dispatch, getState }) => {
+  const state = getState();
+  const activeSet = getActiveSet(state.sport.scoreHistory);
+  if (!activeSet) return;
+  const activeTurn = getActiveTurn(activeSet);
+  if (!activeTurn) return;
+
+  const activeTurnIndex = getActiveTurnIndex(activeSet);
+  const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
+
+  await dispatch(
+    createPoint({
+      point: {
+        billiardsPoint: {
+          type,
+          penalty,
+          score,
+        },
+        timeScored: new Date().toISOString(),
+      },
+      setIndex: activeSetIndex,
+      turnIndex: activeTurnIndex,
+    }),
+  );
+});
+
 export const handleChangeTurnScore = createAsyncThunk<
   void,
   { setIndex: number; turnIndex: number; score: number },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleCreateTurnScore', async ({ setIndex, turnIndex, score }, { dispatch }) => {
+>('sport/handleCreateTurnScore', async ({ setIndex, turnIndex, score }, { dispatch }) => {
   await dispatch(
     changeTurnScore({
       setIndex: setIndex,
@@ -628,7 +756,7 @@ export const handleChangeSetScore = createAsyncThunk<
   void,
   { setIndex: number; teamIndex: number; score: number },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleCreateTurn', async ({ setIndex, teamIndex, score }, { dispatch }) => {
+>('sport/handleCreateTurn', async ({ setIndex, teamIndex, score }, { dispatch }) => {
   await dispatch(
     changeSetScore({
       score,
@@ -642,10 +770,39 @@ export const changeBackendUpdatedState = createAsyncThunk<
   void,
   { value: boolean },
   { state: RootState; dispatch: AppDispatch }
->('snooker/handleCreateTurn', async ({ value }, { dispatch }) => {
+>('sport/handleCreateTurn', async ({ value }, { dispatch }) => {
   await dispatch(
     handleBackendUpdatedState({
       value,
     }),
   );
+});
+
+export const handleReversePlayersState = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
+  'sport/handleReversePlayersState',
+  async ({}, { getState, dispatch }) => {
+    const state = getState();
+    await dispatch(reverseTeamPlayers());
+
+    if (state.sport.handicap) {
+      await dispatch(updateHandicap({ handicap: -state.sport.handicap }));
+    }
+  },
+);
+
+export const handleBilliardsChangeScoreCompletetion = createAsyncThunk<
+  void,
+  {},
+  { state: RootState; dispatch: AppDispatch }
+>('sport/handleBilliardsChangeScoreCompletion', async ({}, { getState, dispatch }) => {
+  const state = getState();
+  const activeSet = getActiveSet(state.sport.scoreHistory);
+
+  if (!activeSet) return;
+
+  if (state.sport.format === 'BILLIARDS_RACE_TO' && state.sport.maxScorePerSet) {
+    if (activeSet.teamOneScore >= state.sport.maxScorePerSet || activeSet.teamTwoScore >= state.sport.maxScorePerSet) {
+      await dispatch(handleEndFrame({ updateUndoStack: false }));
+    }
+  }
 });

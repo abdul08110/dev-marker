@@ -1,25 +1,20 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer';
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 
 interface SnookerMenuDrawerProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   showCorrection: boolean;
   showRerack: boolean;
+  showEndFrame: boolean;
   showConcedeFrame: boolean;
   showEndGame: boolean;
   onCorrection?: () => void;
   onRerack?: () => void;
   onConcedeFrame?: () => void;
   onEndGame?: () => void;
+  onEndFrame?: () => void;
 }
 
 export function SnookerMenuDrawer(props: SnookerMenuDrawerProps) {
@@ -32,22 +27,27 @@ export function SnookerMenuDrawer(props: SnookerMenuDrawerProps) {
         <div className="px-4 h-full">
           <div className="flex flex-col gap-2">
             {props.showCorrection && (
-              <Button variant="select" className="p-1 border-b" onClick={props.onCorrection}>
+              <Button variant="select" type='button' className="p-1 border-b" onClick={props.onCorrection}>
                 Correction
               </Button>
             )}
             {props.showRerack && (
-              <Button variant="select" className="p-1" onClick={props.onRerack}>
+              <Button variant="select" type='button' className="p-1" onClick={props.onRerack}>
                 Re-rack
               </Button>
             )}
             {props.showConcedeFrame && (
-              <Button variant="select" className="p-1" onClick={props.onConcedeFrame}>
+              <Button variant="select" type='button' className="p-1" onClick={props.onConcedeFrame}>
                 Concede Frame
               </Button>
             )}
+            {props.showEndFrame && (
+              <Button variant="select" type='button' className="p-1" onClick={props.onEndFrame}>
+                End Frame
+              </Button>
+            )}
             {props.showEndGame && (
-              <Button variant="select" className="p-1" onClick={props.onEndGame}>
+              <Button variant="select" type='button' className="p-1" onClick={props.onEndGame}>
                 End Game
               </Button>
             )}

@@ -27,6 +27,15 @@ export enum SnookerPointType {
   MISSED_POT = 'MISSED_POT',
 }
 
+export enum BilliardPointType {
+  RED_IN_OFF = 'RED_IN_OFF',
+  RED_POT = 'RED_POT',
+  WHITE_IN_OFF = 'WHITE_IN_OFF',
+  WHITE_POT = 'WHITE_POT',
+  CANNON = 'CANNON',
+  FOUL = 'FOUL'
+}
+
 export interface Set {
   teamOneScore: number;
   teamTwoScore: number;
@@ -34,6 +43,7 @@ export interface Set {
   turns: Turn[];
   status: 'COMPLETED' | 'ONGOING' | 'CONCEDED';
   snookerCorrections: SnookerCorrection[];
+  billiardsCorrections: BilliardsCorrection[];
   setConcededTo: 0 | 1 | null;
 }
 
@@ -41,6 +51,12 @@ export interface SnookerCorrection {
   teamOneScore: number;
   teamTwoScore: number;
   redsRemaining: number;
+  timeScored: string;
+}
+
+export interface BilliardsCorrection {
+  teamOneScore: number;
+  teamTwoScore: number;
   timeScored: string;
 }
 
@@ -52,7 +68,7 @@ export interface Turn {
 }
 
 export interface Point {
-  snookerPoint: {
+  snookerPoint?: {
     redsLost: number;
     missCalled: boolean;
     freeBall: boolean;
@@ -61,12 +77,21 @@ export interface Point {
     penalty: number;
     score: number;
   };
+  billiardsPoint?: {
+    type: BilliardPointType,
+    penalty: number;
+    score: number;
+  };
   timeScored: string;
 }
 
 export interface GeneralScoringState {
+  format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED';
+  numberOn: number | null;
+  numberAhead: number | null;
   matchId: null | string;
   isBackendUpdated: boolean;
+  sport: 'SNOOKER' | 'BILLIARDS',
   team1Score: number;
   team2Score: number;
   team1: TeamDetails;
@@ -75,14 +100,11 @@ export interface GeneralScoringState {
   timeInMinutes: number;
   scoreHistory: Set[];
   startTimeDate: string | null;
+  noOfSets: number | null
+  maxScorePerSet: number | null
+  handicap: number;
 }
 
-export interface SnookerScoringState extends GeneralScoringState {
-  format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED';
-  handicap: number;
-  numberOn: number;
-  numberAhead: number;
-}
 
 export interface ClubData {
   clubId: string;

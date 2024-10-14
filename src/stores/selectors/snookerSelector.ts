@@ -3,7 +3,7 @@
  */
 
 import { RootState } from '@/stores';
-import { SnookerPointType, type Set, SnookerScoringState, Turn, Point, SnookerCorrection } from '../types';
+import { SnookerPointType, type Set, Turn, Point, SnookerCorrection, GeneralScoringState } from '../types';
 import { createSelector } from '@reduxjs/toolkit';
 import { getActivePoint, getActiveSet, getActiveTurn, getAllPointsAfter, getLastPointPlayedInSet } from './commonSport';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
@@ -15,6 +15,8 @@ const formatToRedsCount = {
   SNOOKER_15_RED: 15,
   SNOOKER_10_RED: 10,
   SNOOKER_6_RED: 6,
+  BILLIARDS_RACE_TO: 0,
+  BILLIARDS_TIME_BASED: 0,
 };
 
 export const colorPointsOrder = [
@@ -45,10 +47,19 @@ export const getNumberOfRedsFromFormat = (format: keyof typeof formatToRedsCount
   return formatToRedsCount[format];
 };
 
+export const getActiveTurnScore = createSelector(
+  (state: RootState) => state.sport,
+  (sportState: GeneralScoringState) => {
+    const activeSet = getActiveSet(sportState.scoreHistory);
+    const activeTurn = activeSet ? getActiveTurn(activeSet) : null;
+    return activeTurn ? activeTurn.points.reduce((total, point) => total + point.snookerPoint!.score, 0) : 0;
+  },
+);
+
 const getLastRedPottedTurnAndPointIndex = (turns: Turn[]): { turnIndex: number; pointIndex: number } | null => {
   for (let i = turns.length - 1; i >= 0; i--) {
     for (let j = turns[i].points.length - 1; j >= 0; j--) {
-      if (turns[i].points[j].snookerPoint.type === SnookerPointType.RED) {
+      if (turns[i].points[j].snookerPoint!.type === SnookerPointType.RED) {
         return { turnIndex: i, pointIndex: j };
       }
     }
@@ -82,7 +93,7 @@ export const getPottedColorBallsAfterAllReds = (turns: Turn[]): SnookerPointType
         point.snookerPoint.type !== SnookerPointType.MISSED_POT &&
         point.snookerPoint.type !== SnookerPointType.PLAY_SAFE,
     )
-    .map((point) => ('type' in point.snookerPoint ? point.snookerPoint.type : undefined))
+    .map((point) => ('type' in point.snookerPoint! ? point.snookerPoint.type : undefined))
     .filter((type): type is SnookerPointType => type !== undefined);
 };
 
@@ -105,10 +116,10 @@ export const calculateRedsLeft = (
   for (const turn of turns) {
     for (const point of turn.points) {
       if (!latestCorrection || new Date(point.timeScored) > new Date(latestCorrection.timeScored)) {
-        if (point.snookerPoint.type === SnookerPointType.RED) {
+        if (point.snookerPoint!.type === SnookerPointType.RED) {
           redsLeft--;
-        } else if (point.snookerPoint.type === SnookerPointType.FOUL && point.snookerPoint.redsLost > 0) {
-          redsLeft -= point.snookerPoint.redsLost;
+        } else if (point.snookerPoint!.type === SnookerPointType.FOUL && point.snookerPoint!.redsLost > 0) {
+          redsLeft -= point.snookerPoint!.redsLost;
         }
       }
     }
@@ -126,7 +137,7 @@ export const adjustColorBallsPottedWithFreeBall = (activeSet: Set): SnookerPoint
   const pottedPoints = pointsAfterAllRedsArePotted.slice(1);
 
   const freeBallIndexes = pottedPoints
-    .map((point, index) => ('freeBall' in point.snookerPoint && point.snookerPoint.freeBall ? index : -1))
+    .map((point, index) => ('freeBall' in point.snookerPoint! && point.snookerPoint.freeBall ? index : -1))
     .filter((index) => index !== -1);
 
   freeBallIndexes.forEach((freeBallIndex) => {
@@ -179,14 +190,14 @@ export const getNumberAhead = (activeSet: Set, activeTeam: 'team1' | 'team2') =>
 export const checkIfFreeBallPlayed = (sets: Set[], pointCheckFn: (set: Set) => Point | null) => {
   const activeSet = getActiveSet(sets);
   const point = pointCheckFn(activeSet!);
-  return point && 'freeBall' in point.snookerPoint ? point.snookerPoint.freeBall : false;
+  return point && 'freeBall' in point.snookerPoint! ? point.snookerPoint.freeBall : false;
 };
 
 export const checkIfLastBallIsFreeBall = (sets: Set[]) => checkIfFreeBallPlayed(sets, getLastPointPlayedInSet);
 
 export const getTeamSetScores = createSelector(
-  (state: RootState) => state.snooker,
-  (snookerState: SnookerScoringState) => {
+  (state: RootState) => state.sport,
+  (snookerState: GeneralScoringState) => {
     const activeSet = getActiveSet(snookerState.scoreHistory);
     return {
       team1score: activeSet ? activeSet.teamOneScore : 0,
@@ -196,16 +207,16 @@ export const getTeamSetScores = createSelector(
 );
 
 export const getActiveTurnPointTypes = createSelector(
-  (state: RootState) => state.snooker,
-  (snookerState: SnookerScoringState) => {
+  (state: RootState) => state.sport,
+  (snookerState: GeneralScoringState) => {
     const activeSet = getActiveSet(snookerState.scoreHistory);
     const activeTurn = activeSet ? getActiveTurn(activeSet) : null;
-    return activeTurn ? activeTurn.points.map((point) => point.snookerPoint.type) : [];
+    return activeTurn ? activeTurn.points.map((point) => point.snookerPoint!.type) : [];
   },
 );
 
 export const calculateTeamPOSN = createSelector(
-  (state: { snooker: SnookerScoringState }) => state.snooker,
+  (state: { sport: GeneralScoringState }) => state.sport,
   (snookerState) => {
     const activeSet = getActiveSet(snookerState.scoreHistory);
     const pointTypes = [
@@ -216,13 +227,14 @@ export const calculateTeamPOSN = createSelector(
       SnookerPointType.BLUE,
       SnookerPointType.PINK,
       SnookerPointType.BLACK,
+      SnookerPointType.PLAY_SAFE
     ];
 
     let [team1Potted, team2Potted] = [0, 0];
     let [team1Played, team2Played] = [0, 0];
 
     activeSet?.turns.forEach((turn) => {
-      const potted = turn.points.filter((point) => pointTypes.includes(point.snookerPoint.type)).length;
+      const potted = turn.points.filter((point) => pointTypes.includes(point.snookerPoint!.type)).length;
       const totalPlayed = turn.points.length;
       if (snookerState.team1.players.some((player) => player.id === turn.turnPlayerId)) {
         team1Potted += potted;
@@ -246,26 +258,18 @@ export const calculateTeamPOSN = createSelector(
   },
 );
 
-export const getActiveTurnScore = createSelector(
-  (state: RootState) => state.snooker,
-  (snookerState: SnookerScoringState) => {
-    const activeSet = getActiveSet(snookerState.scoreHistory);
-    const activeTurn = activeSet ? getActiveTurn(activeSet) : null;
-    return activeTurn ? activeTurn.points.reduce((total, point) => total + point.snookerPoint.score, 0) : 0;
-  },
-);
-
 export const selectHighestTurnScores = createSelector(
-  (state: { snooker: SnookerScoringState }) => state.snooker,
+  (state: { sport: GeneralScoringState }) => state.sport,
   (snookerState) => {
     const activeSet = getActiveSet(snookerState.scoreHistory);
     const getTeamTurnScores = (team: 'team1' | 'team2') => {
-      return (
-        activeSet?.turns
+      if (activeSet) {
+        return activeSet!.turns
           .filter((turn) => snookerState[team].players.some((player) => player.id === turn.turnPlayerId))
-          .map((turn) => turn.points.reduce((total, point) => total + point.snookerPoint.score, 0))
-          .sort((a, b) => b - a) || []
-      );
+          .map((turn) => turn.points.reduce((total, point) => total + point.snookerPoint!.score, 0));
+      } else {
+        return [];
+      }
     };
 
     return {
@@ -276,7 +280,7 @@ export const selectHighestTurnScores = createSelector(
 );
 
 export const snookerButtonsDisabledState = createSelector(
-  (state: { snooker: SnookerScoringState }) => state.snooker,
+  (state: { sport: GeneralScoringState }) => state.sport,
   (snookerState) => {
     const activeSet = getActiveSet(snookerState.scoreHistory);
     const activeTurn = activeSet ? getActiveTurn(activeSet) : null;
@@ -301,7 +305,7 @@ export const snookerButtonsDisabledState = createSelector(
       return (
         !activeTurn ||
         (lastPoint &&
-          'type' in lastPoint.snookerPoint &&
+          'type' in lastPoint.snookerPoint! &&
           lastPoint?.snookerPoint.type !== SnookerPointType.RED &&
           redsLeft > 0 &&
           !isLastBallFreeBall) ||
@@ -328,7 +332,7 @@ export const snookerButtonsDisabledState = createSelector(
 );
 
 export const getNumberOfRedsLeft = createSelector(
-  (state: { snooker: SnookerScoringState }) => state.snooker,
+  (state: { sport: GeneralScoringState }) => state.sport,
   (snookerState) => {
     const activeSet = getActiveSet(snookerState.scoreHistory);
     return calculateRedsLeft(

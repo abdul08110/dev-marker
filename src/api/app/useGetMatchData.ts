@@ -17,7 +17,7 @@ export interface MatchStartResponse {
     currentSetTeamTwoScore: number;
     expectedEndTimeDate: string;
     id: string;
-    noOfSets: number;
+    noOfSets: number | null;
     handicap: number;
     sideOnePlayerOne: {
         id: string;
@@ -45,7 +45,8 @@ export interface MatchStartResponse {
     teamTwoScore: number,
     venueId: string,
     sets: Set[],
-    streamingType: 'PUBLIC' | 'PRIVATE'
+    streamingType: 'PUBLIC' | 'PRIVATE',
+    maxScorePerSet: number | null,
 }
 
 const useGetMatchLiveData = () => {

@@ -5,7 +5,7 @@ import { HomeLoading } from '@/components/loading/homeLoading';
 import { LiveMatchGoToScoreBoardOrMarkerModal } from '@/components/modals/liveMatchGoToScoreBoardOrMarkerModal';
 import TvLogo from '@/icons/tv';
 import { setActiveClub, setClubs } from '@/stores/slices/clubSlice';
-import { resetState } from '@/stores/slices/snookerSlice';
+import { resetStateSnooker } from '@/stores/slices/sportSlice';
 import { clearUndoStack } from '@/stores/slices/undoSlice';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
@@ -19,11 +19,12 @@ export function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLiveMatchModalOpen, setIsLiveMatchModalOpen] = useState<boolean>(false);
   const [liveMatchId, setLiveMatchId] = useState<string | null>(null);
+  const [liveSport, setLiveSport] = useState<'BILLIARDS' | 'SNOOKER' | null>(null);
   const { logout } = useLogout();
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(resetState());
+    dispatch(resetStateSnooker());
     dispatch(clearUndoStack());
     const fetchData = async () => {
       const result = await getMarkerClubs();
@@ -42,6 +43,7 @@ export function Home() {
 
         if (liveMatchByVenueResponse && liveMatchByVenueResponse.matchId !== null) {
           setLiveMatchId(liveMatchByVenueResponse.matchId);
+          setLiveSport(liveMatchByVenueResponse.sport);
           setIsLiveMatchModalOpen(true);
         }
 
@@ -99,7 +101,7 @@ export function Home() {
                         <h3 className="text-white text-xl">SNOOKER</h3>
                       </div>
                       <div
-                        onClick={() => navigate('/app/billiyards')}
+                        onClick={() => navigate('/app/billiards')}
                         className="bg-[url('/images/billiards.png')] p-5 flex justify-center items-end aspect-[4/3] h-44 bg-cover rounded-lg w-full"
                       >
                         <h3 className="text-white text-xl">BILLIARDS</h3>
@@ -119,7 +121,7 @@ export function Home() {
             </div>
           </div>
         </div>
-        <LiveMatchGoToScoreBoardOrMarkerModal matchId={liveMatchId} isModalOpen={isLiveMatchModalOpen} />
+        <LiveMatchGoToScoreBoardOrMarkerModal sport={liveSport} matchId={liveMatchId} isModalOpen={isLiveMatchModalOpen} />
       </section>
     );
   }
