@@ -1,6 +1,8 @@
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import clsx from 'clsx';
 import { ScoreBoardTeamCard } from './scoreBoardTeamCard';
+import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
+import { SnookerFramesSummary } from '../scoring/snookerFrameSummary';
 
 interface ScoreBoardRenderProps {
   state: ScoreBoardState;
@@ -8,27 +10,36 @@ interface ScoreBoardRenderProps {
 }
 
 export function ScoreboardRender(props: ScoreBoardRenderProps) {
+  const activeSet = getActiveSet(props.state.sets);
+  const activeTurn = getActiveTurn(activeSet);
+
   return (
-    <div className="container flex-grow">
+    <div className="container flex-grow flex flex-col gap-4">
+      <SnookerFramesSummary team1Score={props.state.teamOneScore} team2Score={props.state.teamTwoScore} />
       <div
-        className={clsx('w-full h-full grid gap-5', {
-          'grid-rows-2 grid-cols-1': props.orientation === 'portrait',
-          'grid-rows-1 grid-cols-2': props.orientation === 'landscape',
+        className={clsx('w-full h-full gap-5', {
+          'flex flex-col': props.orientation === 'portrait',
+          'flex flex-row': props.orientation === 'landscape',
         })}
       >
         <ScoreBoardTeamCard
           playerOne={props.state.sideOnePlayerOne}
           playerTwo={props.state.sideOnePlayerTwo}
-          score={props.state.currentSetTeamOneScore}
-          break={props.state.activePlayerTurnScore}
+          score={activeSet ? activeSet.teamOneScore : 0}
+          activeTurn={activeTurn}
           activePlayerId={props.state.activePlayerId}
+          showBilliardsBall={props.state.sport === 'BILLIARDS' ? 'YELLOW' : null}
+          sport={props.state.sport}
         />
+      
         <ScoreBoardTeamCard
           playerOne={props.state.sideTwoPlayerOne}
           playerTwo={props.state.sideTwoPlayerTwo}
-          score={props.state.currentSetTeamTwoScore}
-          break={props.state.activePlayerTurnScore}
+          score={activeSet ? activeSet.teamTwoScore : 0}
+          activeTurn={activeTurn}
           activePlayerId={props.state.activePlayerId}
+          showBilliardsBall={props.state.sport === 'BILLIARDS' ? 'WHITE' : null}
+          sport={props.state.sport}
         />
       </div>
     </div>

@@ -1,12 +1,15 @@
-import { Player } from '@/stores/types';
+import { Player, Turn } from '@/stores/types';
 import clsx from 'clsx';
+import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 
 interface ScoreBoardTeamCardProps {
   playerOne: Player;
   playerTwo: Player | null;
   score: number;
-  break: number;
+  activeTurn: Turn | null;
   activePlayerId: string | null;
+  showBilliardsBall: 'YELLOW' | 'WHITE' | null;
+  sport: 'SNOOKER' | 'BILLIARDS';
 }
 
 export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
@@ -37,11 +40,22 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             />
           </div>
         ) : (
-          <img src={props.playerOne.profilePhoto ? props.playerOne.profilePhoto : ''} />
+          <img src={props.playerOne.profilePhoto ? props.playerOne.profilePhoto : '/images/user-dummy-pic.png'} />
         )}
       </div>
+      {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn && props.sport === 'SNOOKER' ? (
+        <SnookerPointTypeDisplay
+          activeTurnPointTypes={props.activeTurn.points.map((value) => value.snookerPoint!.type)}
+        />
+      ) : (
+        <></>
+      )}
       <h3 className="text-white text-6xl">{props.score}</h3>
-      {isPlayerOneActive || isPlayerTwoActive ? <div className="text-white text-xl">{props.break} Break</div> : <></>}
+      {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn ? (
+        <div className="text-white text-xl">Break {props.activeTurn.score}</div>
+      ) : (
+        <></>
+      )}
 
       <div
         className={clsx('flex justify-center items-center px-4 py-1 rounded truncate w-full', {
@@ -62,6 +76,14 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             'text-black': (isPlayerOneActive || isPlayerTwoActive) && isPlayerOneActive,
           })}
         >
+          {props.sport === 'BILLIARDS' && props.showBilliardsBall !== null ? (
+            <img
+              className="h-6 w-6 object-contain"
+              src={props.showBilliardsBall === 'YELLOW' ? '/images/yellow-ball.png' : '/images/white-ball.png'}
+            />
+          ) : (
+            <></>
+          )}
           {props.playerOne.name}
         </div>
       ) : (

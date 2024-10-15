@@ -1,10 +1,11 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
+import { OrientationChangeButton } from '@/components/sections/scoreboard/orientationChangeButton';
 import { ScoreboardRender } from '@/components/sections/scoreboard/scoreBoardRender';
 import TimeManager from '@/components/sections/scoring/timeManager';
 import useScoreboard from '@/hooks/useScoreboard';
 
 export function ScoreBoard() {
-  const { loading, scoreBoardData, timeLeft, orientation } = useScoreboard();
+  const { loading, scoreBoardData, timeLeft, orientation, setOrientation } = useScoreboard();
 
   return (
     <section>
@@ -13,7 +14,10 @@ export function ScoreBoard() {
       ) : (
         <section>
           {scoreBoardData ? (
-            <section className="h-screen w-screen flex flex-col py-10 gap-4">
+            <section className="h-screen w-screen flex flex-col py-4 gap-4 relative">
+              <OrientationChangeButton
+                onChange={() => setOrientation(orientation === 'landscape' ? 'portrait' : 'landscape')}
+              />
               <TimeManager timeLeft={timeLeft} size={'large'} />
               <ScoreboardRender state={scoreBoardData} orientation={orientation} />
             </section>

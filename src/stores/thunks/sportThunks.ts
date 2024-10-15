@@ -156,8 +156,6 @@ export const handleMatchStart = createAsyncThunk<
     }),
   );
   await dispatch(updateMatchStartedTimeDateUtc({ startTimeDate: new Date().toISOString() }));
-
-  if (activeTeam === 1 && state.sport.sport === 'SNOOKER') await dispatch(handleReversePlayers({ matchId }));
   await dispatch(handleCreateSet({ matchId, scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
 
@@ -557,10 +555,10 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
         matchId: state.sport.matchId!,
         activePlayerId: activePlayer ? activePlayer.id : null,
         sets: state.sport.scoreHistory,
-        teamOneScore: state.sport.team1Score,
-        teamTwoScore: state.sport.team2Score,
-        currentSetTeamOneScore: activeSet ? activeSet.teamOneScore : 0,
-        currentSetTeamTwoScore: activeSet ? activeSet.teamTwoScore : 0,
+        teamOneScore: state.sport.team1Score ? state.sport.team1Score : 0,
+        teamTwoScore: state.sport.team2Score ? state.sport.team1Score : 0,
+        currentSetTeamOneScore: activeSet && activeSet.teamOneScore ? activeSet.teamOneScore : 0,
+        currentSetTeamTwoScore: activeSet && activeSet.teamOneScore ? activeSet.teamTwoScore : 0,
       });
 
       if (res === true) {

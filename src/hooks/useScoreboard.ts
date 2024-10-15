@@ -6,9 +6,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import useTimer from './useTimer';
 import { toast } from '@/components/ui/use-toast';
-import { Player } from '@/stores/types';
+import { Player, Set } from '@/stores/types';
 import { getTimeLeftInMinutes } from '@/utils/functions';
-import useOrientation from './useOrientation';
 
 export interface ScoreBoardState {
   matchId: string;
@@ -20,32 +19,22 @@ export interface ScoreBoardState {
   activePlayerId: string | null;
   teamOneScore: number;
   teamTwoScore: number;
-  currentSetTeamOneScore: number;
-  currentSetTeamTwoScore: number;
-  activePlayerTurnScore: number;
+  sets: Set[];
 }
 
 const useScoreboard = () => {
-  // REDUX STATE
   const clubs = useSelector((state: RootState) => state.club);
-
-  // HOOKS
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchParamsMatchId = searchParams.get('matchId');
   const { timeLeft, startTimer, setTimeLeft } = useTimer(30, () => {
     // Logic to handle when timer completes
   });
-  const orientation = useOrientation();
-
-  // API
   const getLiveMatchHook = useGetMatchLiveData();
-
-  // LOCAL STATE
   const [loading, setLoading] = React.useState<boolean>(false);
   const [scoreBoardData, setScoreboardData] = React.useState<ScoreBoardState | null>(null);
+  const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('portrait');
 
-  // USE EFFECT
   useEffect(() => {
     fetchMatchData(searchParamsMatchId);
   }, [searchParamsMatchId]);
@@ -66,39 +55,50 @@ const useScoreboard = () => {
       `${clubs.activeClub.venueId}/match-end`,
     ];
 
-    const mqttClient = mqtt.connect(brokerUrl, {
-      keepalive: 60,
-      reconnectPeriod: 2000,
-    });
+    const connectToMqtt = () => {
+      const mqttClient = mqtt.connect(brokerUrl, {
+        keepalive: 60,
+        reconnectPeriod: 2000,
+      });
 
-    mqttClient.on('connect', () => {
-      topics.forEach((topic) => {
-        mqttClient.subscribe(topic, (err) => {
-          if (err) console.error(`Subscription error for topic ${topic}: ${err.message}`);
-          else console.log(`connected to topic ${topic}`);
+      mqttClient.on('connect', () => {
+        console.log('Connected to MQTT broker');
+        topics.forEach((topic) => {
+          mqttClient.subscribe(topic, (err) => {
+            if (err) console.error(`Subscription error for topic ${topic}: ${err.message}`);
+            else console.log(`Subscribed to topic ${topic}`);
+          });
         });
       });
-    });
 
-    mqttClient.on('message', (topic, message) => {
-      handleNewMessage(topic, message.toString());
-    });
+      mqttClient.on('message', (topic, message) => {
+        handleNewMessage(topic, message.toString());
+      });
 
-    mqttClient.on('reconnect', () => {
-      console.log('Attempting to reconnect to MQTT broker');
-    });
+      mqttClient.on('reconnect', () => {
+        console.log('Attempting to reconnect to MQTT broker');
+      });
 
-    mqttClient.on('error', (err) => {
-      console.error('MQTT Error:', err);
+      mqttClient.on('error', (err) => {
+        console.error('MQTT Error:', err);
+        mqttClient.end();
+      });
+
+      mqttClient.on('close', () => {
+        console.log('Disconnected from MQTT broker. Reconnecting...');
+        setTimeout(connectToMqtt, 2000); // Reconnect explicitly after a delay
+      });
+
+      return mqttClient;
+    };
+
+    const mqttClient = connectToMqtt();
+
+    return () => {
       mqttClient.end();
-    });
-
-    mqttClient.on('close', () => {
-      console.log('Disconnected from MQTT broker');
-    });
+    };
   }, [clubs.activeClub]);
 
-  // HANDLERS
   const fetchMatchData = async (matchId: string | null) => {
     if (matchId) {
       setLoading(true);
@@ -106,9 +106,6 @@ const useScoreboard = () => {
         const res = await getLiveMatchHook.getLiveMatchData({ matchId });
 
         if (res !== null) {
-          const activeSet = res.sets[res.sets.length - 1];
-          const activeTurn = activeSet ? activeSet.turns[activeSet.turns.length - 1] : null;
-
           setScoreboardData({
             matchId: matchId,
             sport: res.sport,
@@ -119,9 +116,7 @@ const useScoreboard = () => {
             activePlayerId: res.activePlayerId,
             teamOneScore: res.teamOneScore,
             teamTwoScore: res.teamTwoScore,
-            currentSetTeamOneScore: res.currentSetTeamOneScore,
-            currentSetTeamTwoScore: res.currentSetTeamTwoScore,
-            activePlayerTurnScore: activeTurn && activeTurn.score ? activeTurn.score : 0,
+            sets: res.sets,
           });
 
           setTimeLeft(Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60));
@@ -151,19 +146,22 @@ const useScoreboard = () => {
     const parsedMessage = JSON.parse(message);
     const topicWithoutId = topic.split('/')[1];
 
+    console.log(`THE TOPIC IS ${topic}`);
+
     switch (topicWithoutId) {
       case 'send-data':
-        if (scoreBoardData !== null) {
-          setScoreboardData({
-            ...scoreBoardData!,
+        setScoreboardData((prevData) => {
+          if (prevData === null) return null;
+          const updatedSets = parsedMessage.sets ? [...parsedMessage.sets] : prevData.sets;
+  
+          return {
+            ...prevData,
             activePlayerId: parsedMessage.activePlayerId,
-            activePlayerTurnScore: parsedMessage.activePlayerTurnScore,
-            currentSetTeamOneScore: parsedMessage.currentSetTeamOneScore,
-            currentSetTeamTwoScore: parsedMessage.currentSetTeamTwoScore,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-          });
-        }
+            sets: updatedSets
+          };
+        });
         break;
       case 'match-start':
         const matchId = parsedMessage.matchId;
@@ -171,6 +169,7 @@ const useScoreboard = () => {
         break;
       case 'match-end':
         setScoreboardData(null);
+        navigate('/app/scoreboard');
         break;
     }
   };
@@ -180,6 +179,7 @@ const useScoreboard = () => {
     scoreBoardData,
     timeLeft,
     orientation,
+    setOrientation
   };
 };
 

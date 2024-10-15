@@ -25,6 +25,7 @@ import {
   handleMatchStart,
   handlePlayerSelectState,
   handleRerackState,
+  handleReversePlayersState,
   handleSelectionOfBreakOffTeam,
   handleSettingsStateUpdate,
   handleUndoScoreClicked,
@@ -160,19 +161,37 @@ const useSnookerScoring = () => {
   };
 
   const handleMatchCreation = async (playerOrder: string[]) => {
+    let isTeamReveresed = false;
+    const activeTeam = getActiveTeam(snookerScoring.team1, snookerScoring.team2);
+
+    if (activeTeam === 1) {
+      await dispatch(handleReversePlayersState({}));
+      isTeamReveresed = true;
+    }
+
     const currentDate = new Date();
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
       expectedEndTimeDate: new Date(currentDate.getTime() + snookerScoring.timeInMinutes * 60000),
-      sideOnePlayerOneId: snookerScoring.team1.players[0].id!,
-      sideTwoPlayerOneId: snookerScoring.team2.players[0].id!,
-      sideOnePlayerTwoId: snookerScoring.team1.players.length > 1 ? snookerScoring.team1.players[1].id! : undefined,
-      sideTwoPlayerTwoId: snookerScoring.team2.players.length > 1 ? snookerScoring.team1.players[1].id! : undefined,
+      sideOnePlayerOneId: isTeamReveresed ? snookerScoring.team2.players[0].id! : snookerScoring.team1.players[0].id!,
+      sideTwoPlayerOneId: isTeamReveresed ? snookerScoring.team1.players[0].id! : snookerScoring.team2.players[0].id!,
+      sideOnePlayerTwoId:
+        snookerScoring.team1.players.length > 1
+          ? isTeamReveresed
+            ? snookerScoring.team2.players[1].id!
+            : snookerScoring.team1.players[1].id!
+          : undefined,
+      sideTwoPlayerTwoId:
+        snookerScoring.team2.players.length > 1
+          ? isTeamReveresed
+            ? snookerScoring.team1.players[1].id!
+            : snookerScoring.team2.players[1].id!
+          : undefined,
       sport: 'SNOOKER',
       sportType: snookerScoring.format,
       streamingType: snookerScoring.streaming,
       venueId: clubs.activeClub!.venueId,
-      handicap: snookerScoring.handicap,
+      handicap: isTeamReveresed ? -snookerScoring.handicap : snookerScoring.handicap,
       maxScorePerSet: snookerScoring.maxScorePerSet,
       noOfSets: snookerScoring.noOfSets,
     });
@@ -450,7 +469,7 @@ const useSnookerScoring = () => {
     showConcedeFrameDrawer,
     setShowConcedeFrameDrawer,
     loading,
-    handleEndFrameButton
+    handleEndFrameButton,
   };
 };
 
