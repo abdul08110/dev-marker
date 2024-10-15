@@ -14,7 +14,7 @@ const formSchema = z.object({
     password: z.string()
         .min(6, { message: 'Invalid Character length' })
         .max(40, { message: 'Invalid Character length' })
-        .regex(/[^a-zA-Z0-9\-\/]/, { message: 'no special character' })
+        // .regex(/[^a-zA-Z0-9\-\/]/, { message: 'no special character' })
         .refine(value => value.trim().length > 0, { message: 'no password found' })
 })
 
