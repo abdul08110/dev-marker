@@ -51,7 +51,7 @@ export function StreamContainer(props: StreamContainerProps) {
           )}
         </div>
       ) : (
-        <video autoPlay loop muted src="/sponsor-videos/chowhan_ventures.mp4" className="w-full h-auto" />
+        <video autoPlay loop muted src="https://flick-automations.s3.ap-south-1.amazonaws.com/images/chowhan_ventures.mp4" className="w-full h-auto" />
       )}
     </div>
   );

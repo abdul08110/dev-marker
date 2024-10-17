@@ -18,8 +18,8 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
       <SnookerFramesSummary team1Score={props.state.teamOneScore} team2Score={props.state.teamTwoScore} />
       <div
         className={clsx('w-full h-full gap-5', {
-          'flex flex-col': props.orientation === 'portrait',
-          'flex flex-row': props.orientation === 'landscape',
+          'grid gird-cols-1': props.orientation === 'portrait',
+          'grid grid-cols-2': props.orientation === 'landscape',
         })}
       >
         <ScoreBoardTeamCard
