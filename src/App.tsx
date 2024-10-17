@@ -8,6 +8,7 @@ import { Home } from './pages/app/Home';
 import { SnookerScoring } from './pages/app/SnookerScoring';
 import { ScoreBoard } from './pages/app/ScoreBoard';
 import { BilliardsScoring } from './pages/app/billiardsScoring';
+import { Tv } from './pages/app/Tv';
 
 
 const App: React.FC = () => {
@@ -25,6 +26,7 @@ const App: React.FC = () => {
           <Route path="/app/snooker" element={<SnookerScoring />} />
           <Route path="/app/billiards" element={<BilliardsScoring />} />
           <Route path="/app/scoreboard" element={<ScoreBoard />} />
+          <Route path="/app/tv" element={<Tv />} />
         </Route>
         <Route path="/login" element={<Login />} />
       </Routes>

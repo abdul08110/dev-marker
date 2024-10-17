@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 export function Home() {
   const dispatch = useDispatch();
-  const { getMarkerClubs, data } = useMarkerClubs();
+  const { getMarkerClubs, data } = useMarkerClubs('MARKER');
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLiveMatchModalOpen, setIsLiveMatchModalOpen] = useState<boolean>(false);

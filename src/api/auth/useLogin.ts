@@ -6,6 +6,7 @@ import { ApiResponse } from '@/types';
 interface UseLoginProps {
     email: string;
     password: string;
+    type: 'MARKER' | 'TV'
 }
 
 interface LoginResponse {
@@ -20,13 +21,13 @@ const useLogin = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const login = async ({ email, password }: UseLoginProps): Promise<LoginResponse | null> => {
+    const login = async ({ email, password, type }: UseLoginProps): Promise<LoginResponse | null> => {
         setLoading(true);
         setError(null);
 
         try {
             const data = await handleApiResponse(
-                axiosInstance.post<ApiResponse<LoginResponse>>('auth/marker/login', {
+                axiosInstance.post<ApiResponse<LoginResponse>>(`auth/${type === 'MARKER' ? 'marker' : 'tv'}/login`, {
                     email,
                     password,
                 })

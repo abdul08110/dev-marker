@@ -8,6 +8,7 @@ import useTimer from './useTimer';
 import { toast } from '@/components/ui/use-toast';
 import { Player, Set } from '@/stores/types';
 import { getTimeLeftInMinutes } from '@/utils/functions';
+import useBodyRotation from './useBodyRotation';
 
 export interface ScoreBoardState {
   matchId: string;
@@ -34,6 +35,8 @@ const useScoreboard = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [scoreBoardData, setScoreboardData] = React.useState<ScoreBoardState | null>(null);
   const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('portrait');
+  const { rotateBody } = useBodyRotation();
+
 
   useEffect(() => {
     fetchMatchData(searchParamsMatchId);
@@ -179,7 +182,8 @@ const useScoreboard = () => {
     scoreBoardData,
     timeLeft,
     orientation,
-    setOrientation
+    setOrientation,
+    rotateBody
   };
 };
 
