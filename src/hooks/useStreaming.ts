@@ -103,7 +103,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           venueNo: res.venue.no,
           clubName: res.club.name,
           noOfFrames: res.noOfSets,
-          actualStartTimeDate: res.actualStartTimeDate
+          actualStartTimeDate: res.actualStartTimeDate,
+          overlayType: res.overlayType
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {

@@ -5,6 +5,7 @@ import YouTubePlayer from '@/components/ui/youtube-player';
 
 interface StreamContainerProps {
   state: StreamingState | null;
+  isPortrait: boolean;
 }
 
 export function StreamContainer(props: StreamContainerProps) {
@@ -25,7 +26,7 @@ export function StreamContainer(props: StreamContainerProps) {
             <></>
           )}
 
-          {props.state.overlayType === 'DESTINATION' ? (
+          {props.state.overlayType === 'DESTINATION' && !props.isPortrait ? (
             <div className="h-full w-full absolute inset-0 flex flex-col items-center">
               <div className="w-[70%] mt-auto mb-4 bg-[#424242] flex items-center">
                 <div className=" border-white border grid grid-cols-12 h-14 w-full">

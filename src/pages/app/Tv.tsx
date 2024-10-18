@@ -29,7 +29,7 @@ export function Tv() {
 
   return (
     <div className="h-screen w-screen">
-      <StreamContainer state={streamingData} />
+      <StreamContainer state={streamingData} isPortrait={false} />
     </div>
   );
 }
