@@ -58,6 +58,12 @@ export interface MatchStartResponse {
     name: string;
     profilePhoto: string;
   };
+  venue: {
+    no: number;
+  },
+  club: {
+    name: string;
+  },
   sport: 'SNOOKER' | 'BILLIARDS';
   sportType: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED';
   teamOneScore: number;

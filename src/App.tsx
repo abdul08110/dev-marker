@@ -9,7 +9,7 @@ import { SnookerScoring } from './pages/app/SnookerScoring';
 import { ScoreBoard } from './pages/app/ScoreBoard';
 import { BilliardsScoring } from './pages/app/billiardsScoring';
 import { Tv } from './pages/app/Tv';
-
+import { ClientStream } from './pages/app/ClientStream';
 
 const App: React.FC = () => {
   const token = getToken();
@@ -17,10 +17,7 @@ const App: React.FC = () => {
     <Router>
       <Toaster />
       <Routes>
-        <Route
-          path="/"
-          element={token ? <Navigate to="/app/home" /> : <Navigate to="/login" />}
-        />
+        <Route path="/" element={token ? <Navigate to="/app/home" /> : <Navigate to="/login" />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/app/home" element={<Home />} />
           <Route path="/app/snooker" element={<SnookerScoring />} />
@@ -29,6 +26,7 @@ const App: React.FC = () => {
           <Route path="/app/tv" element={<Tv />} />
         </Route>
         <Route path="/login" element={<Login />} />
+        <Route path="/app/stream" element={<ClientStream />} />
       </Routes>
     </Router>
   );

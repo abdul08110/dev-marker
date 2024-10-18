@@ -21,6 +21,10 @@ export interface StreamingState {
   sets: Set[];
   overlayType?: 'SOURCE' | 'DESTINATION';
   showPlayerMatchHistory?: boolean;
+  venueNo: number,
+  clubName: string,
+  noOfFrames: number | null,
+  actualStartTimeDate: string,
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -81,6 +85,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       const res = await getLiveMatchHook.getLiveMatchData({ matchId });
 
       if (res) {
+        setStreamingData(null);
         setStreamingData({
           matchId: matchId,
           sport: res.sport,
@@ -95,6 +100,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           matchStatus: res.matchStatus,
           streamType: res.streamType,
           streamData: res.streamData,
+          venueNo: res.venue.no,
+          clubName: res.club.name,
+          noOfFrames: res.noOfSets,
+          actualStartTimeDate: res.actualStartTimeDate
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -163,7 +172,6 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         break;
       case 'match-end':
         setStreamingData(null);
-        mqttClientRef.current?.end();
         break;
     }
   };

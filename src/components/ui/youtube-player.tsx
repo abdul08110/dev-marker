@@ -2,15 +2,26 @@ import { useEffect, useRef } from 'react';
 
 const YouTubePlayer = ({ videoId }: { videoId: string }) => {
   const playerRef = useRef<HTMLDivElement | null>(null);
+  const playerInstanceRef = useRef<any>(null);
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://www.youtube.com/iframe_api';
-    script.async = true;
-    document.body.appendChild(script);
+    const loadYouTubeAPI = () => {
+      const script = document.createElement('script');
+      script.src = 'https://www.youtube.com/iframe_api';
+      script.async = true;
+      document.body.appendChild(script);
 
-    (window as any).onYouTubeIframeAPIReady = () => {
-      new (window as any).YT.Player(playerRef.current, {
+      (window as any).onYouTubeIframeAPIReady = () => {
+        createPlayer();
+      };
+    };
+
+    const createPlayer = () => {
+      if (playerInstanceRef.current) {
+        playerInstanceRef.current.destroy();
+      }
+
+      playerInstanceRef.current = new (window as any).YT.Player(playerRef.current, {
         videoId: videoId,
         playerVars: {
           autoplay: 1,
@@ -19,7 +30,7 @@ const YouTubePlayer = ({ videoId }: { videoId: string }) => {
           rel: 0,
           showinfo: 0,
           iv_load_policy: 3,
-          mute: 1
+          mute: 1,
         },
         events: {
           onReady: (event: any) => {
@@ -35,9 +46,16 @@ const YouTubePlayer = ({ videoId }: { videoId: string }) => {
       });
     };
 
+    if (!(window as any).YT) {
+      loadYouTubeAPI();
+    } else {
+      createPlayer();
+    }
+
     return () => {
-      delete (window as any).onYouTubeIframeAPIReady;
-      document.body.removeChild(script);
+      if (playerInstanceRef.current) {
+        playerInstanceRef.current.destroy();
+      }
     };
   }, [videoId]);
 
