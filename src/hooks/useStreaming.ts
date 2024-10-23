@@ -4,6 +4,8 @@ import useGetMatchLiveData, { StreamData, StreamType } from '@/api/app/useGetMat
 import { toast } from '@/components/ui/use-toast';
 import { Player, Set } from '@/stores/types';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
+import useTimer from './useTimer';
+import { getTimeLeftInMinutes } from '@/utils/functions';
 
 export interface StreamingState {
   matchId: string;
@@ -33,6 +35,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const getLiveMatchHook = useGetMatchLiveData();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
+  const { timeLeft, startTimer, setTimeLeft } = useTimer(30, () => {
+    // Logic to handle when timer completes
+  });
 
   const connectToMqtt = (topics: string[]) => {
     const brokerUrl = import.meta.env.VITE_MQTT_URL;
@@ -107,6 +112,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           overlayType: res.overlayType
         });
 
+        setTimeLeft(Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60));
+        startTimer();
+
         if (res.matchStatus === 'LIVE' && !venueId) {
           const venueTopics = [`${res.venueId}/send-data`, `${res.venueId}/match-end`];
           connectToMqtt(venueTopics);
@@ -172,6 +180,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         fetchActiveMatchForVenue(venueId!);
         break;
       case 'match-end':
+        startTimer();
         setStreamingData(null);
         break;
     }
@@ -180,6 +189,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   return {
     loading,
     streamingData,
+    timeLeft,
   };
 };
 

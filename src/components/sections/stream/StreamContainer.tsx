@@ -1,11 +1,13 @@
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { StreamingState } from '@/hooks/useStreaming';
 import { StreamType } from '@/api/app/useGetMatchData';
-import YouTubePlayer from '@/components/ui/youtube-player';
+import YouTube from 'react-youtube';
+import { formatTime } from '@/utils/functions';
 
 interface StreamContainerProps {
   state: StreamingState | null;
   isPortrait: boolean;
+  timeLeft: number;
 }
 
 export function StreamContainer(props: StreamContainerProps) {
@@ -21,7 +23,24 @@ export function StreamContainer(props: StreamContainerProps) {
           props.state.streamData !== undefined &&
           props.state.streamData.provider &&
           props.state.streamData.provider === 'YOUTUBE' ? (
-            <YouTubePlayer key={props.state.streamData.brodcastId} videoId={props.state.streamData.brodcastId!} />
+            <YouTube
+              videoId={props.state.streamData.brodcastId!}
+              id={props.state.streamData.brodcastId!}
+              onReady={(v) => {
+                v.target.mute();
+                v.target.playVideo();
+              }}
+              className="w-full h-full object-cover"
+              opts={{
+                height: '100%',
+                width: '100%',
+
+                playerVars: {
+                  autoplay: 1,
+                  controls: 0,
+                },
+              }}
+            />
           ) : (
             <></>
           )}
@@ -55,13 +74,19 @@ export function StreamContainer(props: StreamContainerProps) {
                       <span className="text-xl font-bold text-white">{activeSet ? activeSet?.teamOneScore : 0}</span>
                     </div>
 
-                    <div className="flex w-44 gap-3 justify-center items-center">
-                      <span className="text-xl font-bold text-white">[{props.state.teamOneScore}]</span>
-                      <span className="text-xl font-bold text-white">
-                        [{props.state.noOfFrames ? props.state.noOfFrames : props.state.sets.length}]
-                      </span>
-                      <span className="text-xl font-bold text-white">[{props.state.teamTwoScore}]</span>
-                    </div>
+                    {props.state.sport === 'SNOOKER' ? (
+                      <div className="flex w-44 gap-3 justify-center items-center">
+                        <span className="text-xl font-bold text-white">[{props.state.teamOneScore}]</span>
+                        <span className="text-xl font-bold text-white">
+                          [{props.state.noOfFrames ? props.state.noOfFrames : props.state.sets.length}]
+                        </span>
+                        <span className="text-xl font-bold text-white">[{props.state.teamTwoScore}]</span>
+                      </div>
+                    ) : (
+                      <div className="flex w-44 gap-3 justify-center items-center">
+                        <span className="text-xl font-bold text-white">{formatTime(props.timeLeft)}</span>
+                      </div>
+                    )}
 
                     <div className="flex ">
                       <span className="text-xl font-bold text-white">{activeSet ? activeSet?.teamTwoScore : 0}</span>

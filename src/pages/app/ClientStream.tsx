@@ -20,7 +20,7 @@ export function ClientStream() {
     setLoading(false);
   }, []);
 
-  const { loading: streamingLoading, streamingData } = useStreaming(undefined, matchId ? matchId : undefined);
+  const { loading: streamingLoading, streamingData, timeLeft } = useStreaming(undefined, matchId ? matchId : undefined);
 
   if (loading || streamingLoading) {
     return <SnookerMarkingLoading />;
@@ -28,7 +28,7 @@ export function ClientStream() {
 
   return (
     <div className="h-screen w-screen">
-      <StreamContainer isPortrait={isPortrait} state={streamingData} />
+      <StreamContainer timeLeft={timeLeft} isPortrait={isPortrait} state={streamingData} />
     </div>
   );
 }

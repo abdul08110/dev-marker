@@ -23,6 +23,8 @@ const YouTubePlayer = ({ videoId }: { videoId: string }) => {
 
       playerInstanceRef.current = new (window as any).YT.Player(playerRef.current, {
         videoId: videoId,
+        height: '100%',
+        width: '100%',
         playerVars: {
           autoplay: 1,
           controls: 0,
