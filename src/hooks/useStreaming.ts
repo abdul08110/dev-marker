@@ -32,8 +32,8 @@ export interface StreamingState {
 const useStreaming = (venueId?: string, matchId?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [streamingData, setStreamingData] = useState<StreamingState | null>(null);
-  const [viewershipData, setViewershipData] = useState<StreamingState | null>(null);
-  const [videoStartTime, setVideoStartTime] = useState<number | null>(null);
+  // const [viewershipData, setViewershipData] = useState<StreamingState | null>(null);
+  // const [videoStartTime, setVideoStartTime] = useState<number | null>(null);
   const getLiveMatchHook = useGetMatchLiveData();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
@@ -188,33 +188,32 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     }
   };
 
-  const updateViewershipData = () => {
-    if (!streamingData || !streamingData.sets) return;
+  // const updateViewershipData = () => {
+  //   if (!streamingData || !streamingData.sets) return;
 
-    const updatedSets = streamingData.sets.map((set) => {
-      const updatedTurns = set.turns.filter((turn) => {
-        return new Date(turn.timeScored) <= new Date();
-      });
+  //   const updatedSets = streamingData.sets.map((set) => {
+  //     const updatedTurns = set.turns.filter((turn) => {
+  //       return new Date(turn.timeScored) <= new Date();
+  //     });
 
-      return {
-        ...set,
-        turns: updatedTurns,
-      };
-    });
+  //     return {
+  //       ...set,
+  //       turns: updatedTurns,
+  //     };
+  //   });
 
-    // setViewershipData((prevData) => ({
-    //   ...prevData,
-    //   sets: updatedSets,
-    //   teamOneScore: updatedSets.reduce((total, set) => total + set.teamOneScore, 0),
-    //   teamTwoScore: updatedSets.reduce((total, set) => total + set.teamTwoScore, 0),
-    // }));
-  };
+  //   setViewershipData((prevData) => ({
+  //     ...prevData,
+  //     sets: updatedSets,
+  //     teamOneScore: updatedSets.reduce((total, set) => total + set.teamOneScore, 0),
+  //     teamTwoScore: updatedSets.reduce((total, set) => total + set.teamTwoScore, 0),
+  //   }));
+  // };
 
   return {
     loading,
     streamingData,
     timeLeft,
-    setVideoStartTime
   };
 };
 
