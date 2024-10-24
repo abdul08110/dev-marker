@@ -47,16 +47,16 @@ export function StreamContainer(props: StreamContainerProps) {
 
           {props.state.overlayType === 'DESTINATION' && !props.isPortrait ? (
             <div className="h-full w-full absolute inset-0 flex flex-col items-center">
-              <div className="w-[70%] mt-auto mb-4 bg-[#424242] flex items-center">
-                <div className=" border-white border grid grid-cols-12 h-14 w-full">
-                  <div className="col-span-4 rounded-r-full flex items-center p-2 relative">
+              <div className="lg:w-[70%] w-[90%] mt-auto mb-4 bg-[#424242] flex items-center">
+                <div className=" border-white border grid grid-cols-12 lg:h-14 h-12 w-full">
+                  <div className="col-span-4 rounded-r-full flex items-center relative pl-1">
                     <div className={`flex gap-2 items-center w-full rounded`}>
                       {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
                       props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
                         <>
-                          <img className="w-6 h-6" src={'/images/red-ball.png'} />
+                          <img className="lg:w-6 lg:h-6 w-4 h-4" src={'/images/red-ball.png'} />
                           <div className="absolute py-1 px-3 -top-4 left-[30%] bg-markerButton ">
-                            <h5 className="text-sm">Break {activeTurn ? activeTurn?.score : 0}</h5>
+                            <h5 className="lg:text-sm text-xs">Break {activeTurn ? activeTurn?.score : 0}</h5>
                           </div>
                         </>
                       ) : (
@@ -66,34 +66,34 @@ export function StreamContainer(props: StreamContainerProps) {
                         className="w-10 h-10"
                         src={props.state.sideOnePlayerOne.profilePhoto ? props.state.sideOnePlayerOne.profilePhoto : ''}
                       />
-                      <small className="text-white text-xl">{props.state.sideOnePlayerOne.name}</small>
+                      <small className="text-white lg:text-xl text-sm">{props.state.sideOnePlayerOne.name}</small>
                     </div>
                   </div>
                   <div className="col-span-4 flex justify-center items-center gap-4 relative">
                     <div className="flex">
-                      <span className="text-xl font-bold text-white">{activeSet ? activeSet?.teamOneScore : 0}</span>
+                      <span className="lg:text-xl text-sm font-bold text-white">{activeSet ? activeSet?.teamOneScore : 0}</span>
                     </div>
 
                     {props.state.sport === 'SNOOKER' ? (
                       <div className="flex w-44 gap-3 justify-center items-center">
-                        <span className="text-xl font-bold text-white">[{props.state.teamOneScore}]</span>
-                        <span className="text-xl font-bold text-white">
+                        <span className="lg:text-xl text-sm font-bold text-white">[{props.state.teamOneScore}]</span>
+                        <span className="lg:text-xl text-sm font-bold text-white">
                           [{props.state.noOfFrames ? props.state.noOfFrames : props.state.sets.length}]
                         </span>
-                        <span className="text-xl font-bold text-white">[{props.state.teamTwoScore}]</span>
+                        <span className="lg:text-xl text-sm font-bold text-white">[{props.state.teamTwoScore}]</span>
                       </div>
                     ) : (
                       <div className="flex w-44 gap-3 justify-center items-center">
-                        <span className="text-xl font-bold text-white">{formatTime(props.timeLeft)}</span>
+                        <span className="lg:text-xl text-sm font-bold text-white">{formatTime(props.timeLeft)}</span>
                       </div>
                     )}
 
                     <div className="flex ">
-                      <span className="text-xl font-bold text-white">{activeSet ? activeSet?.teamTwoScore : 0}</span>
+                      <span className="lg:text-xl text-sm font-bold text-white">{activeSet ? activeSet?.teamTwoScore : 0}</span>
                     </div>
 
                     <div className="absolute w-full py-1 px-3 -top-4 left-0 bg-markerButton text-center">
-                      <h5 className="text-sm">
+                      <h5 className="lg:text-sm text-xs text-nowrap">
                         Table {props.state.venueNo}, {props.state.clubName}{' '}
                         {new Date(props.state.actualStartTimeDate).toLocaleTimeString(undefined, {
                           hour: '2-digit',
@@ -104,8 +104,8 @@ export function StreamContainer(props: StreamContainerProps) {
                     </div>
                   </div>
                   <div className="col-span-4 rounded-l-full  flex items-center relative">
-                    <div className="flex gap-2 items-center justify-end w-full p-1 rounded">
-                      <small className="text-white text-xl">{props.state.sideTwoPlayerOne.name}</small>
+                    <div className="flex gap-2 items-center justify-end w-full pr-1 rounded">
+                      <small className="text-white lg:text-xl text-sm">{props.state.sideTwoPlayerOne.name}</small>
                       <img
                         className="w-10 h-10"
                         src={props.state.sideTwoPlayerOne.profilePhoto ? props.state.sideTwoPlayerOne.profilePhoto : ''}
@@ -113,9 +113,9 @@ export function StreamContainer(props: StreamContainerProps) {
                       {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
                       props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
                         <>
-                          <img className="w-6 h-6" src={'/images/red-ball.png'} />
+                          <img className="lg:w-6 lg:h-6 w-4 h-4" src={'/images/red-ball.png'} />
                           <div className="absolute py-1 px-3 -top-4 right-[30%] bg-markerButton ">
-                            <h5 className="text-sm">Break {activeTurn ? activeTurn?.score : 0}</h5>
+                            <h5 className="lg:text-sm text-xs">Break {activeTurn ? activeTurn?.score : 0}</h5>
                           </div>
                         </>
                       ) : (

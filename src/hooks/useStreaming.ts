@@ -23,15 +23,17 @@ export interface StreamingState {
   sets: Set[];
   overlayType?: 'SOURCE' | 'DESTINATION';
   showPlayerMatchHistory?: boolean;
-  venueNo: number,
-  clubName: string,
-  noOfFrames: number | null,
-  actualStartTimeDate: string,
+  venueNo: number;
+  clubName: string;
+  noOfFrames: number | null;
+  actualStartTimeDate: string;
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [streamingData, setStreamingData] = useState<StreamingState | null>(null);
+  const [viewershipData, setViewershipData] = useState<StreamingState | null>(null);
+  const [videoStartTime, setVideoStartTime] = useState<number | null>(null);
   const getLiveMatchHook = useGetMatchLiveData();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
@@ -109,7 +111,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           clubName: res.club.name,
           noOfFrames: res.noOfSets,
           actualStartTimeDate: res.actualStartTimeDate,
-          overlayType: res.overlayType
+          overlayType: res.overlayType,
         });
 
         setTimeLeft(Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60));
@@ -186,10 +188,33 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     }
   };
 
+  const updateViewershipData = () => {
+    if (!streamingData || !streamingData.sets) return;
+
+    const updatedSets = streamingData.sets.map((set) => {
+      const updatedTurns = set.turns.filter((turn) => {
+        return new Date(turn.timeScored) <= new Date();
+      });
+
+      return {
+        ...set,
+        turns: updatedTurns,
+      };
+    });
+
+    // setViewershipData((prevData) => ({
+    //   ...prevData,
+    //   sets: updatedSets,
+    //   teamOneScore: updatedSets.reduce((total, set) => total + set.teamOneScore, 0),
+    //   teamTwoScore: updatedSets.reduce((total, set) => total + set.teamTwoScore, 0),
+    // }));
+  };
+
   return {
     loading,
     streamingData,
     timeLeft,
+    setVideoStartTime
   };
 };
 
