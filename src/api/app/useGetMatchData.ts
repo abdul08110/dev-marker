@@ -30,6 +30,7 @@ export interface StreamData {
 export interface MatchStartResponse {
   activePlayerId: string | null;
   actualStartTimeDate: string;
+  actualEndTimeDate: string | null;
   clubId: string;
   createdAt: string;
   currentSetTeamOneScore: number;

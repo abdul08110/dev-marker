@@ -21,7 +21,14 @@ export function Tv() {
     fetchData();
   }, []);
 
-  const { loading: streamingLoading, streamingData, timeLeft } = useStreaming(venueId || undefined);
+  const {
+    loading: streamingLoading,
+    streamingData,
+    timeLeft,
+    onVideoStart,
+    onVideoPause,
+    onVideoEnd
+  } = useStreaming(venueId || undefined);
 
   if (loading || streamingLoading) {
     return <SnookerMarkingLoading />;
@@ -29,7 +36,14 @@ export function Tv() {
 
   return (
     <div className="h-screen w-screen">
-      <StreamContainer timeLeft={timeLeft} state={streamingData} isPortrait={false} />
+      <StreamContainer
+        onVideoEnd={onVideoEnd}
+        onVideoPause={onVideoPause}
+        onVideoStart={onVideoStart}
+        timeLeft={timeLeft}
+        state={streamingData}
+        isPortrait={false}
+      />
     </div>
   );
 }

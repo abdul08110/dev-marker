@@ -227,7 +227,7 @@ export const calculateTeamPOSN = createSelector(
       SnookerPointType.BLUE,
       SnookerPointType.PINK,
       SnookerPointType.BLACK,
-      SnookerPointType.PLAY_SAFE
+      SnookerPointType.PLAY_SAFE,
     ];
 
     let [team1Potted, team2Potted] = [0, 0];
@@ -315,13 +315,13 @@ export const snookerButtonsDisabledState = createSelector(
     };
 
     return {
-      [SnookerScoringButtonEnum.RED]: !activeTurn || redsLeft === 0,
-      [SnookerScoringButtonEnum.YELLOW]: shouldDisableColorButton(0, SnookerPointType.YELLOW),
-      [SnookerScoringButtonEnum.GREEN]: shouldDisableColorButton(1, SnookerPointType.GREEN),
-      [SnookerScoringButtonEnum.BROWN]: shouldDisableColorButton(2, SnookerPointType.BROWN),
-      [SnookerScoringButtonEnum.BLUE]: shouldDisableColorButton(3, SnookerPointType.BLUE),
-      [SnookerScoringButtonEnum.PINK]: shouldDisableColorButton(4, SnookerPointType.PINK),
-      [SnookerScoringButtonEnum.BLACK]: shouldDisableColorButton(5, SnookerPointType.BLACK),
+      [SnookerScoringButtonEnum.RED]: !activeTurn,
+      [SnookerScoringButtonEnum.YELLOW]: !activeTurn,
+      [SnookerScoringButtonEnum.GREEN]: !activeTurn,
+      [SnookerScoringButtonEnum.BROWN]: !activeTurn,
+      [SnookerScoringButtonEnum.BLUE]: !activeTurn,
+      [SnookerScoringButtonEnum.PINK]: !activeTurn,
+      [SnookerScoringButtonEnum.BLACK]: !activeTurn,
       [SnookerScoringButtonEnum.FOUL]: !activeTurn || pointsOnTable === 0,
       [SnookerScoringButtonEnum.BREAK_OFF]: activeSet !== undefined,
       [SnookerScoringButtonEnum.PLAY_SAFE]: !activeTurn && activeSet === undefined,

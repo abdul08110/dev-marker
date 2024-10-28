@@ -37,3 +37,24 @@ export const formatTime = (totalSeconds: number) => {
   const seconds = totalSeconds % 60;
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
+
+export const getTimeDifferenceInMinutes = (isoTime1: string, isoTime2: string): number => 
+  Math.abs(new Date(isoTime2).getTime() - new Date(isoTime1).getTime()) / 60000;
+
+
+export const addTimeLeftToStart = (timeStart: string, timeLeftMinutes: number) => {
+  const startTime = new Date(timeStart);
+  const timeLeftMilliseconds = timeLeftMinutes * 60 * 1000;
+  const newTime = new Date(startTime.getTime() + timeLeftMilliseconds);
+
+  return newTime.toISOString();
+};
+
+export const subtractTimeLeftFromEnd = (endTime: string, timeLeftMinutes: number) => {
+  const endTimeDate = new Date(endTime);
+  const timeLeftMilliseconds = timeLeftMinutes * 60 * 1000;
+
+  const newTime = new Date(endTimeDate.getTime() - timeLeftMilliseconds);
+
+  return newTime.toISOString();
+};

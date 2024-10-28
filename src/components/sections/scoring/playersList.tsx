@@ -53,7 +53,7 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
     };
 
     return (
-        <div className="w-full">
+        <div className="w-full h-full">
             <Command shouldFilter={false} className="w-full mt-2 bg-transparent text-white">
                 <CommandInput
                     className="text-white w-full"
@@ -61,7 +61,7 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
                     value={searchQuery}
                     onValueChange={handleSearchChange}
                 />
-                <CommandList>
+                <CommandList className="h-full max-h-full">
                     {loading && <CommandEmpty>Loading players...</CommandEmpty>}
                     {error && <CommandEmpty>Error loading players</CommandEmpty>}
                     {!loading && !error && players && players.length === 0 && (

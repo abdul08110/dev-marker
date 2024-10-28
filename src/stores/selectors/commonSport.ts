@@ -1,5 +1,4 @@
-
-import { type Set, TeamDetails, Turn, Point } from '../types';
+import { type Set, TeamDetails, Turn, Point, Player } from '../types';
 
 const getLastElement = <T>(array: T[]): T | null => (array.length > 0 ? array[array.length - 1] : null);
 
@@ -26,17 +25,11 @@ export const getActiveTurnIndex = (set: Set | null): number =>
 
 // POINTS
 
-export const getActivePoint = (turn: Turn | null): Point | null =>
-  turn ? getLastElement(turn.points) : null;
+export const getActivePoint = (turn: Turn | null): Point | null => (turn ? getLastElement(turn.points) : null);
 
-export const getSecondLastPoint = (turn: Turn | null): Point | null =>
-  getSecondLastElement(turn?.points ?? []);
+export const getSecondLastPoint = (turn: Turn | null): Point | null => getSecondLastElement(turn?.points ?? []);
 
-export const getAllPointsAfter = (
-  turns: Turn[],
-  startTurnIndex: number,
-  startPointIndex: number,
-): Point[] => {
+export const getAllPointsAfter = (turns: Turn[], startTurnIndex: number, startPointIndex: number): Point[] => {
   let points: Point[] = [];
   for (let i = startTurnIndex; i < turns.length; i++) {
     const start = i === startTurnIndex ? startPointIndex + 1 : 0;
@@ -106,4 +99,81 @@ export const getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex = 
 
 export const getTeamKey = (teamIndex: number): 'team1' | 'team2' => {
   return teamIndex === 0 ? 'team1' : 'team2';
+};
+
+export const calculateTotalTeamScore = (
+  sets: Set[],
+) => {
+  const totalScores = {
+    side1: 0,
+    side2: 0
+  }
+
+  sets.forEach((value) => {
+    if (value.status === 'COMPLETED') {
+      value.teamOneScore > value.teamTwoScore || ( value.setConcededTo !== null && value.setConcededTo === 0 ) ? totalScores.side1 += 1 : totalScores.side2 += 1
+    }
+  })
+
+  return totalScores;
+}
+
+export const calculatePointsBySide = (
+  turns: Turn[],
+  sideOnePlayerOne: Player,
+  sideOnePlayerTwo: Player | null,
+  sideTwoPlayerOne: Player,
+  sideTwoPlayerTwo: Player | null,
+) => {
+  const sidePoints = {
+    side1: 0,
+    side2: 0,
+  };
+
+  const side1Players = new Set<string | null>(
+    [sideOnePlayerOne.id, sideOnePlayerTwo?.id].filter((id): id is string | null => id !== undefined),
+  );
+
+  const side2Players = new Set<string | null>(
+    [sideTwoPlayerOne.id, sideTwoPlayerTwo?.id].filter((id): id is string | null => id !== undefined),
+  );
+
+  turns.forEach((turn) => {
+    const totalPoints = turn.points.reduce((total, point) => {
+      if (point.snookerPoint) {
+        return total + point.snookerPoint.score;
+      }
+      if (point.billiardsPoint) {
+        return total + point.billiardsPoint.score;
+      }
+      return total;
+    }, 0);
+
+    const penaltyPoints = turn.points.reduce((penaltyTotal, point) => {
+      if (point.snookerPoint && point.snookerPoint.penalty > 0) {
+        return penaltyTotal + point.snookerPoint.penalty;
+      }
+      if (point.billiardsPoint && point.billiardsPoint.penalty > 0) {
+        return penaltyTotal + point.billiardsPoint.penalty;
+      }
+      return penaltyTotal;
+    }, 0);
+
+    const playerSide = side1Players.has(turn.turnPlayerId)
+      ? 'side1'
+      : side2Players.has(turn.turnPlayerId)
+        ? 'side2'
+        : null;
+
+    if (playerSide) {
+      if (playerSide === 'side1' && penaltyPoints > 0) {
+        sidePoints.side2 += penaltyPoints;
+      } else if (playerSide === 'side2' && penaltyPoints > 0) {
+        sidePoints.side1 += penaltyPoints;
+      }
+      sidePoints[playerSide] += totalPoints;
+    }
+  });
+
+  return sidePoints;
 };

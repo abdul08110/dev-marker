@@ -30,7 +30,7 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
               : `Team ${props.teamIndex + 1} Player ${props.playerIndex + 1}`}
           </DrawerTitle>
         </DrawerHeader>
-        <div className="px-4 h-full">
+        <div className="px-4 h-[70%]">
           <PlayersList
             disabledPlayerList={props.disabledPlayerList}
             onPlayerSelect={props.onSubmit}

@@ -10,6 +10,7 @@ interface ScoreBoardTeamCardProps {
   activePlayerId: string | null;
   showBilliardsBall: 'YELLOW' | 'WHITE' | null;
   sport: 'SNOOKER' | 'BILLIARDS';
+  orientation: 'portrait' | 'landscape';
 }
 
 export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
@@ -18,12 +19,12 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
 
   return (
     <div
-      className={clsx('rounded-md p-2 flex flex-col items-center gap-2 w-full', {
+      className={clsx('rounded-md p-2 items-center gap-2 w-full flex flex-col relative', {
         'bg-lightSecondary': !(isPlayerOneActive || isPlayerTwoActive),
         'bg-primary': isPlayerOneActive || isPlayerTwoActive,
       })}
     >
-      <div className="flex-grow flex flex-col justify-start items-center gap-2 min-h-24">
+      <div className={`flex-grow flex flex-col justify-start items-center gap-2 min-h-24`}>
         {isPlayerOneActive || isPlayerTwoActive ? (
           <div className="px-4">
             <img

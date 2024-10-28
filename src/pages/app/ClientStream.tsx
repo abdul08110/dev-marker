@@ -12,15 +12,23 @@ export function ClientStream() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const matchIdFromUrl = params.get('matchId');
-    
+
     if (matchIdFromUrl) {
       setMatchId(matchIdFromUrl);
     }
-    
+
     setLoading(false);
   }, []);
 
-  const { loading: streamingLoading, streamingData, timeLeft } = useStreaming(undefined, matchId ? matchId : undefined);
+  const {
+    loading: streamingLoading,
+    streamingData,
+    timeLeft,
+    onVideoStart,
+    onVideoPause,
+    viewershipData,
+    onVideoEnd
+  } = useStreaming(undefined, matchId ? matchId : undefined);
 
   if (loading || streamingLoading) {
     return <SnookerMarkingLoading />;
@@ -28,7 +36,14 @@ export function ClientStream() {
 
   return (
     <div className="h-screen w-screen">
-      <StreamContainer timeLeft={timeLeft} isPortrait={isPortrait} state={streamingData} />
+      <StreamContainer
+        onVideoPause={onVideoPause}
+        onVideoStart={onVideoStart}
+        onVideoEnd={onVideoEnd}
+        timeLeft={timeLeft}
+        isPortrait={isPortrait}
+        state={streamingData && streamingData.matchStatus === 'COMPLETED' ? viewershipData : streamingData}
+      />
     </div>
   );
 }
