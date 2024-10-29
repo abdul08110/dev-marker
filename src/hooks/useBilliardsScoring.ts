@@ -23,11 +23,7 @@ import React, { useEffect } from 'react';
 import useTimer from './useTimer';
 import { getTimeLeftInMinutes } from '@/utils/functions';
 import { toast } from '@/components/ui/use-toast';
-import {
-  getActiveSet,
-  getActiveTeam,
-  getActiveTurn,
-} from '@/stores/selectors/commonSport';
+import { getActiveSet, getActiveTeam, getActiveTurn } from '@/stores/selectors/commonSport';
 import { BilliardPointType, Player } from '@/stores/types';
 import { matchEndGameRequest } from '@/api/scoring/scoringFunctions';
 import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@/stores/selectors/billiardsSelector';
@@ -133,7 +129,7 @@ const useBilliardsScoring = () => {
     const activeSet = getActiveSet(billiardsScoring.scoreHistory);
 
     if (activeSet) {
-      await dispatch(handleTeamSwitch({}));
+      await dispatch(handleTeamSwitch({ createUndoAndPushData: true }));
     } else {
       await dispatch(handleSelectionOfBreakOffTeam({ teamIndex }));
     }
@@ -144,8 +140,8 @@ const useBilliardsScoring = () => {
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
       expectedEndTimeDate: new Date(currentDate.getTime() + billiardsScoring.timeInMinutes * 60000),
-      sideOnePlayerOneId: billiardsScoring.team1.players[0].id!,
-      sideTwoPlayerOneId: billiardsScoring.team2.players[0].id!,
+      sideOnePlayerOneId: playerOrder[0],
+      sideTwoPlayerOneId: playerOrder[1],
       sport: 'BILLIARDS',
       sportType: billiardsScoring.format,
       streamingType: billiardsScoring.streaming,
@@ -280,7 +276,10 @@ const useBilliardsScoring = () => {
     setShowBallColorModal(false);
     setShowLoadingModal(true);
 
-    let unModifiedScoreOrder = [billiardsScoring.team1.players[0].id!, billiardsScoring.team2.players[0].id!];
+    const playerOne = billiardsScoring.team1.players[0].id!;
+    const playerTwo = billiardsScoring.team2.players[0].id!;
+
+    let unModifiedScoreOrder = [playerOne, playerTwo];
 
     const activeTeam = getActiveTeam(billiardsScoring.team1, billiardsScoring.team2);
     let isTeamReveresed = false;
@@ -288,9 +287,7 @@ const useBilliardsScoring = () => {
       await dispatch(handleReversePlayersState({}));
       isTeamReveresed = true;
     }
-    await handleMatchCreation(
-      isTeamReveresed ? [unModifiedScoreOrder[1], unModifiedScoreOrder[0]] : unModifiedScoreOrder,
-    );
+    await handleMatchCreation(isTeamReveresed === true ? [playerTwo, playerOne] : unModifiedScoreOrder);
 
     setShowLoadingModal(false);
   };
@@ -329,7 +326,7 @@ const useBilliardsScoring = () => {
     team1score,
     team2score,
     handleBilliardsSelectColorBall,
-    handleEndFrameButton
+    handleEndFrameButton,
   };
 };
 

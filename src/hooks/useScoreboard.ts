@@ -34,9 +34,8 @@ const useScoreboard = () => {
   const getLiveMatchHook = useGetMatchLiveData();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [scoreBoardData, setScoreboardData] = React.useState<ScoreBoardState | null>(null);
-  const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('portrait');
+  const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('landscape');
   const { rotateBody } = useBodyRotation();
-
 
   useEffect(() => {
     fetchMatchData(searchParamsMatchId);
@@ -156,13 +155,13 @@ const useScoreboard = () => {
         setScoreboardData((prevData) => {
           if (prevData === null) return null;
           const updatedSets = parsedMessage.sets ? [...parsedMessage.sets] : prevData.sets;
-  
+
           return {
             ...prevData,
             activePlayerId: parsedMessage.activePlayerId,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-            sets: updatedSets
+            sets: updatedSets,
           };
         });
         break;
@@ -183,7 +182,7 @@ const useScoreboard = () => {
     timeLeft,
     orientation,
     setOrientation,
-    rotateBody
+    rotateBody,
   };
 };
 

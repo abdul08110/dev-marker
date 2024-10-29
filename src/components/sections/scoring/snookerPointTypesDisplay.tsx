@@ -3,6 +3,7 @@ import clsx from 'clsx';
 
 interface SnookerPointTypeDisplayProps {
   activeTurnPointTypes: SnookerPointType[];
+  class?: string;
 }
 
 export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
@@ -20,7 +21,7 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
   };
 
   return (
-    <div className="w-full flex flex-wrap gap-1 justify-center">
+    <div className={clsx('w-full flex flex-wrap gap-1 justify-center', props.class)}>
       {props.activeTurnPointTypes.map((value, index) => (
         <div key={index} className={clsx('w-4 h-4 rounded-full', pointTypeToColorClass[value])}></div>
       ))}

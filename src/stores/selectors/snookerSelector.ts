@@ -5,7 +5,7 @@
 import { RootState } from '@/stores';
 import { SnookerPointType, type Set, Turn, Point, SnookerCorrection, GeneralScoringState } from '../types';
 import { createSelector } from '@reduxjs/toolkit';
-import { getActivePoint, getActiveSet, getActiveTurn, getAllPointsAfter, getLastPointPlayedInSet } from './commonSport';
+import {  getActiveSet, getActiveTurn, getAllPointsAfter, getLastPointPlayedInSet } from './commonSport';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 
 const RED_POINTS = 1;
@@ -284,35 +284,35 @@ export const snookerButtonsDisabledState = createSelector(
   (snookerState) => {
     const activeSet = getActiveSet(snookerState.scoreHistory);
     const activeTurn = activeSet ? getActiveTurn(activeSet) : null;
-    const lastPoint = getActivePoint(activeTurn);
-    const turns = activeSet ? activeSet.turns : [];
-    const redsLeft = calculateRedsLeft(
-      turns,
-      snookerState.format,
-      activeSet && activeSet.snookerCorrections ? activeSet.snookerCorrections : [],
-    );
-    const pottedColorsAfterAllReds = getPottedColorBallsAfterAllReds(turns);
-    const isLastBallFreeBall = checkIfLastBallIsFreeBall(snookerState.scoreHistory);
+    // const lastPoint = getActivePoint(activeTurn);
+    // const turns = activeSet ? activeSet.turns : [];
+    // const redsLeft = calculateRedsLeft(
+    //   turns,
+    //   snookerState.format,
+    //   activeSet && activeSet.snookerCorrections ? activeSet.snookerCorrections : [],
+    // );
+    // const pottedColorsAfterAllReds = getPottedColorBallsAfterAllReds(turns);
+    // const isLastBallFreeBall = checkIfLastBallIsFreeBall(snookerState.scoreHistory);
     const pointsOnTable = getNumberOnTableOfTheCurrentFrame(activeSet ? activeSet : null, snookerState.format);
 
-    const shouldDisableColorButton = (colorIndex: number, colorName: SnookerPointType) => {
-      const pottedColors = adjustColorBallsPottedWithFreeBall(activeSet!);
+    // const shouldDisableColorButton = (colorIndex: number, colorName: SnookerPointType) => {
+    //   const pottedColors = adjustColorBallsPottedWithFreeBall(activeSet!);
 
-      if (isLastBallFreeBall && redsLeft === 0) {
-        return pottedColors.includes(colorName);
-      }
+    //   if (isLastBallFreeBall && redsLeft === 0) {
+    //     return pottedColors.includes(colorName);
+    //   }
 
-      return (
-        !activeTurn ||
-        (lastPoint &&
-          'type' in lastPoint.snookerPoint! &&
-          lastPoint?.snookerPoint.type !== SnookerPointType.RED &&
-          redsLeft > 0 &&
-          !isLastBallFreeBall) ||
-        (redsLeft === 0 && pottedColors.length !== colorIndex && pottedColorsAfterAllReds.length !== 0) ||
-        (lastPoint === null && redsLeft > 0)
-      );
-    };
+    //   return (
+    //     !activeTurn ||
+    //     (lastPoint &&
+    //       'type' in lastPoint.snookerPoint! &&
+    //       lastPoint?.snookerPoint.type !== SnookerPointType.RED &&
+    //       redsLeft > 0 &&
+    //       !isLastBallFreeBall) ||
+    //     (redsLeft === 0 && pottedColors.length !== colorIndex && pottedColorsAfterAllReds.length !== 0) ||
+    //     (lastPoint === null && redsLeft > 0)
+    //   );
+    // };
 
     return {
       [SnookerScoringButtonEnum.RED]: !activeTurn,

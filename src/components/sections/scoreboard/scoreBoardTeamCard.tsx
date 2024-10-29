@@ -10,7 +10,8 @@ interface ScoreBoardTeamCardProps {
   activePlayerId: string | null;
   showBilliardsBall: 'YELLOW' | 'WHITE' | null;
   sport: 'SNOOKER' | 'BILLIARDS';
-  orientation: 'portrait' | 'landscape';
+  contentfrom: 'top' | 'left';
+  teamIndex: 0 | 1;
 }
 
 export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
@@ -19,62 +20,116 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
 
   return (
     <div
-      className={clsx('rounded-md p-2 items-center gap-2 w-full flex flex-col relative', {
-        'bg-lightSecondary': !(isPlayerOneActive || isPlayerTwoActive),
+      className={clsx('rounded-md gap-2 h-full w-full overflow-hidden col-span-1 relative pt-4 pb-4', {
+        'bg-[#5E5E5E]': !(isPlayerOneActive || isPlayerTwoActive),
         'bg-primary': isPlayerOneActive || isPlayerTwoActive,
+        'flex flex-col': props.contentfrom === 'top',
+        'flex flex-row': props.contentfrom === 'left',
+        'pr-32 pl-4': props.teamIndex === 0 && props.contentfrom === 'left',
+        'pl-32 pr-4': props.teamIndex === 1 && props.contentfrom === 'left',
+        'pl-4 pr-4':  props.contentfrom === 'top',
       })}
     >
-      <div className={`flex-grow flex flex-col justify-start items-center gap-2 min-h-24`}>
-        {isPlayerOneActive || isPlayerTwoActive ? (
-          <div className="px-4">
-            <img
-              src={
-                isPlayerOneActive
-                  ? props.playerOne.profilePhoto
-                    ? props.playerOne.profilePhoto
-                    : ''
-                  : props.playerTwo!.profilePhoto
-                    ? props.playerTwo!.profilePhoto
-                    : ''
-              }
-              className="w-full aspect-square object-cover"
-            />
-          </div>
-        ) : (
-          <img src={props.playerOne.profilePhoto ? props.playerOne.profilePhoto : '/images/user-dummy-pic.png'} />
-        )}
-      </div>
-      {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn && props.sport === 'SNOOKER' ? (
-        <SnookerPointTypeDisplay
-          activeTurnPointTypes={props.activeTurn.points.map((value) => value.snookerPoint!.type)}
-        />
-      ) : (
-        <></>
-      )}
-      <h3 className="text-white text-6xl">{props.score}</h3>
-      {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn ? (
-        <div className="text-white text-xl">Break {props.activeTurn.score}</div>
-      ) : (
-        <></>
-      )}
-
       <div
-        className={clsx('flex justify-center items-center px-4 py-1 rounded truncate w-full', {
-          'bg-lighterSecondary text-white': !(isPlayerOneActive || isPlayerTwoActive),
-          'bg-white text-black': isPlayerOneActive || isPlayerTwoActive,
-          'text-black/50': (isPlayerOneActive || isPlayerTwoActive) && isPlayerTwoActive,
-          'text-black': (isPlayerOneActive || isPlayerTwoActive) && isPlayerOneActive,
+        className={clsx(`flex justify-center items-center gap-2`, {
+          'h-[30%]': props.contentfrom === 'top',
+          'w-[30%]': props.contentfrom === 'left',
         })}
       >
-        {props.playerOne.name}
+        {isPlayerOneActive || isPlayerTwoActive ? (
+          <img
+            src={
+              isPlayerOneActive
+                ? props.playerOne.profilePhoto
+                  ? props.playerOne.profilePhoto
+                  : '/images/user-dummy-pic.png'
+                : props.playerTwo!.profilePhoto
+                  ? props.playerTwo!.profilePhoto
+                  : '/images/user-dummy-pic.png'
+            }
+            className={clsx('h-full w-full aspect-square object-contain', {
+              '-rotate-90': props.contentfrom === 'left',
+            })}
+          />
+        ) : (
+          <img
+            className={clsx('h-full w-full aspect-square object-contain', {
+              '-rotate-90': props.contentfrom === 'left',
+            })}
+            src={props.playerOne.profilePhoto ? props.playerOne.profilePhoto : '/images/user-dummy-pic.png'}
+          />
+        )}
       </div>
-      {props.playerTwo ? (
+
+      <div
+        className={clsx('justify-center items-center', {
+          'h-[50%] flex flex-col': props.contentfrom === 'top',
+          'w-[50%] flex flex-row': props.contentfrom === 'left',
+        })}
+      >
         <div
-          className={clsx('flex justify-center items-center px-4 py-1 rounded truncate w-full', {
-            'bg-lighterSecondary text-white': !(isPlayerOneActive || isPlayerTwoActive),
-            'bg-white text-black': isPlayerOneActive || isPlayerTwoActive,
-            'text-black/50': (isPlayerOneActive || isPlayerTwoActive) && isPlayerTwoActive,
-            'text-black': (isPlayerOneActive || isPlayerTwoActive) && isPlayerOneActive,
+          className={clsx({
+            'h-[20%]': props.contentfrom === 'top',
+            'w-[20%] h-full flex justify-center items-center': props.contentfrom === 'left',
+          })}
+        >
+          {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn && props.sport === 'SNOOKER' ? (
+            <SnookerPointTypeDisplay
+              class={clsx({ '-rotate-90': props.contentfrom === 'left' })}
+              activeTurnPointTypes={props.activeTurn.points.map((value) => value.snookerPoint!.type)}
+            />
+          ) : (
+            <div className="h-full w-full"></div>
+          )}
+        </div>
+        <div
+          className={clsx('text-white leading-[1] font-bold text-center', {
+            'h-[60%] w-full': props.contentfrom === 'top',
+            'w-[60%] h-full flex justify-center items-center': props.contentfrom === 'left',
+          })}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 12vw, 30rem)' : 'clamp(1rem, 20vh, 30rem)' }}
+        >
+          <span
+            className={clsx({
+              '-rotate-90 inline-block': props.contentfrom === 'left',
+            })}
+          >
+            {props.score}
+          </span>
+        </div>
+        <div
+          className={clsx('text-yellow-300 uppercase text-center', {
+            'h-[20%] w-full': props.contentfrom === 'top',
+            'w-[20%] h-full flex justify-center items-center': props.contentfrom === 'left',
+          })}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 10vw, 2rem)' : 'clamp(1rem, 10vh, 2rem)' }}
+        >
+          {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn ? (
+            <span
+              className={clsx({
+                '-rotate-90 inline-block whitespace-nowrap': props.contentfrom === 'left',
+              })}
+            >
+              Break {props.activeTurn.score}
+            </span>
+          ) : (
+            <></>
+          )}
+        </div>
+      </div>
+
+      <div
+        className={clsx({
+          'h-[20%] flex flex-col gap-4 justify-end w-full': props.contentfrom === 'top',
+          'w-[20%] h-full flex flex-col gap-4 justify-center items-end': props.contentfrom === 'left',
+        })}
+      >
+        <div
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(1rem, 4vh, 10rem)' }}
+          className={clsx('flex justify-center items-center p-0 w-full font-medium text-white', {
+            'text-white/50': (isPlayerOneActive || isPlayerTwoActive) && isPlayerTwoActive,
+            'h-fit max-h-[50%]': props.contentfrom === 'top',
+            'w-full h-full max-w-[50%]': props.contentfrom === 'left',
           })}
         >
           {props.sport === 'BILLIARDS' && props.showBilliardsBall !== null ? (
@@ -85,11 +140,35 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
           ) : (
             <></>
           )}
-          {props.playerOne.name}
+          <span
+            className={clsx({
+              '-rotate-90 inline-block whitespace-nowrap': props.contentfrom === 'left',
+            })}
+          >
+            {props.playerOne.name}
+          </span>
         </div>
-      ) : (
-        <></>
-      )}
+        {props.playerTwo ? (
+          <div
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(1rem, 4vh, 10rem)' }}
+            className={clsx('flex justify-center items-center h-fit p-2 w-full font-medium text-white', {
+              'text-white/50': (isPlayerOneActive || isPlayerTwoActive) && isPlayerTwoActive,
+            })}
+          >
+            {props.sport === 'BILLIARDS' && props.showBilliardsBall !== null ? (
+              <img
+                className="h-6 w-6 object-contain"
+                src={props.showBilliardsBall === 'YELLOW' ? '/images/yellow-ball.png' : '/images/white-ball.png'}
+              />
+            ) : (
+              <></>
+            )}
+            {props.playerTwo.name}
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   );
 }

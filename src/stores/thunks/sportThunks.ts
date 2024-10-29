@@ -296,7 +296,7 @@ export const handleBilliardsPointTrigger = createAsyncThunk<
       }),
     );
 
-    await dispatch(handleTeamSwitch({}));
+    await dispatch(handleTeamSwitch({ createUndoAndPushData: false }));
   } else {
     await dispatch(
       handleChangeSetScore({
@@ -381,7 +381,7 @@ export const handleChangeScoreOnTrigger = createAsyncThunk<
     pointType === SnookerPointType.MISSED_POT ||
     pointType === SnookerPointType.PLAY_SAFE
   ) {
-    await dispatch(handleTeamSwitch({}));
+    await dispatch(handleTeamSwitch({ createUndoAndPushData: false }));
   }
 
   await dispatch(changeBackendUpdatedState({ value: false }));
@@ -447,7 +447,7 @@ export const handleFoulScore = createAsyncThunk<
     }),
   );
 
-  await dispatch(handleTeamSwitch({}));
+  await dispatch(handleTeamSwitch({ createUndoAndPushData: false }));
   await dispatch(handleSelectionOfOnAndAheadScores({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
@@ -609,9 +609,9 @@ export const pushToUndoStackSnooker = createAsyncThunk<void, {}, { state: RootSt
   },
 );
 
-export const handleTeamSwitch = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
+export const handleTeamSwitch = createAsyncThunk<void, { createUndoAndPushData: boolean }, { state: RootState; dispatch: AppDispatch }>(
   'sport/handleTeamSwitch',
-  async ({}, { dispatch, getState }) => {
+  async ({ createUndoAndPushData }, { dispatch, getState }) => {
     const state = getState();
     const matchId = state.sport.matchId;
     const activePlayer = getActivePlayer(state.sport.team1, state.sport.team2);
@@ -627,6 +627,11 @@ export const handleTeamSwitch = createAsyncThunk<void, {}, { state: RootState; d
     await dispatch(setActivePlayer({ playerId: data.nextPlayerId }));
 
     await dispatch(handleCreateTurn({ setIndex: activeSetIndex, playerId: data.nextPlayerId }));
+
+    if (createUndoAndPushData) {
+      await dispatch(changeBackendUpdatedState({ value: false }));
+      await dispatch(pushToUndoStackSnooker({}));
+    }
   },
 );
 

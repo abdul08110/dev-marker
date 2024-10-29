@@ -1,11 +1,12 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
+import { ScoreBoardOrientationModal } from '@/components/modals/scoreBoardOrientationModal';
 import { ScoreboardRender } from '@/components/sections/scoreboard/scoreBoardRender';
-import { Button } from '@/components/ui/button';
 import useScoreboard from '@/hooks/useScoreboard';
-import OrientationLogo from '@/icons/orientation';
+import { useState } from 'react';
 
 export function ScoreBoard() {
   const { loading, scoreBoardData, timeLeft, orientation, setOrientation } = useScoreboard();
+  const [showScoreBoardOrientationModal, setShowScoreBoardOrientationModal] = useState(true);
 
   return (
     <section>
@@ -14,14 +15,7 @@ export function ScoreBoard() {
       ) : (
         <section>
           {scoreBoardData ? (
-            <section className="h-screen w-screen flex flex-col py-4 gap-4 relative">
-              <div className="flex justify-between container">
-                <Button onClick={() => setOrientation(orientation === 'landscape' ? 'portrait' : 'landscape')}>
-                  <OrientationLogo className="h-5 w-5 text-white" />
-                </Button>
-              </div>
-              <ScoreboardRender timeLeft={timeLeft} state={scoreBoardData} orientation={orientation} />
-            </section>
+            <ScoreboardRender timeLeft={timeLeft} state={scoreBoardData} orientation={orientation} />
           ) : (
             <section className="h-screen w-screen flex justify-center items-center">
               <div className="text-white">
@@ -31,6 +25,15 @@ export function ScoreBoard() {
           )}
         </section>
       )}
+
+      <ScoreBoardOrientationModal
+        isModalOpen={showScoreBoardOrientationModal}
+        closeModal={() => setShowScoreBoardOrientationModal(false)}
+        confirmModal={() => {
+          setOrientation('portrait');
+          setShowScoreBoardOrientationModal(false);
+        }}
+      />
     </section>
   );
 }
