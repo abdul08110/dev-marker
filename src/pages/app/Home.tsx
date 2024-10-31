@@ -41,6 +41,8 @@ export function Home() {
         dispatch(setClubs(formattedData));
         dispatch(setActiveClub(formattedData[0]));
 
+        console.log(activeTournaments);
+
         const activeTournamentsResponse = await getTournaments();
 
         if (activeTournamentsResponse && activeTournamentsResponse.results.length > 0) {
