@@ -14,6 +14,17 @@ export interface Player {
   phoneNumber?: string;
 }
 
+export interface TournamentTeam { 
+  id: string;
+  name: string;
+  logo: string; 
+}
+
+export interface Tournament {
+  id: string;
+  logo: string;
+}
+
 export enum SnookerPointType {
   YELLOW = 'YELLOW',
   GREEN = 'GREEN',

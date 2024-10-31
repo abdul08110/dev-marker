@@ -39,6 +39,18 @@ export interface MatchStartResponse {
   id: string;
   noOfSets: number | null;
   handicap: number;
+  tournament?: {
+    id: string;
+    name: string;
+  },
+  tournamentTeamOne?: {
+    name: string;
+    logo: string;
+  },
+  tournamentTeamTwo?: {
+    name: string;
+    logo: string;
+  },
   sideOnePlayerOne: {
     id: string;
     name: string;

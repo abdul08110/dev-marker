@@ -4,7 +4,7 @@ import { handleApiResponse } from '@/utils/handlers';
 import { ApiResponse } from '@/types';
 
 interface MatchStartDataProps {
-    expectedEndTimeDate: Date,
+    expectedEndTimeDate?: Date,
     clubId: string,
     sport: 'BILLIARDS' | 'SNOOKER',
     sportType: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED',
@@ -16,7 +16,11 @@ interface MatchStartDataProps {
     streamingType: 'PUBLIC' | 'PRIVATE',
     handicap: number;
     maxScorePerSet: number | null,
-    noOfSets: number | null
+    noOfSets: number | null,
+    cumulativeScoring?: boolean,
+    tournamentTeamOneId?: string,
+    tournamentTeamTwoId?: string,
+    tournamentId?: string,
 }
 
 interface MatchStartResponse {

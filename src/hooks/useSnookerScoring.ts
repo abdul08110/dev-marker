@@ -28,6 +28,7 @@ import {
   handleReversePlayersState,
   handleSelectionOfBreakOffTeam,
   handleSettingsStateUpdate,
+  handleStartTournamentMatch,
   handleUndoScoreClicked,
   matchSyncDataFromBackend,
 } from '@/stores/thunks/sportThunks';
@@ -261,12 +262,25 @@ const useSnookerScoring = () => {
             return;
           }
           if (snookerScoring.team1.players.length === 1 && snookerScoring.team2.players.length === 1) {
-            await handleMatchCreation([
-              activeTeamInfo === 0 ? snookerScoring.team1.players[0].id : snookerScoring.team2.players[0].id,
-              activeTeamInfo === 0 ? snookerScoring.team2.players[0].id : snookerScoring.team1.players[0].id,
-            ]);
-            setShowLoadingModal(false);
-            return;
+            if (snookerScoring.matchId === null) {
+              await handleMatchCreation([
+                activeTeamInfo === 0 ? snookerScoring.team1.players[0].id : snookerScoring.team2.players[0].id,
+                activeTeamInfo === 0 ? snookerScoring.team2.players[0].id : snookerScoring.team1.players[0].id,
+              ]);
+              setShowLoadingModal(false);
+              return;
+            } else {
+              await dispatch(
+                handleStartTournamentMatch({
+                  scoreOrder: [
+                    activeTeamInfo === 0 ? snookerScoring.team1.players[0].id : snookerScoring.team2.players[0].id,
+                    activeTeamInfo === 0 ? snookerScoring.team2.players[0].id : snookerScoring.team1.players[0].id,
+                  ],
+                }),
+              );
+              setShowLoadingModal(false);
+              return;
+            }
           } else {
             setShowPlayerOrderModal(true);
             setShowLoadingModal(false);

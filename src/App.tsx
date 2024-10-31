@@ -10,6 +10,7 @@ import { ScoreBoard } from './pages/app/ScoreBoard';
 import { BilliardsScoring } from './pages/app/billiardsScoring';
 import { Tv } from './pages/app/Tv';
 import { ClientStream } from './pages/app/ClientStream';
+import { Tournament } from './pages/app/Tournament';
 
 const App: React.FC = () => {
   const token = getToken();
@@ -24,6 +25,7 @@ const App: React.FC = () => {
           <Route path="/app/billiards" element={<BilliardsScoring />} />
           <Route path="/app/scoreboard" element={<ScoreBoard />} />
           <Route path="/app/tv" element={<Tv />} />
+          <Route path="/app/tournament" element={<Tournament />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/app/stream" element={<ClientStream />} />

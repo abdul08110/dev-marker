@@ -1,4 +1,5 @@
 import useLogout from '@/api/auth/useLogout';
+import useGetActiveTournaments from '@/api/home/useGetActiveTournaments';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useMarkerClubs from '@/api/home/useMarkerClubs';
 import { HomeLoading } from '@/components/loading/homeLoading';
@@ -7,6 +8,7 @@ import TvLogo from '@/icons/tv';
 import { setActiveClub, setClubs } from '@/stores/slices/clubSlice';
 import { resetStateSnooker } from '@/stores/slices/sportSlice';
 import { clearUndoStack } from '@/stores/slices/undoSlice';
+import { Tournament } from '@/stores/types';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -15,11 +17,13 @@ import { useNavigate } from 'react-router-dom';
 export function Home() {
   const dispatch = useDispatch();
   const { getMarkerClubs, data } = useMarkerClubs('MARKER');
+  const { getTournaments, tournaments } = useGetActiveTournaments();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLiveMatchModalOpen, setIsLiveMatchModalOpen] = useState<boolean>(false);
   const [liveMatchId, setLiveMatchId] = useState<string | null>(null);
   const [liveSport, setLiveSport] = useState<'BILLIARDS' | 'SNOOKER' | null>(null);
+  const [activeTournaments, setActiveTournaments] = useState<Tournament[] | null>(null);
   const { logout } = useLogout();
   const navigate = useNavigate();
 
@@ -36,6 +40,12 @@ export function Home() {
 
         dispatch(setClubs(formattedData));
         dispatch(setActiveClub(formattedData[0]));
+
+        const activeTournamentsResponse = await getTournaments();
+
+        if (activeTournamentsResponse && activeTournamentsResponse.results.length > 0) {
+          setActiveTournaments(activeTournamentsResponse.results);
+        }
 
         const liveMatchByVenueResponse = await getMarkerLiveMatchesByVenueHookData.getMarkerLiveMatchesByVenue(
           formattedData[0].venueId,
@@ -116,12 +126,39 @@ export function Home() {
               <h3 className="text-white text-xl">BOOKINGS</h3>
             </div>
 
-            <div className="bg-[url('/images/practice-match.png')] p-5 flex justify-center items-end aspect-[4/3] h-56 bg-cover rounded-lg w-full">
-              <h3 className="text-white text-xl">TOURNAMENT</h3>
-            </div>
+            <Dialog>
+              <DialogTrigger className="p-0 bg-transparent border-0">
+                <div className="bg-[url('/images/practice-match.png')] p-5 flex justify-center items-end aspect-[4/3] h-56 bg-cover rounded-lg w-full">
+                  <h3 className="text-white text-xl">TOURNAMENT</h3>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="absolute transform -translate-y-1/2 top-1/2 left-0 w-full">
+                <DialogTitle></DialogTitle>
+
+                <div className="container">
+                  <div className="p-2 flex justify-center">
+                    <div className="w-full bg-[#1F1F1F] p-4 grid grid-cols-2 gap-4 items-center justify-center rounded-xl shadow-xl">
+                      {tournaments && tournaments.length > 0 ? (
+                        tournaments.map((value) => (
+                          <div key={value.id} onClick={() => navigate(`/app/tournament?tournamentId=${value.id}`)}>
+                            <img src={value.logo} className="h-56 w-auto object-contain rounded-xl overflow-hidden" />
+                          </div>
+                        ))
+                      ) : (
+                        <div>No Results Found</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
-        <LiveMatchGoToScoreBoardOrMarkerModal sport={liveSport} matchId={liveMatchId} isModalOpen={isLiveMatchModalOpen} />
+        <LiveMatchGoToScoreBoardOrMarkerModal
+          sport={liveSport}
+          matchId={liveMatchId}
+          isModalOpen={isLiveMatchModalOpen}
+        />
       </section>
     );
   }

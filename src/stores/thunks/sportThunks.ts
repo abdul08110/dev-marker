@@ -136,6 +136,29 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
   },
 );
 
+export const handleStartTournamentMatch = createAsyncThunk<
+  void,
+  { scoreOrder: string[] },
+  { state: RootState; dispatch: AppDispatch }
+>('sport/handleMatchStart', async ({ scoreOrder }, { dispatch, getState }) => {
+  const state = getState();
+  const activePlayer = getActivePlayer(state.sport.team1, state.sport.team2);
+  const activeTeam = getActiveTeam(state.sport.team1, state.sport.team2);
+
+  if (!activePlayer || !activePlayer.id || activeTeam === null) return;
+  await dispatch(clearUndoStack());
+
+  await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
+  await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
+
+  if (state.sport.sport === 'SNOOKER') {
+    await dispatch(handleSelectionOfOnAndAheadScores({}));
+  }
+
+  await dispatch(changeBackendUpdatedState({ value: false }));
+  await dispatch(pushToUndoStackSnooker({}));
+})
+
 // SCORING BUTTON CLICK THRUNKS
 
 export const handleMatchStart = createAsyncThunk<
@@ -156,7 +179,7 @@ export const handleMatchStart = createAsyncThunk<
     }),
   );
   await dispatch(updateMatchStartedTimeDateUtc({ startTimeDate: new Date().toISOString() }));
-  await dispatch(handleCreateSet({ matchId, scoreOrder: scoreOrder }));
+  await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
 
   if (state.sport.sport === 'SNOOKER') {
@@ -175,7 +198,7 @@ export const handleBreakOff = createAsyncThunk<
   const state = getState();
 
   await dispatch(setActivePlayer({ playerId: scoreOrder[0] }));
-  await dispatch(handleCreateSet({ matchId: state.sport.matchId!, scoreOrder: scoreOrder }));
+  await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: state.sport.scoreHistory.length, playerId: scoreOrder[0] }));
   await dispatch(handleSelectionOfOnAndAheadScores({}));
 
@@ -648,7 +671,7 @@ export const handleReversePlayers = createAsyncThunk<
 
 export const handleCreateSet = createAsyncThunk<
   void,
-  { matchId: string; scoreOrder: string[] },
+  { scoreOrder: string[] },
   { state: RootState; dispatch: AppDispatch }
 >('sport/handleCreateSet', async ({ scoreOrder }, { dispatch }) => {
   await dispatch(createSet({ scoreOrder }));
