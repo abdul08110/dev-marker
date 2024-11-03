@@ -34,7 +34,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
         className={clsx(
           'absolute left-1/2 transform -translate-x-1/2 top-[12%] z-40 flex justify-center items-center',
           {
-            '-rotate-90 top-24': props.orientation === 'portrait',
+            '-rotate-90 -top-14': props.orientation === 'portrait',
             'top-[12%]': props.orientation === 'landscape',
           },
         )}
@@ -43,10 +43,10 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           <strong
             className={clsx('text-center text-white leading-[1]', {
               'text-4xl': props.orientation === 'landscape',
-              'md:text-6xl text-2xl': props.orientation === 'portrait',
+              'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
             })}
           >
-            {props.state.teamOneScore} ({props.state.sets.length}) {props.state.teamTwoScore}
+            <span>{props.state.teamOneScore}</span> <span>({props.state.sets.length})</span> <span>{props.state.teamTwoScore}</span>
           </strong>
         </div>
       </div>

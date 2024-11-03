@@ -75,7 +75,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         >
           {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn && props.sport === 'SNOOKER' ? (
             <SnookerPointTypeDisplay
-              class={clsx({ '-rotate-90': props.contentfrom === 'left' })}
+              class={clsx({ 'flex-col': props.contentfrom === 'left' })}
               activeTurnPointTypes={props.activeTurn.points.map((value) => value.snookerPoint!.type)}
             />
           ) : (
@@ -87,7 +87,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             'h-[60%] w-full': props.contentfrom === 'top',
             'w-[60%] h-full flex justify-center items-center': props.contentfrom === 'left',
           })}
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 12vw, 30rem)' : 'clamp(1rem, 20vh, 30rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 14vw, 30rem)' : 'clamp(1rem, 20vh, 30rem)' }}
         >
           <span
             className={clsx({
@@ -102,7 +102,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             'h-[20%] w-full': props.contentfrom === 'top',
             'w-[20%] h-full flex justify-center items-center': props.contentfrom === 'left',
           })}
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 10vw, 2rem)' : 'clamp(1rem, 10vh, 2rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 14vw, 4rem)' : 'clamp(1rem, 10vh, 2rem)' }}
         >
           {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn ? (
             <span
@@ -125,8 +125,8 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         })}
       >
         <div
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(1rem, 4vh, 10rem)' }}
-          className={clsx('flex justify-center items-center p-0 w-full font-medium text-white', {
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 5vw, 10rem)' : 'clamp(1rem, 5vw, 7rem)' }}
+          className={clsx('flex justify-center items-center p-0 w-full font-bold text-white', {
             'text-white/50': (isPlayerOneActive || isPlayerTwoActive) && isPlayerTwoActive,
             'h-fit max-h-[50%]': props.contentfrom === 'top',
             'w-full h-full max-w-[50%]': props.contentfrom === 'left',
@@ -150,7 +150,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         </div>
         {props.playerTwo ? (
           <div
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(1rem, 4vh, 10rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(4rem, 40vw, 60rem)' }}
             className={clsx('flex justify-center items-center h-fit p-2 w-full font-medium text-white', {
               'text-white/50': (isPlayerOneActive || isPlayerTwoActive) && isPlayerTwoActive,
             })}
