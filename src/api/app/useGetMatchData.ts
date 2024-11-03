@@ -42,6 +42,7 @@ export interface MatchStartResponse {
   tournament?: {
     id: string;
     name: string;
+    logo?: string;
   },
   tournamentTeamOne?: {
     name: string;
@@ -76,6 +77,7 @@ export interface MatchStartResponse {
   },
   club: {
     name: string;
+    imageUrl?: string;
   },
   sport: 'SNOOKER' | 'BILLIARDS';
   sportType: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED';

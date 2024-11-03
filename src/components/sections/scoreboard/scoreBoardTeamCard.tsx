@@ -27,7 +27,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         'flex flex-row': props.contentfrom === 'left',
         'pr-32 pl-4': props.teamIndex === 0 && props.contentfrom === 'left',
         'pl-32 pr-4': props.teamIndex === 1 && props.contentfrom === 'left',
-        'pl-4 pr-4':  props.contentfrom === 'top',
+        'pl-4 pr-4': props.contentfrom === 'top',
       })}
     >
       <div
@@ -47,13 +47,13 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
                   ? props.playerTwo!.profilePhoto
                   : '/images/user-dummy-pic.png'
             }
-            className={clsx('h-full w-full aspect-square object-contain', {
+            className={clsx('h-full w-auto aspect-square object-cover rounded-full overflow-hidden', {
               '-rotate-90': props.contentfrom === 'left',
             })}
           />
         ) : (
           <img
-            className={clsx('h-full w-full aspect-square object-contain', {
+            className={clsx('h-full w-auto aspect-square object-cover rounded-full overflow-hidden', {
               '-rotate-90': props.contentfrom === 'left',
             })}
             src={props.playerOne.profilePhoto ? props.playerOne.profilePhoto : '/images/user-dummy-pic.png'}
@@ -150,7 +150,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         </div>
         {props.playerTwo ? (
           <div
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(4rem, 40vw, 60rem)' }}
+            style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(4rem, 40vw, 60rem)' }}
             className={clsx('flex justify-center items-center h-fit p-2 w-full font-medium text-white', {
               'text-white/50': (isPlayerOneActive || isPlayerTwoActive) && isPlayerTwoActive,
             })}

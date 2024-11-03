@@ -29,6 +29,10 @@ export interface StreamingState {
   noOfFrames: number | null;
   actualStartTimeDate: string;
   actualEndTimeDate: string | null;
+  clubLogo: string | null;
+  tournamentLogo: string | null;
+  teamOneLogo: string | null;
+  teamTwoLogo: string | null;
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -125,6 +129,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           actualStartTimeDate: res.actualStartTimeDate,
           overlayType: res.overlayType,
           actualEndTimeDate: res.actualEndTimeDate,
+          clubLogo: res.club.imageUrl ? res.club.imageUrl : null,
+          tournamentLogo: res.tournament && res.tournament.logo ? res.tournament.logo : null,
+          teamOneLogo: res.tournamentTeamOne && res.tournamentTeamOne.logo ? res.tournamentTeamOne.logo : null,
+          teamTwoLogo: res.tournamentTeamTwo && res.tournamentTeamTwo.logo ? res.tournamentTeamTwo.logo : null,
         });
 
         console.log(streamingData);
@@ -157,6 +165,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
             actualStartTimeDate: res.actualStartTimeDate,
             overlayType: res.overlayType,
             actualEndTimeDate: res.actualEndTimeDate,
+            clubLogo: res.club.imageUrl ? res.club.imageUrl : null,
+            tournamentLogo: res.tournament && res.tournament.logo ? res.tournament.logo : null,
+            teamOneLogo: res.tournamentTeamOne && res.tournamentTeamOne.logo ? res.tournamentTeamOne.logo : null,
+            teamTwoLogo: res.tournamentTeamTwo && res.tournamentTeamTwo.logo ? res.tournamentTeamTwo.logo : null,
           });
           startScoreCheck();
         }
@@ -208,9 +220,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     const parsedMessage = JSON.parse(message);
     const topicWithoutId = topic.split('/')[1];
 
+    let currentStreamingData = structuredClone(streamingDataRef.current);
+
     switch (topicWithoutId) {
       case 'send-data':
-        const currentStreamingData = structuredClone(streamingDataRef.current);
         if (currentStreamingData!.streamType === StreamType.CLOUD_PROVIDER) {
           window.setTimeout(() => {
             setStreamingData((prevData) => {
@@ -230,7 +243,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         fetchActiveMatchForVenue(venueId!);
         break;
       case 'match-end':
-        if (streamingData!.streamType === StreamType.CLOUD_PROVIDER) {
+        if (currentStreamingData!.streamType === StreamType.CLOUD_PROVIDER) {
           window.setTimeout(() => {
             startTimer();
             setStreamingData(null);
@@ -329,6 +342,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
             actualStartTimeDate: currentStreamingData.actualStartTimeDate,
             overlayType: currentStreamingData.overlayType,
             actualEndTimeDate: currentStreamingData.actualEndTimeDate,
+            clubLogo: currentStreamingData.clubLogo,
+            tournamentLogo: currentStreamingData.tournamentLogo,
+            teamOneLogo: currentStreamingData.teamOneLogo,
+            teamTwoLogo: currentStreamingData.teamTwoLogo,
           });
         });
       }

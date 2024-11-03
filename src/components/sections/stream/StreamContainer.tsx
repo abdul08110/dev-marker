@@ -86,13 +86,22 @@ export function StreamContainer(props: StreamContainerProps) {
                 }}
               />
               {/* Overlay Content */}
+
+              <div className="absolute inset-0 pointer-events-none w-full flex justify-between p-4">
+                <img src="/images/clublogo.png" className="h-14 w-14 rounded-full overflow-hidden" />
+
+                <div className="flex flex-col gap-2 items-center">
+                  <img src={props.state.clubLogo!} className="h-14 w-14" />
+                  <small className="text-white font-medium text-xl">T-{props.state.venueNo}</small>
+                </div>
+              </div>
               {props.state.overlayType === 'DESTINATION' && !props.isPortrait && (
                 <div className="absolute inset-0 flex flex-col justify-end items-center pointer-events-none">
-                  <div className="w-[90%] h-[12%] bg-black flex items-center">
-                    <div className="flex p-1 w-full md:gap-4 gap-2 h-full">
+                  <div className="w-full h-[12%] bg-transparent flex justify-center">
+                    <div className="flex p-1 w-full gap-1 h-full justify-center">
                       <div>
                         <img
-                          className="h-full w-auto"
+                          className="h-full w-auto aspect-square object-cover rounded-full"
                           src={
                             props.state.sideOnePlayerOne.profilePhoto
                               ? props.state.sideOnePlayerOne.profilePhoto
@@ -102,7 +111,7 @@ export function StreamContainer(props: StreamContainerProps) {
                       </div>
 
                       <div className="flex-grow relative flex items-center">
-                        <div className="absolute top-0 left-0 w-full flex">
+                        {/* <div className="absolute top-0 left-0 w-full flex">
                           <div>
                             <span className="text-white md:text-base text-xs text-left">
                               {new Date(props.state.actualStartTimeDate).toLocaleDateString()}
@@ -124,26 +133,26 @@ export function StreamContainer(props: StreamContainerProps) {
                               })}
                             </span>
                           </div>
-                        </div>
+                        </div> */}
 
-                        <div className="h-8 grid grid-cols-12 bg-primary w-full rounded-md items-center px-2">
+                        <div className="h-14 grid grid-cols-12 bg-primary border border-white w-full rounded-md items-center px-2">
                           <div className="col-span-5 flex gap-2">
-                            {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
+                            {/* {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
                             props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
                               <>
                                 <img className="lg:w-6 lg:h-6 w-4 h-4" src={'/images/white-ball-stream.png'} />
                               </>
                             ) : (
                               <></>
-                            )}
-                            <small className="text-white md:text-base text-xs whitespace-nowrap">
+                            )} */}
+                            <small className="text-white text-xl whitespace-nowrap uppercase font-bold">
                               {props.state.sideOnePlayerOne.name}
                             </small>
 
                             {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
                             props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
                               <>
-                                <h5 className="md:text-base text-xs font-medium text-yellow-500 text-right uppercase ml-auto whitespace-nowrap">
+                                <h5 className="text-xl text-yellow-500 font-bold text-right uppercase ml-auto whitespace-nowrap">
                                   Break {activeTurn ? activeTurn?.score : 0}
                                 </h5>
                               </>
@@ -153,8 +162,9 @@ export function StreamContainer(props: StreamContainerProps) {
                           </div>
 
                           <div className="col-span-2 text-center">
-                            <span className="md:text-base text-xs text-white">
-                              <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>&nbsp;&nbsp;&nbsp;
+                            <span className="text-xl text-white">
+                              <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>
+                              &nbsp;&nbsp;&nbsp;
                               {props.state.teamOneScore}&nbsp;(
                               {props.state.noOfFrames ? props.state.noOfFrames : props.state.sets.length})&nbsp;
                               {props.state.teamTwoScore}&nbsp;&nbsp;&nbsp;
@@ -166,7 +176,7 @@ export function StreamContainer(props: StreamContainerProps) {
                             {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
                             props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
                               <>
-                                <h5 className="md:text-base text-xs text-yellow-500 text-left uppercase mr-auto whitespace-nowrap font-bold">
+                                <h5 className="text-xl text-yellow-500 font-bold text-left uppercase mr-auto whitespace-nowrap">
                                   Break {activeTurn ? activeTurn?.score : 0}
                                 </h5>
                               </>
@@ -174,25 +184,25 @@ export function StreamContainer(props: StreamContainerProps) {
                               <></>
                             )}
 
-                            <small className="text-white md:text-base text-xs whitespace-nowrap">
+                            <small className="text-white text-xl whitespace-nowrap uppercase font-bold">
                               {props.state.sideTwoPlayerOne.name}
                             </small>
 
-                            {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
+                            {/* {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
                             props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
                               <>
                                 <img className="lg:w-6 lg:h-6 w-4 h-4" src={'/images/white-ball-stream.png'} />
                               </>
                             ) : (
                               <></>
-                            )}
+                            )} */}
                           </div>
                         </div>
                       </div>
 
                       <div className="flex justify-end">
                         <img
-                          className="h-full w-auto"
+                          className="h-full w-auto aspect-square object-cover rounded-full"
                           src={
                             props.state.sideTwoPlayerOne.profilePhoto
                               ? props.state.sideTwoPlayerOne.profilePhoto
