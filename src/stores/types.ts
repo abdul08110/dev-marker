@@ -114,6 +114,7 @@ export interface GeneralScoringState {
   noOfSets: number | null
   maxScorePerSet: number | null
   handicap: number;
+  isCumulativeScoring: boolean;
 }
 
 

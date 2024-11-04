@@ -8,6 +8,7 @@ import HandicapSelector from '@/components/ui/handicapSelector';
 import { TournamentTeam } from '@/stores/types';
 import { TeamSelector } from '@/components/ui/team-selector';
 import { TeamPlayerSelector } from '@/components/ui/team-player-selector';
+import { SpinButton } from '@/components/ui/spinButton';
 
 export interface ConfigureTournamentData {
   format: '15_REDS_SINGLE_FRAME' | '6_REDS_CUMULATIVE' | '10_REDS_SINGLE_FRAME';
@@ -16,6 +17,8 @@ export interface ConfigureTournamentData {
   teamTwoId: string;
   teamOnePlayerOneId: string;
   teamTwoPlayerOneId: string;
+  tournamentTeamOneScore: number;
+  tournamentTeamTwoScore: number;
 }
 
 const formSchema = z.object({
@@ -25,6 +28,8 @@ const formSchema = z.object({
   teamTwoId: z.string(),
   teamOnePlayerOneId: z.string(),
   teamTwoPlayerOneId: z.string(),
+  tournamentTeamOneScore: z.number(),
+  tournamentTeamTwoScore: z.number(),
 });
 
 interface ConfigureTournamentProps {
@@ -38,6 +43,8 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
     defaultValues: {
       format: '15_REDS_SINGLE_FRAME',
       handicap: 0,
+      tournamentTeamOneScore: 0,
+      tournamentTeamTwoScore: 0,
     },
   });
 
@@ -70,7 +77,6 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
           )}
         />
 
-      
         <Controller
           name="teamOneId"
           control={form.control}
@@ -141,7 +147,7 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
           <></>
         )}
 
-<FormField
+        <FormField
           control={form.control}
           name="handicap"
           render={({ field }) => (
@@ -153,6 +159,36 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
                   onChange={field.onChange}
                   playerNames={{ player1: 'Team 1', player2: 'Team 2' }}
                 />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="tournamentTeamOneScore"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-white text-sm">Team One Score</FormLabel>
+              <FormControl>
+                <div className="w-44">
+                  <SpinButton value={field.value} onChange={field.onChange} min={0} step={1} />
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="tournamentTeamTwoScore"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-white text-sm">Team Two Score</FormLabel>
+              <FormControl>
+                <div className="w-44">
+                  <SpinButton value={field.value} onChange={field.onChange} min={0} step={1} />
+                </div>
               </FormControl>
             </FormItem>
           )}

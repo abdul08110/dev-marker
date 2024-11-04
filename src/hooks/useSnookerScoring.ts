@@ -166,7 +166,7 @@ const useSnookerScoring = () => {
     const activeTeam = getActiveTeam(snookerScoring.team1, snookerScoring.team2);
 
     if (activeTeam === 1) {
-      await dispatch(handleReversePlayersState({}));
+      await dispatch(handleReversePlayersState({ reverseOnApi: false }));
       isTeamReveresed = true;
     }
 

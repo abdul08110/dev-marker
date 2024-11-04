@@ -5,7 +5,7 @@
 import { RootState } from '@/stores';
 import { SnookerPointType, type Set, Turn, Point, SnookerCorrection, GeneralScoringState } from '../types';
 import { createSelector } from '@reduxjs/toolkit';
-import {  getActiveSet, getActiveTurn, getAllPointsAfter, getLastPointPlayedInSet } from './commonSport';
+import { getActiveSet, getActiveTurn, getAllPointsAfter, getLastPointPlayedInSet } from './commonSport';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 
 const RED_POINTS = 1;
@@ -198,11 +198,25 @@ export const checkIfLastBallIsFreeBall = (sets: Set[]) => checkIfFreeBallPlayed(
 export const getTeamSetScores = createSelector(
   (state: RootState) => state.sport,
   (snookerState: GeneralScoringState) => {
-    const activeSet = getActiveSet(snookerState.scoreHistory);
-    return {
-      team1score: activeSet ? activeSet.teamOneScore : 0,
-      team2score: activeSet ? activeSet.teamTwoScore : 0,
-    };
+    if (snookerState.isCumulativeScoring === false) {
+      const activeSet = getActiveSet(snookerState.scoreHistory);
+      return {
+        team1score: activeSet ? activeSet.teamOneScore : 0,
+        team2score: activeSet ? activeSet.teamTwoScore : 0,
+      };
+    } else {
+      let teamOneScore = 0;
+      let teamTwoScore = 0;
+      for (const value of snookerState.scoreHistory) {
+        teamOneScore += value.teamOneScore;
+        teamTwoScore += value.teamTwoScore;
+      }
+
+      return {
+        team1score: teamOneScore,
+        team2score: teamTwoScore
+      };
+    }
   },
 );
 

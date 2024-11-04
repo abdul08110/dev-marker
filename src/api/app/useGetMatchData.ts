@@ -91,7 +91,10 @@ export interface MatchStartResponse {
   streamType?: StreamType;
   matchStatus: 'LIVE' | 'COMPLETED',
   overlayType?: 'SOURCE' | 'DESTINATION'
-  showPlayerMatchHistory?: boolean
+  showPlayerMatchHistory?: boolean,
+  cumulativeScoring?: boolean,
+  tournamentTeamOneScore?: number,
+  tournamentTeamTwoScore?: number
 }
 
 const useGetMatchLiveData = () => {

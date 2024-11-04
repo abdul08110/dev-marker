@@ -78,6 +78,8 @@ const useTournament = () => {
       tournamentTeamOneId: data.teamOneId,
       tournamentTeamTwoId: data.teamTwoId,
       tournamentId: tournamentId!,
+      tournamentTeamOneScore: data.tournamentTeamOneScore,
+      tournamentTeamTwoScore: data.tournamentTeamTwoScore,
     });
 
     if (response) {
