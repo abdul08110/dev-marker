@@ -284,7 +284,7 @@ const useBilliardsScoring = () => {
     const activeTeam = getActiveTeam(billiardsScoring.team1, billiardsScoring.team2);
     let isTeamReveresed = false;
     if ((activeTeam === 1 && type === 'yellow') || (activeTeam === 0 && type === 'white')) {
-      await dispatch(handleReversePlayersState({}));
+      await dispatch(handleReversePlayersState({ 'reverseOnApi': false }));
       isTeamReveresed = true;
     }
     await handleMatchCreation(isTeamReveresed === true ? [playerTwo, playerOne] : unModifiedScoreOrder);

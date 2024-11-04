@@ -59,7 +59,6 @@ import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreC
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
 import { MatchStartResponse } from '@/api/app/useGetMatchData';
 import { ballsToPointsEnumBilliards } from '../selectors/billiardsSelector';
-import { ConfigureTournamentData } from '@/components/forms/app/configureTournament';
 
 // HANDLE SCORE UPDATE FROM THE BACKEND.
 

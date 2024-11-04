@@ -17,6 +17,7 @@ const initialState: GeneralScoringState = {
   team2Score: 0,
   numberAhead: 0,
   numberOn: 0,
+  isCumulativeScoring: false,
   team1: {
     players: [
       {
