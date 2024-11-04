@@ -47,10 +47,12 @@ export interface MatchStartResponse {
   tournamentTeamOne?: {
     name: string;
     logo: string;
+    code: string;
   },
   tournamentTeamTwo?: {
     name: string;
     logo: string;
+    code: string;
   },
   sideOnePlayerOne: {
     id: string;
@@ -94,7 +96,7 @@ export interface MatchStartResponse {
   showPlayerMatchHistory?: boolean,
   cumulativeScoring?: boolean,
   tournamentTeamOneScore?: number,
-  tournamentTeamTwoScore?: number
+  tournamentTeamTwoScore?: number,
 }
 
 const useGetMatchLiveData = () => {

@@ -21,6 +21,13 @@ export interface ScoreBoardState {
   teamOneScore: number;
   teamTwoScore: number;
   sets: Set[];
+  actualStartTime: string | null;
+  expectedEndTimeDate: string | null;
+  teamOneLogo: string | null;
+  teamTwoLogo: string | null;
+  tournamentId: string | null;
+  tournamentTeamOneScore: number | null;
+  tournamentTeamTwoScore: number | null;
 }
 
 const useScoreboard = () => {
@@ -119,6 +126,13 @@ const useScoreboard = () => {
             teamOneScore: res.teamOneScore,
             teamTwoScore: res.teamTwoScore,
             sets: res.sets,
+            actualStartTime: res.actualStartTimeDate,
+            expectedEndTimeDate: res.expectedEndTimeDate ? res.expectedEndTimeDate : null,
+            teamOneLogo: res.tournamentTeamOne ? res.tournamentTeamOne.logo : null,
+            teamTwoLogo: res.tournamentTeamTwo ? res.tournamentTeamTwo.logo : null,
+            tournamentId: res.tournament ? res.tournament.id : null,
+            tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
+            tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
           });
 
           setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);

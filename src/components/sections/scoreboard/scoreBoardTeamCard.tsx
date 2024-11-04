@@ -12,6 +12,8 @@ interface ScoreBoardTeamCardProps {
   sport: 'SNOOKER' | 'BILLIARDS';
   contentfrom: 'top' | 'left';
   teamIndex: 0 | 1;
+  tournamentTeamLogo: string | null;
+  tournamentId: string | null;
 }
 
 export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
@@ -30,36 +32,57 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         'pl-4 pr-4': props.contentfrom === 'top',
       })}
     >
-      <div
-        className={clsx(`flex justify-center items-center gap-2`, {
-          'h-[30%]': props.contentfrom === 'top',
-          'w-[30%]': props.contentfrom === 'left',
-        })}
-      >
-        {isPlayerOneActive || isPlayerTwoActive ? (
-          <img
-            src={
-              isPlayerOneActive
-                ? props.playerOne.profilePhoto
+      {props.tournamentId === null ? (
+        <div
+          className={clsx(`flex justify-center items-center gap-2`, {
+            'h-[30%]': props.contentfrom === 'top',
+            'w-[30%]': props.contentfrom === 'left',
+          })}
+        >
+          {isPlayerOneActive || isPlayerTwoActive ? (
+            <img
+              src={
+                isPlayerOneActive
                   ? props.playerOne.profilePhoto
-                  : '/images/user-dummy-pic.png'
-                : props.playerTwo!.profilePhoto
-                  ? props.playerTwo!.profilePhoto
-                  : '/images/user-dummy-pic.png'
-            }
-            className={clsx('h-full w-auto aspect-square object-cover rounded-full overflow-hidden', {
-              '-rotate-90': props.contentfrom === 'left',
-            })}
-          />
-        ) : (
-          <img
-            className={clsx('h-full w-auto aspect-square object-cover rounded-full overflow-hidden', {
-              '-rotate-90': props.contentfrom === 'left',
-            })}
-            src={props.playerOne.profilePhoto ? props.playerOne.profilePhoto : '/images/user-dummy-pic.png'}
-          />
-        )}
-      </div>
+                    ? props.playerOne.profilePhoto
+                    : '/images/user-dummy-pic.png'
+                  : props.playerTwo!.profilePhoto
+                    ? props.playerTwo!.profilePhoto
+                    : '/images/user-dummy-pic.png'
+              }
+              className={clsx(' aspect-square object-cover rounded-full overflow-hidden', {
+                '-rotate-90 w-full h-auto': props.contentfrom === 'left',
+                'h-full w-auto': props.contentfrom === 'top',
+              })}
+            />
+          ) : (
+            <img
+              className={clsx('aspect-square object-cover rounded-full overflow-hidden', {
+                '-rotate-90 w-full h-auto': props.contentfrom === 'left',
+                'h-full w-auto': props.contentfrom === 'top',
+              })}
+              src={props.playerOne.profilePhoto ? props.playerOne.profilePhoto : '/images/user-dummy-pic.png'}
+            />
+          )}
+        </div>
+      ) : (
+        <div
+          className={clsx(`flex justify-center items-center gap-2`, {
+            'h-[30%]': props.contentfrom === 'top',
+            'w-[30%]': props.contentfrom === 'left',
+          })}
+        >
+           <img
+              src={
+                props.tournamentTeamLogo ? props.tournamentTeamLogo : '/images/user-dummy-pic.png'
+              }
+              className={clsx(' aspect-square object-cover rounded-full overflow-hidden', {
+                '-rotate-90 w-full h-auto': props.contentfrom === 'left',
+                'h-full w-auto': props.contentfrom === 'top',
+              })}
+            />
+        </div>
+      )}
 
       <div
         className={clsx('justify-center items-center', {

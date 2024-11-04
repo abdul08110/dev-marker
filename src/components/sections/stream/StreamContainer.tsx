@@ -132,7 +132,10 @@ export function StreamContainer(props: StreamContainerProps) {
 
               <div className="absolute inset-0 w-full flex justify-between lg:p-4 p-2 h-fit">
                 <div className="flex flex-col gap-2 items-center h-fit">
-                  <img src="/images/clublogo.png" className="lg:h-14 lg:w-14 h-8 w-8 rounded-full overflow-hidden" />
+                  <img
+                    src="/images/clublogo.png"
+                    className="lg:h-14 xl:h-24 xl:w-24 lg:w-14 h-8 w-8 rounded-full overflow-hidden"
+                  />
                   {props.state.matchStatus === 'LIVE' ? (
                     <div
                       onClick={handleGoLive}
@@ -149,7 +152,7 @@ export function StreamContainer(props: StreamContainerProps) {
                         ),
                       })}
                     >
-                      <span className="font-bold text-xs">LIVE</span>
+                      <span className="font-bold text-xs xl:text-xl">LIVE</span>
                     </div>
                   ) : (
                     <></>
@@ -157,36 +160,64 @@ export function StreamContainer(props: StreamContainerProps) {
                 </div>
 
                 <div className="flex flex-col gap-2 items-center h-fit">
-                  <img src={props.state.clubLogo!} className="lg:h-14 lg:w-14 h-8 w-8 " />
-                  <small className="text-white font-medium lg:text-xl text-base">T-{props.state.venueNo}</small>
+                  <img src={props.state.clubLogo!} className="lg:h-14 xl:h-24 xl:w-24 lg:w-14 h-8 w-8 " />
+                  <small className="text-white font-medium lg:text-xl text-base xl:text-xl">
+                    T-{props.state.venueNo}
+                  </small>
+                  <img src={props.state.tournamentLogo!} className="lg:h-14 lg:w-auto h-8 w-auto" />
                 </div>
               </div>
               {props.state.overlayType === 'DESTINATION' && !props.isPortrait && (
                 <div className="absolute bottom-0 flex flex-col items-center w-full">
+                  {props.state.tournamentLogo ? (
+                    <div className="w-full px-4 flex justify-between">
+                      <span className="text-white font-bold lg:text-xl text-base xl:text-3xl xl:ml-5">
+                        {props.state.tournamentTeamOneScore}
+                      </span>
+                      <span className="text-white font-bold lg:text-xl text-base xl:text-3xl xl:mr-5">
+                        {props.state.tournamentTeamTwoScore}
+                      </span>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+
                   <div className="w-full h-[12%] bg-transparent flex justify-center mb-1">
                     <div className="flex p-1 w-full gap-1 h-full justify-center">
                       <div>
-                        <img
-                          className="lg:h-14 lg:w-14 h-8 w-8 aspect-square object-cover rounded-full"
-                          src={
-                            props.state.sideOnePlayerOne.profilePhoto
-                              ? props.state.sideOnePlayerOne.profilePhoto
-                              : '/images/user-dummy-pic.png'
-                          }
-                        />
+                        {props.state.tournamentLogo ? (
+                          <img
+                            className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
+                            src={props.state.teamOneLogo ? props.state.teamOneLogo : '/images/user-dummy-pic.png'}
+                          />
+                        ) : (
+                          <></>
+                        )}
+                        {props.state.tournamentLogo === null ? (
+                          <img
+                            className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
+                            src={
+                              props.state.sideOnePlayerOne.profilePhoto
+                                ? props.state.sideOnePlayerOne.profilePhoto
+                                : '/images/user-dummy-pic.png'
+                            }
+                          />
+                        ) : (
+                          <></>
+                        )}
                       </div>
 
                       <div className="flex-grow relative flex items-center">
-                        <div className="lg:h-14 h-6 grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
+                        <div className="grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
                           <div className="col-span-5 flex gap-2">
-                            <small className="text-white lg:text-xl text-[0.5rem] whitespace-nowrap uppercase font-bold">
-                              {props.state.sideOnePlayerOne.name}
+                            <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
+                              {props.state.sideOnePlayerOne.name} ({props.state.tournamentTeamOneabb})
                             </small>
 
                             {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
                             props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
                               <>
-                                <h5 className="lg:text-xl text-[0.5rem] text-yellow-500 font-bold text-right uppercase ml-auto whitespace-nowrap">
+                                <h5 className="text-xl text-yellow-500 font-bold text-right uppercase ml-auto whitespace-nowrap">
                                   Break {activeTurn ? activeTurn?.score : 0}
                                 </h5>
                               </>
@@ -196,7 +227,7 @@ export function StreamContainer(props: StreamContainerProps) {
                           </div>
 
                           <div className="col-span-2 text-center flex justify-center">
-                            <span className="lg:text-xl text-[0.5rem] text-white">
+                            <span className="xl:text-3xl lg:text-xl text-base text-white">
                               <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>
                               &nbsp;&nbsp;&nbsp;
                               {props.state.teamOneScore}&nbsp;(
@@ -210,7 +241,7 @@ export function StreamContainer(props: StreamContainerProps) {
                             {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
                             props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
                               <>
-                                <h5 className="lg:text-xl text-[0.5rem] text-yellow-500 font-bold text-left uppercase mr-auto whitespace-nowrap">
+                                <h5 className="xl:text-3xl lg:text-xl text-base text-yellow-500 font-bold text-left uppercase mr-auto whitespace-nowrap">
                                   Break {activeTurn ? activeTurn?.score : 0}
                                 </h5>
                               </>
@@ -218,22 +249,36 @@ export function StreamContainer(props: StreamContainerProps) {
                               <></>
                             )}
 
-                            <small className="text-white lg:text-xl text-[0.5rem] whitespace-nowrap uppercase font-bold">
-                              {props.state.sideTwoPlayerOne.name}
+                            <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
+                              ({props.state.tournamentTeamTwoabb}) {props.state.sideTwoPlayerOne.name}
                             </small>
                           </div>
                         </div>
                       </div>
 
                       <div className="flex justify-end">
-                        <img
-                          className="lg:h-14 lg:w-14 h-8 w-8 aspect-square object-cover rounded-full"
-                          src={
-                            props.state.sideTwoPlayerOne.profilePhoto
-                              ? props.state.sideTwoPlayerOne.profilePhoto
-                              : '/images/user-dummy-pic.png'
-                          }
-                        />
+                        <div>
+                          {props.state.tournamentLogo ? (
+                            <img
+                              className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
+                              src={props.state.teamTwoLogo ? props.state.teamTwoLogo : '/images/user-dummy-pic.png'}
+                            />
+                          ) : (
+                            <></>
+                          )}
+                          {props.state.tournamentLogo === null ? (
+                            <img
+                              className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
+                              src={
+                                props.state.sideTwoPlayerOne.profilePhoto
+                                  ? props.state.sideTwoPlayerOne.profilePhoto
+                                  : '/images/user-dummy-pic.png'
+                              }
+                            />
+                          ) : (
+                            <></>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

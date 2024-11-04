@@ -13,8 +13,8 @@ const ALL_COLORED_POINTS = 2 + 3 + 4 + 5 + 6 + 7;
 
 const formatToRedsCount = {
   SNOOKER_15_RED: 15,
-  SNOOKER_10_RED: 10,
-  SNOOKER_6_RED: 6,
+  SNOOKER_10_RED: 15,
+  SNOOKER_6_RED: 15,
   BILLIARDS_RACE_TO: 0,
   BILLIARDS_TIME_BASED: 0,
 };

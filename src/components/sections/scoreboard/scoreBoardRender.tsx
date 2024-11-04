@@ -16,40 +16,113 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
 
   return (
     <div className="w-screen h-screen relative p-2">
-      <div
-        className={clsx('absolute  left-1/2 transform -translate-x-1/2  z-40 flex justify-center items-center', {
-          '-rotate-90 bottom-24': props.orientation === 'portrait',
-          'top-1/2 -translate-y-1/2': props.orientation === 'landscape',
-        })}
-      >
-        <div className="bg-[#2D2D2D] p-2 border border-white rounded-xl flex flex-col justify-center items-center">
-          <span className="text-center text-white md:text-xl text-base">Time Left (mins):</span>
-          <strong className="text-center text-white md:text-8xl text-4xl leading-[1]">
-            {formatTime(props.timeLeft)}
-          </strong>
+      {props.state.expectedEndTimeDate ? (
+        <div
+          className={clsx('absolute  left-1/2 transform -translate-x-1/2  z-40 flex justify-center items-center', {
+            '-rotate-90 bottom-24': props.orientation === 'portrait',
+            'top-1/2 -translate-y-1/2': props.orientation === 'landscape',
+          })}
+        >
+          <div className="bg-[#2D2D2D] p-2 border border-white rounded-xl flex flex-col justify-center items-center">
+            <span className="text-center text-white md:text-xl text-base">Time Left (mins):</span>
+            <strong className="text-center text-white md:text-8xl text-4xl leading-[1]">
+              {formatTime(props.timeLeft)}
+            </strong>
+          </div>
         </div>
-      </div>
+      ) : (
+        <></>
+      )}
 
-      <div
-        className={clsx(
-          'absolute left-1/2 transform -translate-x-1/2 top-[12%] z-40 flex justify-center items-center',
-          {
+      {props.state.tournamentId !== null ? (
+        <div
+          className={clsx('absolute left-10 top-10 z-20', {
             '-rotate-90 -top-14': props.orientation === 'portrait',
             'top-[12%]': props.orientation === 'landscape',
-          },
-        )}
-      >
-        <div className="bg-[#2D2D2D] p-2 border border-white rounded-xl flex flex-col justify-center items-center">
-          <strong
-            className={clsx('text-center text-white leading-[1]', {
-              'text-4xl': props.orientation === 'landscape',
-              'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
-            })}
-          >
-            <span>{props.state.teamOneScore}</span> <span>({props.state.sets.length})</span> <span>{props.state.teamTwoScore}</span>
-          </strong>
+          })}
+        >
+          {
+            <strong
+              className={clsx('text-center text-white leading-[1]', {
+                'text-4xl': props.orientation === 'landscape',
+                'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
+              })}
+            >
+              {props.state.tournamentTeamOneScore}
+            </strong>
+          }
         </div>
-      </div>
+      ) : (
+        <></>
+      )}
+
+      {props.state.tournamentId === null ? (
+        <div
+          className={clsx(
+            'absolute left-1/2 transform -translate-x-1/2 top-[12%] z-40 flex justify-center items-center',
+            {
+              '-rotate-90 -top-14': props.orientation === 'portrait',
+              'top-[12%]': props.orientation === 'landscape',
+            },
+          )}
+        >
+          <div className="bg-[#2D2D2D] p-2 border border-white rounded-xl flex flex-col justify-center items-center">
+            <strong
+              className={clsx('text-center text-white leading-[1]', {
+                'text-4xl': props.orientation === 'landscape',
+                'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
+              })}
+            >
+              <span>{props.state.teamOneScore}</span> <span>({props.state.sets.length})</span>{' '}
+              <span>{props.state.teamTwoScore}</span>
+            </strong>
+          </div>
+        </div>
+      ) : (
+        <div
+          className={clsx(
+            'absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 flex justify-center items-center',
+            {
+              '-rotate-90': props.orientation === 'portrait',
+              '': props.orientation === 'landscape',
+            },
+          )}
+        >
+          <div className="bg-[#2D2D2D] p-2 border border-white rounded-xl flex flex-col justify-center items-center">
+            <strong
+              className={clsx('text-center text-white leading-[1]', {
+                'text-4xl': props.orientation === 'landscape',
+                'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
+              })}
+            >
+              <span>{props.state.teamOneScore}</span> <span>({props.state.sets.length})</span>{' '}
+              <span>{props.state.teamTwoScore}</span>
+            </strong>
+          </div>
+        </div>
+      )}
+
+      {props.state.tournamentId !== null ? (
+        <div
+          className={clsx('absolute right-10 top-10 z-10', {
+            '-rotate-90 -top-14': props.orientation === 'portrait',
+            'top-[12%]': props.orientation === 'landscape',
+          })}
+        >
+          {
+            <strong
+              className={clsx('text-center text-white leading-[1]', {
+                'text-4xl': props.orientation === 'landscape',
+                'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
+              })}
+            >
+              {props.state.tournamentTeamOneScore}
+            </strong>
+          }
+        </div>
+      ) : (
+        <></>
+      )}
 
       <div className={clsx('w-full h-full gap-2 grid grid-cols-2')}>
         <ScoreBoardTeamCard
@@ -62,6 +135,8 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           showBilliardsBall={props.state.sport === 'BILLIARDS' ? 'YELLOW' : null}
           sport={props.state.sport}
           teamIndex={0}
+          tournamentTeamLogo={props.state.teamOneLogo}
+          tournamentId={props.state.tournamentId}
         />
         <ScoreBoardTeamCard
           contentfrom={props.orientation === 'portrait' ? 'left' : 'top'}
@@ -73,6 +148,8 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           showBilliardsBall={props.state.sport === 'BILLIARDS' ? 'WHITE' : null}
           sport={props.state.sport}
           teamIndex={1}
+          tournamentTeamLogo={props.state.teamTwoLogo}
+          tournamentId={props.state.tournamentId}
         />
       </div>
     </div>

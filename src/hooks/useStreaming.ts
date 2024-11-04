@@ -39,6 +39,10 @@ export interface StreamingState {
   tournamentLogo: string | null;
   teamOneLogo: string | null;
   teamTwoLogo: string | null;
+  tournamentTeamOneScore: number | null;
+  tournamentTeamTwoScore: number | null;
+  tournamentTeamOneabb: string | null;
+  tournamentTeamTwoabb: string | null;
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -145,6 +149,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentLogo: res.tournament && res.tournament.logo ? res.tournament.logo : null,
           teamOneLogo: res.tournamentTeamOne && res.tournamentTeamOne.logo ? res.tournamentTeamOne.logo : null,
           teamTwoLogo: res.tournamentTeamTwo && res.tournamentTeamTwo.logo ? res.tournamentTeamTwo.logo : null,
+          tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
+          tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
+          tournamentTeamOneabb: res.tournamentTeamOne && res.tournamentTeamOne.code ? res.tournamentTeamOne.code : null,
+          tournamentTeamTwoabb: res.tournamentTeamTwo && res.tournamentTeamTwo.code ? res.tournamentTeamTwo.code : null
         });
 
         reset();
@@ -183,6 +191,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentLogo: res.tournament && res.tournament.logo ? res.tournament.logo : null,
           teamOneLogo: res.tournamentTeamOne && res.tournamentTeamOne.logo ? res.tournamentTeamOne.logo : null,
           teamTwoLogo: res.tournamentTeamTwo && res.tournamentTeamTwo.logo ? res.tournamentTeamTwo.logo : null,
+          tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
+          tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
+          tournamentTeamOneabb: res.tournamentTeamOne && res.tournamentTeamOne.code ? res.tournamentTeamOne.code : null,
+          tournamentTeamTwoabb: res.tournamentTeamTwo && res.tournamentTeamTwo.code ? res.tournamentTeamTwo.code : null
         });
         startScoreCheck();
 
@@ -272,7 +284,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const handlePlayBackScoreCheck = () => {
     const currentStreamingData = structuredClone(streamingDataRef.current);
     const currentStopWatch = structuredClone(stopWatchTimeRef.current);
-    
+
     console.log(currentStopWatch);
 
     if (currentStreamingData) {
@@ -360,6 +372,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
             tournamentLogo: currentStreamingData.tournamentLogo,
             teamOneLogo: currentStreamingData.teamOneLogo,
             teamTwoLogo: currentStreamingData.teamTwoLogo,
+            tournamentTeamOneScore: currentStreamingData.tournamentTeamOneScore,
+            tournamentTeamTwoScore: currentStreamingData.tournamentTeamTwoScore,
+            tournamentTeamOneabb: currentStreamingData.tournamentTeamOneabb,
+            tournamentTeamTwoabb: currentStreamingData.tournamentTeamTwoabb
           });
         }, 20000);
       }
@@ -376,7 +392,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         } else if (currentStreamingData.matchStatus === 'LIVE') {
           const diff = getTimeDifferenceInMilliseconds(
             currentStreamingData.actualStartTimeDate,
-            new Date().toISOString()
+            new Date().toISOString(),
           );
 
           setTime(diff);
@@ -390,31 +406,26 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   };
 
   const onVideoGoToLive = () => {
-    
     const currentStreamingData = structuredClone(streamingDataRef.current);
     if (currentStreamingData) {
       stop();
-      const diff = getTimeDifferenceInMilliseconds(
-        currentStreamingData.actualStartTimeDate,
-        new Date().toISOString()
-      );
-  
+      const diff = getTimeDifferenceInMilliseconds(currentStreamingData.actualStartTimeDate, new Date().toISOString());
+
       setTime(diff);
       stopWatchTimeRef.current = diff;
       start();
 
       console.log(diff);
-      console.log("Set diff:", diff);
+      console.log('Set diff:', diff);
 
       handlePlayBackScoreCheck();
 
-
       const actualStartTime = new Date(currentStreamingData.actualStartTimeDate).getTime();
       const liveTime = new Date(actualStartTime + diff);
-      
-      console.log("Live IST Time:", liveTime.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
+
+      console.log('Live IST Time:', liveTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
     }
-  }
+  };
 
   const onVideoPause = () => {
     pauseTimer();
@@ -437,7 +448,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     viewershipData,
     onVideoEnd,
     time,
-    onVideoGoToLive
+    onVideoGoToLive,
   };
 };
 
