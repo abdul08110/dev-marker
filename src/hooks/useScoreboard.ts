@@ -121,7 +121,7 @@ const useScoreboard = () => {
             sets: res.sets,
           });
 
-          setTimeLeft(Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60));
+          setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
           startTimer();
         } else {
           toast({

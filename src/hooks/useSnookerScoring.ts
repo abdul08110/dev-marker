@@ -113,7 +113,7 @@ const useSnookerScoring = () => {
           if (res !== null) {
             setOpenPlayerSelectCard(false);
             await dispatch(matchSyncDataFromBackend({ data: res }));
-            setTimeLeft(Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60));
+            setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
             startTimer();
           } else {
             toast({

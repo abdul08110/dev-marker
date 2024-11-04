@@ -2,8 +2,10 @@ import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { StreamingState } from '@/hooks/useStreaming';
 import { StreamType } from '@/api/app/useGetMatchData';
 import YouTube from 'react-youtube';
-import { useRef, useState } from 'react';
-import { EnableAudioModal } from '@/components/modals/enableAudoModal';
+import { useEffect, useRef, useState } from 'react';
+// import { EnableAudioModal } from '@/components/modals/enableAudoModal';
+import { isWithinFiveSecondsRange } from '@/utils/functions';
+import clsx from 'clsx';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -12,44 +14,79 @@ interface StreamContainerProps {
   onVideoStart: () => void;
   onVideoPause: () => void;
   onVideoEnd: () => void;
+  stopWatchTime: number;
+  onVideoGoToLive: () => void;
 }
 
 export function StreamContainer(props: StreamContainerProps) {
-  const [audioAllowed, setAudioAllowed] = useState(false);
-  const [showAudioPrompt, setShowAudioPrompt] = useState(false);
+  // const [audioAllowed, setAudioAllowed] = useState<boolean | null>(null);
+  // const [showAudioPrompt, setShowAudioPrompt] = useState(false);
   const activeSet = getActiveSet(props.state ? props.state.sets : []);
   const activeTurn = getActiveTurn(activeSet);
   const youTubePlayerRef = useRef<any>(null);
+  const [currentTime, setCurrentTime] = useState(Date.now());
 
-  const handleAudioPermission = () => {
-    setAudioAllowed(true);
-    setShowAudioPrompt(false);
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(Date.now()), 1000);
 
-    if (youTubePlayerRef.current) {
-      youTubePlayerRef.current.unMute();
-      youTubePlayerRef.current.playVideo();
+    return () => clearInterval(interval); // Clean up interval on unmount
+  }, []);
+
+  // const handleAudioPermission = () => {
+  //   setAudioAllowed(true);
+  //   setShowAudioPrompt(false);
+
+  //   if (youTubePlayerRef.current) {
+  //     youTubePlayerRef.current.unMute();
+  //     youTubePlayerRef.current.playVideo();
+  //   }
+  // };
+
+  const handleGoLive = () => {
+    if (youTubePlayerRef.current && props.state) {
+      const actualStartTime = new Date(props.state.actualStartTimeDate).getTime();
+      const currentTime = Date.now();
+      const elapsedSeconds = Math.floor((currentTime - actualStartTime) / 1000);
+
+      youTubePlayerRef.current.seekTo(elapsedSeconds, true);
+      props.onVideoGoToLive();
     }
   };
+
+  // const handleAudioPermissionCloseModal = () => {
+  //   setShowAudioPrompt(false);
+
+  //   if (youTubePlayerRef.current) {
+  //     youTubePlayerRef.current.mute();
+  //     youTubePlayerRef.current.playVideo();
+  //   }
+  // };
 
   const handleYouTubeReady = (event: any) => {
     youTubePlayerRef.current = event.target;
 
-    if (!audioAllowed) {
-      event.target.mute();
-      setShowAudioPrompt(true);
-    } else {
-      event.target.unMute();
-      event.target.playVideo();
-    }
+    event.target.mute();
+    event.target.playVideo();
+
+    // if (audioAllowed === null) {
+    //   setShowAudioPrompt(true);
+    //   return;
+    // } else if (audioAllowed === true) {
+    //   event.target.unMute();
+    //   event.target.playVideo();
+    // } else if (audioAllowed === false) {
+    //   event.target.mute();
+    //   event.target.playVideo();
+    // }
   };
 
   return (
     <div className="h-full w-full flex justify-center items-center">
-      <EnableAudioModal
+      {/* <EnableAudioModal
         isModalOpen={showAudioPrompt}
-        closeModal={() => setShowAudioPrompt(false)}
+        closeModal={handleAudioPermissionCloseModal}
         confirmModal={handleAudioPermission}
-      />
+      /> */}
       {props.state ? (
         <div className="relative flex justify-center items-center w-full h-full">
           {props.state.streamType === StreamType.CLOUD_PROVIDER &&
@@ -58,7 +95,7 @@ export function StreamContainer(props: StreamContainerProps) {
           props.state.streamData.provider &&
           props.state.streamData.provider === 'YOUTUBE' ? (
             <div
-              className="relative w-full h-full max-w-full max-h-full"
+              className="relative w-full h-full max-w-full max-h-full overflow-hidden"
               style={{
                 width: '100%',
                 height: 'auto',
@@ -75,6 +112,9 @@ export function StreamContainer(props: StreamContainerProps) {
                 onPlay={props.onVideoStart}
                 onPause={props.onVideoPause}
                 onEnd={props.onVideoEnd}
+                onStateChange={(e) => {
+                  console.log(e);
+                }}
                 className="object-contain w-full h-full"
                 opts={{
                   height: '100%',
@@ -82,26 +122,52 @@ export function StreamContainer(props: StreamContainerProps) {
                   playerVars: {
                     autoplay: 1,
                     controls: 0,
+                    rel: 0,
+                    fs: 0,
+                    modestbranding: 1,
                   },
                 }}
               />
               {/* Overlay Content */}
 
-              <div className="absolute inset-0 pointer-events-none w-full flex justify-between p-4">
-                <img src="/images/clublogo.png" className="h-14 w-14 rounded-full overflow-hidden" />
+              <div className="absolute inset-0 w-full flex justify-between lg:p-4 p-2 h-fit">
+                <div className="flex flex-col gap-2 items-center h-fit">
+                  <img src="/images/clublogo.png" className="lg:h-14 lg:w-14 h-8 w-8 rounded-full overflow-hidden" />
+                  {props.state.matchStatus === 'LIVE' ? (
+                    <div
+                      onClick={handleGoLive}
+                      className={clsx('flex justify-center items-center cursor-pointer', {
+                        'bg-red-500 text-white p-1': isWithinFiveSecondsRange(
+                          new Date(props.state.actualStartTimeDate).toISOString(),
+                          props.stopWatchTime,
+                          currentTime,
+                        ),
+                        'bg-gray-500 text-base p-1': !isWithinFiveSecondsRange(
+                          new Date(props.state.actualStartTimeDate).toISOString(),
+                          props.stopWatchTime,
+                          currentTime,
+                        ),
+                      })}
+                    >
+                      <span className="font-bold text-xs">LIVE</span>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
 
-                <div className="flex flex-col gap-2 items-center">
-                  <img src={props.state.clubLogo!} className="h-14 w-14" />
-                  <small className="text-white font-medium text-xl">T-{props.state.venueNo}</small>
+                <div className="flex flex-col gap-2 items-center h-fit">
+                  <img src={props.state.clubLogo!} className="lg:h-14 lg:w-14 h-8 w-8 " />
+                  <small className="text-white font-medium lg:text-xl text-base">T-{props.state.venueNo}</small>
                 </div>
               </div>
               {props.state.overlayType === 'DESTINATION' && !props.isPortrait && (
-                <div className="absolute inset-0 flex flex-col justify-end items-center pointer-events-none">
-                  <div className="w-full h-[12%] bg-transparent flex justify-center">
+                <div className="absolute bottom-0 flex flex-col items-center w-full">
+                  <div className="w-full h-[12%] bg-transparent flex justify-center mb-1">
                     <div className="flex p-1 w-full gap-1 h-full justify-center">
                       <div>
                         <img
-                          className="h-full w-auto aspect-square object-cover rounded-full"
+                          className="lg:h-14 lg:w-14 h-8 w-8 aspect-square object-cover rounded-full"
                           src={
                             props.state.sideOnePlayerOne.profilePhoto
                               ? props.state.sideOnePlayerOne.profilePhoto
@@ -111,48 +177,16 @@ export function StreamContainer(props: StreamContainerProps) {
                       </div>
 
                       <div className="flex-grow relative flex items-center">
-                        {/* <div className="absolute top-0 left-0 w-full flex">
-                          <div>
-                            <span className="text-white md:text-base text-xs text-left">
-                              {new Date(props.state.actualStartTimeDate).toLocaleDateString()}
-                            </span>
-                          </div>
-
-                          <div className="flex-grow text-center">
-                            <span className="text-white md:text-base text-xs text-left uppercase">
-                              {props.state.clubName} - Table {props.state.venueNo}
-                            </span>
-                          </div>
-
-                          <div className="text-right">
-                            <span className="text-white md:text-base text-xs text-right">
-                              {new Date(props.state.actualStartTimeDate).toLocaleTimeString(undefined, {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true,
-                              })}
-                            </span>
-                          </div>
-                        </div> */}
-
-                        <div className="h-14 grid grid-cols-12 bg-primary border border-white w-full rounded-md items-center px-2">
+                        <div className="lg:h-14 h-6 grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
                           <div className="col-span-5 flex gap-2">
-                            {/* {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
-                            props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
-                              <>
-                                <img className="lg:w-6 lg:h-6 w-4 h-4" src={'/images/white-ball-stream.png'} />
-                              </>
-                            ) : (
-                              <></>
-                            )} */}
-                            <small className="text-white text-xl whitespace-nowrap uppercase font-bold">
+                            <small className="text-white lg:text-xl text-[0.5rem] whitespace-nowrap uppercase font-bold">
                               {props.state.sideOnePlayerOne.name}
                             </small>
 
                             {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
                             props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
                               <>
-                                <h5 className="text-xl text-yellow-500 font-bold text-right uppercase ml-auto whitespace-nowrap">
+                                <h5 className="lg:text-xl text-[0.5rem] text-yellow-500 font-bold text-right uppercase ml-auto whitespace-nowrap">
                                   Break {activeTurn ? activeTurn?.score : 0}
                                 </h5>
                               </>
@@ -161,8 +195,8 @@ export function StreamContainer(props: StreamContainerProps) {
                             )}
                           </div>
 
-                          <div className="col-span-2 text-center">
-                            <span className="text-xl text-white">
+                          <div className="col-span-2 text-center flex justify-center">
+                            <span className="lg:text-xl text-[0.5rem] text-white">
                               <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>
                               &nbsp;&nbsp;&nbsp;
                               {props.state.teamOneScore}&nbsp;(
@@ -176,7 +210,7 @@ export function StreamContainer(props: StreamContainerProps) {
                             {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
                             props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
                               <>
-                                <h5 className="text-xl text-yellow-500 font-bold text-left uppercase mr-auto whitespace-nowrap">
+                                <h5 className="lg:text-xl text-[0.5rem] text-yellow-500 font-bold text-left uppercase mr-auto whitespace-nowrap">
                                   Break {activeTurn ? activeTurn?.score : 0}
                                 </h5>
                               </>
@@ -184,25 +218,16 @@ export function StreamContainer(props: StreamContainerProps) {
                               <></>
                             )}
 
-                            <small className="text-white text-xl whitespace-nowrap uppercase font-bold">
+                            <small className="text-white lg:text-xl text-[0.5rem] whitespace-nowrap uppercase font-bold">
                               {props.state.sideTwoPlayerOne.name}
                             </small>
-
-                            {/* {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
-                            props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
-                              <>
-                                <img className="lg:w-6 lg:h-6 w-4 h-4" src={'/images/white-ball-stream.png'} />
-                              </>
-                            ) : (
-                              <></>
-                            )} */}
                           </div>
                         </div>
                       </div>
 
                       <div className="flex justify-end">
                         <img
-                          className="h-full w-auto aspect-square object-cover rounded-full"
+                          className="lg:h-14 lg:w-14 h-8 w-8 aspect-square object-cover rounded-full"
                           src={
                             props.state.sideTwoPlayerOne.profilePhoto
                               ? props.state.sideTwoPlayerOne.profilePhoto
@@ -214,6 +239,16 @@ export function StreamContainer(props: StreamContainerProps) {
                   </div>
                 </div>
               )}
+              {/* <div className="absolute -bottom-3  w-full h-auto">
+                <input
+                  type="range"
+                  min="0"
+                  max={duration}
+                  value={currentTime}
+                  onChange={handleScrubberChange}
+                  className="w-full h-2"
+                />
+              </div> */}
             </div>
           ) : (
             <></>

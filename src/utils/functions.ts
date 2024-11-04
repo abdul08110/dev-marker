@@ -31,6 +31,11 @@ export function getTimeLeftInMinutes(expectedEnd: string): number {
   return Math.max(timeLeftInMinutes, 0);
 }
 
+export function addMillisecondsToUTC(currentISODate: string, millisecondsToAdd: number): string {
+  const date = new Date(currentISODate);
+  date.setTime(date.getTime() + millisecondsToAdd);
+  return date.toISOString();
+}
 
 export const formatTime = (totalSeconds: number) => {
   const minutes = Math.floor(totalSeconds / 60);
@@ -38,9 +43,8 @@ export const formatTime = (totalSeconds: number) => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
-export const getTimeDifferenceInMinutes = (isoTime1: string, isoTime2: string): number => 
+export const getTimeDifferenceInMinutes = (isoTime1: string, isoTime2: string): number =>
   Math.abs(new Date(isoTime2).getTime() - new Date(isoTime1).getTime()) / 60000;
-
 
 export const addTimeLeftToStart = (timeStart: string, timeLeftMinutes: number) => {
   const startTime = new Date(timeStart);
@@ -57,4 +61,20 @@ export const subtractTimeLeftFromEnd = (endTime: string, timeLeftMinutes: number
   const newTime = new Date(endTimeDate.getTime() - timeLeftMilliseconds);
 
   return newTime.toISOString();
+};
+
+export const getTimeDifferenceInMilliseconds = (start: string, end: string): number => {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  return endDate.getTime() - startDate.getTime();
+};
+
+export const isWithinFiveSecondsRange = (
+  actualStartTimeISO: string,
+  stopWatchTimeMs: number,
+  currentTimeStamp: number,
+): boolean => {
+  const actualStartTimeDate = new Date(actualStartTimeISO);
+  const targetTime = actualStartTimeDate.getTime() + stopWatchTimeMs;
+  return Math.abs(currentTimeStamp - targetTime) <= 5000;
 };

@@ -139,7 +139,7 @@ export function Home() {
 
                 <div className="container">
                   <div className="p-2 flex justify-center">
-                    <div className="w-full bg-[#1F1F1F] p-4 grid grid-cols-2 gap-4 items-center justify-center rounded-xl shadow-xl">
+                    <div className="w-full bg-[#1F1F1F] p-4 gap-4 items-center justify-center rounded-xl shadow-xl">
                       {tournaments && tournaments.length > 0 ? (
                         tournaments.map((value) => (
                           <div key={value.id} onClick={() => navigate(`/app/tournament?tournamentId=${value.id}`)}>

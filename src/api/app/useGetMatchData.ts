@@ -35,7 +35,7 @@ export interface MatchStartResponse {
   createdAt: string;
   currentSetTeamOneScore: number;
   currentSetTeamTwoScore: number;
-  expectedEndTimeDate: string;
+  expectedEndTimeDate?: string;
   id: string;
   noOfSets: number | null;
   handicap: number;

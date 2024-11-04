@@ -70,7 +70,7 @@ export function TeamSelector(props: TeamSelectorProps) {
                         className="h-8 w-8 rounded-full object-cover"
                       />
                       <div className="flex flex-col justify-between">
-                        <span className="text-black">{team.name}</span>
+                        <span className='data-[selected=true]:text-white'>{team.name}</span>
                       </div>
                     </div>
                   </CommandItem>

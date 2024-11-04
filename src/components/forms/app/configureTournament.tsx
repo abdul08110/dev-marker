@@ -70,22 +70,7 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="handicap"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-white text-sm">Handicap</FormLabel>
-              <FormControl>
-                <HandicapSelector
-                  value={field.value}
-                  onChange={field.onChange}
-                  playerNames={{ player1: 'Team 1', player2: 'Team 2' }}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+      
         <Controller
           name="teamOneId"
           control={form.control}
@@ -155,6 +140,23 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
         ) : (
           <></>
         )}
+
+<FormField
+          control={form.control}
+          name="handicap"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-white text-sm">Handicap</FormLabel>
+              <FormControl>
+                <HandicapSelector
+                  value={field.value}
+                  onChange={field.onChange}
+                  playerNames={{ player1: 'Team 1', player2: 'Team 2' }}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
         <Button type="submit" className="mt-auto">
           Save changes

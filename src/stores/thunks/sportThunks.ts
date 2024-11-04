@@ -122,7 +122,7 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       });
     }
 
-    newState.timeInMinutes = getTimeInMinutes(data.actualStartTimeDate, data.expectedEndTimeDate);
+    newState.timeInMinutes = data.expectedEndTimeDate ? getTimeInMinutes(data.actualStartTimeDate, data.expectedEndTimeDate) : 0;
 
     await dispatch(
       setState({

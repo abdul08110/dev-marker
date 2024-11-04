@@ -22,11 +22,12 @@ export function ClientStream() {
 
   const {
     loading: streamingLoading,
-    streamingData,
     timeLeft,
     onVideoStart,
     onVideoPause,
     viewershipData,
+    time,
+    onVideoGoToLive,
     onVideoEnd
   } = useStreaming(undefined, matchId ? matchId : undefined);
 
@@ -37,12 +38,14 @@ export function ClientStream() {
   return (
     <div className="h-screen w-screen">
       <StreamContainer
+        stopWatchTime={time}
         onVideoPause={onVideoPause}
         onVideoStart={onVideoStart}
         onVideoEnd={onVideoEnd}
         timeLeft={timeLeft}
         isPortrait={isPortrait}
-        state={streamingData && streamingData.matchStatus === 'COMPLETED' ? viewershipData : streamingData}
+        state={viewershipData}
+        onVideoGoToLive={onVideoGoToLive}
       />
     </div>
   );
