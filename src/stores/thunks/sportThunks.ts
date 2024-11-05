@@ -83,7 +83,7 @@ export const setStateTournament = createAsyncThunk<void, { data: ConfigureTourna
 
     const sport: 'SNOOKER' | 'BILLIARDS' = 'SNOOKER'
 
-    const handicap =  -(data.teamOneHandicap - data.teamTwoHandicap)
+    const handicap =  data.teamOneHandicap - data.teamTwoHandicap
     
     let newState = {
       format: sportType,
