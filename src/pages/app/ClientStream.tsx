@@ -27,6 +27,7 @@ export function ClientStream() {
     onVideoEnd,
     updateTime,
     currentTime,
+    streamingData
   } = useStreaming(undefined, matchId ? matchId : undefined);
 
   if (loading || streamingLoading) {
@@ -42,7 +43,7 @@ export function ClientStream() {
         onVideoEnd={onVideoEnd}
         timeLeft={timeLeft}
         isPortrait={isPortrait}
-        state={viewershipData}
+        state={streamingData && streamingData.overlayType === 'SOURCE_WITH_FINAL_SCORES' ? streamingData : viewershipData}
       />
     </div>
   );

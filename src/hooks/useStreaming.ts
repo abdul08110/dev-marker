@@ -23,7 +23,7 @@ export interface StreamingState {
   streamData?: StreamData;
   matchStatus: 'LIVE' | 'COMPLETED';
   sets: Set[];
-  overlayType?: 'SOURCE' | 'DESTINATION';
+  overlayType?: 'SOURCE' | 'DESTINATION' | 'SOURCE_WITH_FINAL_SCORES';
   showPlayerMatchHistory?: boolean;
   venueNo: number;
   clubName: string;
