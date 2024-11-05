@@ -34,7 +34,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
         <></>
       )}
 
-      {props.state.tournamentId !== null ? (
+      {/* {props.state.tournamentId !== null ? (
         <div
           className={clsx('absolute left-10 top-10 z-20 bg-[#2D2D2D] p-2 border-white border', {
             '-rotate-90 -top-14': props.orientation === 'portrait',
@@ -54,7 +54,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
         </div>
       ) : (
         <></>
-      )}
+      )} */}
 
       {props.state.tournamentId === null ? (
         <div
@@ -95,14 +95,14 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
                 'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
               })}
             >
-              <span>{props.state.teamOneScore}</span> <span>({props.state.sets.length})</span>{' '}
-              <span>{props.state.teamTwoScore}</span>
+              <span>{props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore: 0 }</span> <span>(3)</span>{' '}
+              <span>{props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore: 0}</span>
             </strong>
           </div>
         </div>
       )}
 
-      {props.state.tournamentId !== null ? (
+      {/* {props.state.tournamentId !== null ? (
         <div
           className={clsx('absolute right-10 top-10 z-10 bg-[#2D2D2D] p-2 border-white border', {
             '-rotate-90 -top-14': props.orientation === 'portrait',
@@ -122,7 +122,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
         </div>
       ) : (
         <></>
-      )}
+      )} */}
 
       <div className={clsx('w-full h-full gap-2 grid grid-cols-2')}>
         <ScoreBoardTeamCard

@@ -221,7 +221,7 @@ export function StreamContainer(props: StreamContainerProps) {
                               )}
 
                               <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                                ({props.state.tournamentTeamTwoabb}) {props.state.teamTwoHandicap} +{' '}
+                                ({props.state.tournamentTeamTwoabb}) + {props.state.teamTwoHandicap}{' '}
                                 {props.state.sideTwoPlayerOne.name}
                               </small>
                             </div>

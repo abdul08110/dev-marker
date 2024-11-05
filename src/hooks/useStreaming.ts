@@ -11,7 +11,7 @@ import { calculatePointsBySide, calculateTotalTeamScore } from '@/stores/selecto
 export interface StreamingState {
   matchId: string;
   sport: 'BILLIARDS' | 'SNOOKER';
-  sportType:  'SNOOKER_10_RED' | 'SNOOKER_15_RED' | 'SNOOKER_6_RED',
+  sportType: 'SNOOKER_10_RED' | 'SNOOKER_15_RED' | 'SNOOKER_6_RED';
   sideOnePlayerOne: Player;
   sideOnePlayerTwo: Player | null;
   sideTwoPlayerOne: Player;
@@ -40,6 +40,7 @@ export interface StreamingState {
   tournamentTeamTwoabb: string | null;
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
+  handicap: number;
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -147,7 +148,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentTeamTwoabb: res.tournamentTeamTwo && res.tournamentTeamTwo.code ? res.tournamentTeamTwo.code : null,
           teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
           teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
-          sportType: res.sportType
+          sportType: res.sportType,
+          handicap: res.handicap,
         });
 
         if (res.matchStatus === 'LIVE') {
@@ -189,7 +191,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentTeamTwoabb: res.tournamentTeamTwo && res.tournamentTeamTwo.code ? res.tournamentTeamTwo.code : null,
           teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
           teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
-          sportType: res.sportType
+          sportType: res.sportType,
+          handicap: res.handicap,
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -324,6 +327,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         currentStreamingData?.sideOnePlayerTwo,
         currentStreamingData?.sideTwoPlayerOne,
         currentStreamingData?.sideTwoPlayerTwo,
+        currentStreamingData?.handicap,
       );
 
       consideredSets[consideredSets.length - 1] = {
@@ -365,7 +369,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentTeamTwoabb: currentStreamingData.tournamentTeamTwoabb,
           teamOneHandicap: currentStreamingData.teamOneHandicap,
           teamTwoHandicap: currentStreamingData.teamTwoHandicap,
-          sportType: currentStreamingData.sportType
+          sportType: currentStreamingData.sportType,
+          handicap: currentStreamingData.handicap,
         });
       }
     }

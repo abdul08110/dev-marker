@@ -101,22 +101,22 @@ export const getTeamKey = (teamIndex: number): 'team1' | 'team2' => {
   return teamIndex === 0 ? 'team1' : 'team2';
 };
 
-export const calculateTotalTeamScore = (
-  sets: Set[],
-) => {
+export const calculateTotalTeamScore = (sets: Set[]) => {
   const totalScores = {
     side1: 0,
-    side2: 0
-  }
+    side2: 0,
+  };
 
   sets.forEach((value) => {
     if (value.status === 'COMPLETED') {
-      value.teamOneScore > value.teamTwoScore || ( value.setConcededTo !== null && value.setConcededTo === 0 ) ? totalScores.side1 += 1 : totalScores.side2 += 1
+      value.teamOneScore > value.teamTwoScore || (value.setConcededTo !== null && value.setConcededTo === 0)
+        ? (totalScores.side1 += 1)
+        : (totalScores.side2 += 1);
     }
-  })
+  });
 
   return totalScores;
-}
+};
 
 export const calculatePointsBySide = (
   turns: Turn[],
@@ -124,10 +124,17 @@ export const calculatePointsBySide = (
   sideOnePlayerTwo: Player | null,
   sideTwoPlayerOne: Player,
   sideTwoPlayerTwo: Player | null,
+  handicap: number,
 ) => {
+  let isHandicapTeamOneOrTeamTwo: 'teamA' | 'teamB' = 'teamA';
+
+  if (handicap < 0) {
+    isHandicapTeamOneOrTeamTwo = 'teamB';
+  }
+
   const sidePoints = {
-    side1: 0,
-    side2: 0,
+    side1: (isHandicapTeamOneOrTeamTwo === 'teamA' ? 0 + handicap : 0 ),
+    side2: (isHandicapTeamOneOrTeamTwo === 'teamB' ? 0 + (-1 * handicap) : 0 ),
   };
 
   const side1Players = new Set<string | null>(
