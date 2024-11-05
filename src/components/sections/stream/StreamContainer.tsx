@@ -146,7 +146,7 @@ export function StreamContainer(props: StreamContainerProps) {
                 <div className="absolute bottom-0 flex flex-col items-center w-full">
                   <div className="w-full h-auto bg-transparent flex justify-center">
                     <div className="flex px-1 w-full gap-1 h-full justify-center">
-                      <div className='flex items-end'>
+                      <div className="flex items-end">
                         {props.state.tournamentLogo ? (
                           <img
                             className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
@@ -202,7 +202,8 @@ export function StreamContainer(props: StreamContainerProps) {
                               <span className="xl:text-3xl lg:text-xl text-base text-white">
                                 <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>
                                 &nbsp;&nbsp;&nbsp;
-                                {props.state.tournamentTeamOneScore}&nbsp;(3)&nbsp;
+                                {props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore : 0}
+                                &nbsp;(3)&nbsp;
                                 {props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore : 0}
                                 &nbsp;&nbsp;&nbsp;
                                 <span className="font-bold">{activeSet ? activeSet?.teamTwoScore : 0}</span>
@@ -229,7 +230,7 @@ export function StreamContainer(props: StreamContainerProps) {
                       </div>
 
                       <div className="flex justify-end">
-                        <div className='flex items-end'>
+                        <div className="flex items-end">
                           {props.state.tournamentLogo ? (
                             <img
                               className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
