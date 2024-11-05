@@ -273,7 +273,7 @@ export function StreamContainer(props: StreamContainerProps) {
                   </div>
                 </div>
               )}
-              {props.state.overlayType === 'SOURCE_WITH_FINAL_SCORES' ? (
+              {props.state.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait ? (
                 <div className="absolute bottom-0 flex flex-col items-center w-full">
                   <div className="w-full h-auto bg-transparent flex justify-center">
                     <div className="flex px-1 w-full gap-1 h-full justify-center">
