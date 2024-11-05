@@ -67,7 +67,6 @@ export const setStateTournament = createAsyncThunk<void, { data: ConfigureTourna
   'sport/setStateTournament',
   async ({ data, tournamentId }, { dispatch }) => {
     let sportType: 'SNOOKER_10_RED' | 'SNOOKER_15_RED' | 'SNOOKER_6_RED' = 'SNOOKER_10_RED';
-    let noOfSets = 1;
     let isCumulativeScore = false;
 
     if (data.format === '10_REDS_SINGLE_FRAME') {
@@ -76,7 +75,6 @@ export const setStateTournament = createAsyncThunk<void, { data: ConfigureTourna
       sportType = 'SNOOKER_15_RED';
     } else if (data.format === '6_REDS_CUMULATIVE') {
       sportType = 'SNOOKER_6_RED';
-      noOfSets = 2;
       isCumulativeScore = true;
     }
 
@@ -118,7 +116,7 @@ export const setStateTournament = createAsyncThunk<void, { data: ConfigureTourna
         ],
         score: 0
       },
-      handicap: handicap === -0 ? 0 : handicap,
+      handicap: handicap === 0 ? 0 : handicap,
       streaming: streamType,
       timeInMinutes: 0,
       startTimeDate: null,

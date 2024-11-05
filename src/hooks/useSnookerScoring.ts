@@ -172,6 +172,9 @@ const useSnookerScoring = () => {
       isTeamReveresed = true;
     }
 
+    const teamOneHandicap = isTeamReveresed ? snookerScoring.teamTwoHandicap : snookerScoring.teamOneHandicap
+    const teamTwoHandicap = isTeamReveresed ? snookerScoring.teamOneHandicap : snookerScoring.teamTwoHandicap
+
     const currentDate = new Date();
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
@@ -206,8 +209,8 @@ const useSnookerScoring = () => {
       tournamentId: snookerScoring.tournamentId ? snookerScoring.tournamentId : undefined,
       tournamentTeamOneScore: snookerScoring.tournamentTeamOneScore ? snookerScoring.tournamentTeamOneScore : undefined,
       tournamentTeamTwoScore: snookerScoring.tournamentTeamTwoScore ? snookerScoring.tournamentTeamTwoScore : undefined,
-      teamOneHandicap: snookerScoring.teamOneHandicap ? snookerScoring.teamOneHandicap : undefined,
-      teamTwoHandicap: snookerScoring.teamTwoHandicap ? snookerScoring.teamTwoHandicap : undefined,
+      teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
+      teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
     });
 
     if (matchId) {

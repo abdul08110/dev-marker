@@ -11,7 +11,7 @@ import { BilliardsScoring } from './pages/app/billiardsScoring';
 import { Tv } from './pages/app/Tv';
 import { ClientStream } from './pages/app/ClientStream';
 import { Tournament } from './pages/app/Tournament';
-import { TeamForm } from './pages/app/teamForm';
+import { TeamForm } from './pages/app/TeamForm';
 
 const App: React.FC = () => {
   const token = getToken();

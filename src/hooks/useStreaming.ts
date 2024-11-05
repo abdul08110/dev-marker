@@ -49,7 +49,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const getLiveMatchHook = useGetMatchLiveData();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
-  const { timeLeft, startTimer, setTimeLeft, pauseTimer } = useTimer(0, () => {
+  const { timeLeft, startTimer, setTimeLeft } = useTimer(0, () => {
     // Logic to handle when timer completes
   });
   const scoreCheckIntervalRef = useRef<number | null>(null);
