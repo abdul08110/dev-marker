@@ -115,6 +115,13 @@ export interface GeneralScoringState {
   maxScorePerSet: number | null
   handicap: number;
   isCumulativeScoring: boolean;
+  tournamentTeamOneId: string | null;
+  tournamentTeamTwoId: string | null;
+  tournamentId: string | null;
+  tournamentTeamOneScore: number | null;
+  tournamentTeamTwoScore: number | null;
+  teamOneHandicap: number | null;
+  teamTwoHandicap: number | null;
 }
 
 

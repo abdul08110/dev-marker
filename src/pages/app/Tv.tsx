@@ -25,12 +25,9 @@ export function Tv() {
     loading: streamingLoading,
     viewershipData,
     timeLeft,
-    onVideoStart,
-    onVideoPause,
     onVideoEnd,
-    time,
-    onVideoGoToLive
-    
+    currentTime,
+    updateTime,
   } = useStreaming(venueId || undefined);
 
   if (loading || streamingLoading) {
@@ -40,14 +37,13 @@ export function Tv() {
   return (
     <div className="h-screen w-screen">
       <StreamContainer
-       stopWatchTime={time}
+        updateTimer={updateTime}
+        stopWatchTime={currentTime}
         onVideoEnd={onVideoEnd}
-        onVideoPause={onVideoPause}
-        onVideoStart={onVideoStart}
         timeLeft={timeLeft}
         state={viewershipData}
         isPortrait={false}
-        onVideoGoToLive={onVideoGoToLive}
+        showBottomScrubber={false}
       />
     </div>
   );

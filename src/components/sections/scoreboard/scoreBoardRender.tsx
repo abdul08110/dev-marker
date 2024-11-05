@@ -36,7 +36,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
 
       {props.state.tournamentId !== null ? (
         <div
-          className={clsx('absolute left-10 top-10 z-20', {
+          className={clsx('absolute left-10 top-10 z-20 bg-[#2D2D2D] p-2 border-white border', {
             '-rotate-90 -top-14': props.orientation === 'portrait',
             'top-[12%]': props.orientation === 'landscape',
           })}
@@ -104,7 +104,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
 
       {props.state.tournamentId !== null ? (
         <div
-          className={clsx('absolute right-10 top-10 z-10', {
+          className={clsx('absolute right-10 top-10 z-10 bg-[#2D2D2D] p-2 border-white border', {
             '-rotate-90 -top-14': props.orientation === 'portrait',
             'top-[12%]': props.orientation === 'landscape',
           })}
@@ -137,6 +137,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           teamIndex={0}
           tournamentTeamLogo={props.state.teamOneLogo}
           tournamentId={props.state.tournamentId}
+          teamHandicap={props.state.teamOneHandicap}
         />
         <ScoreBoardTeamCard
           contentfrom={props.orientation === 'portrait' ? 'left' : 'top'}
@@ -150,6 +151,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           teamIndex={1}
           tournamentTeamLogo={props.state.teamTwoLogo}
           tournamentId={props.state.tournamentId}
+          teamHandicap={props.state.teamTwoHandicap}
         />
       </div>
     </div>

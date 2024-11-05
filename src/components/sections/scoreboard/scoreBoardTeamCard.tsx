@@ -14,6 +14,7 @@ interface ScoreBoardTeamCardProps {
   teamIndex: 0 | 1;
   tournamentTeamLogo: string | null;
   tournamentId: string | null;
+  teamHandicap: number | null;
 }
 
 export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
@@ -149,7 +150,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
       >
         <div
           style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 5vw, 10rem)' : 'clamp(1rem, 5vw, 7rem)' }}
-          className={clsx('flex justify-center items-center p-0 w-full font-bold text-white', {
+          className={clsx('flex justify-center items-center p-0 w-full font-bold text-white uppercase text-left text-nowrap', {
             'text-white/50': (isPlayerOneActive || isPlayerTwoActive) && isPlayerTwoActive,
             'h-fit max-h-[50%]': props.contentfrom === 'top',
             'w-full h-full max-w-[50%]': props.contentfrom === 'left',
@@ -168,13 +169,13 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
               '-rotate-90 inline-block whitespace-nowrap': props.contentfrom === 'left',
             })}
           >
-            {props.playerOne.name}
+            <span>{props.playerOne.name}</span> {props.teamHandicap ? `+ ${props.teamHandicap}` : ''}
           </span>
         </div>
         {props.playerTwo ? (
           <div
             style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(4rem, 40vw, 60rem)' }}
-            className={clsx('flex justify-center items-center h-fit p-2 w-full font-medium text-white', {
+            className={clsx('flex justify-center items-center h-fit p-2 w-full font-medium text-white uppercase text-left text-nowrap', {
               'text-white/50': (isPlayerOneActive || isPlayerTwoActive) && isPlayerTwoActive,
             })}
           >
@@ -186,7 +187,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             ) : (
               <></>
             )}
-            {props.playerTwo.name}
+            <span>{props.playerTwo.name}</span> {props.teamHandicap ? `+ ${props.teamHandicap}` : ''}
           </div>
         ) : (
           <></>

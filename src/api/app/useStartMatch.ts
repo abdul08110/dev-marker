@@ -22,7 +22,9 @@ interface MatchStartDataProps {
     tournamentTeamTwoId?: string,
     tournamentId?: string,
     tournamentTeamOneScore?: number,
-    tournamentTeamTwoScore?: number
+    tournamentTeamTwoScore?: number,
+    teamOneHandicap?: number,
+    teamTwoHandicap?: number,
 }
 
 interface MatchStartResponse {

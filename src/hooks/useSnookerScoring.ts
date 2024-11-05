@@ -85,7 +85,9 @@ const useSnookerScoring = () => {
   // LOCAL STATE
   const [openFoulDrawer, setOpenFoulDrawer] = React.useState(false);
   const [openSettingsDrawer, setOpenSettingsDrawer] = React.useState(false);
-  const [openPlayerSelectCard, setOpenPlayerSelectCard] = React.useState(true);
+  const [openPlayerSelectCard, setOpenPlayerSelectCard] = React.useState(
+    snookerScoring.team1.players[0].id ? false : true,
+  );
   const [selectedTeamIndex, setSelectedTeamIndex] = React.useState(0);
   const [selectedPlayerIndex, setSelectedPlayerIndex] = React.useState(0);
   const [showEndGameModal, setShowEndGameModal] = React.useState(false);
@@ -173,7 +175,10 @@ const useSnookerScoring = () => {
     const currentDate = new Date();
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
-      expectedEndTimeDate: new Date(currentDate.getTime() + snookerScoring.timeInMinutes * 60000),
+      expectedEndTimeDate:
+        snookerScoring.timeInMinutes !== 0
+          ? new Date(currentDate.getTime() + snookerScoring.timeInMinutes * 60000)
+          : undefined,
       sideOnePlayerOneId: isTeamReveresed ? snookerScoring.team2.players[0].id! : snookerScoring.team1.players[0].id!,
       sideTwoPlayerOneId: isTeamReveresed ? snookerScoring.team1.players[0].id! : snookerScoring.team2.players[0].id!,
       sideOnePlayerTwoId:
@@ -195,6 +200,14 @@ const useSnookerScoring = () => {
       handicap: isTeamReveresed ? -snookerScoring.handicap : snookerScoring.handicap,
       maxScorePerSet: snookerScoring.maxScorePerSet,
       noOfSets: snookerScoring.noOfSets,
+      cumulativeScoring: snookerScoring.isCumulativeScoring,
+      tournamentTeamOneId: snookerScoring.tournamentTeamOneId ? snookerScoring.tournamentTeamOneId : undefined,
+      tournamentTeamTwoId: snookerScoring.tournamentTeamTwoId ? snookerScoring.tournamentTeamTwoId : undefined,
+      tournamentId: snookerScoring.tournamentId ? snookerScoring.tournamentId : undefined,
+      tournamentTeamOneScore: snookerScoring.tournamentTeamOneScore ? snookerScoring.tournamentTeamOneScore : undefined,
+      tournamentTeamTwoScore: snookerScoring.tournamentTeamTwoScore ? snookerScoring.tournamentTeamTwoScore : undefined,
+      teamOneHandicap: snookerScoring.teamOneHandicap ? snookerScoring.teamOneHandicap : undefined,
+      teamTwoHandicap: snookerScoring.teamTwoHandicap ? snookerScoring.teamTwoHandicap : undefined,
     });
 
     if (matchId) {

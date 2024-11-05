@@ -59,8 +59,89 @@ import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreC
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
 import { MatchStartResponse } from '@/api/app/useGetMatchData';
 import { ballsToPointsEnumBilliards } from '../selectors/billiardsSelector';
+import { ConfigureTournamentData } from '@/components/forms/app/configureTournament';
 
 // HANDLE SCORE UPDATE FROM THE BACKEND.
+
+export const setStateTournament = createAsyncThunk<void, { data: ConfigureTournamentData, tournamentId: string }, { dispatch: AppDispatch }>(
+  'sport/setStateTournament',
+  async ({ data, tournamentId }, { dispatch }) => {
+    let sportType: 'SNOOKER_10_RED' | 'SNOOKER_15_RED' | 'SNOOKER_6_RED' = 'SNOOKER_10_RED';
+    let noOfSets = 1;
+    let isCumulativeScore = false;
+
+    if (data.format === '10_REDS_SINGLE_FRAME') {
+      sportType = 'SNOOKER_10_RED';
+    } else if (data.format === '15_REDS_SINGLE_FRAME') {
+      sportType = 'SNOOKER_15_RED';
+    } else if (data.format === '6_REDS_CUMULATIVE') {
+      sportType = 'SNOOKER_6_RED';
+      noOfSets = 2;
+      isCumulativeScore = true;
+    }
+
+    let streamType: 'PUBLIC' | 'PRIVATE' = 'PUBLIC';
+    
+
+    const sport: 'SNOOKER' | 'BILLIARDS' = 'SNOOKER'
+
+    const handicap =  -(data.teamOneHandicap - data.teamTwoHandicap)
+    
+    let newState = {
+      format: sportType,
+      matchId: null,
+      sport: sport,
+      isBackendUpdated: false,
+      team1Score: 0,
+      team2Score: 0,
+      numberAhead: 0,
+      numberOn: 0,
+      team1: {
+        players: [
+          {
+            name: data.teamOnePlayerOne.name,
+            isActive: false,
+            id:  data.teamOnePlayerOne.id,
+            profilePhoto: data.teamOnePlayerOne.profilePhoto,
+          }
+        ],
+        score: 0
+      },
+      team2: {
+        players: [
+          {
+            name: data.teamTwoPlayerOne.name,
+            isActive: false,
+            id:  data.teamTwoPlayerOne.id,
+            profilePhoto: data.teamTwoPlayerOne.profilePhoto,
+          }
+        ],
+        score: 0
+      },
+      handicap: handicap === -0 ? 0 : handicap,
+      streaming: streamType,
+      timeInMinutes: 0,
+      startTimeDate: null,
+      scoreHistory: [],
+      noOfSets: null,
+      maxScorePerSet: null,
+      isCumulativeScoring: isCumulativeScore,
+      tournamentTeamOneId: data.teamOneId,
+      tournamentTeamTwoId: data.teamTwoId,
+      tournamentId: tournamentId,
+      tournamentTeamOneScore: data.tournamentTeamOneScore,
+      tournamentTeamTwoScore: data.tournamentTeamTwoScore,
+      teamOneHandicap: data.teamOneHandicap,
+      teamTwoHandicap: data.teamTwoHandicap
+    }
+
+    await dispatch(
+      setState({
+        data: newState,
+      }),
+    );
+  },
+)
 
 export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStartResponse }, { dispatch: AppDispatch }>(
   'sport/matchSyncDataFromBackend',
@@ -103,7 +184,14 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       startTimeDate: data.actualStartTimeDate,
       noOfSets: null,
       maxScorePerSet: null,
-      isCumulativeScoring: data.cumulativeScoring && data.cumulativeScoring === true ? true : false
+      isCumulativeScoring: data.cumulativeScoring && data.cumulativeScoring === true ? true : false,
+      tournamentTeamOneId: null,
+      tournamentTeamTwoId: null,
+      tournamentId: null,
+      tournamentTeamOneScore: null,
+      tournamentTeamTwoScore: null,
+      teamOneHandicap: null,
+      teamTwoHandicap: null
     };
 
     if (data.sideTwoPlayerTwo !== null) {

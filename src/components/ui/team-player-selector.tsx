@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import useGetTournamentPlayers from '@/api/app/useGetTournamentPlayers';
 import useDebounce from '@/hooks/useDebounce';
+import { Player } from '@/stores/types';
 
 interface TeamSelectorProps {
-  onChange: (playerId: string) => void;
+  onChange: (player: Player) => void;
   teamId: string;
-  value: string;
+  value: Player;
 }
 
 export function TeamPlayerSelector(props: TeamSelectorProps) {
@@ -42,7 +43,7 @@ export function TeamPlayerSelector(props: TeamSelectorProps) {
     const player = players?.find((value) => value.id === playerId);
     if (player) {
       setSearchQuery(player.name);
-      props.onChange(player.id!);
+      props.onChange(player);
       setDropdownVisible(false);
     }
   };

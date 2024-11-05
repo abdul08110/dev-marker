@@ -97,6 +97,8 @@ export interface MatchStartResponse {
   cumulativeScoring?: boolean,
   tournamentTeamOneScore?: number,
   tournamentTeamTwoScore?: number,
+  teamOneHandicap?: number,
+  teamTwoHandicap?: number
 }
 
 const useGetMatchLiveData = () => {

@@ -28,6 +28,8 @@ export interface ScoreBoardState {
   tournamentId: string | null;
   tournamentTeamOneScore: number | null;
   tournamentTeamTwoScore: number | null;
+  teamOneHandicap: number | null;
+  teamTwoHandicap: number | null;
 }
 
 const useScoreboard = () => {
@@ -133,6 +135,8 @@ const useScoreboard = () => {
             tournamentId: res.tournament ? res.tournament.id : null,
             tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
             tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
+            teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
+            teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null
           });
 
           setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);

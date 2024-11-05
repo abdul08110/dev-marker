@@ -45,6 +45,13 @@ const initialState: GeneralScoringState = {
   timeInMinutes: 30,
   scoreHistory: [],
   startTimeDate: null,
+  tournamentTeamOneId: null,
+  tournamentTeamTwoId: null,
+  tournamentId: null,
+  tournamentTeamOneScore: null,
+  tournamentTeamTwoScore: null,
+  teamOneHandicap: null,
+  teamTwoHandicap: null
 };
 
 const sportSlice = createSlice({

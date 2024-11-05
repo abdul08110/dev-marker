@@ -4,30 +4,42 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
-import HandicapSelector from '@/components/ui/handicapSelector';
-import { TournamentTeam } from '@/stores/types';
+import { Player, TournamentTeam } from '@/stores/types';
 import { TeamSelector } from '@/components/ui/team-selector';
 import { TeamPlayerSelector } from '@/components/ui/team-player-selector';
 import { SpinButton } from '@/components/ui/spinButton';
+import { Input } from '@/components/ui/input';
 
 export interface ConfigureTournamentData {
   format: '15_REDS_SINGLE_FRAME' | '6_REDS_CUMULATIVE' | '10_REDS_SINGLE_FRAME';
-  handicap: number;
   teamOneId: string;
   teamTwoId: string;
-  teamOnePlayerOneId: string;
-  teamTwoPlayerOneId: string;
+  teamOnePlayerOne: Player;
+  teamTwoPlayerOne: Player;
+  teamOneHandicap: number;
+  teamTwoHandicap: number;
   tournamentTeamOneScore: number;
   tournamentTeamTwoScore: number;
 }
 
 const formSchema = z.object({
   format: z.enum(['15_REDS_SINGLE_FRAME', '6_REDS_CUMULATIVE', '10_REDS_SINGLE_FRAME']),
-  handicap: z.number().min(-147).max(147),
   teamOneId: z.string(),
   teamTwoId: z.string(),
-  teamOnePlayerOneId: z.string(),
-  teamTwoPlayerOneId: z.string(),
+  teamOnePlayerOne: z.object({
+    name: z.string(),
+    profilePhoto: z.string().nullable().optional(),
+    id: z.string().nullable(),
+    phoneNumber: z.string().optional(),
+  }),
+  teamTwoPlayerOne: z.object({
+    name: z.string(),
+    profilePhoto: z.string().nullable().optional(),
+    id: z.string().nullable(),
+    phoneNumber: z.string().optional(),
+  }),
+  teamOneHandicap: z.string().transform((val) => parseInt(val, 10)),
+  teamTwoHandicap: z.string().transform((val) => parseInt(val, 10)),
   tournamentTeamOneScore: z.number(),
   tournamentTeamTwoScore: z.number(),
 });
@@ -42,7 +54,8 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       format: '15_REDS_SINGLE_FRAME',
-      handicap: 0,
+      teamOneHandicap: 0,
+      teamTwoHandicap: 0,
       tournamentTeamOneScore: 0,
       tournamentTeamTwoScore: 0,
     },
@@ -95,6 +108,39 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
             </FormItem>
           )}
         />
+
+        {teamOneId ? (
+          <Controller
+            name="teamOnePlayerOne"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white text-sm">Player One</FormLabel>
+                <FormControl>
+                  <TeamPlayerSelector value={field.value} teamId={teamOneId} onChange={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <></>
+        )}
+
+        <FormField
+          control={form.control}
+          name="teamOneHandicap"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">Team One Handicap</FormLabel>
+              <FormControl>
+                <Input {...field} type="number" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Controller
           name="teamTwoId"
           control={form.control}
@@ -114,52 +160,34 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
           )}
         />
 
-        {teamOneId && teamTwoId ? (
-          <div className="flex flex-col gap-4">
-            <Controller
-              name="teamOnePlayerOneId"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white text-sm">Player One</FormLabel>
-                  <FormControl>
-                    <TeamPlayerSelector value={field.value} teamId={teamOneId} onChange={field.onChange} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Controller
-              name="teamTwoPlayerOneId"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white text-sm">Player Two</FormLabel>
-                  <FormControl>
-                    <TeamPlayerSelector value={field.value} teamId={teamTwoId} onChange={field.onChange} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+        {teamTwoId ? (
+          <Controller
+            name="teamTwoPlayerOne"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white text-sm">Player Two</FormLabel>
+                <FormControl>
+                  <TeamPlayerSelector value={field.value} teamId={teamTwoId} onChange={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         ) : (
           <></>
         )}
 
         <FormField
           control={form.control}
-          name="handicap"
+          name="teamTwoHandicap"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-white text-sm">Handicap</FormLabel>
+            <FormItem>
+              <FormLabel className="text-white">Team Two Handicap</FormLabel>
               <FormControl>
-                <HandicapSelector
-                  value={field.value}
-                  onChange={field.onChange}
-                  playerNames={{ player1: 'Team 1', player2: 'Team 2' }}
-                />
+                <Input {...field} type="number" />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

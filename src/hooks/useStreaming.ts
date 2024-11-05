@@ -5,18 +5,13 @@ import { toast } from '@/components/ui/use-toast';
 import { Player, Set } from '@/stores/types';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useTimer from './useTimer';
-import {
-  addMillisecondsToUTC,
-  getTimeDifferenceInMilliseconds,
-  getTimeDifferenceInMinutes,
-  getTimeLeftInMinutes,
-} from '@/utils/functions';
+import { addMillisecondsToUTC, getTimeDifferenceInMinutes, getTimeLeftInMinutes } from '@/utils/functions';
 import { calculatePointsBySide, calculateTotalTeamScore } from '@/stores/selectors/commonSport';
-import useStopWatch from './useStopWatch';
 
 export interface StreamingState {
   matchId: string;
   sport: 'BILLIARDS' | 'SNOOKER';
+  sportType:  'SNOOKER_10_RED' | 'SNOOKER_15_RED' | 'SNOOKER_6_RED',
   sideOnePlayerOne: Player;
   sideOnePlayerTwo: Player | null;
   sideTwoPlayerOne: Player;
@@ -43,6 +38,8 @@ export interface StreamingState {
   tournamentTeamTwoScore: number | null;
   tournamentTeamOneabb: string | null;
   tournamentTeamTwoabb: string | null;
+  teamOneHandicap: number | null;
+  teamTwoHandicap: number | null;
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -55,11 +52,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const { timeLeft, startTimer, setTimeLeft, pauseTimer } = useTimer(0, () => {
     // Logic to handle when timer completes
   });
-  const { time, start, pause, reset, isRunning, setTime } = useStopWatch();
   const scoreCheckIntervalRef = useRef<number | null>(null);
   const streamingDataRef = useRef<StreamingState | null>(null);
   const timeLeftRef = useRef<number>(timeLeft);
-  const stopWatchTimeRef = useRef<number>(time);
+  const [currentTime, setCurrentTime] = useState(0);
 
   const connectToMqtt = (topics: string[]) => {
     const brokerUrl = import.meta.env.VITE_MQTT_URL;
@@ -99,10 +95,6 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   useEffect(() => {
     timeLeftRef.current = timeLeft;
   }, [timeLeft]);
-
-  useEffect(() => {
-    stopWatchTimeRef.current = time;
-  }, [time]);
 
   useEffect(() => {
     if (matchId) {
@@ -152,11 +144,11 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
           tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
           tournamentTeamOneabb: res.tournamentTeamOne && res.tournamentTeamOne.code ? res.tournamentTeamOne.code : null,
-          tournamentTeamTwoabb: res.tournamentTeamTwo && res.tournamentTeamTwo.code ? res.tournamentTeamTwo.code : null
+          tournamentTeamTwoabb: res.tournamentTeamTwo && res.tournamentTeamTwo.code ? res.tournamentTeamTwo.code : null,
+          teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
+          teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
+          sportType: res.sportType
         });
-
-        reset();
-        stop();
 
         if (res.matchStatus === 'LIVE') {
           if (res.expectedEndTimeDate) {
@@ -194,9 +186,11 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
           tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
           tournamentTeamOneabb: res.tournamentTeamOne && res.tournamentTeamOne.code ? res.tournamentTeamOne.code : null,
-          tournamentTeamTwoabb: res.tournamentTeamTwo && res.tournamentTeamTwo.code ? res.tournamentTeamTwo.code : null
+          tournamentTeamTwoabb: res.tournamentTeamTwo && res.tournamentTeamTwo.code ? res.tournamentTeamTwo.code : null,
+          teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
+          teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
+          sportType: res.sportType
         });
-        startScoreCheck();
 
         if (res.matchStatus === 'LIVE' && !venueId) {
           const venueTopics = [`${res.venueId}/send-data`, `${res.venueId}/match-end`];
@@ -269,28 +263,22 @@ const useStreaming = (venueId?: string, matchId?: string) => {
             startTimer();
             setStreamingData(null);
             setViewershipData(null);
+
+            if (scoreCheckIntervalRef.current !== null) {
+              window.clearInterval(scoreCheckIntervalRef!.current);
+              scoreCheckIntervalRef.current = null;
+            }
           }, 20000);
         }
         break;
     }
   };
 
-  const startScoreCheck = () => {
-    scoreCheckIntervalRef.current = window.setInterval(() => {
-      handlePlayBackScoreCheck();
-    }, 2000);
-  };
-
-  const handlePlayBackScoreCheck = () => {
+  const handlePlayBackScoreCheck = (currentTime: number) => {
     const currentStreamingData = structuredClone(streamingDataRef.current);
-    const currentStopWatch = structuredClone(stopWatchTimeRef.current);
-
-    console.log(currentStopWatch);
 
     if (currentStreamingData) {
-      const currentScoreTime = addMillisecondsToUTC(currentStreamingData.actualStartTimeDate, currentStopWatch);
-
-      console.log(currentScoreTime);
+      const currentScoreTime = addMillisecondsToUTC(currentStreamingData.actualStartTimeDate, currentTime);
 
       let consideredSets = currentStreamingData!.sets
         .filter((value) => new Date(value.turns[0].timeScored) <= new Date(currentScoreTime))
@@ -347,108 +335,61 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       const totalTeamScores = calculateTotalTeamScore(consideredSets);
 
       if (currentStreamingData!.streamType === StreamType.CLOUD_PROVIDER) {
-        window.setTimeout(() => {
-          setViewershipData({
-            matchId: currentStreamingData.matchId,
-            sport: currentStreamingData.sport,
-            sideOnePlayerOne: currentStreamingData.sideOnePlayerOne,
-            sideTwoPlayerOne: currentStreamingData.sideTwoPlayerOne,
-            sideOnePlayerTwo: currentStreamingData.sideOnePlayerTwo,
-            sideTwoPlayerTwo: currentStreamingData.sideTwoPlayerTwo,
-            activePlayerId: activePlayerId,
-            teamOneScore: totalTeamScores.side1,
-            teamTwoScore: totalTeamScores.side2,
-            sets: consideredSets,
-            matchStatus: currentStreamingData.matchStatus,
-            streamType: currentStreamingData.streamType,
-            streamData: currentStreamingData.streamData,
-            venueNo: currentStreamingData.venueNo,
-            clubName: currentStreamingData.clubName,
-            noOfFrames: currentStreamingData.noOfFrames,
-            actualStartTimeDate: currentStreamingData.actualStartTimeDate,
-            overlayType: currentStreamingData.overlayType,
-            actualEndTimeDate: currentStreamingData.actualEndTimeDate,
-            clubLogo: currentStreamingData.clubLogo,
-            tournamentLogo: currentStreamingData.tournamentLogo,
-            teamOneLogo: currentStreamingData.teamOneLogo,
-            teamTwoLogo: currentStreamingData.teamTwoLogo,
-            tournamentTeamOneScore: currentStreamingData.tournamentTeamOneScore,
-            tournamentTeamTwoScore: currentStreamingData.tournamentTeamTwoScore,
-            tournamentTeamOneabb: currentStreamingData.tournamentTeamOneabb,
-            tournamentTeamTwoabb: currentStreamingData.tournamentTeamTwoabb
-          });
-        }, 20000);
+        setViewershipData({
+          matchId: currentStreamingData.matchId,
+          sport: currentStreamingData.sport,
+          sideOnePlayerOne: currentStreamingData.sideOnePlayerOne,
+          sideTwoPlayerOne: currentStreamingData.sideTwoPlayerOne,
+          sideOnePlayerTwo: currentStreamingData.sideOnePlayerTwo,
+          sideTwoPlayerTwo: currentStreamingData.sideTwoPlayerTwo,
+          activePlayerId: activePlayerId,
+          teamOneScore: totalTeamScores.side1,
+          teamTwoScore: totalTeamScores.side2,
+          sets: consideredSets,
+          matchStatus: currentStreamingData.matchStatus,
+          streamType: currentStreamingData.streamType,
+          streamData: currentStreamingData.streamData,
+          venueNo: currentStreamingData.venueNo,
+          clubName: currentStreamingData.clubName,
+          noOfFrames: currentStreamingData.noOfFrames,
+          actualStartTimeDate: currentStreamingData.actualStartTimeDate,
+          overlayType: currentStreamingData.overlayType,
+          actualEndTimeDate: currentStreamingData.actualEndTimeDate,
+          clubLogo: currentStreamingData.clubLogo,
+          tournamentLogo: currentStreamingData.tournamentLogo,
+          teamOneLogo: currentStreamingData.teamOneLogo,
+          teamTwoLogo: currentStreamingData.teamTwoLogo,
+          tournamentTeamOneScore: currentStreamingData.tournamentTeamOneScore,
+          tournamentTeamTwoScore: currentStreamingData.tournamentTeamTwoScore,
+          tournamentTeamOneabb: currentStreamingData.tournamentTeamOneabb,
+          tournamentTeamTwoabb: currentStreamingData.tournamentTeamTwoabb,
+          teamOneHandicap: currentStreamingData.teamOneHandicap,
+          teamTwoHandicap: currentStreamingData.teamTwoHandicap,
+          sportType: currentStreamingData.sportType
+        });
       }
     }
-  };
-
-  const onVideoStart = () => {
-    if (isRunning === false && time === 0) {
-      const currentStreamingData = structuredClone(streamingDataRef.current);
-
-      if (currentStreamingData) {
-        if (currentStreamingData.matchStatus === 'COMPLETED') {
-          setTime(0);
-        } else if (currentStreamingData.matchStatus === 'LIVE') {
-          const diff = getTimeDifferenceInMilliseconds(
-            currentStreamingData.actualStartTimeDate,
-            new Date().toISOString(),
-          );
-
-          setTime(diff);
-          console.log(time);
-        }
-      }
-    }
-
-    startTimer();
-    start();
-  };
-
-  const onVideoGoToLive = () => {
-    const currentStreamingData = structuredClone(streamingDataRef.current);
-    if (currentStreamingData) {
-      stop();
-      const diff = getTimeDifferenceInMilliseconds(currentStreamingData.actualStartTimeDate, new Date().toISOString());
-
-      setTime(diff);
-      stopWatchTimeRef.current = diff;
-      start();
-
-      console.log(diff);
-      console.log('Set diff:', diff);
-
-      handlePlayBackScoreCheck();
-
-      const actualStartTime = new Date(currentStreamingData.actualStartTimeDate).getTime();
-      const liveTime = new Date(actualStartTime + diff);
-
-      console.log('Live IST Time:', liveTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
-    }
-  };
-
-  const onVideoPause = () => {
-    pauseTimer();
-    pause();
   };
 
   const onVideoEnd = () => {
     setStreamingData(null);
     setViewershipData(null);
-    pauseTimer();
-    pause();
+    setCurrentTime(0);
+  };
+
+  const updateTime = async (timeInMillseconds: number) => {
+    await setCurrentTime(timeInMillseconds);
+    await handlePlayBackScoreCheck(timeInMillseconds);
   };
 
   return {
     loading,
     streamingData,
     timeLeft,
-    onVideoStart,
-    onVideoPause,
     viewershipData,
     onVideoEnd,
-    time,
-    onVideoGoToLive,
+    currentTime,
+    updateTime,
   };
 };
 
