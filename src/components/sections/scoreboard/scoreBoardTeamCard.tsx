@@ -15,6 +15,7 @@ interface ScoreBoardTeamCardProps {
   tournamentTeamLogo: string | null;
   tournamentId: string | null;
   teamHandicap: number | null;
+  teamTurns: Turn[] | null
 }
 
 export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
@@ -97,10 +98,14 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             'w-[20%] h-full flex justify-center items-center': props.contentfrom === 'left',
           })}
         >
-          {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn && props.sport === 'SNOOKER' ? (
+          {props.sport === 'SNOOKER' && props.teamTurns ? (
             <SnookerPointTypeDisplay
               class={clsx({ 'flex-col': props.contentfrom === 'left' })}
-              activeTurnPointTypes={props.activeTurn.points.map((value) => value.snookerPoint!.type)}
+              activeTurnPointTypes={props.teamTurns.flatMap(turn =>
+                turn.points
+                  .filter(point => point.snookerPoint)
+                  .map(point => point.snookerPoint!.type)
+              )}
             />
           ) : (
             <div className="h-full w-full"></div>

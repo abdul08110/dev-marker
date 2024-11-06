@@ -13,6 +13,16 @@ interface ScoreBoardRenderProps {
 export function ScoreboardRender(props: ScoreBoardRenderProps) {
   const activeSet = getActiveSet(props.state.sets);
   const activeTurn = getActiveTurn(activeSet);
+  const teamOneTurns = activeSet?.turns.filter(
+    (value) =>
+      value.turnPlayerId === props.state.sideOnePlayerOne.id ||
+      (props.state.sideOnePlayerTwo !== null && value.turnPlayerId === props.state.sideOnePlayerTwo?.id),
+  );
+  const teamTwoTurns = activeSet?.turns.filter(
+    (value) =>
+      value.turnPlayerId === props.state.sideTwoPlayerOne.id ||
+      (props.state.sideTwoPlayerTwo !== null && value.turnPlayerId === props.state.sideTwoPlayerTwo?.id),
+  );
 
   return (
     <div className="w-screen h-screen relative p-2">
@@ -95,8 +105,9 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
                 'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
               })}
             >
-              <span>{props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore: 0 }</span> <span>(3)</span>{' '}
-              <span>{props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore: 0}</span>
+              <span>{props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore : 0}</span>{' '}
+              <span>(3)</span>{' '}
+              <span>{props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore : 0}</span>
             </strong>
           </div>
         </div>
@@ -138,6 +149,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           tournamentTeamLogo={props.state.teamOneLogo}
           tournamentId={props.state.tournamentId}
           teamHandicap={props.state.teamOneHandicap}
+          teamTurns={teamOneTurns ? teamOneTurns : null}
         />
         <ScoreBoardTeamCard
           contentfrom={props.orientation === 'portrait' ? 'left' : 'top'}
@@ -152,6 +164,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           tournamentTeamLogo={props.state.teamTwoLogo}
           tournamentId={props.state.tournamentId}
           teamHandicap={props.state.teamTwoHandicap}
+          teamTurns={teamTwoTurns ? teamTwoTurns : null}
         />
       </div>
     </div>
