@@ -145,16 +145,16 @@ input, select, textarea{
 }
 
 .purple-slider .rc-slider-track {
-  background-color: #8d47b3;
+  background-color: red;
 }
 
 .purple-slider .rc-slider-handle {
-  border-color: #8d47b3;
+  border-color: red;
 }
 
 .purple-slider .rc-slider-handle:hover,
 .purple-slider .rc-slider-handle:focus,
 .purple-slider .rc-slider-handle:active {
-  border-color: #8d47b3;
-  box-shadow: 0 0 5px #8d47b3;
+  border-color: red;
+  box-shadow: 0 0 5px red;
 }

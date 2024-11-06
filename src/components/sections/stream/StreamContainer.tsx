@@ -255,7 +255,7 @@ export function StreamContainer(props: StreamContainerProps) {
                       </div>
                     </div>
                   </div>
-                  <div className="px-4  w-full h-auto">
+                  <div className="px-2  w-full h-auto mt-2">
                     {props.showBottomScrubber ? (
                       <Slider
                         className="purple-slider"
@@ -356,7 +356,7 @@ export function StreamContainer(props: StreamContainerProps) {
                     </div>
                   </div>
 
-                  <div className="px-4  w-full h-auto">
+                  <div className="px-0  w-full h-auto">
                     {props.showBottomScrubber ? (
                       <Slider
                         className="purple-slider"

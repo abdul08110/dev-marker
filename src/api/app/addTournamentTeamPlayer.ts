@@ -23,12 +23,12 @@ const useTournamentTeamAddPlayers = () => {
     name,
     teamId,
     tournamentId,
-  }: AddTournamentTeamPlayerProps): Promise<AddTournamentTeamPlayerResponse | null> => {
+  }: AddTournamentTeamPlayerProps): Promise<boolean> => {
     setLoading(true);
     setError(null);
 
     try {
-      const data = await handleApiResponse(
+      await handleApiResponse(
         axiosInstance.post<ApiResponse<AddTournamentTeamPlayerResponse>>(
           `tournament/marker/create-tournament-player`,
           {
@@ -40,10 +40,10 @@ const useTournamentTeamAddPlayers = () => {
         ),
       );
 
-      return data;
+      return true
     } catch (err: any) {
       setError(err.message);
-      return null;
+      return false;
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,11 @@
 import useTournamentTeamAddPlayers from '@/api/app/addTournamentTeamPlayer';
 import useGetTournamentTeams from '@/api/app/useGetTournamentTeams';
-import { AddTournamentTeamPlayerForm, AddTournamentTeamPlayerFormData } from '@/components/forms/app/addTournamentPlayer';
+import {
+  AddTournamentTeamPlayerForm,
+  AddTournamentTeamPlayerFormData,
+} from '@/components/forms/app/addTournamentPlayer';
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
+import { toast } from '@/components/ui/use-toast';
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -38,7 +42,20 @@ export function TeamForm() {
   }
 
   const handleTournamentPlayerCreation = async (data: AddTournamentTeamPlayerFormData) => {
-    await addTournamentTeamPlayer({ phone: data.phone, name: data.name, teamId: data.teamId, tournamentId: tournamentId! });
+    const res = await addTournamentTeamPlayer({
+      phone: data.phone,
+      name: data.name,
+      teamId: data.teamId,
+      tournamentId: tournamentId!,
+    });
+
+    if (res === true) {
+      toast({
+        title: 'Success',
+        description: 'Player Added',
+        variant: 'default',
+      });
+    }
 
     // navigate(0);
   };
