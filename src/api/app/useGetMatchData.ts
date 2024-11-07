@@ -14,7 +14,7 @@ export enum StreamType {
 }
 
 export interface StreamData {
-  provider?: 'YOUTUBE';
+  provider?: 'YOUTUBE' | 'MUX';
   publicUrl?: string;
   streamKey?: string;
   streamUrl?: string;
