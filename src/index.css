@@ -158,3 +158,39 @@ input, select, textarea{
   border-color: red;
   box-shadow: 0 0 5px red;
 }
+
+.media-player[data-view-type="video"] {
+  aspect-ratio: 16 / 9;
+}
+
+.vds-blocker {
+  display: none;
+}
+
+.vds-button:not([data-muted]) .mute-icon,
+.vds-button:not([data-state='low']) .volume-low-icon,
+.vds-button:not([data-state='high']) .volume-high-icon {
+  display: none;
+}
+
+.vds-button[data-paused] .pause-icon,
+.vds-button:not([data-paused]) .play-icon {
+  display: none;
+}
+
+.slider-track-fill {
+  width: var(--slider-progress); /* Updated automatically by Vidstack */
+}
+
+.slider-thumb {
+  transition: opacity 0.2s ease-in, box-shadow 0.2s ease;
+  left: calc(var(--slider-progress, 0%) - 11px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.slider-thumb:hover,
+.slider-thumb:focus {
+  opacity: 1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
