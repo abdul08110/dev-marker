@@ -171,14 +171,36 @@ export function StreamContainer(props: StreamContainerProps) {
 
                       <div className="flex-grow relative flex flex-col justify-center items-center">
                         <div className="flex flex-col justify-center items-center w-full">
-                          <div className="w-fit">
-                            <h5 className="xl:text-xl lg:text-base text-base text-white font-bold">
+                          <div className="w-full grid grid-cols-3 bg-black/10 p-2">
+                            <div className="col-span-1 flex justify-start items-end">
+                              {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
+                              props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
+                                <h5 className="xl:text-xl lg:text-base text-base text-white font-bold text-left uppercase whitespace-nowrap">
+                                  Break {activeTurn ? activeTurn?.score : 0}
+                                </h5>
+                              ) : (
+                                <></>
+                              )}
+                            </div>
+
+                            <h5 className="col-span-1 xl:text-xl lg:text-base text-base text-white font-bold text-center">
                               {props.state.sportType === 'SNOOKER_10_RED'
                                 ? '10 REDS SINGLE FRAME'
                                 : props.state.sportType === 'SNOOKER_15_RED'
                                   ? '15 REDS SINGLE FRAME'
                                   : '6 REDS CUMULATIVE'}
                             </h5>
+
+                            <div className="col-span-1 flex justify-end items-end">
+                              {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
+                              props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
+                                <h5 className="xl:text-xl lg:text-base text-base text-white font-bold text-right uppercase whitespace-nowrap">
+                                  Break {activeTurn ? activeTurn?.score : 0}
+                                </h5>
+                              ) : (
+                                <></>
+                              )}
+                            </div>
                           </div>
 
                           <div className="grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
@@ -188,14 +210,14 @@ export function StreamContainer(props: StreamContainerProps) {
                                 {props.state.tournamentTeamOneabb})
                               </small>
 
-                              {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
+                              {/* {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
                               props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
                                 <h5 className="xl:text-xl lg:text-md text-xs text-yellow-500 font-bold text-right uppercase ml-auto whitespace-nowrap">
                                   Break {activeTurn ? activeTurn?.score : 0}
                                 </h5>
                               ) : (
                                 <></>
-                              )}
+                              )} */}
                             </div>
 
                             <div className="col-span-2 text-center flex justify-center">
@@ -211,14 +233,14 @@ export function StreamContainer(props: StreamContainerProps) {
                             </div>
 
                             <div className="col-span-5 text-right flex gap-2 justify-end items-center">
-                              {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
+                              {/* {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
                               props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
                                 <h5 className="xl:text-xl lg:text-md text-xs text-yellow-500 font-bold text-left uppercase mr-auto whitespace-nowrap">
                                   Break {activeTurn ? activeTurn?.score : 0}
                                 </h5>
                               ) : (
                                 <></>
-                              )}
+                              )} */}
 
                               <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
                                 ({props.state.tournamentTeamTwoabb}) + {props.state.teamTwoHandicap}{' '}

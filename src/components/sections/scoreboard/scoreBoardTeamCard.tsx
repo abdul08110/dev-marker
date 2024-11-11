@@ -100,6 +100,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         >
           {props.sport === 'SNOOKER' && props.teamTurns ? (
             <SnookerPointTypeDisplay
+              isBig={true}
               class={clsx({ 'flex-col': props.contentfrom === 'left' })}
               activeTurnPointTypes={props.teamTurns.flatMap(turn =>
                 turn.points
