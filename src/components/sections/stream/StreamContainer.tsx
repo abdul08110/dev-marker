@@ -171,7 +171,7 @@ export function StreamContainer(props: StreamContainerProps) {
 
                       <div className="flex-grow relative flex flex-col justify-center items-center">
                         <div className="flex flex-col justify-center items-center w-full">
-                          <div className="w-full grid grid-cols-3 bg-black/10 p-2">
+                          <div className="w-full grid grid-cols-3 bg-black/10 lg:p-2 p-1">
                             <div className="col-span-1 flex justify-start items-end">
                               {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
                               props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
