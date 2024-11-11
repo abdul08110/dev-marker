@@ -5,6 +5,8 @@ import YouTube, { YouTubeEvent } from 'react-youtube';
 import { useEffect, useRef, useState } from 'react';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import MuteLogo from '@/icons/mute';
+import VolumeLogo from '@/icons/volume';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -22,6 +24,7 @@ export function StreamContainer(props: StreamContainerProps) {
   const youTubePlayerRef = useRef<any>(null);
   const intervalRef = useRef<number | null>(null);
   const [videoDuration, setVideoDuration] = useState(0);
+  const [isSoundOn, setIsSoundOn] = useState(false);
 
   const clearExistingInterval = () => {
     if (intervalRef.current) {
@@ -36,6 +39,18 @@ export function StreamContainer(props: StreamContainerProps) {
 
     event.target.mute();
     event.target.playVideo();
+  };
+
+  const handleMuteUnmute = () => {
+    if (youTubePlayerRef.current) {
+      if (isSoundOn) {
+        youTubePlayerRef.current.mute();
+      } else {
+        youTubePlayerRef.current.unMute();
+      }
+    }
+
+    setIsSoundOn(!isSoundOn);
   };
 
   const handleYoutubeStateChange = async (event: YouTubeEvent<number>) => {
@@ -111,6 +126,17 @@ export function StreamContainer(props: StreamContainerProps) {
                     src="/images/clublogo.png"
                     className="lg:h-14 xl:h-24 xl:w-24 lg:w-14 h-8 w-8 rounded-full overflow-hidden"
                   />
+
+                  {isSoundOn ? (
+                    <div onClick={() => handleMuteUnmute()}>
+                      <MuteLogo className="xl:h-12 xl:w-12 lg:h-8 lg:w-8 h-5 w-5 cursor-pointer text-white" />
+                    </div>
+                  ) : (
+                    <div onClick={() => handleMuteUnmute()}>
+                      <VolumeLogo className="xl:h-12 xl:w-12 lg:h-8 lg:w-8 h-5 w-5 cursor-pointer text-white" />
+                    </div>
+                  )}
+
                   {/* {props.state.matchStatus === 'LIVE' ? (
                     <div
                       // onClick={handleGoLive}
