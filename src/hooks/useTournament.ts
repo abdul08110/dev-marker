@@ -5,6 +5,8 @@ import { ConfigureTournamentData } from '@/components/forms/app/configureTournam
 import { RootState, useAppDispatch } from '@/stores';
 import { useSelector } from 'react-redux';
 import { setStateTournament } from '@/stores/thunks/sportThunks';
+import useGetTournamentPlayers from '@/api/app/useGetTournamentPlayers';
+import { toast } from '@/components/ui/use-toast';
 
 const useTournament = () => {
   // HOOKS
@@ -13,6 +15,7 @@ const useTournament = () => {
   const [searchParams] = useSearchParams();
   const tournamentId = searchParams.get('tournamentId');
   const dispatch = useAppDispatch();
+  const { getPlayers } = useGetTournamentPlayers();
 
   // API
   const { getTournamentTeams, teams } = useGetTournamentTeams();
@@ -49,7 +52,42 @@ const useTournament = () => {
   const handleMatchCreation = async (data: ConfigureTournamentData) => {
     setLoading(true);
 
-    await dispatch(setStateTournament({ data, tournamentId: tournamentId! }));
+    const teamOnePlayers = await getPlayers({ id: data.teamOneId });
+    const teamTwoPlayers = await getPlayers({ id: data.teamTwoId });
+
+    if (!teamOnePlayers || teamOnePlayers?.results.length === 0) {
+      toast({
+        title: 'Error',
+        description: 'Team One Player not found',
+        variant: 'destructive',
+      });
+
+      setLoading(false);
+
+      return;
+    }
+
+    if (!teamTwoPlayers || teamTwoPlayers?.results.length === 0) {
+      toast({
+        title: 'Error',
+        description: 'Team Two Player not found',
+        variant: 'destructive',
+      });
+
+      setLoading(false);
+
+      return;
+    }
+
+
+    const modifiedData = {
+      ...data,
+      sideOnePlayerOne: teamOnePlayers.results[0]!,
+      sideTwoPlayerOne: teamTwoPlayers.results[0]!
+    }
+    
+
+    await dispatch(setStateTournament({ data: modifiedData, tournamentId: tournamentId! }));
 
     navigate(`/app/snooker`);
 
