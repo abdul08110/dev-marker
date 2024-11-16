@@ -89,7 +89,7 @@ const useTournament = () => {
 
     await dispatch(setStateTournament({ data: modifiedData, tournamentId: tournamentId! }));
 
-    navigate(`/app/snooker`);
+    navigate(`/app/billiards`);
 
     setLoading(false);
   };

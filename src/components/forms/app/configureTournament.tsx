@@ -62,7 +62,7 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white text-sm">Team One</FormLabel>
+              <FormLabel className="text-white text-sm">Player One</FormLabel>
               <FormControl>
                 <TeamSelector
                   value={field.value}
@@ -81,7 +81,7 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
           name="teamOneHandicap"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white">Team One Handicap</FormLabel>
+              <FormLabel className="text-white">Player One Handicap</FormLabel>
               <FormControl>
                 <Input {...field} type="number" />
               </FormControl>
@@ -95,7 +95,7 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white text-sm">Team Two</FormLabel>
+              <FormLabel className="text-white text-sm">Player Two</FormLabel>
               <FormControl>
                 <TeamSelector
                   value={field.value}
@@ -114,7 +114,7 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
           name="teamTwoHandicap"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white">Team Two Handicap</FormLabel>
+              <FormLabel className="text-white">Player Two Handicap</FormLabel>
               <FormControl>
                 <Input {...field} type="number" />
               </FormControl>
