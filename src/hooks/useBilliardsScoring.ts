@@ -65,7 +65,9 @@ const useBilliardsScoring = () => {
 
   // LOCAL STATE
   const [openSettingsDrawer, setOpenSettingsDrawer] = React.useState(false);
-  const [openPlayerSelectCard, setOpenPlayerSelectCard] = React.useState(true);
+  const [openPlayerSelectCard, setOpenPlayerSelectCard] = React.useState(
+    billiardsScoring.team1.players[0].id ? false : true,
+  );
   const [selectedTeamIndex, setSelectedTeamIndex] = React.useState(0);
   const [selectedPlayerIndex, setSelectedPlayerIndex] = React.useState(0);
   const [showLoadingModal, setShowLoadingModal] = React.useState(false);

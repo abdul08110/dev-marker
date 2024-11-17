@@ -71,8 +71,8 @@ export const setStateTournament = createAsyncThunk<
       raceTo: number;
       teamOneId: string;
       teamTwoId: string;
-      teamOneHandicap: number;
-      teamTwoHandicap: number;
+      teamOneHandicap: string;
+      teamTwoHandicap: string;
     };
     tournamentId: string;
   },
@@ -81,7 +81,7 @@ export const setStateTournament = createAsyncThunk<
   let sportType: 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED' = 'BILLIARDS_RACE_TO';
   let isCumulativeScore = false;
 
-  let streamType: 'PUBLIC' | 'PRIVATE' = 'PRIVATE';
+  let streamType: 'PUBLIC' | 'PRIVATE' = 'PUBLIC';
 
   const sport: 'SNOOKER' | 'BILLIARDS' = 'BILLIARDS';
 
@@ -129,8 +129,8 @@ export const setStateTournament = createAsyncThunk<
     tournamentId: tournamentId,
     tournamentTeamOneScore: 0,
     tournamentTeamTwoScore: 0,
-    teamOneHandicap: data.teamOneHandicap,
-    teamTwoHandicap: data.teamTwoHandicap,
+    teamOneHandicap: Number(data.teamOneHandicap) * -1,
+    teamTwoHandicap: Number(data.teamTwoHandicap) * -1,
   };
 
   await dispatch(

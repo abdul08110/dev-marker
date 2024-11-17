@@ -11,16 +11,16 @@ export interface ConfigureTournamentData {
   raceTo: number;
   teamOneId: string;
   teamTwoId: string;
-  teamOneHandicap: number;
-  teamTwoHandicap: number;
+  teamOneHandicap: string;
+  teamTwoHandicap: string;
 }
 
 const formSchema = z.object({
   raceTo: z.number(),
   teamOneId: z.string(),
   teamTwoId: z.string(),
-  teamOneHandicap: z.string().transform((val) => parseInt(val, 10)),
-  teamTwoHandicap: z.string().transform((val) => parseInt(val, 10)),
+  teamOneHandicap: z.string(),
+  teamTwoHandicap: z.string(),
 });
 
 interface ConfigureTournamentProps {
@@ -32,9 +32,9 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      raceTo: 400,
-      teamOneHandicap: 0,
-      teamTwoHandicap: 0,
+      raceTo: 100,
+      teamOneHandicap: '0',
+      teamTwoHandicap: '0',
     },
   });
 
