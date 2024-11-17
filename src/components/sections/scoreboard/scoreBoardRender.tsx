@@ -44,28 +44,6 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
         <></>
       )}
 
-      {/* {props.state.tournamentId !== null ? (
-        <div
-          className={clsx('absolute left-10 top-10 z-20 bg-[#2D2D2D] p-2 border-white border', {
-            '-rotate-90 -top-14': props.orientation === 'portrait',
-            'top-[12%]': props.orientation === 'landscape',
-          })}
-        >
-          {
-            <strong
-              className={clsx('text-center text-white leading-[1]', {
-                'text-4xl': props.orientation === 'landscape',
-                'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
-              })}
-            >
-              {props.state.tournamentTeamOneScore}
-            </strong>
-          }
-        </div>
-      ) : (
-        <></>
-      )} */}
-
       {props.state.tournamentId === null ? (
         <div
           className={clsx(

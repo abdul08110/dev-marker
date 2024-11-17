@@ -298,9 +298,13 @@ const sportSlice = createSlice({
     reverseTeamPlayers(state) {
       const teamOnePlayers = state.team1.players;
       const teamTwoPlayers = state.team2.players;
+      const teamOneHandicap = state.teamOneHandicap;
+      const teamTwoHandicap = state.teamTwoHandicap;
 
       state.team1.players = teamTwoPlayers;
       state.team2.players = teamOnePlayers;
+      state.teamOneHandicap = teamTwoHandicap;
+      state.teamTwoHandicap = teamOneHandicap;
     },
     updateMatchStartedTimeDateUtc(state, action: PayloadAction<{ startTimeDate: string }>) {
       state.startTimeDate = action.payload.startTimeDate;
