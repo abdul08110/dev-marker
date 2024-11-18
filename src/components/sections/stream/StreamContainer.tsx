@@ -236,7 +236,10 @@ export function StreamContainer(props: StreamContainerProps) {
                           <div className="grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
                             <div className="col-span-5 flex gap-2 items-center">
                               <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                                {props.state.sideOnePlayerOne.name} {props.state.teamOneHandicap}{' '}
+                                {props.state.sideOnePlayerOne.name}{' '}
+                                <span className={props.state.isTeamOneHandicapApplied === true ? 'line-through' : ''}>
+                                  {props.state.teamOneHandicap}
+                                </span>{' '}
                                 {props.state.tournamentTeamOneabb && props.state.sport === 'SNOOKER'
                                   ? props.state.tournamentTeamOneabb
                                   : ''}
@@ -268,9 +271,25 @@ export function StreamContainer(props: StreamContainerProps) {
                               <div className="col-span-2 flex justify-center items-center">
                                 {' '}
                                 <span className="xl:text-3xl lg:text-xl text-base text-white">
-                                  <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>
+                                  <span
+                                    className={
+                                      props.state.isTeamOneHandicapApplied === true
+                                        ? 'font-bold text-green-500'
+                                        : 'font-bold'
+                                    }
+                                  >
+                                    {activeSet ? activeSet?.teamOneScore : 0}
+                                  </span>
                                   &nbsp;({props.state.maxScorePerSet} UP)&nbsp;
-                                  <span className="font-bold">{activeSet ? activeSet?.teamTwoScore : 0}</span>
+                                  <span
+                                    className={
+                                      props.state.isTeamTwoHandicapApplied === true
+                                        ? 'font-bold text-green-500'
+                                        : 'font-bold'
+                                    }
+                                  >
+                                    {activeSet ? activeSet?.teamTwoScore : 0}
+                                  </span>
                                 </span>
                               </div>
                             )}
@@ -289,7 +308,10 @@ export function StreamContainer(props: StreamContainerProps) {
                                 {props.state.tournamentTeamTwoabb && props.state.sport === 'SNOOKER'
                                   ? props.state.tournamentTeamTwoabb
                                   : ''}{' '}
-                                {props.state.teamTwoHandicap} {props.state.sideTwoPlayerOne.name}
+                                <span className={props.state.isTeamTwoHandicapApplied === true ? 'line-through' : ''}>
+                                  {props.state.teamTwoHandicap}
+                                </span>{' '}
+                                {props.state.sideTwoPlayerOne.name}
                               </small>
                             </div>
                           </div>

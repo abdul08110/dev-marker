@@ -16,6 +16,7 @@ interface ScoreBoardTeamCardProps {
   tournamentId: string | null;
   teamHandicap: number | null;
   teamTurns: Turn[] | null;
+  isHandicapApplied?: boolean;
 }
 
 export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
@@ -118,6 +119,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
           <span
             className={clsx({
               '-rotate-90 inline-block': props.contentfrom === 'left',
+              'text-green-500': props.isHandicapApplied === true,
             })}
           >
             {props.score}
@@ -151,7 +153,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         })}
       >
         <div
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(1rem, 5vw, 7rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 3vw, 10rem)' : 'clamp(1rem, 5vw, 7rem)' }}
           className={clsx(
             'flex justify-center gap-4 items-center p-0 w-full font-bold text-white uppercase text-left text-nowrap',
             {
@@ -174,7 +176,10 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
               '-rotate-90 inline-block whitespace-nowrap': props.contentfrom === 'left',
             })}
           >
-            <span>{props.playerOne.name}</span> {props.teamHandicap ? `${props.teamHandicap}` : ''}
+            <span>{props.playerOne.name}</span>{' '}
+            <span className={props.isHandicapApplied === true ? 'line-through' : ''}>
+              {props.teamHandicap ? `${props.teamHandicap}` : ''}
+            </span>
           </span>
         </div>
         {props.playerTwo ? (

@@ -42,6 +42,8 @@ export interface StreamingState {
   teamTwoHandicap: number | null;
   handicap: number;
   maxScorePerSet: number | null;
+  isTeamOneHandicapApplied?: boolean,
+  isTeamTwoHandicapApplied?: boolean
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -151,7 +153,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
           sportType: res.sportType,
           handicap: res.handicap,
-          maxScorePerSet: res.maxScorePerSet
+          maxScorePerSet: res.maxScorePerSet,
+          isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
+          isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied
         });
 
         if (res.matchStatus === 'LIVE') {
@@ -195,7 +199,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
           sportType: res.sportType,
           handicap: res.handicap,
-          maxScorePerSet: res.maxScorePerSet
+          maxScorePerSet: res.maxScorePerSet,
+          isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
+          isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -341,6 +347,23 @@ const useStreaming = (venueId?: string, matchId?: string) => {
 
       const totalTeamScores = calculateTotalTeamScore(consideredSets);
 
+      let handicapAdjustedScores = totalTeamScores;
+
+      if (currentStreamingData.sport === 'BILLIARDS') {
+        if (currentStreamingData.teamOneHandicap) {
+          const adjustedTeamOneScore = handicapAdjustedScores.side1 + currentStreamingData.teamOneHandicap;
+          if (adjustedTeamOneScore >= 0) {
+            handicapAdjustedScores.side1 = adjustedTeamOneScore;
+          }
+        }
+        if (currentStreamingData.teamTwoHandicap) {
+          const adjustedTeamTwoScore = handicapAdjustedScores.side2 + currentStreamingData.teamTwoHandicap;
+          if (adjustedTeamTwoScore >= 0) {
+            handicapAdjustedScores.side2 = adjustedTeamTwoScore;
+          }
+        }
+      }
+
       if (currentStreamingData!.streamType === StreamType.CLOUD_PROVIDER) {
         setViewershipData({
           matchId: currentStreamingData.matchId,
@@ -350,8 +373,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           sideOnePlayerTwo: currentStreamingData.sideOnePlayerTwo,
           sideTwoPlayerTwo: currentStreamingData.sideTwoPlayerTwo,
           activePlayerId: activePlayerId,
-          teamOneScore: totalTeamScores.side1,
-          teamTwoScore: totalTeamScores.side2,
+          teamOneScore: handicapAdjustedScores.side1,
+          teamTwoScore: handicapAdjustedScores.side2,
           sets: consideredSets,
           matchStatus: currentStreamingData.matchStatus,
           streamType: currentStreamingData.streamType,
@@ -374,7 +397,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamTwoHandicap: currentStreamingData.teamTwoHandicap,
           sportType: currentStreamingData.sportType,
           handicap: currentStreamingData.handicap,
-          maxScorePerSet: currentStreamingData.maxScorePerSet
+          maxScorePerSet: currentStreamingData.maxScorePerSet,
+          isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== totalTeamScores.side1,
+          isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== totalTeamScores.side2,
         });
       }
     }

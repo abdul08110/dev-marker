@@ -30,6 +30,8 @@ export interface ScoreBoardState {
   tournamentTeamTwoScore: number | null;
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
+  isTeamOneHandicapApplied?: boolean,
+  isTeamTwoHandicapApplied?: boolean
 }
 
 const useScoreboard = () => {
@@ -136,7 +138,9 @@ const useScoreboard = () => {
             tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
             tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
             teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
-            teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null
+            teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
+            isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
+            isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied
           });
 
           setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);

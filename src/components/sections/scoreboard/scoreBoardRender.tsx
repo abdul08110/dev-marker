@@ -134,6 +134,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           tournamentId={props.state.tournamentId}
           teamHandicap={props.state.teamOneHandicap}
           teamTurns={teamOneTurns ? teamOneTurns : null}
+          isHandicapApplied={props.state.isTeamOneHandicapApplied}
         />
         <ScoreBoardTeamCard
           contentfrom={props.orientation === 'portrait' ? 'left' : 'top'}
@@ -149,6 +150,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           tournamentId={props.state.tournamentId}
           teamHandicap={props.state.teamTwoHandicap}
           teamTurns={teamTwoTurns ? teamTwoTurns : null}
+          isHandicapApplied={props.state.isTeamTwoHandicapApplied}
         />
       </div>
     </div>
