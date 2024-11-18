@@ -31,7 +31,10 @@ export interface ScoreBoardState {
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
   isTeamOneHandicapApplied?: boolean,
-  isTeamTwoHandicapApplied?: boolean
+  isTeamTwoHandicapApplied?: boolean,
+  maxScorePerSet: number | null;
+  tournamentTeamOneName: string | null;
+  tournamentTeamTwoName: string | null;
 }
 
 const useScoreboard = () => {
@@ -140,7 +143,10 @@ const useScoreboard = () => {
             teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
             teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
             isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
-            isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied
+            isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
+            maxScorePerSet: res.maxScorePerSet,
+            tournamentTeamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
+            tournamentTeamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null
           });
 
           setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
@@ -174,7 +180,6 @@ const useScoreboard = () => {
 
     switch (topicWithoutId) {
       case 'send-data':
-        console.log(parsedMessage);
         setScoreboardData((prevData) => {
           if (prevData === null) return null;
           const updatedSets = parsedMessage.sets ? [...parsedMessage.sets] : prevData.sets;
