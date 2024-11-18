@@ -184,6 +184,8 @@ const useScoreboard = () => {
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
             sets: updatedSets,
+            isTeamOneHandicapApplied: parsedMessage.isTeamOneHandicapApplied,
+            isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied
           };
         });
         break;

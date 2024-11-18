@@ -347,7 +347,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
 
       const totalTeamScores = calculateTotalTeamScore(consideredSets);
 
-      let handicapAdjustedScores = totalTeamScores;
+      let handicapAdjustedScores = structuredClone(teamScoresForCurrentSet);
 
       if (currentStreamingData.sport === 'BILLIARDS') {
         if (currentStreamingData.teamOneHandicap) {
@@ -398,8 +398,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           sportType: currentStreamingData.sportType,
           handicap: currentStreamingData.handicap,
           maxScorePerSet: currentStreamingData.maxScorePerSet,
-          isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== totalTeamScores.side1,
-          isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== totalTeamScores.side2,
+          isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== teamScoresForCurrentSet.side1,
+          isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== teamScoresForCurrentSet.side2,
         });
       }
     }

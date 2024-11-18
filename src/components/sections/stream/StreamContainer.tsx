@@ -271,25 +271,9 @@ export function StreamContainer(props: StreamContainerProps) {
                               <div className="col-span-2 flex justify-center items-center">
                                 {' '}
                                 <span className="xl:text-3xl lg:text-xl text-base text-white">
-                                  <span
-                                    className={
-                                      props.state.isTeamOneHandicapApplied === true
-                                        ? 'font-bold text-green-500'
-                                        : 'font-bold'
-                                    }
-                                  >
-                                    {activeSet ? activeSet?.teamOneScore : 0}
-                                  </span>
+                                  <span className={'font-bold'}>{activeSet ? activeSet?.teamOneScore : 0}</span>
                                   &nbsp;({props.state.maxScorePerSet} UP)&nbsp;
-                                  <span
-                                    className={
-                                      props.state.isTeamTwoHandicapApplied === true
-                                        ? 'font-bold text-green-500'
-                                        : 'font-bold'
-                                    }
-                                  >
-                                    {activeSet ? activeSet?.teamTwoScore : 0}
-                                  </span>
+                                  <span className={'font-bold'}>{activeSet ? activeSet?.teamTwoScore : 0}</span>
                                 </span>
                               </div>
                             )}
