@@ -269,7 +269,7 @@ export function StreamContainer(props: StreamContainerProps) {
                                 {' '}
                                 <span className="xl:text-3xl lg:text-xl text-base text-white">
                                   <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>
-                                  &nbsp;&nbsp;&nbsp;
+                                  &nbsp;({props.state.maxScorePerSet} UP)&nbsp;
                                   <span className="font-bold">{activeSet ? activeSet?.teamTwoScore : 0}</span>
                                 </span>
                               </div>

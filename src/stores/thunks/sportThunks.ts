@@ -123,7 +123,7 @@ export const setStateTournament = createAsyncThunk<
     startTimeDate: null,
     scoreHistory: [],
     noOfSets: null,
-    maxScorePerSet: null,
+    maxScorePerSet: data.raceTo,
     isCumulativeScoring: isCumulativeScore,
     tournamentTeamOneId: data.teamOneId,
     tournamentTeamTwoId: data.teamTwoId,
@@ -447,7 +447,7 @@ export const handleBilliardsPointTrigger = createAsyncThunk<
     await dispatch(handleTeamSwitch({ createUndoAndPushData: false }));
   }
 
-  await dispatch(handleBilliardsChangeScoreCompletetion({}));
+  // await dispatch(handleBilliardsChangeScoreCompletetion({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
   await dispatch(pushToUndoStackSnooker({}));

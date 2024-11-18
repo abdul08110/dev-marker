@@ -41,6 +41,7 @@ export interface StreamingState {
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
   handicap: number;
+  maxScorePerSet: number | null;
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -150,6 +151,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
           sportType: res.sportType,
           handicap: res.handicap,
+          maxScorePerSet: res.maxScorePerSet
         });
 
         if (res.matchStatus === 'LIVE') {
@@ -193,6 +195,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
           sportType: res.sportType,
           handicap: res.handicap,
+          maxScorePerSet: res.maxScorePerSet
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -371,6 +374,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamTwoHandicap: currentStreamingData.teamTwoHandicap,
           sportType: currentStreamingData.sportType,
           handicap: currentStreamingData.handicap,
+          maxScorePerSet: currentStreamingData.maxScorePerSet
         });
       }
     }

@@ -151,7 +151,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         })}
       >
         <div
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 4vw, 8rem)' : 'clamp(1rem, 5vw, 7rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(1rem, 5vw, 7rem)' }}
           className={clsx(
             'flex justify-center gap-4 items-center p-0 w-full font-bold text-white uppercase text-left text-nowrap',
             {
