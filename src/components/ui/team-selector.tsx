@@ -40,9 +40,9 @@ export function TeamSelector(props: TeamSelectorProps) {
   const handleSelect = (teamId: string) => {
     const selectedTeam = teams.find((team) => team.id === teamId);
     if (selectedTeam) {
-      setSearchQuery(selectedTeam.name);
+      setSearchQuery(selectedTeam.users[0].name);
       props.onChange(teamId);
-        setDropdownVisible(false)
+      setDropdownVisible(false);
     }
   };
 
