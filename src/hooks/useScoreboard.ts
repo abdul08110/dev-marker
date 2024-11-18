@@ -174,6 +174,7 @@ const useScoreboard = () => {
 
     switch (topicWithoutId) {
       case 'send-data':
+        console.log(parsedMessage);
         setScoreboardData((prevData) => {
           if (prevData === null) return null;
           const updatedSets = parsedMessage.sets ? [...parsedMessage.sets] : prevData.sets;
