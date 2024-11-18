@@ -8,7 +8,7 @@ import { TeamSelector } from '@/components/ui/team-selector';
 import { Input } from '@/components/ui/input';
 
 export interface ConfigureTournamentData {
-  raceTo: number;
+  raceTo: string;
   teamOneId: string;
   teamTwoId: string;
   teamOneHandicap: string;
@@ -16,7 +16,7 @@ export interface ConfigureTournamentData {
 }
 
 const formSchema = z.object({
-  raceTo: z.number(),
+  raceTo: z.string(),
   teamOneId: z.string(),
   teamTwoId: z.string(),
   teamOneHandicap: z.string(),
@@ -32,7 +32,7 @@ export function TournamentConfigurationForm(props: ConfigureTournamentProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      raceTo: 100,
+      raceTo: '100',
       teamOneHandicap: '0',
       teamTwoHandicap: '0',
     },

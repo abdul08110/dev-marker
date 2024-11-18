@@ -69,7 +69,7 @@ export const setStateTournament = createAsyncThunk<
     data: {
       sideOnePlayerOne: Player;
       sideTwoPlayerOne: Player;
-      raceTo: number;
+      raceTo: string;
       teamOneId: string;
       teamTwoId: string;
       teamOneHandicap: string;
@@ -123,7 +123,7 @@ export const setStateTournament = createAsyncThunk<
     startTimeDate: null,
     scoreHistory: [],
     noOfSets: null,
-    maxScorePerSet: data.raceTo,
+    maxScorePerSet: Number(data.raceTo),
     isCumulativeScoring: isCumulativeScore,
     tournamentTeamOneId: data.teamOneId,
     tournamentTeamTwoId: data.teamTwoId,
