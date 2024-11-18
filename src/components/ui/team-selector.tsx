@@ -27,7 +27,7 @@ export function TeamSelector(props: TeamSelectorProps) {
 
     if (props.teams) {
       const filteredTeams = props.teams.filter((team) =>
-        team.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
+        team.users[0].name.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
       );
       setTeams(filteredTeams);
     } else {
@@ -70,7 +70,7 @@ export function TeamSelector(props: TeamSelectorProps) {
                         className="h-8 w-8 rounded-full object-cover"
                       />
                       <div className="flex flex-col justify-between">
-                        <span className='data-[selected=true]:text-white'>{team.name}</span>
+                        <span className='data-[selected=true]:text-white'>{team.users[0].name}</span>
                       </div>
                     </div>
                   </CommandItem>

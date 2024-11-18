@@ -17,7 +17,8 @@ export interface Player {
 export interface TournamentTeam { 
   id: string;
   name: string;
-  logo: string; 
+  logo: string;
+  users: Player[] 
 }
 
 export interface Tournament {
@@ -105,6 +106,8 @@ export interface GeneralScoringState {
   sport: 'SNOOKER' | 'BILLIARDS',
   team1Score: number;
   team2Score: number;
+  isTeamOneHandicapApplied: boolean;
+  isTeamTwoHandicapApplied: boolean;
   team1: TeamDetails;
   team2: TeamDetails;
   streaming: 'PUBLIC' | 'PRIVATE';

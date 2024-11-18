@@ -387,7 +387,7 @@ const useSnookerScoring = () => {
   };
 
   const handleGoToHome = () => {
-    navigate('/');
+    navigate('/app/home');
   };
 
   const handleEndFrameButton = async () => {

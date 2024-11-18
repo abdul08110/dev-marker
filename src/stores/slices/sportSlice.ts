@@ -52,6 +52,8 @@ const initialState: GeneralScoringState = {
   tournamentTeamTwoScore: null,
   teamOneHandicap: null,
   teamTwoHandicap: null,
+  isTeamOneHandicapApplied: false,
+  isTeamTwoHandicapApplied: false,
 };
 
 const sportSlice = createSlice({
@@ -104,6 +106,8 @@ const sportSlice = createSlice({
         startTimeDate: null,
         noOfSets: null,
         maxScorePerSet: null,
+        isTeamOneHandicapApplied: false,
+        isTeamTwoHandicapApplied: false,
       });
     },
     resetStateBilliards(state) {
@@ -145,6 +149,8 @@ const sportSlice = createSlice({
         startTimeDate: null,
         noOfSets: null,
         maxScorePerSet: null,
+        isTeamOneHandicapApplied: false,
+        isTeamTwoHandicapApplied: false,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
@@ -312,6 +318,10 @@ const sportSlice = createSlice({
     handleBackendUpdatedState(state, action: PayloadAction<{ value: boolean }>) {
       state.isBackendUpdated = action.payload.value;
     },
+    updateTeamHandicapApplied(state, action: PayloadAction<{ teamIndex: 0 | 1; value: boolean }>) {
+      const teamName = action.payload.teamIndex === 0 ? 'isTeamOneHandicapApplied' : 'isTeamTwoHandicapApplied';
+      state[teamName] = action.payload.value;
+    },
   },
 });
 
@@ -346,5 +356,6 @@ export const {
   resetStateSnooker,
   updateNoOfSets,
   updateMaxScorePerSet,
+  updateTeamHandicapApplied,
 } = sportSlice.actions;
 export default sportSlice.reducer;

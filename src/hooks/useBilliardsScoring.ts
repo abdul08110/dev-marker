@@ -212,7 +212,7 @@ const useBilliardsScoring = () => {
   };
 
   const handleGoToHome = () => {
-    navigate('/');
+    navigate('/app/home');
   };
 
   const handleEndFrameButton = async () => {
