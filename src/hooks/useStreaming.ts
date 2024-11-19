@@ -43,8 +43,11 @@ export interface StreamingState {
   handicap: number;
   maxScorePerSet: number | null;
   isTeamOneHandicapApplied?: boolean,
-  isTeamTwoHandicapApplied?: boolean
+  isTeamTwoHandicapApplied?: boolean,
+  tournamentName: string | null;
+  tournamentId: string | null;
 }
+
 
 const useStreaming = (venueId?: string, matchId?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -155,7 +158,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           handicap: res.handicap,
           maxScorePerSet: res.maxScorePerSet,
           isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
-          isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied
+          isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
+          tournamentName: res.tournament ? res.tournament.name : null,
+          tournamentId: res.tournament ? res.tournament.id : null
         });
 
         if (res.matchStatus === 'LIVE') {
@@ -201,7 +206,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           handicap: res.handicap,
           maxScorePerSet: res.maxScorePerSet,
           isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
-          isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied
+          isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
+          tournamentName: res.tournament ? res.tournament.name : null,
+          tournamentId: res.tournament ? res.tournament.id : null
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -400,6 +407,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           maxScorePerSet: currentStreamingData.maxScorePerSet,
           isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== teamScoresForCurrentSet.side1,
           isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== teamScoresForCurrentSet.side2,
+          tournamentName: currentStreamingData.tournamentName,
+          tournamentId: currentStreamingData.tournamentId
         });
       }
     }

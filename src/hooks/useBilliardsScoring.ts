@@ -251,19 +251,33 @@ const useBilliardsScoring = () => {
     const activeTeam = getActiveTeam(billiardsScoring.team1, billiardsScoring.team2);
     let isTeamReveresed = false;
     if ((activeTeam === 1 && type === 'yellow') || (activeTeam === 0 && type === 'white')) {
-      await dispatch(handleReversePlayersState({ 'reverseOnApi': false }));
+      await dispatch(handleReversePlayersState({ reverseOnApi: false }));
       isTeamReveresed = true;
     }
 
-    const teamOneHandicap = isTeamReveresed ? billiardsScoring.teamTwoHandicap : billiardsScoring.teamOneHandicap
-    const teamTwoHandicap = isTeamReveresed ? billiardsScoring.teamOneHandicap : billiardsScoring.teamTwoHandicap
+    const teamOneHandicap = isTeamReveresed ? billiardsScoring.teamTwoHandicap : billiardsScoring.teamOneHandicap;
+    const teamTwoHandicap = isTeamReveresed ? billiardsScoring.teamOneHandicap : billiardsScoring.teamTwoHandicap;
+
+    const tournamentTeamOneId = isTeamReveresed
+      ? billiardsScoring.tournamentTeamTwoId
+      : billiardsScoring.tournamentTeamOneId;
+    const tournamentTeamTwoId = isTeamReveresed
+      ? billiardsScoring.tournamentTeamOneId
+      : billiardsScoring.tournamentTeamTwoId;
 
     const currentDate = new Date();
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
-      expectedEndTimeDate: billiardsScoring.timeInMinutes !== 0 ? new Date(currentDate.getTime() + billiardsScoring.timeInMinutes * 60000) : undefined,
-      sideOnePlayerOneId: isTeamReveresed ? billiardsScoring.team2.players[0].id! : billiardsScoring.team1.players[0].id!,
-      sideTwoPlayerOneId: isTeamReveresed ? billiardsScoring.team1.players[0].id! : billiardsScoring.team2.players[0].id!,
+      expectedEndTimeDate:
+        billiardsScoring.timeInMinutes !== 0
+          ? new Date(currentDate.getTime() + billiardsScoring.timeInMinutes * 60000)
+          : undefined,
+      sideOnePlayerOneId: isTeamReveresed
+        ? billiardsScoring.team2.players[0].id!
+        : billiardsScoring.team1.players[0].id!,
+      sideTwoPlayerOneId: isTeamReveresed
+        ? billiardsScoring.team1.players[0].id!
+        : billiardsScoring.team2.players[0].id!,
       sport: 'BILLIARDS',
       sportType: billiardsScoring.format,
       streamingType: billiardsScoring.streaming,
@@ -272,11 +286,15 @@ const useBilliardsScoring = () => {
       maxScorePerSet: billiardsScoring.maxScorePerSet,
       noOfSets: billiardsScoring.noOfSets,
       cumulativeScoring: billiardsScoring.isCumulativeScoring,
-      tournamentTeamOneId: billiardsScoring.tournamentTeamOneId ? billiardsScoring.tournamentTeamOneId : undefined,
-      tournamentTeamTwoId: billiardsScoring.tournamentTeamTwoId ? billiardsScoring.tournamentTeamTwoId : undefined,
+      tournamentTeamOneId: tournamentTeamOneId ? tournamentTeamOneId : undefined,
+      tournamentTeamTwoId: tournamentTeamTwoId ? tournamentTeamTwoId : undefined,
       tournamentId: billiardsScoring.tournamentId ? billiardsScoring.tournamentId : undefined,
-      tournamentTeamOneScore: billiardsScoring.tournamentTeamOneScore ? billiardsScoring.tournamentTeamOneScore : undefined,
-      tournamentTeamTwoScore: billiardsScoring.tournamentTeamTwoScore ? billiardsScoring.tournamentTeamTwoScore : undefined,
+      tournamentTeamOneScore: billiardsScoring.tournamentTeamOneScore
+        ? billiardsScoring.tournamentTeamOneScore
+        : undefined,
+      tournamentTeamTwoScore: billiardsScoring.tournamentTeamTwoScore
+        ? billiardsScoring.tournamentTeamTwoScore
+        : undefined,
       teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
     });
