@@ -224,8 +224,10 @@ export function StreamContainer(props: StreamContainerProps) {
 
                             <div className="grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
                               <div className="col-span-4 flex gap-2 items-center">
-                                <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
+                                <img src='/images/yellow-ball.png' className='h-3 w-3 md:h-5 md:w-5' />
+                                <small className="text-white xl:text-3xl lg:text-xl text-[0.92rem] whitespace-nowrap uppercase font-bold">
                                   {props.state.sideOnePlayerOne.name}{' '}
+                                  <span>({props.state.teamOneName === 'MAHARASHTRA' ? 'MAH' : props.state.teamOneName}){' '}</span>
                                   <span
                                     className={
                                       props.state.isTeamOneHandicapApplied === true
@@ -283,10 +285,8 @@ export function StreamContainer(props: StreamContainerProps) {
                                 <></>
                               )} */}
 
-                                <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                                  {props.state.tournamentTeamTwoabb && props.state.sport === 'SNOOKER'
-                                    ? props.state.tournamentTeamTwoabb
-                                    : ''}{' '}
+                                <small className="text-white xl:text-3xl lg:text-xl text-[0.92rem] whitespace-nowrap uppercase font-bold">
+                                 
                                   <span
                                     className={
                                       props.state.isTeamTwoHandicapApplied === true
@@ -296,8 +296,11 @@ export function StreamContainer(props: StreamContainerProps) {
                                   >
                                     {props.state.teamTwoHandicap}
                                   </span>{' '}
+                                  <span>({props.state.teamTwoName === 'MAHARASHTRA' ? 'MAH' : props.state.teamTwoName}){' '}</span>
                                   {props.state.sideTwoPlayerOne.name}
                                 </small>
+
+                                <img src='/images/white-ball.png' className='h-3 w-3 md:h-5 md:w-5' />
                               </div>
                             </div>
                           </div>
@@ -416,6 +419,7 @@ export function StreamContainer(props: StreamContainerProps) {
                               <div className="col-span-5 flex gap-2 items-center">
                                 <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
                                   {props.state.sideOnePlayerOne.name}{' '}
+                                
                                   <span className={props.state.isTeamOneHandicapApplied === true ? 'line-through' : ''}>
                                     {props.state.teamOneHandicap}
                                   </span>{' '}

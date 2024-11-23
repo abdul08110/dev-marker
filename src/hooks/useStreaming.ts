@@ -46,6 +46,8 @@ export interface StreamingState {
   isTeamTwoHandicapApplied?: boolean,
   tournamentName: string | null;
   tournamentId: string | null;
+  teamOneName: string | null;
+  teamTwoName: string | null;
 }
 
 
@@ -160,7 +162,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
           isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
           tournamentName: res.tournament ? res.tournament.name : null,
-          tournamentId: res.tournament ? res.tournament.id : null
+          tournamentId: res.tournament ? res.tournament.id : null,
+          teamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
+          teamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
         });
 
         if (res.matchStatus === 'LIVE') {
@@ -208,7 +212,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
           isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
           tournamentName: res.tournament ? res.tournament.name : null,
-          tournamentId: res.tournament ? res.tournament.id : null
+          tournamentId: res.tournament ? res.tournament.id : null,
+          teamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
+          teamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -408,7 +414,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== teamScoresForCurrentSet.side1,
           isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== teamScoresForCurrentSet.side2,
           tournamentName: currentStreamingData.tournamentName,
-          tournamentId: currentStreamingData.tournamentId
+          tournamentId: currentStreamingData.tournamentId,
+          teamOneName: currentStreamingData.teamOneName,
+          teamTwoName: currentStreamingData.teamTwoName
         });
       }
     }
