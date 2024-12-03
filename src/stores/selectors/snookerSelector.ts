@@ -5,7 +5,13 @@
 import { RootState } from '@/stores';
 import { SnookerPointType, type Set, Turn, Point, SnookerCorrection, GeneralScoringState } from '../types';
 import { createSelector } from '@reduxjs/toolkit';
-import { getActiveSet, getActiveTurn, getAllPointsAfter, getLastPointPlayedInSet } from './commonSport';
+import {
+  getActiveSet,
+  getActiveTurn,
+  getAllPointsAfter,
+  getLastPointPlayedInSet,
+  getTeamTurnsForSet,
+} from './commonSport';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 
 const RED_POINTS = 1;
@@ -214,7 +220,7 @@ export const getTeamSetScores = createSelector(
 
       return {
         team1score: teamOneScore,
-        team2score: teamTwoScore
+        team2score: teamTwoScore,
       };
     }
   },
@@ -226,6 +232,45 @@ export const getActiveTurnPointTypes = createSelector(
     const activeSet = getActiveSet(snookerState.scoreHistory);
     const activeTurn = activeSet ? getActiveTurn(activeSet) : null;
     return activeTurn ? activeTurn.points.map((point) => point.snookerPoint!.type) : [];
+  },
+);
+
+export const getSnookerPointTypesByTurns = (turns: Turn[]) => {
+  return turns.map((turn) =>
+    turn.points.filter((point) => point.snookerPoint !== undefined).map((point) => point.snookerPoint!.type),
+  );
+};
+
+export const getTurnPointTypes = createSelector(
+  (state: RootState) => state.sport,
+  (snookerState: GeneralScoringState) => {
+    const activeSet = getActiveSet(snookerState.scoreHistory);
+
+    if (!activeSet) {
+      return {
+        teamOne: [],
+        teamTwo: [],
+      };
+    }
+
+    const teamOneTurns = getTeamTurnsForSet(
+      activeSet,
+      snookerState.team1.players[0].id,
+      snookerState.team1.players[1] ? snookerState.team1.players[1].id : null,
+    );
+    const teamTwoTurns = getTeamTurnsForSet(
+      activeSet,
+      snookerState.team2.players[0].id,
+      snookerState.team2.players[1] ? snookerState.team2.players[1].id : null,
+    );
+
+    const teamOnePoints = teamOneTurns ? getSnookerPointTypesByTurns(teamOneTurns) : [];
+    const teamTwoPoints = teamTwoTurns ? getSnookerPointTypesByTurns(teamTwoTurns) : [];
+
+    return {
+      teamOne: teamOnePoints,
+      teamTwo: teamTwoPoints,
+    };
   },
 );
 

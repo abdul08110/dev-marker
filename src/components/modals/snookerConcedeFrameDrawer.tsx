@@ -18,7 +18,7 @@ export function SnookerScoreConcedeFrameDrawer(props: SnookerConcedeFrameDrawerP
     <Drawer open={props.open} onOpenChange={props.setOpen}>
       <DrawerContent className="border-0 h-3/5">
         <DrawerHeader className="text-left text-white">
-          <DrawerTitle className="text-2xl">Concede Frame</DrawerTitle>
+          <DrawerTitle className="text-2xl">Concede Frame To</DrawerTitle>
         </DrawerHeader>
         <div className="px-4 h-full">
           <SnookerConcedeFrameForm

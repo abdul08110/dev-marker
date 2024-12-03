@@ -1,5 +1,4 @@
 import { MarkerNavigation } from '@/components/sections/scoring/markerNavigation';
-import { MaxScore } from '@/components/sections/scoring/maxScore';
 import { PlayerTeamManager } from '@/components/sections/scoring/playerTeamManager';
 import { ScoringHeader } from '@/components/sections/scoring/scoringHeader';
 import { SnookerScoringButtons } from '@/components/sections/scoring/snookerScoringButtons';
@@ -81,7 +80,8 @@ export function SnookerScoring() {
     showConcedeFrameDrawer,
     setShowConcedeFrameDrawer,
     loading,
-    handleEndFrameButton
+    handleEndFrameButton,
+    teamActiveSetPoints
   } = useSnookerScoring();
 
   // PARENT UI
@@ -113,7 +113,7 @@ export function SnookerScoring() {
                 <PlayerTeamManager
                   onPlayerButtonClick={handlePlayerSelect}
                   activeTurnScore={activeTurnPointScore}
-                  activeTurnPointTypes={activeTurnPointTypes}
+                  activeTurnPointTypes={teamActiveSetPoints}
                   team1SetScore={team1score}
                   team2SetScore={team2score}
                   onTeamClick={handleTeamClick}
@@ -123,7 +123,7 @@ export function SnookerScoring() {
                   showBilliardsButtons={false}
                 />
                 <SnookerFramesSummary team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
-                <MaxScore numberAhead={snookerScoring.numberAhead!} numberOn={snookerScoring.numberOn!} />
+                {/* <MaxScore numberAhead={snookerScoring.numberAhead!} numberOn={snookerScoring.numberOn!} /> */}
                 <SnookerScoringButtons
                   isLongEnabled={isLongActive}
                   onLongClick={() => setIsLongActive(!isLongActive)}
