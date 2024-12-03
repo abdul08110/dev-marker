@@ -11,6 +11,7 @@ import {
   getActiveTurnScore,
   getNumberOfRedsLeft,
   getTeamSetScores,
+  getTurnPointTypes,
   selectHighestTurnScores,
   snookerButtonsDisabledState,
 } from '@/stores/selectors/snookerSelector';
@@ -56,6 +57,7 @@ const useSnookerScoring = () => {
   const { team1HighestTurnScores, team2HighestTurnScores } = useSelector(selectHighestTurnScores);
   const snookerButtonDisabledState = useSelector(snookerButtonsDisabledState);
   const numberOfRedsOnTable = useSelector(getNumberOfRedsLeft);
+  const teamActiveSetPoints = useSelector(getTurnPointTypes);
 
   // HANDLER TO UPDATE BACKEND WITH THE LATEST DATA ON STATE
   const handleUpdateToServer = async () => {
@@ -500,6 +502,7 @@ const useSnookerScoring = () => {
     setShowConcedeFrameDrawer,
     loading,
     handleEndFrameButton,
+    teamActiveSetPoints
   };
 };
 

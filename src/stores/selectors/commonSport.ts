@@ -23,6 +23,20 @@ export const getLastTurn = (set: Set): Turn | null => getSecondLastElement(set.t
 export const getActiveTurnIndex = (set: Set | null): number =>
   set && set.turns.length > 0 ? set.turns.length - 1 : -1;
 
+export const getTeamTurnsForSet = (
+  set: Set | null,
+  teamPlayerOneId: string | null,
+  teamPlayerTwoId: string | null,
+): Turn[] | undefined => {
+  if (!set || !teamPlayerOneId) return undefined;
+  else {
+    return set.turns.filter(
+      (value) =>
+        value.turnPlayerId === teamPlayerOneId || (teamPlayerTwoId !== null && value.turnPlayerId === teamPlayerTwoId),
+    );
+  }
+};
+
 // POINTS
 
 export const getActivePoint = (turn: Turn | null): Point | null => (turn ? getLastElement(turn.points) : null);
@@ -133,8 +147,8 @@ export const calculatePointsBySide = (
   }
 
   const sidePoints = {
-    side1: (isHandicapTeamOneOrTeamTwo === 'teamA' ? 0 + handicap : 0 ),
-    side2: (isHandicapTeamOneOrTeamTwo === 'teamB' ? 0 + (-1 * handicap) : 0 ),
+    side1: isHandicapTeamOneOrTeamTwo === 'teamA' ? 0 + handicap : 0,
+    side2: isHandicapTeamOneOrTeamTwo === 'teamB' ? 0 + -1 * handicap : 0,
   };
 
   const side1Players = new Set<string | null>(

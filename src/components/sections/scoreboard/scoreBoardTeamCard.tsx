@@ -1,6 +1,7 @@
 import { Player, Turn } from '@/stores/types';
 import clsx from 'clsx';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
+import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 
 interface ScoreBoardTeamCardProps {
   playerOne: Player;
@@ -102,9 +103,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             <SnookerPointTypeDisplay
               isBig={true}
               class={clsx({ 'flex-col': props.contentfrom === 'left' })}
-              activeTurnPointTypes={props.teamTurns.flatMap((turn) =>
-                turn.points.filter((point) => point.snookerPoint).map((point) => point.snookerPoint!.type),
-              )}
+              activeTurnPointTypes={getSnookerPointTypesByTurns(props.teamTurns)}
             />
           ) : (
             <div className="h-full w-full"></div>
