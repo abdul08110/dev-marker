@@ -49,9 +49,20 @@ const useTournament = () => {
   const handleMatchCreation = async (data: ConfigureTournamentData) => {
     setLoading(true);
 
-    await dispatch(setStateTournament({ data, tournamentId: tournamentId! }));
+    const teamOnePlayerOne = teams.find((team) => team.id === data.teamOneId)?.users[0];
+    const teamTwoPlayerOne = teams.find((team) => team.id === data.teamTwoId)?.users[0];
 
-    navigate(`/app/snooker`);
+
+    const modifiedData = {
+      ...data,
+      sideOnePlayerOne: teamOnePlayerOne!,
+      sideTwoPlayerOne:teamTwoPlayerOne!,
+    }
+    
+
+    await dispatch(setStateTournament({ data: modifiedData, tournamentId: tournamentId! }));
+
+    navigate(`/app/billiards`);
 
     setLoading(false);
   };

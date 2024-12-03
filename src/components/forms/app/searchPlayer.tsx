@@ -1,40 +1,79 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useState } from "react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import useSearchPlayers from "@/api/app/useSearchPlayer";
-import { Player } from "@/stores/types";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { useState } from 'react';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import useSearchPlayers from '@/api/app/useSearchPlayer';
+import useAddPlayers from '@/api/app/useAddPlayers';
+import { Player } from '@/stores/types';
 
-const formSchema = z.object({
+const baseSchema = z.object({
   phoneNumber: z
     .string()
-    .length(10, { message: "Phone number must be exactly 10 digits" })
-    .regex(/^\d{10}$/, { message: "Phone number must be a 10-digit number" }),
+    .length(10, { message: 'Phone number must be exactly 10 digits' })
+    .regex(/^\d{10}$/, { message: 'Phone number must be a 10-digit number' }),
+});
+
+const optionalNameSchema = baseSchema.extend({
+  name: z.string().optional(),
+});
+
+const mandatoryNameSchema = baseSchema.extend({
+  name: z.string().min(1, { message: 'Name is required' }),
 });
 
 interface PlayerSearchProps {
   onPlayerConfirm: (player: Player) => void;
+  type: 'MEMBER' | 'GUEST';
+  clubId: string;
 }
 
-
 export function SearchPlayerForm(props: PlayerSearchProps) {
-  const { getPlayers, loading, player, error } = useSearchPlayers();
+  const { getPlayers, loading } = useSearchPlayers();
   const [searchAttempted, setSearchAttempted] = useState<boolean>(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const addPlayerProps = useAddPlayers();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const schema = searchAttempted ? mandatoryNameSchema : optionalNameSchema;
+
+  const form = useForm<z.infer<typeof optionalNameSchema> | z.infer<typeof mandatoryNameSchema>>({
+    resolver: zodResolver(searchAttempted ? mandatoryNameSchema : optionalNameSchema),
     defaultValues: {
-      phoneNumber: "",
+      phoneNumber: '',
+      name: '',
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     setSearchAttempted(true);
-    await getPlayers(values);
+    const result = await getPlayers({ phoneNumber: values.phoneNumber });
+    if (result && result.result) {
+      setSelectedPlayer(result.result);
+      form.setValue('name', result.result.name || '');
+    } else {
+      setSelectedPlayer(null);
+      form.setValue('name', '');
+    }
   }
+
+  const handleAddPlayer = async () => {
+    if (selectedPlayer && props.type === 'GUEST') {
+      props.onPlayerConfirm(selectedPlayer);
+    } else {
+      const response = await addPlayerProps.addPlayer({
+        name: form.getValues('name')!,
+        phoneNumber: form.getValues('phoneNumber'),
+        type: props.type,
+        clubId: props.clubId,
+      });
+
+      if (response) {
+        await props.onPlayerConfirm(response.result);
+      }
+    }
+  };
 
   return (
     <Form {...form}>
@@ -54,31 +93,33 @@ export function SearchPlayerForm(props: PlayerSearchProps) {
             )}
           />
         </div>
-
-        {loading && <p className="text-gray-500">Searching...</p>}
-
-        {!loading && player && searchAttempted && (
-          <div onClick={() => props.onPlayerConfirm(player)} className="mt-2 bg-[#3B3B3B] rounded flex gap-4 p-2">
-            <img
-              src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.png'}
-              alt={player.name}
-              className="w-8 h-8 overflow-hidden object-cover rounded-full"
+        {searchAttempted && (
+          <div>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white">Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <div className="flex items-center">
-              <span className="text-white">{player.name}</span>
-            </div>
           </div>
         )}
 
-        {!loading && !player && searchAttempted && !error && (
-          <p className="text-red-500 mt-2">No player found with this phone number.</p>
+        {searchAttempted ? (
+          <Button type="button" onClick={handleAddPlayer} className="w-full" disabled={addPlayerProps.loading}>
+            Add Player
+          </Button>
+        ) : (
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Searching...' : 'Search Player'}
+          </Button>
         )}
-
-        {error && searchAttempted && <p className="text-red-500 mt-2">{error}</p>}
-
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Searching...' : 'Search Player'}
-        </Button>
       </form>
     </Form>
   );

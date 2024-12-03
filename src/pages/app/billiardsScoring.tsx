@@ -45,7 +45,7 @@ export function BilliardsScoring() {
     loading,
     showBallColorModal,
     handleBilliardsSelectColorBall,
-    handleEndFrameButton
+    handleEndFrameButton,
   } = useBilliardsScoring();
 
   // PARENT UI
@@ -94,7 +94,12 @@ export function BilliardsScoring() {
               matchId={billiardsScoring.matchId}
               showBilliardsButtons={true}
             />
-            <SnookerFramesSummary team1Score={billiardsScoring.team1Score} team2Score={billiardsScoring.team2Score} />
+            <SnookerFramesSummary
+              team1Handicap={billiardsScoring.teamOneHandicap ? billiardsScoring.teamOneHandicap : undefined}
+              team2Handicap={billiardsScoring.teamTwoHandicap ? billiardsScoring.teamTwoHandicap : undefined}
+              team1Score={billiardsScoring.tournamentId ? undefined : billiardsScoring.team1Score}
+              team2Score={billiardsScoring.tournamentId ? undefined : billiardsScoring.team2Score}
+            />
             <BilliardsScoringButtons
               onButtonClick={handleScoringButtonClick}
               showBreakOff={getActiveSet(billiardsScoring.scoreHistory) === undefined}

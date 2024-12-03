@@ -30,6 +30,11 @@ export interface ScoreBoardState {
   tournamentTeamTwoScore: number | null;
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
+  isTeamOneHandicapApplied?: boolean,
+  isTeamTwoHandicapApplied?: boolean,
+  maxScorePerSet: number | null;
+  tournamentTeamOneName: string | null;
+  tournamentTeamTwoName: string | null;
 }
 
 const useScoreboard = () => {
@@ -136,7 +141,12 @@ const useScoreboard = () => {
             tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
             tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
             teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
-            teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null
+            teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
+            isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
+            isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
+            maxScorePerSet: res.maxScorePerSet,
+            tournamentTeamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
+            tournamentTeamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null
           });
 
           setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
@@ -180,6 +190,8 @@ const useScoreboard = () => {
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
             sets: updatedSets,
+            isTeamOneHandicapApplied: parsedMessage.isTeamOneHandicapApplied,
+            isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied
           };
         });
         break;

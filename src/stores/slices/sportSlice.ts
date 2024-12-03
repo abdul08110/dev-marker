@@ -41,7 +41,7 @@ const initialState: GeneralScoringState = {
     score: 0,
   },
   handicap: 0,
-  streaming: 'PUBLIC',
+  streaming: 'PRIVATE',
   timeInMinutes: 30,
   scoreHistory: [],
   startTimeDate: null,
@@ -51,7 +51,9 @@ const initialState: GeneralScoringState = {
   tournamentTeamOneScore: null,
   tournamentTeamTwoScore: null,
   teamOneHandicap: null,
-  teamTwoHandicap: null
+  teamTwoHandicap: null,
+  isTeamOneHandicapApplied: false,
+  isTeamTwoHandicapApplied: false,
 };
 
 const sportSlice = createSlice({
@@ -98,12 +100,14 @@ const sportSlice = createSlice({
           score: 0,
         },
         handicap: 0,
-        streaming: 'PUBLIC',
+        streaming: 'PRIVATE',
         timeInMinutes: 30,
         scoreHistory: [],
         startTimeDate: null,
         noOfSets: null,
         maxScorePerSet: null,
+        isTeamOneHandicapApplied: false,
+        isTeamTwoHandicapApplied: false,
       });
     },
     resetStateBilliards(state) {
@@ -145,6 +149,8 @@ const sportSlice = createSlice({
         startTimeDate: null,
         noOfSets: null,
         maxScorePerSet: null,
+        isTeamOneHandicapApplied: false,
+        isTeamTwoHandicapApplied: false,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
@@ -163,12 +169,13 @@ const sportSlice = createSlice({
     setState(state, action: PayloadAction<{ data: GeneralScoringState }>) {
       Object.assign(state, action.payload.data);
     },
-    createSet(state, action: PayloadAction<{ scoreOrder: string[] }>) {
+    createSet(state, action: PayloadAction<{ scoreOrder: string[]; calculateHandicap: boolean }>) {
       const scoreOrder = action.payload.scoreOrder;
+      const shouldCalculateHandicap = action.payload.calculateHandicap;
 
       state.scoreHistory.push({
-        teamOneScore: state.handicap > 0 ? state.handicap : 0,
-        teamTwoScore: state.handicap < 0 ? Math.abs(state.handicap) : 0,
+        teamOneScore: state.handicap > 0 && shouldCalculateHandicap ? state.handicap : 0,
+        teamTwoScore: state.handicap < 0 && shouldCalculateHandicap ? Math.abs(state.handicap) : 0,
         turns: [],
         status: 'ONGOING',
         snookerCorrections: [],
@@ -258,7 +265,12 @@ const sportSlice = createSlice({
     updateTimeInMinutes(state, action: PayloadAction<{ timeInMinutes: number }>) {
       state.timeInMinutes = action.payload.timeInMinutes;
     },
-    updateFormat(state, action: PayloadAction<{ format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED' }>) {
+    updateFormat(
+      state,
+      action: PayloadAction<{
+        format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED';
+      }>,
+    ) {
       state.format = action.payload.format;
     },
     updateNoOfSets(state, action: PayloadAction<{ no: number }>) {
@@ -292,15 +304,23 @@ const sportSlice = createSlice({
     reverseTeamPlayers(state) {
       const teamOnePlayers = state.team1.players;
       const teamTwoPlayers = state.team2.players;
+      const teamOneHandicap = state.teamOneHandicap;
+      const teamTwoHandicap = state.teamTwoHandicap;
 
       state.team1.players = teamTwoPlayers;
       state.team2.players = teamOnePlayers;
+      state.teamOneHandicap = teamTwoHandicap;
+      state.teamTwoHandicap = teamOneHandicap;
     },
     updateMatchStartedTimeDateUtc(state, action: PayloadAction<{ startTimeDate: string }>) {
       state.startTimeDate = action.payload.startTimeDate;
     },
     handleBackendUpdatedState(state, action: PayloadAction<{ value: boolean }>) {
       state.isBackendUpdated = action.payload.value;
+    },
+    updateTeamHandicapApplied(state, action: PayloadAction<{ teamIndex: 0 | 1; value: boolean }>) {
+      const teamName = action.payload.teamIndex === 0 ? 'isTeamOneHandicapApplied' : 'isTeamTwoHandicapApplied';
+      state[teamName] = action.payload.value;
     },
   },
 });
@@ -335,6 +355,7 @@ export const {
   handleBackendUpdatedState,
   resetStateSnooker,
   updateNoOfSets,
-  updateMaxScorePerSet
+  updateMaxScorePerSet,
+  updateTeamHandicapApplied,
 } = sportSlice.actions;
 export default sportSlice.reducer;

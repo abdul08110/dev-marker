@@ -19,6 +19,8 @@ interface MatchUpdateDataProps {
   teamTwoScore: number;
   currentSetTeamOneScore: number;
   currentSetTeamTwoScore: number;
+  isTeamOneHandicapApplied?: boolean;
+  isTeamTwoHandicapApplied?: boolean;
 }
 
 export const reversePlayersRequest = async (props: MatchPlayerReverseProps): Promise<boolean | null> => {

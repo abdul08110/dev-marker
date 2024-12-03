@@ -33,8 +33,8 @@ export const getActiveTurnScore = createSelector(
 
 export const getTeamSetScores = createSelector(
   (state: RootState) => state.sport,
-  (billiardsState: GeneralScoringState) => {
-    const activeSet = getActiveSet(billiardsState.scoreHistory);
+  (sportState: GeneralScoringState) => {
+    const activeSet = getActiveSet(sportState.scoreHistory);
     return {
       team1score: activeSet ? activeSet.teamOneScore : 0,
       team2score: activeSet ? activeSet.teamTwoScore : 0,

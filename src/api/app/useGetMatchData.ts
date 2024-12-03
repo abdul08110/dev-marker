@@ -99,6 +99,11 @@ export interface MatchStartResponse {
   tournamentTeamTwoScore?: number,
   teamOneHandicap?: number,
   teamTwoHandicap?: number
+  tournamentTeamOneId?: string,
+  tournamentTeamTwoId?: string,
+  tournamentId?: string
+  isTeamOneHandicapApplied?: boolean,
+  isTeamTwoHandicapApplied?: boolean
 }
 
 const useGetMatchLiveData = () => {

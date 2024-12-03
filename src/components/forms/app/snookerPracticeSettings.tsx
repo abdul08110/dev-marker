@@ -36,7 +36,7 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
       format: 'SNOOKER_15_RED',
       durationInMinutes: '30:00',
       noOfPlayers: '2',
-      streaming: 'PUBLIC',
+      streaming: 'PRIVATE',
       handicap: 0,
     },
   });

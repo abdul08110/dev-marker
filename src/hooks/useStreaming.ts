@@ -41,7 +41,15 @@ export interface StreamingState {
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
   handicap: number;
+  maxScorePerSet: number | null;
+  isTeamOneHandicapApplied?: boolean,
+  isTeamTwoHandicapApplied?: boolean,
+  tournamentName: string | null;
+  tournamentId: string | null;
+  teamOneName: string | null;
+  teamTwoName: string | null;
 }
+
 
 const useStreaming = (venueId?: string, matchId?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -150,6 +158,13 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
           sportType: res.sportType,
           handicap: res.handicap,
+          maxScorePerSet: res.maxScorePerSet,
+          isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
+          isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
+          tournamentName: res.tournament ? res.tournament.name : null,
+          tournamentId: res.tournament ? res.tournament.id : null,
+          teamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
+          teamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
         });
 
         if (res.matchStatus === 'LIVE') {
@@ -193,6 +208,13 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
           sportType: res.sportType,
           handicap: res.handicap,
+          maxScorePerSet: res.maxScorePerSet,
+          isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
+          isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
+          tournamentName: res.tournament ? res.tournament.name : null,
+          tournamentId: res.tournament ? res.tournament.id : null,
+          teamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
+          teamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -338,6 +360,23 @@ const useStreaming = (venueId?: string, matchId?: string) => {
 
       const totalTeamScores = calculateTotalTeamScore(consideredSets);
 
+      let handicapAdjustedScores = structuredClone(teamScoresForCurrentSet);
+
+      if (currentStreamingData.sport === 'BILLIARDS') {
+        if (currentStreamingData.teamOneHandicap) {
+          const adjustedTeamOneScore = handicapAdjustedScores.side1 + currentStreamingData.teamOneHandicap;
+          if (adjustedTeamOneScore >= 0) {
+            handicapAdjustedScores.side1 = adjustedTeamOneScore;
+          }
+        }
+        if (currentStreamingData.teamTwoHandicap) {
+          const adjustedTeamTwoScore = handicapAdjustedScores.side2 + currentStreamingData.teamTwoHandicap;
+          if (adjustedTeamTwoScore >= 0) {
+            handicapAdjustedScores.side2 = adjustedTeamTwoScore;
+          }
+        }
+      }
+
       if (currentStreamingData!.streamType === StreamType.CLOUD_PROVIDER) {
         setViewershipData({
           matchId: currentStreamingData.matchId,
@@ -347,8 +386,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           sideOnePlayerTwo: currentStreamingData.sideOnePlayerTwo,
           sideTwoPlayerTwo: currentStreamingData.sideTwoPlayerTwo,
           activePlayerId: activePlayerId,
-          teamOneScore: totalTeamScores.side1,
-          teamTwoScore: totalTeamScores.side2,
+          teamOneScore: currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side1 : totalTeamScores.side1,
+          teamTwoScore: currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side2 : totalTeamScores.side2,
           sets: consideredSets,
           matchStatus: currentStreamingData.matchStatus,
           streamType: currentStreamingData.streamType,
@@ -371,6 +410,13 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamTwoHandicap: currentStreamingData.teamTwoHandicap,
           sportType: currentStreamingData.sportType,
           handicap: currentStreamingData.handicap,
+          maxScorePerSet: currentStreamingData.maxScorePerSet,
+          isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== teamScoresForCurrentSet.side1,
+          isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== teamScoresForCurrentSet.side2,
+          tournamentName: currentStreamingData.tournamentName,
+          tournamentId: currentStreamingData.tournamentId,
+          teamOneName: currentStreamingData.teamOneName,
+          teamTwoName: currentStreamingData.teamTwoName
         });
       }
     }

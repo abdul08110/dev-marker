@@ -65,7 +65,9 @@ const useBilliardsScoring = () => {
 
   // LOCAL STATE
   const [openSettingsDrawer, setOpenSettingsDrawer] = React.useState(false);
-  const [openPlayerSelectCard, setOpenPlayerSelectCard] = React.useState(true);
+  const [openPlayerSelectCard, setOpenPlayerSelectCard] = React.useState(
+    billiardsScoring.team1.players[0].id ? false : true,
+  );
   const [selectedTeamIndex, setSelectedTeamIndex] = React.useState(0);
   const [selectedPlayerIndex, setSelectedPlayerIndex] = React.useState(0);
   const [showLoadingModal, setShowLoadingModal] = React.useState(false);
@@ -132,39 +134,6 @@ const useBilliardsScoring = () => {
       await dispatch(handleTeamSwitch({ createUndoAndPushData: true }));
     } else {
       await dispatch(handleSelectionOfBreakOffTeam({ teamIndex }));
-    }
-  };
-
-  const handleMatchCreation = async (playerOrder: string[]) => {
-    const currentDate = new Date();
-    const matchId = await startMatchHook.startMatch({
-      clubId: clubs.activeClub!.clubId,
-      expectedEndTimeDate: new Date(currentDate.getTime() + billiardsScoring.timeInMinutes * 60000),
-      sideOnePlayerOneId: playerOrder[0],
-      sideTwoPlayerOneId: playerOrder[1],
-      sport: 'BILLIARDS',
-      sportType: billiardsScoring.format,
-      streamingType: billiardsScoring.streaming,
-      venueId: clubs.activeClub!.venueId,
-      handicap: billiardsScoring.handicap,
-      maxScorePerSet: billiardsScoring.maxScorePerSet,
-      noOfSets: billiardsScoring.noOfSets,
-    });
-
-    if (matchId) {
-      await dispatch(
-        handleMatchStart({
-          matchId,
-          scoreOrder: playerOrder,
-        }),
-      );
-      await startTimer();
-    } else {
-      toast({
-        title: 'Error',
-        description: 'Something went wrong while trying to start the match, please try again.',
-        variant: 'destructive',
-      });
     }
   };
 
@@ -243,7 +212,7 @@ const useBilliardsScoring = () => {
   };
 
   const handleGoToHome = () => {
-    navigate('/');
+    navigate('/app/home');
   };
 
   const handleEndFrameButton = async () => {
@@ -279,15 +248,72 @@ const useBilliardsScoring = () => {
     const playerOne = billiardsScoring.team1.players[0].id!;
     const playerTwo = billiardsScoring.team2.players[0].id!;
 
-    let unModifiedScoreOrder = [playerOne, playerTwo];
-
     const activeTeam = getActiveTeam(billiardsScoring.team1, billiardsScoring.team2);
     let isTeamReveresed = false;
     if ((activeTeam === 1 && type === 'yellow') || (activeTeam === 0 && type === 'white')) {
-      await dispatch(handleReversePlayersState({ 'reverseOnApi': false }));
+      await dispatch(handleReversePlayersState({ reverseOnApi: false }));
       isTeamReveresed = true;
     }
-    await handleMatchCreation(isTeamReveresed === true ? [playerTwo, playerOne] : unModifiedScoreOrder);
+
+    const teamOneHandicap = isTeamReveresed ? billiardsScoring.teamTwoHandicap : billiardsScoring.teamOneHandicap;
+    const teamTwoHandicap = isTeamReveresed ? billiardsScoring.teamOneHandicap : billiardsScoring.teamTwoHandicap;
+
+    const tournamentTeamOneId = isTeamReveresed
+      ? billiardsScoring.tournamentTeamTwoId
+      : billiardsScoring.tournamentTeamOneId;
+    const tournamentTeamTwoId = isTeamReveresed
+      ? billiardsScoring.tournamentTeamOneId
+      : billiardsScoring.tournamentTeamTwoId;
+
+    const currentDate = new Date();
+    const matchId = await startMatchHook.startMatch({
+      clubId: clubs.activeClub!.clubId,
+      expectedEndTimeDate:
+        billiardsScoring.timeInMinutes !== 0
+          ? new Date(currentDate.getTime() + billiardsScoring.timeInMinutes * 60000)
+          : undefined,
+      sideOnePlayerOneId: isTeamReveresed
+        ? billiardsScoring.team2.players[0].id!
+        : billiardsScoring.team1.players[0].id!,
+      sideTwoPlayerOneId: isTeamReveresed
+        ? billiardsScoring.team1.players[0].id!
+        : billiardsScoring.team2.players[0].id!,
+      sport: 'BILLIARDS',
+      sportType: billiardsScoring.format,
+      streamingType: billiardsScoring.streaming,
+      venueId: clubs.activeClub!.venueId,
+      handicap: billiardsScoring.handicap,
+      maxScorePerSet: billiardsScoring.maxScorePerSet,
+      noOfSets: billiardsScoring.noOfSets,
+      cumulativeScoring: billiardsScoring.isCumulativeScoring,
+      tournamentTeamOneId: tournamentTeamOneId ? tournamentTeamOneId : undefined,
+      tournamentTeamTwoId: tournamentTeamTwoId ? tournamentTeamTwoId : undefined,
+      tournamentId: billiardsScoring.tournamentId ? billiardsScoring.tournamentId : undefined,
+      tournamentTeamOneScore: billiardsScoring.tournamentTeamOneScore
+        ? billiardsScoring.tournamentTeamOneScore
+        : undefined,
+      tournamentTeamTwoScore: billiardsScoring.tournamentTeamTwoScore
+        ? billiardsScoring.tournamentTeamTwoScore
+        : undefined,
+      teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
+      teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
+    });
+
+    if (matchId) {
+      await dispatch(
+        handleMatchStart({
+          matchId,
+          scoreOrder: isTeamReveresed ? [playerTwo, playerOne] : [playerOne, playerTwo],
+        }),
+      );
+      await startTimer();
+    } else {
+      toast({
+        title: 'Error',
+        description: 'Something went wrong while trying to start the match, please try again.',
+        variant: 'destructive',
+      });
+    }
 
     setShowLoadingModal(false);
   };

@@ -9,7 +9,7 @@ interface PlayerTeamCardProps {
   onPlayerCardClick: (playerIndex: number) => void;
   onPlayerTeamCardSelect: () => void;
   teamSetScore: number;
-  activeTurnPointTypes: SnookerPointType[] | null;
+  activeTurnPointTypes: SnookerPointType[][];
   activeTurnScore: number;
   showBilliardsBalls: 'WHITE' | 'YELLOW' | null;
 }
@@ -28,11 +28,7 @@ export function PlayerTeamCard(props: PlayerTeamCardProps) {
     >
       <div className="flex-grow flex flex-col justify-start items-center gap-2 min-h-24">
         <h3 className="text-white text-6xl">{props.teamSetScore}</h3>
-        {isTeamActive && props.activeTurnPointTypes ? (
-          <SnookerPointTypeDisplay activeTurnPointTypes={props.activeTurnPointTypes} />
-        ) : (
-          <></>
-        )}
+        <SnookerPointTypeDisplay isBig={false} activeTurnPointTypes={props.activeTurnPointTypes} />
         {isTeamActive && props.activeTurnScore > 0 ? (
           <SnookerBreakScoreDisplay breakScore={props.activeTurnScore} />
         ) : (
