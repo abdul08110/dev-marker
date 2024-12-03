@@ -78,3 +78,12 @@ export const isWithinFiveSecondsRange = (
   const targetTime = actualStartTimeDate.getTime() + stopWatchTimeMs;
   return Math.abs(currentTimeStamp - targetTime) <= 5000;
 };
+
+export const getDurationInMilliseconds = (startTimeUtc: string) => {
+  const startTime = new Date(startTimeUtc).getTime();
+  const currentTime = Date.now();
+
+  const durationInMs = currentTime - startTime;
+
+  return durationInMs;
+};

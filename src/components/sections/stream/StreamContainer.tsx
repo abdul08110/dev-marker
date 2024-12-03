@@ -1,9 +1,15 @@
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { StreamingState } from '@/hooks/useStreaming';
-import { useEffect, useRef, useState } from 'react';
+import { StreamType } from '@/api/app/useGetMatchData';
+import YouTube from 'react-youtube';
 import 'rc-slider/assets/index.css';
-import MuteLogo from '@/icons/mute';
-import VolumeLogo from '@/icons/volume';
+import { VideoControls } from './Controls';
+import { useYouTubePlayer } from '@/hooks/useYoutubePlayer';
+import { TopOverlay } from './overlays/TopOverlay';
+import { EcaTemplate } from './templates/Eca';
+import { GeneralTemplate } from './templates/General';
+import { SourceWithFinalScores } from './templates/SourceFinalScores';
+import { useState } from 'react';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -18,712 +24,117 @@ interface StreamContainerProps {
 export function StreamContainer(props: StreamContainerProps) {
   const activeSet = getActiveSet(props.state ? props.state.sets : []);
   const activeTurn = getActiveTurn(activeSet);
-  const youTubePlayerRef = useRef<any>(null);
-  const intervalRef = useRef<number | null>(null);
-  const [videoDuration, setVideoDuration] = useState(0);
-  const [isSoundOn, setIsSoundOn] = useState(false);
 
-  const clearExistingInterval = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
+  const {
+    videoDuration,
+    isSoundOn,
+    isVideoPlaying,
+    handleYouTubeReady,
+    handleYouTubeStateChange,
+    handleMuteUnmute,
+    handlePlayPause,
+    handleScrub,
+  } = useYouTubePlayer({
+    onTimerUpdate: props.updateTimer,
+    isMatchLive: props.state && props.state.matchStatus === 'LIVE' ? true : false,
+    matchStartTime: props.state && props.state.actualStartTimeDate ? props.state.actualStartTimeDate : null,
+  });
 
-  const handleYouTubeReady = (event: any) => {
-    youTubePlayerRef.current = event.target;
-    setVideoDuration(event.target.getDuration() * 1000);
+  const [isOverlayEnabled, setIsOverlayEnabled] = useState<boolean>(true);
 
-    event.target.mute();
-    event.target.playVideo();
-  };
-
-  const handleMuteUnmute = () => {
-    if (youTubePlayerRef.current) {
-      if (isSoundOn) {
-        youTubePlayerRef.current.mute();
-      } else {
-        youTubePlayerRef.current.unMute();
-      }
-    }
-
-    setIsSoundOn(!isSoundOn);
-  };
-
-  const handleYoutubeStateChange = async (event: YouTubeEvent<number>) => {
-    if (event.data === 1) {
-      clearExistingInterval();
-      intervalRef.current = window.setInterval(() => {
-        if (youTubePlayerRef.current) {
-          props.updateTimer(youTubePlayerRef.current.getCurrentTime() * 1000);
-        }
-      }, 1000);
-    } else {
-      clearExistingInterval();
-    }
-  };
-
-  useEffect(() => {
-    return player.current!.subscribe(({ currentTime }) => {
-      props.updateTimer(currentTime * 1000);
-    });
-  }, []);
-
-  const getUrlFromStream = (brodcastId: string, provider: 'YOUTUBE' | 'MUX') => {
-    switch (provider) {
-      case 'MUX':
-        return `https://stream.mux.com/${brodcastId}.m3u8`;
-        break;
-      case 'YOUTUBE':
-        return `https://www.youtube.com/watch?v=${brodcastId}`;
-        break;
-    }
+  const toogleOverlay = async () => {
+    setIsOverlayEnabled(!isOverlayEnabled);
   };
 
   return (
-    <MediaPlayer
-      ref={player}
-      src={
-        props.state && props.state.streamData
-          ? getUrlFromStream(props.state.streamData.brodcastId!, props.state.streamData.provider!)
-          : ''
-      }
-      onDoubleClick={(event) => {
-        event.preventDefault();
-      }}
-      onClick={disableOverlay}
-      onEnded={() => props.onVideoEnd()}
-      viewType={'video'}
-      streamType={'on-demand'}
-      autoplay
-      muted
-      crossOrigin
-      className="relative w-full h-full max-w-full max-h-full overflow-hidden"
-    >
-      <MediaProvider
-        iframeProps={{
-          style: { pointerEvents: 'none' },
-        }}
-      />
-
-      {!isOverlayEnabled ? (
-        <Controls.Root onClick={(event) => event.stopPropagation()} className="flex absolute w-full h-full p-2">
-          <Controls.Group className="vds-controls-group mt-auto flex gap-1 w-full items-center p-2">
-            <PlayButton className="bg-black p-0 vds-button h-8 w-8 rounded-md text-center">
-              <PlayIcon className="text-white play-icon h-5 w-5 ml-auto mr-auto" />
-              <PauseIcon className="text-white pause-icon h-5 w-5 ml-auto mr-auto" />
-            </PlayButton>
-            <SeekButton className="bg-black p-0 h-8 w-8 rounded-md text-center" seconds={-10}>
-              <SeekBackward10Icon className="text-white h-5 w-5 ml-auto mr-auto" />
-            </SeekButton>
-            <SeekButton className="bg-black p-0 h-8 w-8 rounded-md text-center" seconds={10}>
-              <SeekForward10Icon className="text-white h-5 w-5 ml-auto mr-auto" />
-            </SeekButton>
-            <TimeSlider.Root className="flex-grow relative h-2 rounded-full">
-              <TimeSlider.Track className="w-full h-full absolute inset-0" />
-              <TimeSlider.TrackFill className="w-full h-full absolute inset-0 bg-gray-400 rounded-l-full rounded-r-full" />
-              <TimeSlider.Progress className="slider-track-fill h-full absolute bg-white rounded-l-full rounded-r-full" />
-              <TimeSlider.Thumb className="slider-thumb absolute top-1/2 -translate-y-1/2 rounded-full bg-white h-3 w-3" />
-            </TimeSlider.Root>
-            <MuteButton className="bg-black p-0 vds-button h-8 w-8 rounded-md text-center">
-              <MuteIcon className="mute-icon text-white h-5 w-5 ml-auto mr-auto" />
-              <VolumeLowIcon className="volume-low-icon text-white h-5 w-5 ml-auto mr-auto" />
-              <VolumeHighIcon className="volume-high-icon text-white h-5 w-5 ml-auto mr-auto" />
-            </MuteButton>
-            {props.state?.matchStatus === 'LIVE' ? (
-              <button className="bg-red-600 h-6 text-xs p-2 text-white flex justify-center items-center rounded-md">
-                <span className="font-bold p-0">LIVE</span>
-              </button>
-            ) : (
-              <></>
-            )}
-          </Controls.Group>
-        </Controls.Root>
-      ) : (
-        <></>
-      )}
-
-      {isOverlayEnabled && props.state && props.state.overlayType === 'DESTINATION' && !props.isPortrait ? (
-        <div className="absolute inset-0 w-full h-full flex flex-col">
-          <div className="flex justify-between lg:p-4 p-2 h-fit">
-            <div className="flex flex-col gap-2 items-center h-fit">
-              <img
-                src="/images/clublogo.png"
-                className="lg:h-14 xl:h-24 xl:w-24 lg:w-14 h-8 w-8 rounded-full overflow-hidden"
+    <div className="h-full w-full flex justify-center items-center">
+      {props.state ? (
+        <div className="relative flex justify-center items-center w-full h-full">
+          {props.state.streamType === StreamType.CLOUD_PROVIDER &&
+          props.state.streamData !== null &&
+          props.state.streamData !== undefined &&
+          props.state.streamData.provider &&
+          props.state.streamData.provider === 'YOUTUBE' ? (
+            <div
+              className="relative w-full h-full max-w-full max-h-full overflow-hidden"
+              style={{
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '16 / 9',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <YouTube
+                videoId={props.state.streamData.brodcastId!}
+                id={props.state.streamData.brodcastId!}
+                onReady={handleYouTubeReady}
+                onEnd={props.onVideoEnd}
+                onStateChange={handleYouTubeStateChange}
+                className="object-contain w-full h-full"
+                opts={{
+                  height: '100%',
+                  width: '100%',
+                  playerVars: {
+                    autoplay: 1,
+                    controls: 0,
+                    rel: 0,
+                    fs: 0,
+                    modestbranding: 1,
+                  },
+                }}
               />
-            </div>
+              {/* Overlay Content */}
 
-            <div className="flex flex-col gap-2 items-center h-fit">
-              <img src={props.state.clubLogo!} className="lg:h-14 xl:h-24 xl:w-24 lg:w-14 h-8 w-8 " />
-              <small className="text-white font-medium lg:text-xl text-base xl:text-xl">T-{props.state.venueNo}</small>
-              <img src={props.state.tournamentLogo!} className="lg:h-14 lg:w-auto h-8 w-auto" />
-            </div>
-          </div>
-          <div className="mt-auto  h-auto bg-transparent flex justify-center w-full">
-            <div className="flex px-1 w-full gap-1 h-full justify-center">
-              <div className="flex items-end">
-                {props.state.tournamentLogo ? (
-                  <img
-                    className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                    src={props.state.teamOneLogo ? props.state.teamOneLogo : '/images/user-dummy-pic.png'}
-                  />
+              <div onClick={toogleOverlay} className="absolute inset-0 z-30 w-full h-full"></div>
 
-                  {isSoundOn ? (
-                    <div onClick={() => handleMuteUnmute()}>
-                      <MuteLogo className="xl:h-12 xl:w-12 lg:h-8 lg:w-8 h-5 w-5 cursor-pointer text-white" />
-                    </div>
-                  ) : (
-                    <div onClick={() => handleMuteUnmute()}>
-                      <VolumeLogo className="xl:h-12 xl:w-12 lg:h-8 lg:w-8 h-5 w-5 cursor-pointer text-white" />
-                    </div>
-                  )}
-                </div>
+              {props.state.overlayType === 'DESTINATION' && !props.isPortrait && (
+                <TopOverlay
+                  clubLogo={props.state.clubLogo!}
+                  tournamentLogo={props.state.tournamentLogo}
+                  venueNo={props.state.venueNo!}
+                />
+              )}
 
-              <div className="flex-grow relative flex flex-col justify-center items-center">
-                <div className="flex flex-col justify-center items-center w-full">
-                  <div className="w-fit">
-                    <h5 className="xl:text-xl lg:text-base text-base text-white font-bold">
-                      {props.state.sportType === 'SNOOKER_10_RED'
-                        ? '10 REDS SINGLE FRAME'
-                        : props.state.sportType === 'SNOOKER_15_RED'
-                          ? '15 REDS SINGLE FRAME'
-                          : '6 REDS CUMULATIVE'}
-                    </h5>
-                  </div>
-
-                  <div className="grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
-                    <div className="col-span-5 flex gap-2 items-center">
-                      <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                        {props.state.sideOnePlayerOne.name} + {props.state.teamOneHandicap} (
-                        {props.state.tournamentTeamOneabb})
-                      </small>
-
-                      {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
-                      props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
-                        <h5 className="xl:text-xl lg:text-md text-xs text-yellow-500 font-bold text-right uppercase ml-auto whitespace-nowrap">
-                          Break {activeTurn ? activeTurn?.score : 0}
-                        </h5>
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-
-                    <div className="col-span-2 text-center flex justify-center">
-                      <span className="xl:text-3xl lg:text-xl text-base text-white">
-                        <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>
-                        &nbsp;&nbsp;&nbsp;
-                        {props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore : 0}
-                        &nbsp;(3)&nbsp;
-                        {props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore : 0}
-                        &nbsp;&nbsp;&nbsp;
-                        <span className="font-bold">{activeSet ? activeSet?.teamTwoScore : 0}</span>
-                      </span>
-                    </div>
-
-                    <div className="col-span-5 text-right flex gap-2 justify-end items-center">
-                      {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
-                      props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
-                        <h5 className="xl:text-xl lg:text-md text-xs text-yellow-500 font-bold text-left uppercase mr-auto whitespace-nowrap">
-                          Break {activeTurn ? activeTurn?.score : 0}
-                        </h5>
-                      ) : (
-                        <></>
-                      )}
-
-                      <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                        ({props.state.tournamentTeamTwoabb}) + {props.state.teamTwoHandicap}{' '}
-                        {props.state.sideTwoPlayerOne.name}
-                      </small>
-                    </div>
-                  </div>
-                </div>
-              </div>
               {props.state.overlayType === 'DESTINATION' &&
                 !props.isPortrait &&
+                isOverlayEnabled &&
                 (props.state.tournamentId === '671f4acf089a3a701c79071f' ? (
-                  <div className="absolute bottom-0 flex flex-col items-center w-full bg-white">
-                    <div className="w-full h-auto bg-transparent flex justify-center">
-                      <div className="flex px-1 w-full gap-1 h-full justify-center">
-                        <div className="flex items-end lg:p-2">
-                          {props.state.tournamentLogo ? (
-                            <img
-                              className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                              src={props.state.teamOneLogo ? props.state.teamOneLogo : '/images/user-dummy-pic.png'}
-                            />
-                          ) : (
-                            <></>
-                          )}
-                          {props.state.tournamentLogo === null ? (
-                            <img
-                              className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                              src={
-                                props.state.sideOnePlayerOne.profilePhoto
-                                  ? props.state.sideOnePlayerOne.profilePhoto
-                                  : '/images/user-dummy-pic.png'
-                              }
-                            />
-                          ) : (
-                            <></>
-                          )}
-                        </div>
-
-                        <div className="flex-grow relative flex flex-col justify-center items-center">
-                          <div className="flex flex-col justify-center items-center w-full">
-                            <div className="w-full grid grid-cols-3 lg:p-2 p-1">
-                              <div className="col-span-1 flex justify-start items-end">
-                                {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
-                                props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
-                                  <h5 className="xl:text-xl lg:text-base text-base text-black font-bold text-left uppercase whitespace-nowrap">
-                                    Break {activeTurn ? activeTurn?.score : 0}
-                                  </h5>
-                                ) : (
-                                  <></>
-                                )}
-                              </div>
-                              {props.state.sport === 'SNOOKER' && props.state.tournamentLogo !== null ? (
-                                <h5 className="col-span-1 xl:text-xl lg:text-base text-base text-white font-bold text-center">
-                                  {props.state.sportType === 'SNOOKER_10_RED'
-                                    ? '10 REDS SINGLE FRAME'
-                                    : props.state.sportType === 'SNOOKER_15_RED'
-                                      ? '15 REDS SINGLE FRAME'
-                                      : '6 REDS CUMULATIVE'}
-                                </h5>
-                              ) : (
-                                <></>
-                              )}
-                              {props.state.sport === 'BILLIARDS' && props.state.tournamentLogo !== null ? (
-                                <div className="col-span-1 ">
-                                  <h5 className="xl:text-xl text-center lg:text-base text-base text-black font-bold uppercase whitespace-nowrap">
-                                    {props.state.tournamentName}
-                                  </h5>
-                                </div>
-                              ) : (
-                                <></>
-                              )}
-
-                              {props.state.tournamentLogo === null ? <div className="col-span-1"></div> : <></>}
-                              <div className="col-span-1 flex justify-end items-end">
-                                {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
-                                props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
-                                  <h5 className="xl:text-xl lg:text-base text-base text-black font-bold text-right uppercase whitespace-nowrap">
-                                    Break {activeTurn ? activeTurn?.score : 0}
-                                  </h5>
-                                ) : (
-                                  <></>
-                                )}
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
-                              <div className="col-span-4 flex gap-2 items-center">
-                                <img src='/images/yellow-ball.png' className='h-3 w-3 md:h-5 md:w-5' />
-                                <small className="text-white xl:text-3xl lg:text-xl text-[0.92rem] whitespace-nowrap uppercase font-bold">
-                                  {props.state.sideOnePlayerOne.name}{' '}
-                                  <span>({props.state.teamOneName === 'MAHARASHTRA' ? 'MAH' : props.state.teamOneName}){' '}</span>
-                                  <span
-                                    className={
-                                      props.state.isTeamOneHandicapApplied === true
-                                        ? 'line-through decoration-red-500 decoration-4'
-                                        : ''
-                                    }
-                                  >
-                                    {props.state.teamOneHandicap}
-                                  </span>{' '}
-                                  {props.state.tournamentTeamOneabb && props.state.sport === 'SNOOKER'
-                                    ? props.state.tournamentTeamOneabb
-                                    : ''}
-                                </small>
-
-                                {/* {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
-                              props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
-                                <h5 className="xl:text-xl lg:text-md text-xs text-yellow-500 font-bold text-right uppercase ml-auto whitespace-nowrap">
-                                  Break {activeTurn ? activeTurn?.score : 0}
-                                </h5>
-                              ) : (
-                                <></>
-                              )} */}
-                              </div>
-
-                              {props.state.sport === 'SNOOKER' ? (
-                                <div className="col-span-2 text-center flex justify-center">
-                                  <span className="xl:text-3xl lg:text-xl text-base text-white">
-                                    <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>
-                                    &nbsp;&nbsp;&nbsp;
-                                    {props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore : 0}
-                                    &nbsp;(3)&nbsp;
-                                    {props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore : 0}
-                                    &nbsp;&nbsp;&nbsp;
-                                    <span className="font-bold">{activeSet ? activeSet?.teamTwoScore : 0}</span>
-                                  </span>
-                                </div>
-                              ) : (
-                                <div className="col-span-4 flex justify-center items-center">
-                                  {' '}
-                                  <span className="xl:text-3xl lg:text-xl text-base text-white">
-                                    <span className={'font-bold'}>{activeSet ? props.state.teamOneScore : 0}</span>
-                                    &nbsp;({props.state.maxScorePerSet} UP)&nbsp;
-                                    <span className={'font-bold'}>{activeSet ? props.state.teamTwoScore : 0}</span>
-                                  </span>
-                                </div>
-                              )}
-
-                              <div className="col-span-4 text-right flex gap-2 justify-end items-center">
-                                {/* {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
-                              props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
-                                <h5 className="xl:text-xl lg:text-md text-xs text-yellow-500 font-bold text-left uppercase mr-auto whitespace-nowrap">
-                                  Break {activeTurn ? activeTurn?.score : 0}
-                                </h5>
-                              ) : (
-                                <></>
-                              )} */}
-
-                                <small className="text-white xl:text-3xl lg:text-xl text-[0.92rem] whitespace-nowrap uppercase font-bold">
-                                 
-                                  <span
-                                    className={
-                                      props.state.isTeamTwoHandicapApplied === true
-                                        ? 'line-through decoration-red-500 decoration-4'
-                                        : ''
-                                    }
-                                  >
-                                    {props.state.teamTwoHandicap}
-                                  </span>{' '}
-                                  <span>({props.state.teamTwoName === 'MAHARASHTRA' ? 'MAH' : props.state.teamTwoName}){' '}</span>
-                                  {props.state.sideTwoPlayerOne.name}
-                                </small>
-
-                                <img src='/images/white-ball.png' className='h-3 w-3 md:h-5 md:w-5' />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-end lg:p-2">
-                          <div className="flex items-end">
-                            {props.state.tournamentLogo ? (
-                              <img
-                                className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                                src={props.state.teamTwoLogo ? props.state.teamTwoLogo : '/images/user-dummy-pic.png'}
-                              />
-                            ) : (
-                              <></>
-                            )}
-                            {props.state.tournamentLogo === null ? (
-                              <img
-                                className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                                src={
-                                  props.state.sideTwoPlayerOne.profilePhoto
-                                    ? props.state.sideTwoPlayerOne.profilePhoto
-                                    : '/images/user-dummy-pic.png'
-                                }
-                              />
-                            ) : (
-                              <></>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {props.showBottomScrubber ? (
-                      <div className="px-2  w-full h-auto mt-2">
-                        <Slider
-                          className="purple-slider"
-                          max={videoDuration}
-                          onChange={(value) => {
-                            if (youTubePlayerRef.current) {
-                              youTubePlayerRef.current.seekTo((value as number) / 1000);
-                            }
-                            props.updateTimer(value as number);
-                          }}
-                          value={props.stopWatchTime}
-                        />
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
+                  <EcaTemplate
+                    teamOneLogo={props.state.teamOneLogo}
+                    teamTwoLogo={props.state.teamTwoLogo}
+                    activePlayerId={props.state.activePlayerId}
+                    activeTurn={activeTurn}
+                    tournamentName={props.state.tournamentName!}
+                    sideOnePlayerOne={props.state.sideOnePlayerOne}
+                    sideTwoPlayerOne={props.state.sideTwoPlayerOne}
+                    isTeamOneHandicapApplied={props.state.isTeamOneHandicapApplied!}
+                    isTeamTwoHandicapApplied={props.state.isTeamTwoHandicapApplied!}
+                    teamOneHandicap={props.state.teamOneHandicap!}
+                    teamTwoHandicap={props.state.teamTwoHandicap!}
+                    maxScorePerSet={props.state.maxScorePerSet!}
+                    teamOneScore={props.state.teamOneScore}
+                    teamTwoScore={props.state.teamTwoScore}
+                  />
                 ) : (
-                  <div className="absolute bottom-0 flex flex-col items-center w-full">
-                    <div className="w-full h-auto bg-transparent flex justify-center">
-                      <div className="flex px-1 w-full gap-1 h-full justify-center">
-                        <div className="flex items-end">
-                          {props.state.tournamentLogo ? (
-                            <img
-                              className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                              src={props.state.teamOneLogo ? props.state.teamOneLogo : '/images/user-dummy-pic.png'}
-                            />
-                          ) : (
-                            <></>
-                          )}
-                          {props.state.tournamentLogo === null ? (
-                            <img
-                              className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                              src={
-                                props.state.sideOnePlayerOne.profilePhoto
-                                  ? props.state.sideOnePlayerOne.profilePhoto
-                                  : '/images/user-dummy-pic.png'
-                              }
-                            />
-                          ) : (
-                            <></>
-                          )}
-                        </div>
-
-                        <div className="flex-grow relative flex flex-col justify-center items-center">
-                          <div className="flex flex-col justify-center items-center w-full">
-                            <div className="w-full grid grid-cols-3 bg-black/10 lg:p-2 p-1">
-                              <div className="col-span-1 flex justify-start items-end">
-                                {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
-                                props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
-                                  <h5 className="xl:text-xl lg:text-base text-base text-white font-bold text-left uppercase whitespace-nowrap">
-                                    Break {activeTurn ? activeTurn?.score : 0}
-                                  </h5>
-                                ) : (
-                                  <></>
-                                )}
-                              </div>
-
-                              {props.state.sport === 'SNOOKER' && props.state.tournamentLogo !== null ? (
-                                <h5 className="col-span-1 xl:text-xl lg:text-base text-base text-white font-bold text-center">
-                                  {props.state.sportType === 'SNOOKER_10_RED'
-                                    ? '10 REDS SINGLE FRAME'
-                                    : props.state.sportType === 'SNOOKER_15_RED'
-                                      ? '15 REDS SINGLE FRAME'
-                                      : '6 REDS CUMULATIVE'}
-                                </h5>
-                              ) : (
-                                <div className="col-span-1"></div>
-                              )}
-
-                              <div className="col-span-1 flex justify-end items-end">
-                                {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
-                                props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
-                                  <h5 className="xl:text-xl lg:text-base text-base text-white font-bold text-right uppercase whitespace-nowrap">
-                                    Break {activeTurn ? activeTurn?.score : 0}
-                                  </h5>
-                                ) : (
-                                  <></>
-                                )}
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
-                              <div className="col-span-5 flex gap-2 items-center">
-                                <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                                  {props.state.sideOnePlayerOne.name}{' '}
-                                
-                                  <span className={props.state.isTeamOneHandicapApplied === true ? 'line-through' : ''}>
-                                    {props.state.teamOneHandicap}
-                                  </span>{' '}
-                                  {props.state.tournamentTeamOneabb && props.state.sport === 'SNOOKER'
-                                    ? props.state.tournamentTeamOneabb
-                                    : ''}
-                                </small>
-
-                                {/* {props.state.activePlayerId === props.state.sideOnePlayerOne.id ||
-                              props.state.activePlayerId === props.state.sideOnePlayerTwo?.id ? (
-                                <h5 className="xl:text-xl lg:text-md text-xs text-yellow-500 font-bold text-right uppercase ml-auto whitespace-nowrap">
-                                  Break {activeTurn ? activeTurn?.score : 0}
-                                </h5>
-                              ) : (
-                                <></>
-                              )} */}
-                              </div>
-
-                              {props.state.sport === 'SNOOKER' ? (
-                                <div className="col-span-2 text-center flex justify-center">
-                                  <span className="xl:text-3xl lg:text-xl text-base text-white">
-                                    <span className="font-bold">{activeSet ? activeSet?.teamOneScore : 0}</span>
-                                    &nbsp;&nbsp;&nbsp;
-                                    {props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore : 0}
-                                    &nbsp;(3)&nbsp;
-                                    {props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore : 0}
-                                    &nbsp;&nbsp;&nbsp;
-                                    <span className="font-bold">{activeSet ? activeSet?.teamTwoScore : 0}</span>
-                                  </span>
-                                </div>
-                              ) : (
-                                <div className="col-span-2 flex justify-center items-center">
-                                  {' '}
-                                  <span className="xl:text-3xl lg:text-xl text-base text-white">
-                                    <span className={'font-bold'}>{activeSet ? props.state.teamOneScore : 0}</span>
-                                    &nbsp;({props.state.maxScorePerSet} UP)&nbsp;
-                                    <span className={'font-bold'}>{activeSet ? props.state.teamTwoScore : 0}</span>
-                                  </span>
-                                </div>
-                              )}
-
-                              <div className="col-span-5 text-right flex gap-2 justify-end items-center">
-                                {/* {props.state.activePlayerId === props.state.sideTwoPlayerOne.id ||
-                              props.state.activePlayerId === props.state.sideTwoPlayerTwo?.id ? (
-                                <h5 className="xl:text-xl lg:text-md text-xs text-yellow-500 font-bold text-left uppercase mr-auto whitespace-nowrap">
-                                  Break {activeTurn ? activeTurn?.score : 0}
-                                </h5>
-                              ) : (
-                                <></>
-                              )} */}
-
-                                <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                                  {props.state.tournamentTeamTwoabb && props.state.sport === 'SNOOKER'
-                                    ? props.state.tournamentTeamTwoabb
-                                    : ''}{' '}
-                                  <span className={props.state.isTeamTwoHandicapApplied === true ? 'line-through' : ''}>
-                                    {props.state.teamTwoHandicap}
-                                  </span>{' '}
-                                  {props.state.sideTwoPlayerOne.name}
-                                </small>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-end">
-                          <div className="flex items-end">
-                            {props.state.tournamentLogo ? (
-                              <img
-                                className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                                src={props.state.teamTwoLogo ? props.state.teamTwoLogo : '/images/user-dummy-pic.png'}
-                              />
-                            ) : (
-                              <></>
-                            )}
-                            {props.state.tournamentLogo === null ? (
-                              <img
-                                className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                                src={
-                                  props.state.sideTwoPlayerOne.profilePhoto
-                                    ? props.state.sideTwoPlayerOne.profilePhoto
-                                    : '/images/user-dummy-pic.png'
-                                }
-                              />
-                            ) : (
-                              <></>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="px-2  w-full h-auto mt-2">
-                      {props.showBottomScrubber ? (
-                        <Slider
-                          className="purple-slider"
-                          max={videoDuration}
-                          onChange={(value) => {
-                            if (youTubePlayerRef.current) {
-                              youTubePlayerRef.current.seekTo((value as number) / 1000);
-                            }
-                            props.updateTimer(value as number);
-                          }}
-                          value={props.stopWatchTime}
-                        />
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-                  </div>
+                  <GeneralTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} />
                 ))}
-              {props.state.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait ? (
-                <div className="absolute bottom-0 flex flex-col items-center w-full">
-                  <div className="w-full h-auto bg-transparent flex justify-center">
-                    <div className="flex px-1 w-full gap-1 h-full justify-center">
-                      <div>
-                        {props.state.tournamentLogo ? (
-                          <img
-                            className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                            src={props.state.teamOneLogo ? props.state.teamOneLogo : '/images/user-dummy-pic.png'}
-                          />
-                        ) : (
-                          <></>
-                        )}
-                        {props.state.tournamentLogo === null ? (
-                          <img
-                            className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                            src={
-                              props.state.sideOnePlayerOne.profilePhoto
-                                ? props.state.sideOnePlayerOne.profilePhoto
-                                : '/images/user-dummy-pic.png'
-                            }
-                          />
-                        ) : (
-                          <></>
-                        )}
-                      </div>
-
-                      <div className="flex-grow relative flex flex-col justify-center items-center">
-                        <div className="grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
-                          <div className="col-span-4 flex gap-2 items-center">
-                            <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                              {props.state.sideOnePlayerOne.name}&nbsp;(
-                              {props.state.tournamentTeamOneabb})
-                            </small>
-                          </div>
-
-                          <div className="col-span-4 text-center flex justify-center">
-                            <span className="xl:text-xl lg:text-xl text-base text-white">
-                              <span className="font-bold">{props.state.teamOneScore}</span>
-                              &nbsp;&nbsp;&nbsp;
-                              <span className="uppercase font-bold">Final Scores</span>
-                              &nbsp;&nbsp;&nbsp;
-                              <span className="font-bold">{props.state.teamTwoScore}</span>
-                            </span>
-                          </div>
-
-                          <div className="col-span-4 text-right flex gap-2 justify-end items-center">
-                            <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                              ({props.state.tournamentTeamTwoabb})&nbsp;
-                              {props.state.sideTwoPlayerOne.name}
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-end">
-                        <div>
-                          {props.state.tournamentLogo ? (
-                            <img
-                              className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                              src={props.state.teamTwoLogo ? props.state.teamTwoLogo : '/images/user-dummy-pic.png'}
-                            />
-                          ) : (
-                            <></>
-                          )}
-                          {props.state.tournamentLogo === null ? (
-                            <img
-                              className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                              src={
-                                props.state.sideTwoPlayerOne.profilePhoto
-                                  ? props.state.sideTwoPlayerOne.profilePhoto
-                                  : '/images/user-dummy-pic.png'
-                              }
-                            />
-                          ) : (
-                            <></>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="px-0  w-full h-auto">
-                    {props.showBottomScrubber ? (
-                      <Slider
-                        className="purple-slider"
-                        max={videoDuration}
-                        onChange={(value) => {
-                          if (youTubePlayerRef.current) {
-                            youTubePlayerRef.current.seekTo((value as number) / 1000);
-                          }
-                          props.updateTimer(value as number);
-                        }}
-                        value={props.stopWatchTime}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <></>
+              {props.state.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && isOverlayEnabled && (
+                <SourceWithFinalScores state={props.state} />
+              )}
+              {!isOverlayEnabled && (
+                <VideoControls
+                  isVideoPlaying={isVideoPlaying}
+                  isSoundOn={isSoundOn}
+                  videoDuration={videoDuration}
+                  currentTime={props.stopWatchTime}
+                  onSliderChange={handleScrub}
+                  onMuteUnmuteClick={handleMuteUnmute}
+                  onPlayPauseClick={handlePlayPause}
+                  isStreamLive={true}
+                  isMatchTypeLive={props.state.matchStatus === 'LIVE'}
+                />
               )}
             </div>
           </div>
