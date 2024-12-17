@@ -137,7 +137,9 @@ export function StreamContainer(props: StreamContainerProps) {
                 />
               )}
             </div>
-          </div>
+          ) : (
+            <></>
+          )}
         </div>
       ) : (
         <video
@@ -148,6 +150,6 @@ export function StreamContainer(props: StreamContainerProps) {
           className="w-full h-auto"
         />
       )}
-    </MediaPlayer>
+    </div>
   );
 }

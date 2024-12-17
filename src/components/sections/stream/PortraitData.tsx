@@ -33,8 +33,11 @@ export function PortraitData(props: PortraitStreamDataProps) {
         </div>
         <div className="flex-grow flex justify-center items-center">
           <div className='flex gap-2'>
-            <div className='flex flex-col gap-2'></div>
-            <div className='flex justify-center items-center font-bold text-white text-sm'>VS</div>
+            <div className='flex flex-col gap-2'>
+
+              {/* {props.state.sideOnePlayerOne.name} */}
+            </div>
+            <div className='flex justify-center items-center font-bold text-white text-sm'></div>
             <div className='flex flex-col gap-2'></div>
           </div>
         </div>
