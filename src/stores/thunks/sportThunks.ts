@@ -607,6 +607,7 @@ export const handleSettingsStateUpdate = createAsyncThunk<
 >(
   'sport/handleSettingsUpdate',
   async ({ format, durationInMinutes, noOfPlayers, streaming, handicap }, { dispatch }) => {
+
     await dispatch(updateTimeInMinutes({ timeInMinutes: timeStringToDecimalMinutes(durationInMinutes) }));
     await dispatch(updateFormat({ format: format }));
     await dispatch(updateStreaming({ streaming }));

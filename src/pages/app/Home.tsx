@@ -1,4 +1,5 @@
 import useLogout from '@/api/auth/useLogout';
+import useCheckVersionOfPwa from '@/api/home/useCheckVersion';
 import useGetActiveTournaments from '@/api/home/useGetActiveTournaments';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useMarkerClubs from '@/api/home/useMarkerClubs';
@@ -19,11 +20,14 @@ export function Home() {
   const { getMarkerClubs, data } = useMarkerClubs('MARKER');
   const { getTournaments, tournaments } = useGetActiveTournaments();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
+  const { checkVersion, version } = useCheckVersionOfPwa();
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLiveMatchModalOpen, setIsLiveMatchModalOpen] = useState<boolean>(false);
   const [liveMatchId, setLiveMatchId] = useState<string | null>(null);
   const [liveSport, setLiveSport] = useState<'BILLIARDS' | 'SNOOKER' | null>(null);
   const [activeTournaments, setActiveTournaments] = useState<Tournament[] | null>(null);
+
   const { logout } = useLogout();
   const navigate = useNavigate();
 
@@ -63,6 +67,21 @@ export function Home() {
       }
     };
 
+    const checkVersionOfPWA = async () => {
+      const res = await checkVersion();
+
+      if (res === true) {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          registrations.forEach((registration) => {
+            registration.unregister();
+          });
+        }
+        window.location.reload();
+      }
+    };
+
+    checkVersionOfPWA();
     fetchData();
   }, []);
 
@@ -154,6 +173,8 @@ export function Home() {
                 </div>
               </DialogContent>
             </Dialog>
+
+            {version && <small className="text-white">{version}</small>}
           </div>
         </div>
         <LiveMatchGoToScoreBoardOrMarkerModal

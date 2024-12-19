@@ -41,10 +41,11 @@ import { SnookerFoulData } from '@/components/forms/app/snookerFoul';
 import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
 import useInterval from './useInterval';
-import { matchEndGameRequest } from '@/api/scoring/scoringFunctions';
+import { matchEndGameRequest, matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
-import { getTimeLeftInMinutes } from '@/utils/functions';
+import { addMillisecondsToUTC, getTimeLeftInMinutes } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
+import { SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
 
 const useSnookerScoring = () => {
   // REDUX STATE
@@ -101,10 +102,11 @@ const useSnookerScoring = () => {
   const [showCorrectionDrawer, setShowCorrectionDrawer] = React.useState(false);
   const [showConcedeFrameDrawer, setShowConcedeFrameDrawer] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [showTimerModal, setShowTimeModal] = React.useState(false);
 
   // TIMER HOOKS
   const { timeLeft, startTimer, setTimeLeft } = useTimer(snookerScoring.timeInMinutes, () => {
-    // Logic to handle when timer completes
+    setShowTimeModal(true);
   });
 
   useEffect(() => {
@@ -174,8 +176,8 @@ const useSnookerScoring = () => {
       isTeamReveresed = true;
     }
 
-    const teamOneHandicap = isTeamReveresed ? snookerScoring.teamTwoHandicap : snookerScoring.teamOneHandicap
-    const teamTwoHandicap = isTeamReveresed ? snookerScoring.teamOneHandicap : snookerScoring.teamTwoHandicap
+    const teamOneHandicap = isTeamReveresed ? snookerScoring.teamTwoHandicap : snookerScoring.teamOneHandicap;
+    const teamTwoHandicap = isTeamReveresed ? snookerScoring.teamOneHandicap : snookerScoring.teamTwoHandicap;
 
     const currentDate = new Date();
     const matchId = await startMatchHook.startMatch({
@@ -363,6 +365,14 @@ const useSnookerScoring = () => {
     }
   };
 
+  const onBackInPlayerSelectModal = async () => {
+    if (snookerScoring.team1.players[0].id !== null) {
+      setSelectedTeamIndex(0);
+      setSelectedPlayerIndex(0);
+      setOpenPlayerSelectCard(true);
+    }
+  };
+
   const handlePlayerConfirm = async (player: Player) => {
     await dispatch(
       await handlePlayerSelectState({
@@ -383,7 +393,7 @@ const useSnookerScoring = () => {
     setOpenFoulDrawer(false);
   };
 
-  const handleSettingsUpdate = async (values: any) => {
+  const handleSettingsUpdate = async (values: SnookerPracticeSettingsData) => {
     await dispatch(handleSettingsStateUpdate(values));
     setOpenSettingsDrawer(false);
   };
@@ -446,6 +456,23 @@ const useSnookerScoring = () => {
     setShowLoadingModal(false);
   };
 
+  const handleTimerButtonAction = async (state: 'CONFIRM' | 'CANCEL') => {
+    if (state === 'CONFIRM') {
+      setShowLoadingModal(true);
+
+      await matchResetTimerRequest({
+        matchId: snookerScoring.matchId!,
+        expectedEndTimeDate: new Date(addMillisecondsToUTC(snookerScoring.startTimeDate!, 30 * 60 * 1000)),
+      });
+      setTimeLeft(30 * 60);
+      startTimer();
+
+
+      setShowLoadingModal(false);
+    }
+    setShowTimeModal(false);
+  };
+
   return {
     snookerScoring,
     clubs,
@@ -502,7 +529,10 @@ const useSnookerScoring = () => {
     setShowConcedeFrameDrawer,
     loading,
     handleEndFrameButton,
-    teamActiveSetPoints
+    teamActiveSetPoints,
+    onBackInPlayerSelectModal,
+    showTimerModal,
+    handleTimerButtonAction,
   };
 };
 

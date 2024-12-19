@@ -40,14 +40,18 @@ export function VideoControls(props: VideoControlsProps) {
           />
         </div>
 
-        <div className='flex'>
-          <Button className={clsx('p-1 h-auto text-sm font-bold', {
-            'bg-red-500 text-white': props.isStreamLive,
-            'bg-red-500/30 text-white': !props.isStreamLive
-          })}>
-            LIVE
-          </Button>
-        </div>
+        {props.isMatchTypeLive && (
+          <div className="flex">
+            <Button
+              className={clsx('p-1 h-auto text-sm font-bold', {
+                'bg-red-500 text-white': props.isStreamLive,
+                'bg-red-500/30 text-white': !props.isStreamLive,
+              })}
+            >
+              LIVE
+            </Button>
+          </div>
+        )}
 
         <div className="flex gap-4">
           <div onClick={props.onMuteUnmuteClick} className="p-2 cursor-pointer">

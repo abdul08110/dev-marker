@@ -21,11 +21,11 @@ import useStartMatch from '@/api/app/useStartMatch';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import React, { useEffect } from 'react';
 import useTimer from './useTimer';
-import { getTimeLeftInMinutes } from '@/utils/functions';
+import { addMillisecondsToUTC, getTimeLeftInMinutes } from '@/utils/functions';
 import { toast } from '@/components/ui/use-toast';
 import { getActiveSet, getActiveTeam, getActiveTurn } from '@/stores/selectors/commonSport';
 import { BilliardPointType, Player } from '@/stores/types';
-import { matchEndGameRequest } from '@/api/scoring/scoringFunctions';
+import { matchEndGameRequest, matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@/stores/selectors/billiardsSelector';
 import { BilliardsPracticeSettingsData } from '@/components/forms/app/billiardsPracticeSettings';
 import { BilliardsScoringButtonEnum } from '@/components/sections/scoring/billiardsScoringButton';
@@ -74,10 +74,11 @@ const useBilliardsScoring = () => {
   const [showBallColorModal, setShowBallColorModal] = React.useState(false);
   const [showMenuDrawer, setShowMenuDrawer] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [showTimerModal, setShowTimeModal] = React.useState(false);
 
   // TIMER HOOKS
   const { timeLeft, startTimer, setTimeLeft } = useTimer(billiardsScoring.timeInMinutes, () => {
-    // Logic to handle when timer completes
+    setShowTimeModal(true);
   });
 
   useEffect(() => {
@@ -206,6 +207,14 @@ const useBilliardsScoring = () => {
     }
   };
 
+  const onBackInPlayerSelectModal = async () => {
+    if (billiardsScoring.team1.players[0].id !== null) {
+      setSelectedTeamIndex(0);
+      setSelectedPlayerIndex(0);
+      setOpenPlayerSelectCard(true);
+    }
+  };
+
   const handleSettingsUpdate = async (values: BilliardsPracticeSettingsData) => {
     await dispatch(handleSettingsStateUpdateBilliards(values));
     setOpenSettingsDrawer(false);
@@ -239,6 +248,23 @@ const useBilliardsScoring = () => {
     }
 
     setShowLoadingModal(false);
+  };
+
+  const handleTimerButtonAction = async (state: 'CONFIRM' | 'CANCEL') => {
+    if (state === 'CONFIRM') {
+      setShowLoadingModal(true);
+
+      await matchResetTimerRequest({
+        matchId: billiardsScoring.matchId!,
+        expectedEndTimeDate: new Date(addMillisecondsToUTC(billiardsScoring.startTimeDate!, 30 * 60 * 1000)),
+      });
+      setTimeLeft(30 * 60);
+      startTimer();
+
+      setShowLoadingModal(false);
+    }
+
+    setShowTimeModal(false);
   };
 
   const handleBilliardsSelectColorBall = async (type: 'white' | 'yellow') => {
@@ -353,6 +379,9 @@ const useBilliardsScoring = () => {
     team2score,
     handleBilliardsSelectColorBall,
     handleEndFrameButton,
+    onBackInPlayerSelectModal,
+    showTimerModal,
+    handleTimerButtonAction,
   };
 };
 

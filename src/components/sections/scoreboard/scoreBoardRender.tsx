@@ -83,7 +83,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
                 'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
               })}
             >
-              <span>{props.state.teamOneScore}</span> <span>({props.state.sets.length})</span>{' '}
+              <span>{props.state.teamOneScore}</span>{' '}
               <span>{props.state.teamTwoScore}</span>
             </strong>
           </div>

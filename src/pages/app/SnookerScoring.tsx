@@ -25,6 +25,7 @@ import { SnookerScoreCorrectionDrawer } from '@/components/modals/snookerCorrect
 import { getNumberOfRedsFromFormat } from '@/stores/selectors/snookerSelector';
 import { SnookerScoreConcedeFrameDrawer } from '@/components/modals/snookerConcedeFrameDrawer';
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
+import { TimerContinueModal } from '@/components/modals/timerContinueModal';
 
 export function SnookerScoring() {
   const {
@@ -46,7 +47,6 @@ export function SnookerScoring() {
     handleGoToHome,
     team1score,
     team2score,
-    activeTurnPointTypes,
     activeTurnPointScore,
     posnScores,
     team1HighestTurnScores,
@@ -81,7 +81,10 @@ export function SnookerScoring() {
     setShowConcedeFrameDrawer,
     loading,
     handleEndFrameButton,
-    teamActiveSetPoints
+    teamActiveSetPoints,
+    onBackInPlayerSelectModal,
+    showTimerModal,
+    handleTimerButtonAction,
   } = useSnookerScoring();
 
   // PARENT UI
@@ -157,6 +160,11 @@ export function SnookerScoring() {
                     selectedTeamIndex,
                     selectedPlayerIndex,
                   )}
+                  showCancel={
+                    snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id !== null
+                  }
+                  showBack={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id === null}
+                  onBack={() => onBackInPlayerSelectModal()}
                 />
                 <PlayerOrderSelectModal
                   isModalOpen={showPlayerOrderModal}
@@ -197,6 +205,11 @@ export function SnookerScoring() {
                   onSubmit={handleConcedeFrameSelection}
                   teamOne={snookerScoring.team1.players}
                   teamTwo={snookerScoring.team2.players}
+                />
+                <TimerContinueModal
+                  isModalOpen={showTimerModal}
+                  onCancel={() => handleTimerButtonAction('CANCEL')}
+                  onContinue={() => handleTimerButtonAction('CONFIRM')}
                 />
               </div>
             </TabsContent>

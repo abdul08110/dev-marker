@@ -4,6 +4,7 @@ import { BilliardsPracticeSettingsDrawer } from '@/components/modals/billiardsPr
 import { BilliardsBallSelectorModal } from '@/components/modals/billiardsSetColorModal';
 import { ScoreUpdateLoadingModal } from '@/components/modals/scoreUpdateLoading';
 import { SelectPlayerDrawer } from '@/components/modals/selectPlayerDrawer';
+import { TimerContinueModal } from '@/components/modals/timerContinueModal';
 import { BilliardsScoringButtons } from '@/components/sections/scoring/billiardsScoringButton';
 import { OnlineOfflineIndicator } from '@/components/sections/scoring/onlineOfflineIndicator';
 import { PlayerTeamManager } from '@/components/sections/scoring/playerTeamManager';
@@ -46,6 +47,9 @@ export function BilliardsScoring() {
     showBallColorModal,
     handleBilliardsSelectColorBall,
     handleEndFrameButton,
+    onBackInPlayerSelectModal,
+    showTimerModal,
+    handleTimerButtonAction,
   } = useBilliardsScoring();
 
   // PARENT UI
@@ -85,7 +89,10 @@ export function BilliardsScoring() {
             <PlayerTeamManager
               onPlayerButtonClick={handlePlayerSelect}
               activeTurnScore={activeTurnPointScore}
-              activeTurnPointTypes={null}
+              activeTurnPointTypes={{
+                teamOne: [],
+                teamTwo: [],
+              }}
               team1SetScore={team1score}
               team2SetScore={team2score}
               onTeamClick={handleTeamClick}
@@ -120,6 +127,11 @@ export function BilliardsScoring() {
                 selectedTeamIndex,
                 selectedPlayerIndex,
               )}
+              showCancel={
+                billiardsScoring.team1.players[0].id !== null && billiardsScoring.team2.players[0].id !== null
+              }
+              showBack={billiardsScoring.team1.players[0].id !== null && billiardsScoring.team2.players[0].id === null}
+              onBack={() => onBackInPlayerSelectModal()}
             />
 
             <BilliardsPracticeSettingsDrawer
@@ -130,6 +142,11 @@ export function BilliardsScoring() {
             <BilliardsBallSelectorModal
               isModalOpen={showBallColorModal}
               handleButtonUpdate={handleBilliardsSelectColorBall}
+            />
+            <TimerContinueModal
+              isModalOpen={showTimerModal}
+              onCancel={() => handleTimerButtonAction('CANCEL')}
+              onContinue={() => handleTimerButtonAction('CONFIRM')}
             />
           </div>
         </section>

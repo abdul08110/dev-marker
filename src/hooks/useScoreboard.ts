@@ -30,11 +30,12 @@ export interface ScoreBoardState {
   tournamentTeamTwoScore: number | null;
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
-  isTeamOneHandicapApplied?: boolean,
-  isTeamTwoHandicapApplied?: boolean,
+  isTeamOneHandicapApplied?: boolean;
+  isTeamTwoHandicapApplied?: boolean;
   maxScorePerSet: number | null;
   tournamentTeamOneName: string | null;
   tournamentTeamTwoName: string | null;
+  actualStartTimeDate: string;
 }
 
 const useScoreboard = () => {
@@ -69,6 +70,7 @@ const useScoreboard = () => {
       `${clubs.activeClub.venueId}/send-data`,
       `${clubs.activeClub.venueId}/match-start`,
       `${clubs.activeClub.venueId}/match-end`,
+      `${clubs.activeClub.venueId}/timer-updated`,
     ];
 
     const connectToMqtt = () => {
@@ -146,7 +148,8 @@ const useScoreboard = () => {
             isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
             maxScorePerSet: res.maxScorePerSet,
             tournamentTeamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
-            tournamentTeamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null
+            tournamentTeamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
+            actualStartTimeDate: res.actualStartTimeDate,
           });
 
           setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
@@ -191,7 +194,7 @@ const useScoreboard = () => {
             teamTwoScore: parsedMessage.teamTwoScore,
             sets: updatedSets,
             isTeamOneHandicapApplied: parsedMessage.isTeamOneHandicapApplied,
-            isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied
+            isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied,
           };
         });
         break;
@@ -202,6 +205,11 @@ const useScoreboard = () => {
       case 'match-end':
         setScoreboardData(null);
         navigate('/app/scoreboard');
+        break;
+      case 'timer-updated':
+        const newExpectedEndDateTime = parsedMessage.expectedEndTimeDate;
+        setTimeLeft(Math.round(getTimeLeftInMinutes(newExpectedEndDateTime) * 60));
+        startTimer();
         break;
     }
   };
