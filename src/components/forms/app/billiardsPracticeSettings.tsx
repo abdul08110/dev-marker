@@ -39,7 +39,7 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
       durationInMinutes: '30:00',
       noOfFrames: 1,
       maxPointsPerFrame: 1,
-      streaming: 'PUBLIC',
+      streaming: 'PRIVATE',
       handicap: 0,
     },
   });

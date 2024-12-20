@@ -143,7 +143,7 @@ const sportSlice = createSlice({
           score: 0,
         },
         handicap: 0,
-        streaming: 'PUBLIC',
+        streaming: 'PRIVATE',
         timeInMinutes: 30,
         scoreHistory: [],
         startTimeDate: null,
