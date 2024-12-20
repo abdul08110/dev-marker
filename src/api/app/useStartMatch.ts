@@ -25,6 +25,7 @@ interface MatchStartDataProps {
     tournamentTeamTwoScore?: number,
     teamOneHandicap?: number,
     teamTwoHandicap?: number,
+    format?: string,
 }
 
 interface MatchStartResponse {
