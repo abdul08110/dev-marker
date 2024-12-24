@@ -30,7 +30,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
         <div
           className={clsx('absolute  left-1/2 transform -translate-x-1/2  z-40 flex justify-center items-center', {
             '-rotate-90 bottom-24': props.orientation === 'portrait',
-            'top-1/2 -translate-y-1/2': props.orientation === 'landscape',
+            'top-40 -translate-y-1/2': props.orientation === 'landscape',
           })}
         >
           <div className="bg-[#2D2D2D] p-2 border border-white rounded-xl flex flex-col justify-center items-center">

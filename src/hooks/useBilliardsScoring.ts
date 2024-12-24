@@ -29,6 +29,7 @@ import { matchEndGameRequest, matchResetTimerRequest } from '@/api/scoring/scori
 import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@/stores/selectors/billiardsSelector';
 import { BilliardsPracticeSettingsData } from '@/components/forms/app/billiardsPracticeSettings';
 import { BilliardsScoringButtonEnum } from '@/components/sections/scoring/billiardsScoringButton';
+import { updateTimeInMinutes } from '@/stores/slices/sportSlice';
 
 const useBilliardsScoring = () => {
   // REDUX STATE
@@ -263,6 +264,8 @@ const useBilliardsScoring = () => {
       });
       setTimeLeft(30 * 60);
       startTimer();
+
+      dispatch(updateTimeInMinutes({ timeInMinutes: billiardsScoring.timeInMinutes + 30 }));
 
       setShowLoadingModal(false);
     } else {

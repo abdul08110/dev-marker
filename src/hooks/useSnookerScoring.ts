@@ -46,6 +46,7 @@ import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC, getTimeLeftInMinutes } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
+import { updateTimeInMinutes } from '@/stores/slices/sportSlice';
 
 const useSnookerScoring = () => {
   // REDUX STATE
@@ -482,10 +483,14 @@ const useSnookerScoring = () => {
 
       await matchResetTimerRequest({
         matchId: snookerScoring.matchId!,
-        expectedEndTimeDate: new Date(addMillisecondsToUTC(snookerScoring.startTimeDate!, 30 * 60 * 1000)),
+        expectedEndTimeDate: new Date(
+          addMillisecondsToUTC(snookerScoring.startTimeDate!, (snookerScoring.timeInMinutes + 30) * 60 * 1000),
+        ),
       });
       setTimeLeft(30 * 60);
       startTimer();
+
+      dispatch(updateTimeInMinutes({ timeInMinutes: snookerScoring.timeInMinutes + 30 }));
 
       setShowLoadingModal(false);
     } else {
