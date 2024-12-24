@@ -46,7 +46,6 @@ import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC, getTimeLeftInMinutes } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
-import { updateTimeInMinutes } from '@/stores/slices/sportSlice';
 
 const useSnookerScoring = () => {
   // REDUX STATE

@@ -695,7 +695,7 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
 
       await dispatch(changeBackendUpdatedState({ value: true }));
 
-      const res = await matchUpdateDataRequest({
+      await matchUpdateDataRequest({
         matchId: state.sport.matchId!,
         activePlayerId: activePlayer ? activePlayer.id : null,
         sets: state.sport.scoreHistory,
