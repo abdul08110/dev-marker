@@ -6,6 +6,7 @@ interface SnookerPointTypeDisplayProps {
   activeTurnPointTypes: SnookerPointType[][];
   class?: string;
   isBig: boolean;
+  rotateBalls?: boolean;
 }
 
 export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
@@ -53,6 +54,9 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
                 key={pointIndex}
                 className={clsx(
                   'rounded-full text-white flex justify-center items-center font-bold',
+                  {
+                    'rotate-90': props.rotateBalls && props.rotateBalls === true,
+                  },
                   pointTypeToColorClass[pointType],
                   `${props.isBig ? 'h-8 w-8' : 'h-4 w-4'}`,
                 )}
@@ -65,6 +69,7 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
                 className={clsx('text-white', {
                   'text-xl': props.isBig,
                   'text-base': !props.isBig,
+                  
                 })}
               >
                 /

@@ -167,18 +167,21 @@ const useSnookerScoring = () => {
     }
   };
 
-  const snookerSportTypeToFormat = (data: "SNOOKER_15_RED" | "SNOOKER_10_RED" | "SNOOKER_6_RED" | "BILLIARDS_RACE_TO" | "BILLIARDS_TIME_BASED", isCumulativeScoring: boolean) => {
+  const snookerSportTypeToFormat = (
+    data: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED',
+    isCumulativeScoring: boolean,
+  ) => {
     switch (data) {
       case 'SNOOKER_10_RED':
-        return(`10 REDS${isCumulativeScoring ? ' CUMULATIVE': ''}`);
+        return `10 REDS${isCumulativeScoring ? ' CUMULATIVE' : ''}`;
       case 'SNOOKER_15_RED':
-        return(`15 REDS${isCumulativeScoring ? ' CUMULATIVE': ''}`);
+        return `15 REDS${isCumulativeScoring ? ' CUMULATIVE' : ''}`;
       case 'SNOOKER_6_RED':
-        return(`6 REDS${isCumulativeScoring ? ' CUMULATIVE': ''}`);
+        return `6 REDS${isCumulativeScoring ? ' CUMULATIVE' : ''}`;
       default:
-        return(`15 REDS${isCumulativeScoring ? ' CUMULATIVE': ''}`);
+        return `15 REDS${isCumulativeScoring ? ' CUMULATIVE' : ''}`;
     }
-  }
+  };
 
   const handleMatchCreation = async (playerOrder: string[]) => {
     let isTeamReveresed = false;
@@ -228,7 +231,7 @@ const useSnookerScoring = () => {
       tournamentTeamTwoScore: snookerScoring.tournamentTeamTwoScore ? snookerScoring.tournamentTeamTwoScore : undefined,
       teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
-      format: snookerSportTypeToFormat(snookerScoring.format, snookerScoring.isCumulativeScoring)
+      format: snookerSportTypeToFormat(snookerScoring.format, snookerScoring.isCumulativeScoring),
     });
 
     if (matchId) {
@@ -434,7 +437,10 @@ const useSnookerScoring = () => {
       await dispatch(handleEndFrame({ updateUndoStack: true }));
     }
 
-    const res = await matchEndGameRequest({ id: snookerScoring.matchId! });
+    const res = await matchEndGameRequest({
+      matchId: snookerScoring.matchId!,
+      teamWinningIndex: snookerScoring.team1Score > snookerScoring.team2Score ? 0 : 1,
+    });
     if (res === true) {
       await handleGoToHome();
     }
@@ -481,8 +487,9 @@ const useSnookerScoring = () => {
       setTimeLeft(30 * 60);
       startTimer();
 
-
       setShowLoadingModal(false);
+    } else {
+      await handleEndGame();
     }
     setShowTimeModal(false);
   };

@@ -118,7 +118,7 @@ export function StreamContainer(props: StreamContainerProps) {
                     teamTwoScore={props.state.teamTwoScore}
                   />
                 ) : (
-                  <GeneralTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} />
+                  <GeneralTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} timeLeft={props.timeLeft} />
                 ))}
               {props.state.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && isOverlayEnabled && (
                 <SourceWithFinalScores state={props.state} />

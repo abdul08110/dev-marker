@@ -69,21 +69,21 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
       {props.state.tournamentId === null ? (
         <div
           className={clsx(
-            'absolute left-1/2 transform -translate-x-1/2 top-[12%] z-40 flex justify-center items-center',
+            'absolute left-1/2 transform -translate-x-1/2 z-40 flex justify-center items-center',
             {
               '-rotate-90 -top-14': props.orientation === 'portrait',
-              'top-[12%]': props.orientation === 'landscape',
+              'bottom-[5.5rem]': props.orientation === 'landscape',
             },
           )}
         >
           <div className="bg-[#2D2D2D] p-2 border border-white rounded-xl flex flex-col justify-center items-center">
             <strong
               className={clsx('text-center text-white leading-[1]', {
-                'text-4xl': props.orientation === 'landscape',
+                'text-6xl': props.orientation === 'landscape',
                 'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
               })}
             >
-              <span>{props.state.teamOneScore}</span>{' '}
+              <span>{props.state.teamOneScore}</span>{' - '}
               <span>{props.state.teamTwoScore}</span>
             </strong>
           </div>

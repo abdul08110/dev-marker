@@ -5,6 +5,7 @@ interface GeneralTemplateProps {
   state: StreamingState;
   activeTurn: Turn | null;
   activeSet: Set | undefined;
+  timeLeft: number;
 }
 
 export function GeneralTemplate(props: GeneralTemplateProps) {
@@ -103,7 +104,7 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
                     {' '}
                     <span className="xl:text-3xl lg:text-xl text-base text-white">
                       <span className={'font-bold'}>{props.activeSet ? props.state.teamOneScore : 0}</span>
-                      &nbsp;({props.state.maxScorePerSet} UP)&nbsp;
+                      &nbsp;({props.timeLeft})&nbsp;
                       <span className={'font-bold'}>{props.activeSet ? props.state.teamTwoScore : 0}</span>
                     </span>
                   </div>

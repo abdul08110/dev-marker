@@ -23,6 +23,11 @@ interface MatchUpdateDataProps {
   isTeamTwoHandicapApplied?: boolean;
 }
 
+interface MarkerEndGameProps {
+  matchId: string;
+  teamWinningIndex: number;
+}
+
 interface MatchResetTimerRequestProps {
   matchId: string;
   expectedEndTimeDate: Date;
@@ -51,10 +56,10 @@ export const matchUpdateDataRequest = async (props: MatchUpdateDataProps): Promi
   }
 };
 
-export const matchEndGameRequest = async (props: MatchPlayerReverseProps): Promise<boolean | null> => {
+export const matchEndGameRequest = async (props: MarkerEndGameProps): Promise<boolean | null> => {
   try {
     await handleApiResponse(
-      axiosInstance.get<ApiResponse<MatchReversePlayersResponse>>(`match/marker/end-game/${props.id}/`),
+      axiosInstance.post<ApiResponse<MatchReversePlayersResponse>>(`match/marker/end-game`, props),
     );
 
     return true;

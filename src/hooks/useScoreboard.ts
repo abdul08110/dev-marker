@@ -43,14 +43,17 @@ const useScoreboard = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchParamsMatchId = searchParams.get('matchId');
-  const { timeLeft, startTimer, setTimeLeft } = useTimer(30, () => {
-    // Logic to handle when timer completes
-  });
+ 
   const getLiveMatchHook = useGetMatchLiveData();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [scoreBoardData, setScoreboardData] = React.useState<ScoreBoardState | null>(null);
   const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('landscape');
+  const [showTimeOverAlert, setShowTimeOverAlert] = React.useState<boolean>(false);
   const { rotateBody } = useBodyRotation();
+
+  const { timeLeft, startTimer, setTimeLeft } = useTimer(30, () => {
+    setShowTimeOverAlert(true);
+  });
 
   useEffect(() => {
     fetchMatchData(searchParamsMatchId);
@@ -209,6 +212,7 @@ const useScoreboard = () => {
       case 'timer-updated':
         const newExpectedEndDateTime = parsedMessage.expectedEndTimeDate;
         setTimeLeft(Math.round(getTimeLeftInMinutes(newExpectedEndDateTime) * 60));
+        setShowTimeOverAlert(false);
         startTimer();
         break;
     }
@@ -221,6 +225,7 @@ const useScoreboard = () => {
     orientation,
     setOrientation,
     rotateBody,
+    showTimeOverAlert
   };
 };
 

@@ -96,15 +96,18 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         <div
           className={clsx({
             'h-[20%]': props.contentfrom === 'top',
-            'w-[20%] h-full flex justify-center items-center': props.contentfrom === 'left',
+            'w-[20%] h-full flex justify-center items-center rotate-180': props.contentfrom === 'left',
           })}
         >
           {props.sport === 'SNOOKER' && props.teamTurns ? (
-            <SnookerPointTypeDisplay
-              isBig={true}
-              class={clsx({ 'flex-col': props.contentfrom === 'left' })}
-              activeTurnPointTypes={getSnookerPointTypesByTurns(props.teamTurns)}
-            />
+            <div className="w-full">
+              <SnookerPointTypeDisplay
+                isBig={true}
+                class={clsx({ 'flex-col': props.contentfrom === 'left' })}
+                activeTurnPointTypes={getSnookerPointTypesByTurns(props.teamTurns)}
+                rotateBalls={props.contentfrom === 'left'}
+              />
+            </div>
           ) : (
             <div className="h-full w-full"></div>
           )}
@@ -173,11 +176,18 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
               <></>
             )}
             <span
-              className={clsx({
-                '-rotate-90 inline-block whitespace-nowrap': props.contentfrom === 'left',
-              })}
+              className={clsx(
+                {
+                  '-rotate-90 inline-block whitespace-nowrap': props.contentfrom === 'left',
+                },
+                'text-center',
+              )}
             >
-              <span>{props.playerOne.name}</span>{' '}
+              <span>
+                {props.playerOne.name.split(' ')[0]}
+                <br />
+                {props.playerOne.name.split(' ')[1] !== undefined ? props.playerOne.name.split(' ')[1] : <span>&nbsp;&nbsp;&nbsp;</span>}
+              </span>
               <span className={props.isHandicapApplied === true ? 'line-through' : ''}>
                 {props.teamHandicap ? `${props.teamHandicap}` : ''}
               </span>
@@ -209,7 +219,12 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             ) : (
               <></>
             )}
-            <span>{props.playerTwo.name}</span> {props.teamHandicap ? `+ ${props.teamHandicap}` : ''}
+            <span>
+              {props.playerTwo.name.split(' ')[0]}
+              <br />
+              {props.playerTwo.name.split(' ')[1]}
+            </span>{' '}
+            {props.teamHandicap ? `+ ${props.teamHandicap}` : ''}
           </div>
         ) : (
           <></>

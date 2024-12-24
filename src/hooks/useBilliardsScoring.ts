@@ -242,7 +242,10 @@ const useBilliardsScoring = () => {
       await dispatch(handleEndFrame({ updateUndoStack: true }));
     }
 
-    const res = await matchEndGameRequest({ id: billiardsScoring.matchId! });
+    const res = await matchEndGameRequest({
+      matchId: billiardsScoring.matchId!,
+      teamWinningIndex: billiardsScoring.team1Score > billiardsScoring.team2Score ? 0 : 1,
+    });
     if (res === true) {
       await handleGoToHome();
     }
@@ -262,6 +265,8 @@ const useBilliardsScoring = () => {
       startTimer();
 
       setShowLoadingModal(false);
+    } else {
+      await handleEndGame();
     }
 
     setShowTimeModal(false);

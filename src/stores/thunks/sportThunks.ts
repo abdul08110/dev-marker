@@ -698,7 +698,7 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
         activePlayerId: activePlayer ? activePlayer.id : null,
         sets: state.sport.scoreHistory,
         teamOneScore: state.sport.team1Score ? state.sport.team1Score : 0,
-        teamTwoScore: state.sport.team2Score ? state.sport.team1Score : 0,
+        teamTwoScore: state.sport.team2Score ? state.sport.team2Score : 0,
         currentSetTeamOneScore: activeSet && activeSet.teamOneScore ? activeSet.teamOneScore : 0,
         currentSetTeamTwoScore: activeSet && activeSet.teamOneScore ? activeSet.teamTwoScore : 0,
         isTeamOneHandicapApplied: state.sport.isTeamOneHandicapApplied,

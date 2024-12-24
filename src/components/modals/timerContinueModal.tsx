@@ -42,7 +42,7 @@ export function TimerContinueModal(props: TimerContinueModalProps) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={props.onCancel}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={props.onCancel}>EndGame</AlertDialogCancel>
           <AlertDialogAction onClick={props.onContinue}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
