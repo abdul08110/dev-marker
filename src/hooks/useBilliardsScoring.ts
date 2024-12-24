@@ -265,8 +265,6 @@ const useBilliardsScoring = () => {
       setTimeLeft(30 * 60);
       startTimer();
 
-      dispatch(updateTimeInMinutes({ timeInMinutes: billiardsScoring.timeInMinutes + 30 }));
-
       setShowLoadingModal(false);
     } else {
       await handleEndGame();

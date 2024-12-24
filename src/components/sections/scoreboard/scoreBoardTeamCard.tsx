@@ -186,7 +186,11 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
               <span>
                 {props.playerOne.name.split(' ')[0]}
                 <br />
-                {props.playerOne.name.split(' ')[1] !== undefined ? props.playerOne.name.split(' ')[1] : <span>&nbsp;&nbsp;&nbsp;</span>}
+                {props.playerOne.name.split(' ').length > 1 ? (
+                  props.playerOne.name.split(' ')[props.playerOne.name.split(' ').length - 1]
+                ) : (
+                  <span>&nbsp;&nbsp;&nbsp;</span>
+                )}
               </span>
               <span className={props.isHandicapApplied === true ? 'line-through' : ''}>
                 {props.teamHandicap ? `${props.teamHandicap}` : ''}

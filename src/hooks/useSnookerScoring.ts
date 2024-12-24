@@ -490,8 +490,6 @@ const useSnookerScoring = () => {
       setTimeLeft(30 * 60);
       startTimer();
 
-      dispatch(updateTimeInMinutes({ timeInMinutes: snookerScoring.timeInMinutes + 30 }));
-
       setShowLoadingModal(false);
     } else {
       await handleEndGame();

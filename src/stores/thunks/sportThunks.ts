@@ -693,6 +693,8 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
       const activePlayer = getActivePlayer(state.sport.team1, state.sport.team2);
       const activeSet = getActiveSet(state.sport.scoreHistory);
 
+      await dispatch(changeBackendUpdatedState({ value: true }));
+
       const res = await matchUpdateDataRequest({
         matchId: state.sport.matchId!,
         activePlayerId: activePlayer ? activePlayer.id : null,
@@ -705,9 +707,9 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
         isTeamTwoHandicapApplied: state.sport.isTeamTwoHandicapApplied,
       });
 
-      if (res === true) {
-        await dispatch(changeBackendUpdatedState({ value: true }));
-      }
+      // if (res === true) {
+      //   await dispatch(changeBackendUpdatedState({ value: true }));
+      // }
     }
   },
 );
