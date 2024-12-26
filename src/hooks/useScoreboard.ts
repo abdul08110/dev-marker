@@ -210,8 +210,10 @@ const useScoreboard = () => {
         navigate('/app/scoreboard');
         break;
       case 'timer-updated':
+        console.log('timer should be updated now');
         const newExpectedEndDateTime = parsedMessage.expectedEndTimeDate;
         setTimeLeft(Math.round(getTimeLeftInMinutes(newExpectedEndDateTime) * 60));
+        console.log('im removing the alert for the timer');
         setShowTimeOverAlert(false);
         startTimer();
         break;
