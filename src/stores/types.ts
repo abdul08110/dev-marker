@@ -125,6 +125,7 @@ export interface GeneralScoringState {
   tournamentTeamTwoScore: number | null;
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
+  expectedEndTimeDate: string | null;
 }
 
 

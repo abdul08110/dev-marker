@@ -87,3 +87,9 @@ export const getDurationInMilliseconds = (startTimeUtc: string) => {
 
   return durationInMs;
 };
+
+export const addMinutesToDate = (minutes: number) => {
+  const date = new Date();
+  date.setMinutes(date.getMinutes() + minutes);
+  return date.toISOString();
+}

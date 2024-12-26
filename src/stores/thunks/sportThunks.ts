@@ -1,5 +1,5 @@
 /**
- * SNOOKER STATE ASYNC HANDLER FOR STATE DISPATCH FUNCTIONS
+ * SPORT STATE ASYNC HANDLER FOR STATE DISPATCH FUNCTIONS
  */
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -32,6 +32,7 @@ import {
   updateNoOfSets,
   updateMaxScorePerSet,
   updateTeamHandicapApplied,
+  setExpectedEndTimeDate,
 } from '../slices/sportSlice';
 import { BilliardPointType, Player, SnookerPointType } from '../types';
 import {
@@ -44,7 +45,7 @@ import {
   getNumberAhead,
   getNumberOnTableOfTheCurrentFrame,
 } from '../selectors/snookerSelector';
-import { getTimeInMinutes, timeStringToDecimalMinutes } from '@/utils/functions';
+import { addMinutesToDate, getTimeInMinutes, timeStringToDecimalMinutes } from '@/utils/functions';
 import {
   getActivePlayer,
   getActiveSet,
@@ -134,6 +135,7 @@ export const setStateTournament = createAsyncThunk<
     teamTwoHandicap: Number(data.teamTwoHandicap) * -1,
     isTeamOneHandicapApplied: false,
     isTeamTwoHandicapApplied: false,
+    expectedEndTimeDate: null,
   };
 
   await dispatch(
@@ -179,7 +181,9 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       },
       handicap: data.handicap,
       streaming: data.streamingType,
-      timeInMinutes: data.expectedEndTimeDate ? getTimeInMinutes(data.actualStartTimeDate, data.expectedEndTimeDate) : 0,
+      timeInMinutes: data.expectedEndTimeDate
+        ? getTimeInMinutes(data.actualStartTimeDate, data.expectedEndTimeDate)
+        : 0,
       scoreHistory: data.sets,
       startTimeDate: data.actualStartTimeDate,
       noOfSets: data.noOfSets,
@@ -194,6 +198,7 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       teamTwoHandicap: data.teamTwoHandicap ? data.teamTwoHandicap : null,
       isTeamOneHandicapApplied: data.isTeamOneHandicapApplied ? data.isTeamOneHandicapApplied : false,
       isTeamTwoHandicapApplied: data.isTeamTwoHandicapApplied ? data.isTeamTwoHandicapApplied : false,
+      expectedEndTimeDate: data.expectedEndTimeDate ? data.expectedEndTimeDate : null,
     };
 
     if (data.sideTwoPlayerTwo !== null) {
@@ -277,6 +282,7 @@ export const handleMatchStart = createAsyncThunk<
     }),
   );
   await dispatch(updateMatchStartedTimeDateUtc({ startTimeDate: new Date().toISOString() }));
+  await dispatch(setExpectedEndTimeDate({ expectedEndTimeDate: addMinutesToDate(state.sport.timeInMinutes) }));
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
 
@@ -607,7 +613,6 @@ export const handleSettingsStateUpdate = createAsyncThunk<
 >(
   'sport/handleSettingsUpdate',
   async ({ format, durationInMinutes, noOfPlayers, streaming, handicap }, { dispatch }) => {
-
     await dispatch(updateTimeInMinutes({ timeInMinutes: timeStringToDecimalMinutes(durationInMinutes) }));
     await dispatch(updateFormat({ format: format }));
     await dispatch(updateStreaming({ streaming }));

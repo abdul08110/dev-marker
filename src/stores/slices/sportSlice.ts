@@ -54,6 +54,7 @@ const initialState: GeneralScoringState = {
   teamTwoHandicap: null,
   isTeamOneHandicapApplied: false,
   isTeamTwoHandicapApplied: false,
+  expectedEndTimeDate: null,
 };
 
 const sportSlice = createSlice({
@@ -218,6 +219,9 @@ const sportSlice = createSlice({
     completeSet(state, action: PayloadAction<{ setIndex: number }>) {
       state.scoreHistory[action.payload.setIndex].status = 'COMPLETED';
     },
+    setExpectedEndTimeDate(state, action: PayloadAction< { expectedEndTimeDate: string }>) {
+      state.expectedEndTimeDate = action.payload.expectedEndTimeDate;
+    },
     changeSetStatus(state, action: PayloadAction<{ setIndex: number; status: 'COMPLETED' | 'ONGOING' | 'CONCEDED' }>) {
       state.scoreHistory[action.payload.setIndex].status = action.payload.status;
     },
@@ -357,5 +361,6 @@ export const {
   updateNoOfSets,
   updateMaxScorePerSet,
   updateTeamHandicapApplied,
+  setExpectedEndTimeDate
 } = sportSlice.actions;
 export default sportSlice.reducer;
