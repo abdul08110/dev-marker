@@ -29,6 +29,7 @@ import { matchEndGameRequest, matchResetTimerRequest } from '@/api/scoring/scori
 import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@/stores/selectors/billiardsSelector';
 import { BilliardsPracticeSettingsData } from '@/components/forms/app/billiardsPracticeSettings';
 import { BilliardsScoringButtonEnum } from '@/components/sections/scoring/billiardsScoringButton';
+import { setExpectedEndTimeDate } from '@/stores/slices/sportSlice';
 
 const useBilliardsScoring = () => {
   // REDUX STATE
@@ -257,10 +258,14 @@ const useBilliardsScoring = () => {
     if (state === 'CONFIRM') {
       setShowLoadingModal(true);
 
+      const newEndTimeDate = addMillisecondsToUTC(billiardsScoring.expectedEndTimeDate!, 30 * 60 * 1000);
+
       await matchResetTimerRequest({
         matchId: billiardsScoring.matchId!,
-        expectedEndTimeDate: new Date(addMillisecondsToUTC(billiardsScoring.startTimeDate!, 30 * 60 * 1000)),
+        expectedEndTimeDate: new Date(newEndTimeDate),
       });
+
+      dispatch(setExpectedEndTimeDate({ expectedEndTimeDate: newEndTimeDate }));
       setTimeLeft(30 * 60);
       startTimer();
 
