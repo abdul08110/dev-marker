@@ -20,7 +20,6 @@ interface PlayersListProps {
 }
 
 export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: PlayersListProps) {
-    const [value, setValue] = React.useState<Player | null>(null);
     const [searchQuery, setSearchQuery] = React.useState<string>("");
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
     const { getPlayers, players, loading, error } = useGetPlayers();
@@ -44,10 +43,8 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
     };
 
     const handleSelect = (currentValue: string) => {
-        console.log(value);
         const player = players?.find(value => value.id === currentValue);
         if (player) {
-            setValue(player);
             onPlayerSelect(player);
         }
     };

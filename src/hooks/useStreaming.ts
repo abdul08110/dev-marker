@@ -5,7 +5,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Player, Set } from '@/stores/types';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useTimer from './useTimer';
-import { addMillisecondsToUTC, getTimeDifferenceInMinutes, getTimeLeftInMinutes } from '@/utils/functions';
+import { addMillisecondsToUTC } from '@/utils/functions';
 import { calculatePointsBySide, calculateTotalTeamScore } from '@/stores/selectors/commonSport';
 
 export interface StreamingState {
@@ -42,14 +42,14 @@ export interface StreamingState {
   teamTwoHandicap: number | null;
   handicap: number;
   maxScorePerSet: number | null;
-  isTeamOneHandicapApplied?: boolean,
-  isTeamTwoHandicapApplied?: boolean,
+  isTeamOneHandicapApplied?: boolean;
+  isTeamTwoHandicapApplied?: boolean;
   tournamentName: string | null;
   tournamentId: string | null;
   teamOneName: string | null;
   teamTwoName: string | null;
+  expectedEndTimeDate: string | null;
 }
-
 
 const useStreaming = (venueId?: string, matchId?: string) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,9 +58,13 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const getLiveMatchHook = useGetMatchLiveData();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
-  const { timeLeft, startTimer, setTimeLeft } = useTimer(0, () => {
-    // Logic to handle when timer completes
+  const timeLeft = useTimer({
+    endTime: streamingData && streamingData.expectedEndTimeDate ? new Date(streamingData.expectedEndTimeDate) : null,
+    startTime:
+      streamingData && streamingData.matchStatus === 'COMPLETED' ? new Date(streamingData.actualStartTimeDate) : null,
+    onTimerComplete: () => {},
   });
+
   const scoreCheckIntervalRef = useRef<number | null>(null);
   const streamingDataRef = useRef<StreamingState | null>(null);
   const timeLeftRef = useRef<number>(timeLeft);
@@ -165,16 +169,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentId: res.tournament ? res.tournament.id : null,
           teamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
           teamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
+          expectedEndTimeDate: res.expectedEndTimeDate ? res.expectedEndTimeDate : null,
         });
-
-        if (res.matchStatus === 'LIVE') {
-          if (res.expectedEndTimeDate) {
-            setTimeLeft(Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60));
-          }
-        } else if (res.matchStatus === 'COMPLETED') {
-          const timeDifference = getTimeDifferenceInMinutes(res.actualStartTimeDate, res.actualEndTimeDate!);
-          setTimeLeft(timeDifference * 60);
-        }
 
         setViewershipData({
           matchId: matchId,
@@ -215,6 +211,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentId: res.tournament ? res.tournament.id : null,
           teamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
           teamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
+          expectedEndTimeDate: res.expectedEndTimeDate ? res.expectedEndTimeDate : null,
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -285,7 +282,6 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       case 'match-end':
         if (currentStreamingData!.streamType === StreamType.CLOUD_PROVIDER) {
           window.setTimeout(() => {
-            startTimer();
             setStreamingData(null);
             setViewershipData(null);
 
@@ -386,8 +382,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           sideOnePlayerTwo: currentStreamingData.sideOnePlayerTwo,
           sideTwoPlayerTwo: currentStreamingData.sideTwoPlayerTwo,
           activePlayerId: activePlayerId,
-          teamOneScore: currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side1 : totalTeamScores.side1,
-          teamTwoScore: currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side2 : totalTeamScores.side2,
+          teamOneScore:
+            currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side1 : totalTeamScores.side1,
+          teamTwoScore:
+            currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side2 : totalTeamScores.side2,
           sets: consideredSets,
           matchStatus: currentStreamingData.matchStatus,
           streamType: currentStreamingData.streamType,
@@ -416,7 +414,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentName: currentStreamingData.tournamentName,
           tournamentId: currentStreamingData.tournamentId,
           teamOneName: currentStreamingData.teamOneName,
-          teamTwoName: currentStreamingData.teamTwoName
+          teamTwoName: currentStreamingData.teamTwoName,
+          expectedEndTimeDate: currentStreamingData.expectedEndTimeDate,
         });
       }
     }

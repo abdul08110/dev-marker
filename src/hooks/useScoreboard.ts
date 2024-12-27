@@ -7,7 +7,6 @@ import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import useTimer from './useTimer';
 import { toast } from '@/components/ui/use-toast';
 import { Player, Set } from '@/stores/types';
-import { getTimeLeftInMinutes } from '@/utils/functions';
 import useBodyRotation from './useBodyRotation';
 
 export interface ScoreBoardState {
@@ -43,7 +42,7 @@ const useScoreboard = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchParamsMatchId = searchParams.get('matchId');
- 
+
   const getLiveMatchHook = useGetMatchLiveData();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [scoreBoardData, setScoreboardData] = React.useState<ScoreBoardState | null>(null);
@@ -51,8 +50,10 @@ const useScoreboard = () => {
   const [showTimeOverAlert, setShowTimeOverAlert] = React.useState<boolean>(false);
   const { rotateBody } = useBodyRotation();
 
-  const { timeLeft, startTimer, setTimeLeft } = useTimer(30, () => {
-    setShowTimeOverAlert(true);
+  const timeLeft = useTimer({
+    endTime:  scoreBoardData && scoreBoardData.expectedEndTimeDate ? new Date(scoreBoardData.expectedEndTimeDate) : null,
+    startTime: null,
+    onTimerComplete: () => {  setShowTimeOverAlert(true); },
   });
 
   useEffect(() => {
@@ -154,9 +155,6 @@ const useScoreboard = () => {
             tournamentTeamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
             actualStartTimeDate: res.actualStartTimeDate,
           });
-
-          setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
-          startTimer();
         } else {
           toast({
             title: 'Error',
@@ -212,10 +210,16 @@ const useScoreboard = () => {
       case 'timer-updated':
         console.log('timer should be updated now');
         const newExpectedEndDateTime = parsedMessage.expectedEndTimeDate;
-        setTimeLeft(Math.round(getTimeLeftInMinutes(newExpectedEndDateTime) * 60));
+        setScoreboardData((prevData) => {
+          if (prevData === null) return null;
+
+          return {
+            ...prevData,
+            expectedEndTimeDate: newExpectedEndDateTime,
+          };
+        });
         console.log('im removing the alert for the timer');
         setShowTimeOverAlert(false);
-        startTimer();
         break;
     }
   };
@@ -227,7 +231,7 @@ const useScoreboard = () => {
     orientation,
     setOrientation,
     rotateBody,
-    showTimeOverAlert
+    showTimeOverAlert,
   };
 };
 

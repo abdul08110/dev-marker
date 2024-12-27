@@ -43,7 +43,7 @@ import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFr
 import useInterval from './useInterval';
 import { matchEndGameRequest, matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
-import { addMillisecondsToUTC, getTimeLeftInMinutes } from '@/utils/functions';
+import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
 import { setExpectedEndTimeDate } from '@/stores/slices/sportSlice';
@@ -106,8 +106,14 @@ const useSnookerScoring = () => {
   const [showTimerModal, setShowTimeModal] = React.useState(false);
 
   // TIMER HOOKS
-  const { timeLeft, startTimer, setTimeLeft } = useTimer(snookerScoring.timeInMinutes, () => {
-    setShowTimeModal(true);
+  // const { timeLeft, startTimer, setTimeLeft } = useTimer(snookerScoring.timeInMinutes, () => {
+  //   setShowTimeModal(true);
+  // });
+
+  const timeLeft = useTimer({
+    endTime: snookerScoring.expectedEndTimeDate ? new Date(snookerScoring.expectedEndTimeDate) : null,
+    startTime: null,
+    onTimerComplete: () => { setShowTimeModal(true); },
   });
 
   useEffect(() => {
@@ -120,8 +126,6 @@ const useSnookerScoring = () => {
           if (res !== null) {
             setOpenPlayerSelectCard(false);
             await dispatch(matchSyncDataFromBackend({ data: res }));
-            setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
-            startTimer();
           } else {
             toast({
               title: 'Error',
@@ -197,12 +201,13 @@ const useSnookerScoring = () => {
     const teamTwoHandicap = isTeamReveresed ? snookerScoring.teamOneHandicap : snookerScoring.teamTwoHandicap;
 
     const currentDate = new Date();
+    const expectedEndTimeDate =
+      snookerScoring.timeInMinutes !== 0
+        ? new Date(currentDate.getTime() + snookerScoring.timeInMinutes * 60000)
+        : undefined;
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
-      expectedEndTimeDate:
-        snookerScoring.timeInMinutes !== 0
-          ? new Date(currentDate.getTime() + snookerScoring.timeInMinutes * 60000)
-          : undefined,
+      expectedEndTimeDate: expectedEndTimeDate,
       sideOnePlayerOneId: isTeamReveresed ? snookerScoring.team2.players[0].id! : snookerScoring.team1.players[0].id!,
       sideTwoPlayerOneId: isTeamReveresed ? snookerScoring.team1.players[0].id! : snookerScoring.team2.players[0].id!,
       sideOnePlayerTwoId:
@@ -240,9 +245,9 @@ const useSnookerScoring = () => {
         handleMatchStart({
           matchId,
           scoreOrder: playerOrder,
+          expectedEndTimeDate
         }),
       );
-      await startTimer();
     } else {
       toast({
         title: 'Error',
@@ -489,8 +494,6 @@ const useSnookerScoring = () => {
       });
 
       dispatch(setExpectedEndTimeDate({ expectedEndTimeDate: newEndTimeDate }));
-      setTimeLeft(30 * 60);
-      startTimer();
 
       setShowLoadingModal(false);
     } else {

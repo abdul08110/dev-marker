@@ -21,7 +21,7 @@ import useStartMatch from '@/api/app/useStartMatch';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import React, { useEffect } from 'react';
 import useTimer from './useTimer';
-import { addMillisecondsToUTC, getTimeLeftInMinutes } from '@/utils/functions';
+import { addMillisecondsToUTC } from '@/utils/functions';
 import { toast } from '@/components/ui/use-toast';
 import { getActiveSet, getActiveTeam, getActiveTurn } from '@/stores/selectors/commonSport';
 import { BilliardPointType, Player } from '@/stores/types';
@@ -78,8 +78,13 @@ const useBilliardsScoring = () => {
   const [showTimerModal, setShowTimeModal] = React.useState(false);
 
   // TIMER HOOKS
-  const { timeLeft, startTimer, setTimeLeft } = useTimer(billiardsScoring.timeInMinutes, () => {
-    setShowTimeModal(true);
+  // const { timeLeft, startTimer, setTimeLeft } = useTimer(billiardsScoring.timeInMinutes, () => {
+  //   setShowTimeModal(true);
+  // });
+  const timeLeft = useTimer({
+    endTime: billiardsScoring.expectedEndTimeDate ? new Date(billiardsScoring.expectedEndTimeDate) : null,
+    startTime: null,
+    onTimerComplete: () => { setShowTimeModal(true); },
   });
 
   useEffect(() => {
@@ -92,8 +97,6 @@ const useBilliardsScoring = () => {
           if (res !== null) {
             setOpenPlayerSelectCard(false);
             await dispatch(matchSyncDataFromBackend({ data: res }));
-            setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
-            startTimer();
           } else {
             toast({
               title: 'Error',
@@ -266,9 +269,6 @@ const useBilliardsScoring = () => {
       });
 
       dispatch(setExpectedEndTimeDate({ expectedEndTimeDate: newEndTimeDate }));
-      setTimeLeft(30 * 60);
-      startTimer();
-
       setShowLoadingModal(false);
     } else {
       await handleEndGame();
@@ -317,12 +317,13 @@ const useBilliardsScoring = () => {
       : billiardsScoring.tournamentTeamTwoId;
 
     const currentDate = new Date();
+    const expectedEndTimeDate =
+      billiardsScoring.timeInMinutes !== 0
+        ? new Date(currentDate.getTime() + billiardsScoring.timeInMinutes * 60000)
+        : undefined;
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
-      expectedEndTimeDate:
-        billiardsScoring.timeInMinutes !== 0
-          ? new Date(currentDate.getTime() + billiardsScoring.timeInMinutes * 60000)
-          : undefined,
+      expectedEndTimeDate: expectedEndTimeDate,
       sideOnePlayerOneId: isTeamReveresed
         ? billiardsScoring.team2.players[0].id!
         : billiardsScoring.team1.players[0].id!,
@@ -360,9 +361,9 @@ const useBilliardsScoring = () => {
         handleMatchStart({
           matchId,
           scoreOrder: isTeamReveresed ? [playerTwo, playerOne] : [playerOne, playerTwo],
+          expectedEndTimeDate,
         }),
       );
-      await startTimer();
     } else {
       toast({
         title: 'Error',

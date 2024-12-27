@@ -109,6 +109,7 @@ const sportSlice = createSlice({
         maxScorePerSet: null,
         isTeamOneHandicapApplied: false,
         isTeamTwoHandicapApplied: false,
+        expectedEndTimeDate: null,
       });
     },
     resetStateBilliards(state) {
@@ -152,6 +153,7 @@ const sportSlice = createSlice({
         maxScorePerSet: null,
         isTeamOneHandicapApplied: false,
         isTeamTwoHandicapApplied: false,
+        expectedEndTimeDate: null,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
@@ -219,7 +221,7 @@ const sportSlice = createSlice({
     completeSet(state, action: PayloadAction<{ setIndex: number }>) {
       state.scoreHistory[action.payload.setIndex].status = 'COMPLETED';
     },
-    setExpectedEndTimeDate(state, action: PayloadAction< { expectedEndTimeDate: string }>) {
+    setExpectedEndTimeDate(state, action: PayloadAction< { expectedEndTimeDate: string | null }>) {
       state.expectedEndTimeDate = action.payload.expectedEndTimeDate;
     },
     changeSetStatus(state, action: PayloadAction<{ setIndex: number; status: 'COMPLETED' | 'ONGOING' | 'CONCEDED' }>) {

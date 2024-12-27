@@ -20,7 +20,6 @@ export function TeamSelector(props: TeamSelectorProps) {
   }, [props.teams]);
 
   const handleSearchChange = (query: string) => {
-    console.log(query);
     setLoading(true);
     setSearchQuery(query);
     setDropdownVisible(query !== '');

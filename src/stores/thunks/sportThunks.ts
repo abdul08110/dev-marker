@@ -45,7 +45,7 @@ import {
   getNumberAhead,
   getNumberOnTableOfTheCurrentFrame,
 } from '../selectors/snookerSelector';
-import { addMinutesToDate, getTimeInMinutes, timeStringToDecimalMinutes } from '@/utils/functions';
+import { getTimeInMinutes, timeStringToDecimalMinutes } from '@/utils/functions';
 import {
   getActivePlayer,
   getActiveSet,
@@ -266,9 +266,9 @@ export const handleStartTournamentMatch = createAsyncThunk<
 
 export const handleMatchStart = createAsyncThunk<
   void,
-  { matchId: string; scoreOrder: string[] },
+  { matchId: string; scoreOrder: string[]; expectedEndTimeDate: Date | undefined },
   { state: RootState; dispatch: AppDispatch }
->('sport/handleMatchStart', async ({ matchId, scoreOrder }, { dispatch, getState }) => {
+>('sport/handleMatchStart', async ({ matchId, scoreOrder, expectedEndTimeDate }, { dispatch, getState }) => {
   const state = getState();
   const activePlayer = getActivePlayer(state.sport.team1, state.sport.team2);
   const activeTeam = getActiveTeam(state.sport.team1, state.sport.team2);
@@ -282,7 +282,9 @@ export const handleMatchStart = createAsyncThunk<
     }),
   );
   await dispatch(updateMatchStartedTimeDateUtc({ startTimeDate: new Date().toISOString() }));
-  await dispatch(setExpectedEndTimeDate({ expectedEndTimeDate: addMinutesToDate(state.sport.timeInMinutes) }));
+  await dispatch(
+    setExpectedEndTimeDate({ expectedEndTimeDate: expectedEndTimeDate ? expectedEndTimeDate.toISOString() : null }),
+  );
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
 
