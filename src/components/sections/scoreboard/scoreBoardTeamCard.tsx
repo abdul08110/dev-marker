@@ -103,7 +103,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             <div className="w-full">
               <SnookerPointTypeDisplay
                 isBig={true}
-                scaleBasedOnheight={true}
+                scaleBasedOnheight={props.contentfrom === 'top'}
                 class={clsx({ 'flex-col': props.contentfrom === 'left' })}
                 activeTurnPointTypes={getSnookerPointTypesByTurns(props.teamTurns)}
                 rotateBalls={props.contentfrom === 'left'}
