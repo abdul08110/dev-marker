@@ -201,14 +201,15 @@ const useScoreboard = () => {
         break;
       case 'match-start':
         const matchId = parsedMessage.matchId;
+        setShowTimeOverAlert(false);
         await fetchMatchData(matchId);
         break;
       case 'match-end':
         setScoreboardData(null);
         navigate('/app/scoreboard');
+        setShowTimeOverAlert(false);
         break;
       case 'timer-updated':
-        console.log('timer should be updated now');
         const newExpectedEndDateTime = parsedMessage.expectedEndTimeDate;
         setScoreboardData((prevData) => {
           if (prevData === null) return null;
@@ -218,7 +219,6 @@ const useScoreboard = () => {
             expectedEndTimeDate: newExpectedEndDateTime,
           };
         });
-        console.log('im removing the alert for the timer');
         setShowTimeOverAlert(false);
         break;
     }

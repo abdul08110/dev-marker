@@ -7,6 +7,7 @@ interface SnookerPointTypeDisplayProps {
   class?: string;
   isBig: boolean;
   rotateBalls?: boolean;
+  scaleBasedOnheight?: boolean;
 }
 
 export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
@@ -23,60 +24,70 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
     [SnookerPointType.PLAY_SAFE]: 'hidden',
   };
 
+  const flattenedPoints = props.activeTurnPointTypes.flatMap((turnPoints, turnIndex) => {
+    const visiblePoints = turnPoints.filter((pointType) => pointTypeToColorClass[pointType] !== 'hidden');
+
+    if (visiblePoints.length === 0) {
+      return [];
+    }
+
+    const points = visiblePoints.map((pointType) => ({
+      pointType,
+      turnIndex,
+      isSeparator: false,
+    }));
+
+    if (turnIndex !== props.activeTurnPointTypes.length - 1) {
+      return [...points, { isSeparator: true }];
+    }
+
+    return points;
+  });
+
   return (
     <div
-      className={clsx('w-full flex flex-wrap justify-center', props.class, {
+      className={clsx('w-full flex flex-wrap justify-center items-center', props.class, {
         'gap-2': props.isBig,
         'gap-1': !props.isBig,
+        'h-full': props.scaleBasedOnheight,
       })}
     >
-      {props.activeTurnPointTypes.map((turnPoints, turnIndex) => {
-        const visiblePoints = turnPoints.filter((pointType) => pointTypeToColorClass[pointType] !== 'hidden');
-
-        if (visiblePoints.length === 0) {
-          return null;
+      {flattenedPoints.map((item, index) => {
+        if (item.isSeparator) {
+          return (
+            <div
+              key={`separator-${index}`}
+              className={clsx('text-white', {
+                'text-xl': props.isBig,
+                'text-base': !props.isBig,
+              })}
+            >
+              /
+            </div>
+          );
         }
 
-        return (
-          <div
-            key={turnIndex}
-            className={clsx(
-              'flex flex-wrap gap-1 items-center',
-
-              {
-                'gap-2': props.isBig,
-                'gap-1': !props.isBig,
-              },
-            )}
-          >
-            {visiblePoints.map((pointType, pointIndex) => (
-              <div
-                key={pointIndex}
-                className={clsx(
-                  'rounded-full text-white flex justify-center items-center font-bold',
-                  {
-                    'rotate-90': props.rotateBalls && props.rotateBalls === true,
-                  },
-                  pointTypeToColorClass[pointType],
-                  `${props.isBig ? 'h-8 w-8' : 'h-4 w-4'}`,
-                )}
-              >
-                {props.isBig ? pointType === SnookerPointType.FOUL ? 'F' : ballsToPointsEnum[pointType] : <></>}
-              </div>
-            ))}
-            {turnIndex !== props.activeTurnPointTypes.length - 1 && (
-              <div
-                className={clsx('text-white', {
-                  'text-xl': props.isBig,
-                  'text-base': !props.isBig,
-                  
-                })}
-              >
-                /
-              </div>
-            )}
-          </div>
-        );
+        if ('pointType' in item) {
+          const { pointType } = item;
+          return (
+            <div
+              key={`point-${index}`}
+              className={clsx(
+                'rounded-full text-white flex justify-center items-center font-bold',
+                pointTypeToColorClass[pointType],
+                {
+                  'rotate-90': props.rotateBalls,
+                  'h-8 w-8': props.isBig,
+                  'h-4 w-4': !props.isBig,
+                  'text-[0.5rem]': !props.isBig,
+                  'w-[5%] h-auto aspect-square': props.scaleBasedOnheight
+                },
+              )}
+            >
+              <span className='text-[0.8em]'>{pointType === SnookerPointType.FOUL ? 'F' : ballsToPointsEnum[pointType]}</span>
+            </div>
+          );
+        }
       })}
     </div>
   );

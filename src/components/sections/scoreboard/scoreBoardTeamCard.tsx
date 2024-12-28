@@ -95,7 +95,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
       >
         <div
           className={clsx({
-            'h-[40%]': props.contentfrom === 'top',
+            'h-[50%]': props.contentfrom === 'top',
             'w-[20%] h-full flex justify-center items-center rotate-180': props.contentfrom === 'left',
           })}
         >
@@ -103,6 +103,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             <div className="w-full">
               <SnookerPointTypeDisplay
                 isBig={true}
+                scaleBasedOnheight={true}
                 class={clsx({ 'flex-col': props.contentfrom === 'left' })}
                 activeTurnPointTypes={getSnookerPointTypesByTurns(props.teamTurns)}
                 rotateBalls={props.contentfrom === 'left'}
@@ -114,7 +115,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         </div>
         <div
           className={clsx('text-white leading-[1] font-bold text-center', {
-            'h-[40%] w-full': props.contentfrom === 'top',
+            'h-[30%] w-full': props.contentfrom === 'top',
             'w-[60%] h-full flex justify-center items-center': props.contentfrom === 'left',
           })}
           style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 10vw, 10rem)' : 'clamp(1rem, 20vh, 30rem)' }}
