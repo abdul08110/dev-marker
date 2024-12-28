@@ -30,12 +30,12 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
         <div
           className={clsx('absolute  left-1/2 transform -translate-x-1/2  z-40 flex justify-center items-center', {
             '-rotate-90 bottom-24': props.orientation === 'portrait',
-            'top-40 -translate-y-1/2': props.orientation === 'landscape',
+            'top-[18%] -translate-y-1/2': props.orientation === 'landscape',
           })}
         >
           <div className="bg-[#2D2D2D] p-2 border border-white rounded-xl flex flex-col justify-center items-center">
             <span className="text-center text-white md:text-xl text-base">Time Left (mins):</span>
-            <strong className="text-center text-white md:text-8xl text-4xl leading-[1]">
+            <strong className="text-center text-white md:text-7xl text-4xl leading-[1]">
               {formatTime(props.timeLeft)}
             </strong>
           </div>
@@ -72,7 +72,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
             'absolute left-1/2 transform -translate-x-1/2 z-40 flex justify-center items-center',
             {
               '-rotate-90 -top-14': props.orientation === 'portrait',
-              'bottom-[5.5rem]': props.orientation === 'landscape',
+              'bottom-[6%]': props.orientation === 'landscape',
             },
           )}
         >

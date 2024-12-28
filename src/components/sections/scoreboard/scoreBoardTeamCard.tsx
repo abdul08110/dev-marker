@@ -95,7 +95,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
       >
         <div
           className={clsx({
-            'h-[20%]': props.contentfrom === 'top',
+            'h-[40%]': props.contentfrom === 'top',
             'w-[20%] h-full flex justify-center items-center rotate-180': props.contentfrom === 'left',
           })}
         >
@@ -114,10 +114,10 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         </div>
         <div
           className={clsx('text-white leading-[1] font-bold text-center', {
-            'h-[60%] w-full': props.contentfrom === 'top',
+            'h-[40%] w-full': props.contentfrom === 'top',
             'w-[60%] h-full flex justify-center items-center': props.contentfrom === 'left',
           })}
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 14vw, 30rem)' : 'clamp(1rem, 20vh, 30rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 10vw, 10rem)' : 'clamp(1rem, 20vh, 30rem)' }}
         >
           <span
             className={clsx({
@@ -130,10 +130,10 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         </div>
         <div
           className={clsx('text-yellow-300 uppercase text-center', {
-            'h-[10%] w-full': props.contentfrom === 'top',
+            'h-[20%] w-full py-2 flex justify-center items-center': props.contentfrom === 'top',
             'w-[20%] h-full flex justify-center items-center': props.contentfrom === 'left',
           })}
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 4vw, 8rem)' : 'clamp(1rem, 10vh, 2rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 3vw, 4rem)' : 'clamp(1rem, 10vh, 2rem)' }}
         >
           {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn ? (
             <span
