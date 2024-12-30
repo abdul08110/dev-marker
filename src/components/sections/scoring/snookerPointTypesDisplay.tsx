@@ -80,7 +80,7 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
                   'h-8 w-8': props.isBig,
                   'h-4 w-4': !props.isBig,
                   'text-[0.5rem]': !props.isBig,
-                  'p-2 aspect-square': props.scaleBasedOnheight
+                  'p-1 aspect-square': props.scaleBasedOnheight
                 },
               )}
             >
