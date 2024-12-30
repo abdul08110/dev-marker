@@ -94,12 +94,13 @@ export function Home() {
           <div className="bg-black h-24">
             <div className="container h-full w-full py-6">
               <div className="flex justify-between h-full">
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <img className="w-16 h-auto object-contain" src={data![0].club.imageUrl} />
 
-                  <div className="flex flex-col justify-between h-full">
+                  <div className="flex flex-col justify-center h-full">
                     <h3 className="text-white text-xl">{data![0].club.name}</h3>
                     <small className="text-muted/50">Table No {data![0].venue.no}</small>
+                    <small className="text-muted/50">{version && version}</small>
                   </div>
                 </div>
                 <div className="flex gap-2 justify-center items-center">
