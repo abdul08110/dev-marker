@@ -77,14 +77,12 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
                 pointTypeToColorClass[pointType],
                 {
                   'rotate-90': props.rotateBalls,
-                  'h-8 w-8': props.isBig,
-                  'h-4 w-4': !props.isBig,
-                  'text-[0.5rem]': !props.isBig,
-                  'p-1 aspect-square': props.scaleBasedOnheight
+                  'h-6 w-6 text-[1em]': props.isBig,
+                  'h-4 w-4 text-[0.8rem]': !props.isBig,
                 },
               )}
             >
-              <span className='text-[0.8em]'>{pointType === SnookerPointType.FOUL ? 'F' : ballsToPointsEnum[pointType]}</span>
+              <span>{pointType === SnookerPointType.FOUL ? 'F' : ballsToPointsEnum[pointType]}</span>
             </div>
           );
         }
