@@ -39,7 +39,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
     >
       {props.tournamentId === null ? (
         <div
-          className={clsx(`flex justify-center items-center gap-2`, {
+          className={clsx(`flex justify-center items-center gap-2 overflow-auto`, {
             'h-[30%]': props.contentfrom === 'top',
             'w-[30%]': props.contentfrom === 'left',
           })}
@@ -118,7 +118,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             'h-[30%] w-full': props.contentfrom === 'top',
             'w-[60%] h-full flex justify-center items-center': props.contentfrom === 'left',
           })}
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 10vw, 10rem)' : 'clamp(1rem, 20vh, 30rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(0.5rem, 8vw, 10rem)' : 'clamp(1rem, 20vh, 30rem)' }}
         >
           <span
             className={clsx({
@@ -134,7 +134,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             'h-[20%] w-full py-2 flex justify-center items-center': props.contentfrom === 'top',
             'w-[20%] h-full flex justify-center items-center': props.contentfrom === 'left',
           })}
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 3vw, 4rem)' : 'clamp(1rem, 10vh, 2rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 4rem)' : 'clamp(1rem, 10vh, 2rem)' }}
         >
           {(isPlayerOneActive || isPlayerTwoActive) && props.activeTurn ? (
             <span
