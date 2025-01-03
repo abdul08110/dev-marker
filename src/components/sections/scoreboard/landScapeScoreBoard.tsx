@@ -1,6 +1,6 @@
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
-import { formatTime } from '@/utils/functions';
+import { formatTime, generatePlayerName, truncateText } from '@/utils/functions';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 
@@ -24,12 +24,15 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         <PlayerImage player={state.sideTwoPlayerOne} />
       </div>
 
-      {/* Snooker Point Types */}
-      <div className="h-[20%] w-full grid grid-cols-3 pt-8 2xl:pt-14">
-        <SnookerPointDisplay turns={activeSet?.turns} players={[state.sideOnePlayerOne, state.sideOnePlayerTwo]} />
-        <div className="flex justify-center items-center h-full"></div>
-        <SnookerPointDisplay turns={activeSet?.turns} players={[state.sideTwoPlayerOne, state.sideTwoPlayerTwo]} />
-      </div>
+      {state.sport === 'SNOOKER' ? (
+        <div className="h-[20%] w-full grid grid-cols-3 pt-8 2xl:pt-14">
+          <SnookerPointDisplay turns={activeSet?.turns} players={[state.sideOnePlayerOne, state.sideOnePlayerTwo]} />
+          <div className="flex justify-center items-center h-full"></div>
+          <SnookerPointDisplay turns={activeSet?.turns} players={[state.sideTwoPlayerOne, state.sideTwoPlayerTwo]} />
+        </div>
+      ) : (
+        <div className="h-[20%]"></div>
+      )}
 
       {/* Team Scores */}
       <div className="h-[40%] w-full grid grid-cols-3 pt-8">
@@ -60,9 +63,21 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
 
       {/* Player Scores */}
       <div className="h-[10%] w-full rounded-md border border-white grid grid-cols-12 py-1 bg-black">
-        <Player playerOneName={state.sideOnePlayerOne.name} />
-        <PlayerScore teamOneScore={state.teamOneScore} teamTwoScore={state.teamTwoScore} />
-        <Player playerOneName={state.sideTwoPlayerOne.name} />
+        <Player
+          playerOneName={state.sideOnePlayerOne.name}
+          playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
+          ballToShow={state.sport === 'BILLIARDS' ? 'YELLOW' : null}
+        />
+        <PlayerScore
+          teamOneScore={state.teamOneScore}
+          teamTwoScore={state.teamTwoScore}
+          noOfFrames={state.sets.length}
+        />
+        <Player
+          playerOneName={state.sideTwoPlayerOne.name}
+          playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
+          ballToShow={state.sport === 'BILLIARDS' ? 'WHITE' : null}
+        />
       </div>
     </section>
   );
@@ -84,7 +99,10 @@ function PlayerImage({ player }: { player: { profilePhoto?: string | null } }) {
 function ClubLogo({ src }: { src: string | undefined }) {
   return (
     <div className="col-span-1 flex flex-col items-center justify-center overflow-auto 480p:gap-2 720p:gap-4 1080p:gap-6">
-      <img src="/images/clubliv-final-logo.png" className="480p:w-24  720p:w-36 1080p:w-[12rem] 2k:w-[18rem] 4k:w-96 h-auto !important" />
+      <img
+        src="/images/clubliv-final-logo.png"
+        className="480p:w-24  720p:w-36 1080p:w-[12rem] 2k:w-[18rem] 4k:w-96 h-auto !important"
+      />
       <img src={src!} className="480p:w-14  720p:w-24 1080p:w-44 2k:w-56 4k:w-96 h-auto !important" />
     </div>
   );
@@ -128,20 +146,42 @@ function TeamScore({ score, isActive, breakScore }: { score: number; isActive: b
 }
 
 // Player Score Component
-function PlayerScore({ teamOneScore, teamTwoScore }: { teamOneScore: number; teamTwoScore: number }) {
+function PlayerScore({
+  teamOneScore,
+  teamTwoScore,
+  noOfFrames,
+}: {
+  teamOneScore: number;
+  teamTwoScore: number;
+  noOfFrames: number;
+}) {
   return (
     <div className="flex justify-center items-center col-span-4">
       <span className="480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] text-center text-white font-bold leading-[1]">
-        {teamOneScore} (3) {teamTwoScore}
+        {teamOneScore} ({noOfFrames}) {teamTwoScore}
       </span>
     </div>
   );
 }
 
-function Player({ playerOneName }: { playerOneName: string }) {
+function Player({
+  playerOneName,
+  playerTwoName,
+  ballToShow,
+}: {
+  playerOneName: string;
+  playerTwoName?: string;
+  ballToShow: 'YELLOW' | 'WHITE' | null;
+}) {
   return (
-    <div className="col-span-4 flex justify-center items-center text-white font-bold 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase">
-      {playerOneName}
+    <div className="col-span-4 flex gap-4 justify-center items-center text-white font-bold 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase">
+      {ballToShow === 'YELLOW' && (
+        <img className="h-full w-auto p-2 object-contain aspect-square" src={'/images/yellow-ball.png'} />
+      )}
+      {truncateText(generatePlayerName(playerOneName, playerTwoName))}
+      {ballToShow === 'WHITE' && (
+        <img className="h-full w-auto p-2 object-contain aspect-square" src={'/images/white-ball.png'} />
+      )}
     </div>
   );
 }

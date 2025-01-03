@@ -92,4 +92,19 @@ export const addMinutesToDate = (minutes: number) => {
   const date = new Date();
   date.setMinutes(date.getMinutes() + minutes);
   return date.toISOString();
+};
+
+export const generatePlayerName = (playerOneName: string, playerTwoName?: string) => {
+  if (playerTwoName) {
+    return `${playerOneName.split(' ')[0]} & ${playerTwoName.split(' ')[0]}`;
+  } else {
+    return `${playerOneName.split(' ')[0]} ${playerOneName.split(' ').length > 1 ? playerOneName.split(' ').at(-1) : ''}`;
+  }
+};
+
+export function truncateText(text: string, limit = 20) {
+  if (text.length > limit) {
+    return text.slice(0, limit) + '...';
+  }
+  return text;
 }
