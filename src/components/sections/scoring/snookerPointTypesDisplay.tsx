@@ -5,9 +5,10 @@ import clsx from 'clsx';
 interface SnookerPointTypeDisplayProps {
   activeTurnPointTypes: SnookerPointType[][];
   class?: string;
-  isBig: boolean;
+  isBig?: boolean;
   rotateBalls?: boolean;
   scaleBasedOnheight?: boolean;
+  className?: string;
 }
 
 export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
@@ -46,21 +47,14 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
 
   return (
     <div
-      className={clsx('w-full flex flex-wrap justify-center items-center', props.class, {
-        'gap-2': props.isBig,
-        'gap-1': !props.isBig,
-        'h-full': props.scaleBasedOnheight,
-      })}
+      className={clsx('w-full flex flex-wrap justify-center items-center gap-1', props.class)}
     >
       {flattenedPoints.map((item, index) => {
         if (item.isSeparator) {
           return (
             <div
               key={`separator-${index}`}
-              className={clsx('text-white', {
-                'text-xl': props.isBig,
-                'text-base': !props.isBig,
-              })}
+              className={clsx('text-white', props.className)}
             >
               /
             </div>
@@ -73,13 +67,12 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
             <div
               key={`point-${index}`}
               className={clsx(
-                'rounded-full text-white flex justify-center items-center font-bold',
+                'rounded-full text-white flex justify-center items-center font-bold h-4 w-4',
                 pointTypeToColorClass[pointType],
                 {
                   'rotate-90': props.rotateBalls,
-                  'h-6 w-6 text-[1em]': props.isBig,
-                  'h-4 w-4 text-[0.8rem]': !props.isBig,
                 },
+                props.className
               )}
             >
               <span>{pointType === SnookerPointType.FOUL ? 'F' : ballsToPointsEnum[pointType]}</span>

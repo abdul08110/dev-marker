@@ -23,6 +23,13 @@ module.exports = {
       fontFamily: {
         sans: ["Open Sans", 'sans-serif'],
       },
+      screens: {
+        '480p': { raw: '(min-height: 480px) and (max-height: 719px)' },
+        '720p': { raw: '(min-height: 720px) and (max-height: 1079px)' },
+        '1080p': { raw: '(min-height: 1080px) and (max-height: 1439px)' },
+        '2k': { raw: '(min-height: 1440px) and (max-height: 2159px)' },
+        '4k': { raw: '(min-height: 2160px)' }
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -35,6 +35,8 @@ export interface ScoreBoardState {
   tournamentTeamOneName: string | null;
   tournamentTeamTwoName: string | null;
   actualStartTimeDate: string;
+  clubLogo: string | null;
+  format: string | null;
 }
 
 const useScoreboard = () => {
@@ -154,6 +156,8 @@ const useScoreboard = () => {
             tournamentTeamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
             tournamentTeamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
             actualStartTimeDate: res.actualStartTimeDate,
+            clubLogo: res.club.imageUrl ? res.club.imageUrl : null,
+            format: res.format,
           });
         } else {
           toast({

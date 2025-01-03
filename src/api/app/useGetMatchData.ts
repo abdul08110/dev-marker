@@ -103,7 +103,8 @@ export interface MatchStartResponse {
   tournamentTeamTwoId?: string,
   tournamentId?: string
   isTeamOneHandicapApplied?: boolean,
-  isTeamTwoHandicapApplied?: boolean
+  isTeamTwoHandicapApplied?: boolean,
+  format: string
 }
 
 const useGetMatchLiveData = () => {
