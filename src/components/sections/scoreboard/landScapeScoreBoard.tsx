@@ -32,7 +32,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
       </div>
 
       {/* Team Scores */}
-      <div className="h-[30%] w-full grid grid-cols-3 pt-8">
+      <div className="h-[40%] w-full grid grid-cols-3 pt-8">
         <TeamScore
           score={activeSet ? activeSet.teamOneScore : 0}
           isActive={isTeamOneActive}
@@ -64,9 +64,6 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         <PlayerScore teamOneScore={state.teamOneScore} teamTwoScore={state.teamTwoScore} />
         <Player playerOneName={state.sideTwoPlayerOne.name} />
       </div>
-
-      {/* Footer */}
-      <FooterLogo />
     </section>
   );
 }
@@ -86,7 +83,8 @@ function PlayerImage({ player }: { player: { profilePhoto?: string | null } }) {
 // Club Logo Component
 function ClubLogo({ src }: { src: string | undefined }) {
   return (
-    <div className="col-span-1 flex items-center justify-center overflow-auto">
+    <div className="col-span-1 flex flex-col items-center justify-center overflow-auto 480p:gap-2 720p:gap-4 1080p:gap-6">
+      <img src="/images/clubliv-final-logo.png" className="480p:w-24  720p:w-36 1080p:w-[12rem] 2k:w-[18rem] 4k:w-96 h-auto !important" />
       <img src={src!} className="480p:w-14  720p:w-24 1080p:w-44 2k:w-56 4k:w-96 h-auto !important" />
     </div>
   );
