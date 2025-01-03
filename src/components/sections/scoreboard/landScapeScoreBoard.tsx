@@ -147,10 +147,10 @@ function Player({ playerOneName }: { playerOneName: string }) {
 }
 
 // Footer Logo Component
-function FooterLogo() {
-  return (
-    <div className="h-[10%] 480p:py-2 720p:py-4 1080p:py-4 2k:py-6 4k:py-8 flex justify-center items-center">
-      <img src="/images/clubliv-final-logo.png" className="w-auto h-full" />
-    </div>
-  );
-}
+// function FooterLogo() {
+//   return (
+//     <div className="h-[10%] 480p:py-2 720p:py-4 1080p:py-4 2k:py-6 4k:py-8 flex justify-center items-center">
+//       <img src="/images/clubliv-final-logo.png" className="w-auto h-full" />
+//     </div>
+//   );
+// }
