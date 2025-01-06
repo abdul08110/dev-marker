@@ -3,6 +3,7 @@ import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { formatTime, generatePlayerName, truncateText } from '@/utils/functions';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
+import clsx from 'clsx';
 
 interface LandscapeScoreBoardProps {
   state: ScoreBoardState;
@@ -16,12 +17,17 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
   const isTeamTwoActive = state.sideTwoPlayerOne.id === state.activePlayerId;
 
   return (
-    <section className="h-screen w-screen bg-gradient-to-b from-[#21062C] to-black flex flex-col 480p:p-5 720p:p-5 1080p:p-8 2k:p-12 4k:p-16">
+    <section className="h-screen w-screen bg-gradient-to-b from-[#21062C] to-black flex flex-col 480p:p-5 720p:p-5 1080p:p-8 2k:p-12 4k:p-16 relative">
       {/* Player and Club Images */}
       <div className="h-[30%] w-full grid grid-cols-3">
         <PlayerImage player={state.sideOnePlayerOne} />
-        <ClubLogo src={state.clubLogo!} />
+        <div></div>
+        {/* <ClubLogo src={state.clubLogo!} /> */}
         <PlayerImage player={state.sideTwoPlayerOne} />
+      </div>
+
+      <div className="absolute w-[28%] left-1/2 transform -translate-x-1/2 h-[50%] flex flex-col gap-10">
+        <ClubLogo src={state.clubLogo!} />
       </div>
 
       {state.sport === 'SNOOKER' ? (
@@ -43,14 +49,14 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         />
         <div className="flex flex-col 480p:gap-2 720p:gap-2 1080p:gap-3 2k:gap-4 4k:gap-6 overflow-auto h-full justify-start items-center col-span-1">
           <div className="bg-black p-2 2k:p-4 4k:p-6 border border-white rounded-xl flex flex-col justify-start items-center">
-            <span className="text-center text-white 480p:text-[0.6rem] 720p:text-[1.2rem] 1080p:text-[1.8rem] 2k:text-[4rem] 4k:text-[6rem]">
+            <span className="text-center text-white 480p:text-[1rem] 720p:text-[1.6rem] 1080p:text-[1.8rem] 2k:text-[4rem] 4k:text-[6rem]">
               Time Left (mins):
             </span>
-            <strong className="text-center text-white 480p:text-[1.8rem] 720p:text-[3.3rem] 1080p:text-[5.4rem] 2k:text-[4.8rem] 4k:text-[6.8rem] leading-[1]">
+            <strong className="text-center text-white 480p:text-[3.1rem] 720p:text-[5rem] 1080p:text-[5.4rem] 2k:text-[4.8rem] 4k:text-[6.8rem] leading-[1]">
               {formatTime(timeLeft)}
             </strong>
           </div>
-          <span className="text-white font-bold uppercase  480p:text-[0.6rem] 720p:text-[1.2rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
+          <span className="text-white font-bold uppercase  480p:text-[1rem] 720p:text-[1.6rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
             {state.format} {state.sport}
           </span>
         </div>
@@ -67,6 +73,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           playerOneName={state.sideOnePlayerOne.name}
           playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
           ballToShow={state.sport === 'BILLIARDS' ? 'YELLOW' : null}
+          isActive={isTeamOneActive}
         />
         <PlayerScore
           teamOneScore={state.teamOneScore}
@@ -77,6 +84,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           playerOneName={state.sideTwoPlayerOne.name}
           playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
           ballToShow={state.sport === 'BILLIARDS' ? 'WHITE' : null}
+          isActive={isTeamTwoActive}
         />
       </div>
     </section>
@@ -98,12 +106,12 @@ function PlayerImage({ player }: { player: { profilePhoto?: string | null } }) {
 // Club Logo Component
 function ClubLogo({ src }: { src: string | undefined }) {
   return (
-    <div className="col-span-1 flex flex-col items-center justify-center overflow-auto 480p:gap-2 720p:gap-4 1080p:gap-6">
+    <div className="flex flex-col h-full w-full justify-top items-center gap-10">
       <img
         src="/images/clubliv-final-logo.png"
-        className="480p:w-24  720p:w-36 1080p:w-[12rem] 2k:w-[18rem] 4k:w-96 h-auto !important"
+        className="480p:w-36  720p:w-44 1080p:w-[12rem] 2k:w-[18rem] 4k:w-96 h-auto !important"
       />
-      <img src={src!} className="480p:w-14  720p:w-24 1080p:w-44 2k:w-56 4k:w-96 h-auto !important" />
+      <img src={src!} className="480p:w-20  720p:w-32 1080p:w-44 2k:w-56 4k:w-96 h-auto !important" />
     </div>
   );
 }
@@ -133,11 +141,11 @@ function SnookerPointDisplay({ turns, players }: { turns?: any[]; players: any[]
 function TeamScore({ score, isActive, breakScore }: { score: number; isActive: boolean; breakScore?: number }) {
   return (
     <div className="flex flex-col gap-1 overflow-auto h-full justify-start items-center col-span-1">
-      <span className="480p:text-[3.2rem] 720p:text-[5.5rem] 1080p:text-[9rem] 2k:text-[10rem] text-white font-bold leading-[1] 4k:text-[18rem]">
+      <span className="480p:text-[3.8rem] 720p:text-[6rem] 1080p:text-[9rem] 2k:text-[10rem] text-white font-bold leading-[1] 4k:text-[18rem]">
         {score}
       </span>
       {isActive && (
-        <span className="text-yellow-500 480p:text-[1rem] 720p:text-[1.4rem] 1080p:text-[2.6rem]  2k:text-[3rem] 4k:text-[4rem] font-medium">
+        <span className="text-yellow-500 480p:text-[1.2rem] 720p:text-[1.9rem] 1080p:text-[2.6rem]  2k:text-[3rem] 4k:text-[4rem] font-medium">
           BREAK {breakScore}
         </span>
       )}
@@ -168,13 +176,23 @@ function Player({
   playerOneName,
   playerTwoName,
   ballToShow,
+  isActive,
 }: {
   playerOneName: string;
   playerTwoName?: string;
   ballToShow: 'YELLOW' | 'WHITE' | null;
+  isActive: boolean;
 }) {
   return (
-    <div className="col-span-4 flex gap-4 justify-center items-center text-white font-bold 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase">
+    <div
+      className={clsx(
+        'col-span-4 flex gap-4 justify-center items-center  font-bold 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase',
+        {
+          'text-yellow-500': isActive,
+          'text-white': !isActive,
+        },
+      )}
+    >
       {ballToShow === 'YELLOW' && (
         <img className="h-full w-auto p-2 object-contain aspect-square" src={'/images/yellow-ball.png'} />
       )}
