@@ -77,7 +77,7 @@ const useSnookerScoring = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isOnline = useOnlineStatus();
-  useInterval(handleUpdateToServer, 3000);
+  useInterval(handleUpdateToServer, 1000);
   const [searchParams] = useSearchParams();
   const matchId = searchParams.get('matchId');
   useBackButtonHandler(handleBackButtonClick);

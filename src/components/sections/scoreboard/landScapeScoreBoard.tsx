@@ -194,11 +194,11 @@ function Player({
       )}
     >
       {ballToShow === 'YELLOW' && (
-        <img className="h-full w-auto p-2 object-contain aspect-square" src={'/images/yellow-ball.png'} />
+        <img className="480p:size-6 720p:size-10 object-contain aspect-square" src={'/images/yellow-ball.png'} />
       )}
       {truncateText(generatePlayerName(playerOneName, playerTwoName))}
       {ballToShow === 'WHITE' && (
-        <img className="h-full w-auto p-2 object-contain aspect-square" src={'/images/white-ball.png'} />
+        <img className="480p:size-6 720p:size-10 object-contain aspect-square" src={'/images/white-ball.png'} />
       )}
     </div>
   );
