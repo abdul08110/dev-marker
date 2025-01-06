@@ -1,4 +1,5 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
+import { PortraitData } from '@/components/sections/stream/PortraitData';
 // import { PortraitData } from '@/components/sections/stream/PortraitData';
 import { StreamContainer } from '@/components/sections/stream/StreamContainer';
 import useDeviceOrientation from '@/hooks/useDeviceOrientation';
@@ -55,7 +56,14 @@ export function ClientStream() {
             streamingData && streamingData.overlayType === 'SOURCE_WITH_FINAL_SCORES' ? streamingData : viewershipData
           }
         />
-        {/* {isPortrait && <PortraitData state={streamingData} />} */}
+        {isPortrait && (
+          <PortraitData
+            timeLeft={timeLeft}
+            state={
+              streamingData && streamingData.overlayType === 'SOURCE_WITH_FINAL_SCORES' ? streamingData : viewershipData
+            }
+          />
+        )}
       </div>
     </div>
   );

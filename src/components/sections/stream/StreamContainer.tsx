@@ -10,6 +10,7 @@ import { EcaTemplate } from './templates/Eca';
 import { GeneralTemplate } from './templates/General';
 import { SourceWithFinalScores } from './templates/SourceFinalScores';
 import { useState } from 'react';
+import clsx from 'clsx';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -47,7 +48,10 @@ export function StreamContainer(props: StreamContainerProps) {
   };
 
   return (
-    <div className="h-full w-full flex justify-center items-center">
+    <div className={clsx("w-full flex justify-center items-center", {
+      'h-auto': props.isPortrait,
+      'h-full': !props.isPortrait
+    })}>
       {props.state ? (
         <div className="relative flex justify-center items-center w-full h-full">
           {props.state.streamType === StreamType.CLOUD_PROVIDER &&
