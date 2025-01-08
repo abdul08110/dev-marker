@@ -1,14 +1,11 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
-import { ScoreBoardOrientationModal } from '@/components/modals/scoreBoardOrientationModal';
 import { TimeUpModal } from '@/components/modals/timeUpModal';
 import { LandscapeScoreboard } from '@/components/sections/scoreboard/landScapeScoreBoard';
 import { ScoreboardRender } from '@/components/sections/scoreboard/scoreBoardRender';
 import useScoreboardRender from '@/hooks/useScoreboardRender';
-import { useState } from 'react';
 
 export function ScoreBoardRender() {
-  const { loading, scoreBoardData, timeLeft, orientation, setOrientation, showTimeOverAlert } = useScoreboardRender();
-  const [showScoreBoardOrientationModal, setShowScoreBoardOrientationModal] = useState(true);
+  const { loading, scoreBoardData, timeLeft, orientation, showTimeOverAlert } = useScoreboardRender();
 
   return (
     <section>
@@ -31,15 +28,6 @@ export function ScoreBoardRender() {
           )}
         </section>
       )}
-
-      <ScoreBoardOrientationModal
-        isModalOpen={showScoreBoardOrientationModal}
-        closeModal={() => setShowScoreBoardOrientationModal(false)}
-        confirmModal={() => {
-          setOrientation('portrait');
-          setShowScoreBoardOrientationModal(false);
-        }}
-      />
 
       <TimeUpModal isModalOpen={showTimeOverAlert} rotate={orientation === 'portrait'} />
     </section>
