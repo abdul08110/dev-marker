@@ -18,7 +18,7 @@ const useLinkDevice = () => {
     setError(null);
 
     try {
-      const data = await handleApiResponse(
+      await handleApiResponse(
         axiosInstance.post<ApiResponse<null>>(`auth/marker/link-device-to-venue`, {
           venueId,
           type,
