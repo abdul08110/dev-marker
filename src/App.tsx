@@ -12,6 +12,8 @@ import { Tv } from './pages/app/Tv';
 import { ClientStream } from './pages/app/ClientStream';
 import { Tournament } from './pages/app/Tournament';
 import { TeamForm } from './pages/app/TeamForm';
+import { ScoreBoardRender } from './pages/app/ScoreBoardRender';
+import { TvRender } from './pages/app/TvRender';
 
 const App: React.FC = () => {
   const token = getToken();
@@ -31,6 +33,8 @@ const App: React.FC = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/app/stream" element={<ClientStream />} />
         <Route path="/app/team-form" element={<TeamForm />} />
+        <Route path="/app/scoreboard-render" element={<ScoreBoardRender />} />
+        <Route path="/app/tv-render" element={<TvRender />} />
       </Routes>
     </Router>
   );

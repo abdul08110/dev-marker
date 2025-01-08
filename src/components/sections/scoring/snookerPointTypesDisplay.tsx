@@ -54,9 +54,9 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
           return (
             <div
               key={`separator-${index}`}
-              className={clsx('text-white', props.className)}
+              className={clsx('text-white items-center mx-1', props.className)}
             >
-              /
+              |
             </div>
           );
         }

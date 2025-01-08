@@ -14,6 +14,8 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@radix-ui/rea
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { ScanQrCode } from 'lucide-react';
+import { ScanQrModal } from '@/components/modals/scanQrModal';
 
 export function Home() {
   const dispatch = useDispatch();
@@ -27,6 +29,8 @@ export function Home() {
   const [liveMatchId, setLiveMatchId] = useState<string | null>(null);
   const [liveSport, setLiveSport] = useState<'BILLIARDS' | 'SNOOKER' | null>(null);
   const [activeTournaments, setActiveTournaments] = useState<Tournament[] | null>(null);
+  const [isQrModalOpen, setIsQrModalOpen] = useState<boolean>(false);
+  const [venueId, setVenueId] = useState<string>('');
 
   const { logout } = useLogout();
   const navigate = useNavigate();
@@ -44,8 +48,7 @@ export function Home() {
 
         dispatch(setClubs(formattedData));
         dispatch(setActiveClub(formattedData[0]));
-
-        console.log(activeTournaments);
+        setVenueId(formattedData[0].venueId);
 
         const activeTournamentsResponse = await getTournaments();
 
@@ -104,6 +107,7 @@ export function Home() {
                   </div>
                 </div>
                 <div className="flex gap-2 justify-center items-center">
+                  <ScanQrCode onClick={() => setIsQrModalOpen(true)} className="size-6 text-white" />
                   <div onClick={() => navigate('/app/scoreboard')} className="flex cursor-pointer">
                     <TvLogo className="h-6 w-auto" />
                   </div>
@@ -178,6 +182,7 @@ export function Home() {
             {version && <small className="text-white">{version}</small>}
           </div>
         </div>
+        <ScanQrModal venueId={venueId} isOpen={isQrModalOpen} onCloseModal={() => setIsQrModalOpen(false)} />
         <LiveMatchGoToScoreBoardOrMarkerModal
           sport={liveSport}
           matchId={liveMatchId}
