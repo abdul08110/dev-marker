@@ -1,4 +1,4 @@
-import { Dialog, DialogClose, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
+import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { Select } from '../ui/select';
 import { SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';

@@ -9,7 +9,6 @@ import TvLogo from '@/icons/tv';
 import { setActiveClub, setClubs } from '@/stores/slices/clubSlice';
 import { resetStateSnooker } from '@/stores/slices/sportSlice';
 import { clearUndoStack } from '@/stores/slices/undoSlice';
-import { Tournament } from '@/stores/types';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -28,7 +27,6 @@ export function Home() {
   const [isLiveMatchModalOpen, setIsLiveMatchModalOpen] = useState<boolean>(false);
   const [liveMatchId, setLiveMatchId] = useState<string | null>(null);
   const [liveSport, setLiveSport] = useState<'BILLIARDS' | 'SNOOKER' | null>(null);
-  const [activeTournaments, setActiveTournaments] = useState<Tournament[] | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = useState<boolean>(false);
   const [venueId, setVenueId] = useState<string>('');
 
@@ -50,11 +48,7 @@ export function Home() {
         dispatch(setActiveClub(formattedData[0]));
         setVenueId(formattedData[0].venueId);
 
-        const activeTournamentsResponse = await getTournaments();
-
-        if (activeTournamentsResponse && activeTournamentsResponse.results.length > 0) {
-          setActiveTournaments(activeTournamentsResponse.results);
-        }
+        await getTournaments();
 
         const liveMatchByVenueResponse = await getMarkerLiveMatchesByVenueHookData.getMarkerLiveMatchesByVenue(
           formattedData[0].venueId,
