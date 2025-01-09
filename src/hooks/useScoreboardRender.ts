@@ -213,7 +213,6 @@ const useScoreboardRender = () => {
         break;
       case 'match-end':
         setScoreboardData(null);
-        navigate('/app/scoreboard');
         setShowTimeOverAlert(false);
         break;
       case 'timer-updated':
