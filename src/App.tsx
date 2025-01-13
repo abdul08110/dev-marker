@@ -14,6 +14,7 @@ import { Tournament } from './pages/app/Tournament';
 import { TeamForm } from './pages/app/TeamForm';
 import { ScoreBoardRender } from './pages/app/ScoreBoardRender';
 import { TvRender } from './pages/app/TvRender';
+import { BowringArena } from './pages/app/bowringArena';
 
 const App: React.FC = () => {
   const token = getToken();
@@ -35,6 +36,7 @@ const App: React.FC = () => {
         <Route path="/app/team-form" element={<TeamForm />} />
         <Route path="/app/scoreboard-render" element={<ScoreBoardRender />} />
         <Route path="/app/tv-render" element={<TvRender />} />
+        <Route path="/app/bowring-render" element={<BowringArena />} />
       </Routes>
     </Router>
   );
