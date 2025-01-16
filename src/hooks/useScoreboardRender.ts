@@ -36,6 +36,7 @@ export interface ScoreBoardState {
   actualStartTimeDate: string;
   clubLogo: string | null;
   format: string | null;
+  venueNo: number | null;
 }
 
 const useScoreboardRender = () => {
@@ -161,6 +162,7 @@ const useScoreboardRender = () => {
             actualStartTimeDate: res.actualStartTimeDate,
             clubLogo: res.club.imageUrl ? res.club.imageUrl : null,
             format: res.format,
+            venueNo: res.venue.no
           });
         } else {
           toast({

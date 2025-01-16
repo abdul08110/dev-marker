@@ -20,10 +20,13 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
     <section className="h-screen w-screen 480p:p-2 720p:p-4 1080p:p-6 2k:p-12 4k:p-16  360p:p-1">
       <div className="relative h-full w-full grid grid-cols-2 480p:gap-2 360p:gap-1 720p:gap-4 1080p:gap-6 2xl:gap-12 4k:gap-16">
         <div
-          className={clsx('col-span-1 360p:p-2 480p:p-5 720p:p-5 1080p:p-8 2k:p-12 4k:p-16 h-full  overflow-auto rounded-md', {
-            'bg-[#5E5E5E]': !isTeamOneActive,
-            'bg-primary': isTeamOneActive,
-          })}
+          className={clsx(
+            'col-span-1 360p:p-2 480p:p-5 720p:p-5 1080p:p-8 2k:p-12 4k:p-16 h-full  overflow-auto rounded-md',
+            {
+              'bg-[#5E5E5E]': !isTeamOneActive,
+              'bg-primary': isTeamOneActive,
+            },
+          )}
         >
           <div className="h-[30%] w-full">
             <PlayerImage player={state.sideOnePlayerOne} />
@@ -50,10 +53,13 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         </div>
 
         <div
-          className={clsx('col-span-1 360p:p-2 480p:p-5 720p:p-5 1080p:p-8 2k:p-12 4k:p-16 h-full overflow-auto rounded-md', {
-            'bg-[#5E5E5E]': !isTeamTwoActive,
-            'bg-primary': isTeamTwoActive,
-          })}
+          className={clsx(
+            'col-span-1 360p:p-2 480p:p-5 720p:p-5 1080p:p-8 2k:p-12 4k:p-16 h-full overflow-auto rounded-md',
+            {
+              'bg-[#5E5E5E]': !isTeamTwoActive,
+              'bg-primary': isTeamTwoActive,
+            },
+          )}
         >
           <div className="h-[30%] w-full">
             <PlayerImage player={state.sideTwoPlayerOne} />
@@ -80,7 +86,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         </div>
 
         <div className="absolute w-[28%] left-1/2 transform -translate-x-1/2 h-[30%] flex justify-center items-center gap-10">
-          <ClubLogo src={state.clubLogo!} />
+          <ClubLogo venueNo={state.venueNo!} />
         </div>
 
         <div className="absolute h-[40%] top-[50%] left-1/2 transform -translate-x-1/2">
@@ -207,9 +213,14 @@ function PlayerImage({ player }: { player: { profilePhoto?: string | null } }) {
 }
 
 // Club Logo Component
-function ClubLogo({ src }: { src: string | undefined }) {
+function ClubLogo({ venueNo }: { venueNo: number }) {
   return (
-    <img src={src!} className="180p:w-4 360p:w-16 480p:w-20  720p:w-32 1080p:w-44 2k:w-56 4k:w-96 h-auto !important" />
+    <div className="flex justify-center items-center bg-white rounded-full 360p:size-12 480p:size-36 720p:size-36">
+      <span className="text-black font-bold uppercase 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
+        {venueNo}
+      </span>
+    </div>
+    // <img src={src!} className="180p:w-4 360p:w-16 480p:w-20  720p:w-32 1080p:w-44 2k:w-56 4k:w-96 h-auto !important" />
   );
 }
 
@@ -291,11 +302,11 @@ function Player({
       )}
     >
       {ballToShow === 'YELLOW' && (
-        <img className="480p:size-6 720p:size-10 object-contain aspect-square" src={'/images/yellow-ball.png'} />
+        <img className="360p:size-4 480p:size-6 720p:size-10 object-contain aspect-square" src={'/images/yellow-ball.png'} />
       )}
       {truncateText(generatePlayerName(playerOneName, playerTwoName))}
       {ballToShow === 'WHITE' && (
-        <img className="480p:size-6 720p:size-10 object-contain aspect-square" src={'/images/white-ball.png'} />
+        <img className="360p:size-4 480p:size-6 720p:size-10 object-contain aspect-square" src={'/images/white-ball.png'} />
       )}
     </div>
   );
