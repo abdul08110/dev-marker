@@ -8,7 +8,7 @@ export function ScoreBoardRender() {
   const { loading, scoreBoardData, timeLeft, orientation, showTimeOverAlert } = useScoreboardRender();
 
   return (
-    <section>
+    <section className='cursor-none'>
       {loading ? (
         <SnookerMarkingLoading />
       ) : (
