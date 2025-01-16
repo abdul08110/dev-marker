@@ -33,7 +33,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         'flex flex-col': props.contentfrom === 'top',
         'flex flex-row': props.contentfrom === 'left',
         'pr-32 pl-4': props.teamIndex === 0 && props.contentfrom === 'left',
-        'pl-32 pr-4': props.teamIndex === 1 && props.contentfrom === 'left',
+        'pl-12 pr-12': props.teamIndex === 1 && props.contentfrom === 'left',
         'pl-4 pr-4': props.contentfrom === 'top',
       })}
     >
@@ -157,7 +157,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         })}
       >
         <div
-          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 3vw, 10rem)' : 'clamp(1rem, 5vw, 7rem)' }}
+          style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 3vw, 10rem)' : 'clamp(1rem, 3vw, 7rem)' }}
           className={clsx(
             'flex flex-col gap-1 items-center justify-center p-0 w-full font-bold text-white uppercase text-left text-nowrap',
             {
