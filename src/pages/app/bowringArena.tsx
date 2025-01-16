@@ -11,7 +11,7 @@ export function BowringArena() {
         <div className="w-full border-l border-black/20 text-center pt-1">{window.innerWidth}px</div>
       </div>
 
-      <div className="absolute inset-0 w-[1440px] h-[810px] bg-black/10 grid grid-cols-2 grid-rows-2 gap-4 p-4">
+      <div className="absolute inset-0 w-[1540px] h-[750px] bg-black/10 grid grid-cols-2 grid-rows-2 gap-4 p-4">
         <iframe
           className="w-full h-full col-span-1"
           src="https://dev-marker.clubliv.in/app/scoreboard-render?venueId=670e06ef4d4f643222e8c7cc"
