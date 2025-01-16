@@ -205,7 +205,7 @@ function PlayerImage({ player }: { player: { profilePhoto?: string | null } }) {
   return (
     <div className="flex justify-center items-center col-span-1 h-full overflow-auto">
       <img
-        className="rounded-md overflow-hidden h-full w-auto aspect-square border-primary border-2 object-cover"
+        className="rounded-md overflow-hidden h-full w-auto aspect-square object-cover"
         src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.jpg'}
       />
     </div>
