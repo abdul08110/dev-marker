@@ -25,8 +25,8 @@ export interface StreamingState {
   sets: Set[];
   overlayType?: 'SOURCE' | 'DESTINATION' | 'SOURCE_WITH_FINAL_SCORES';
   showPlayerMatchHistory?: boolean;
-  venueNo: number;
-  clubName: string;
+  venueNo: number | null;
+  clubName: string | null;
   noOfFrames: number | null;
   actualStartTimeDate: string;
   actualEndTimeDate: string | null;
@@ -127,7 +127,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     setLoading(true);
     try {
       const res = await getLiveMatchHook.getLiveMatchData({ matchId });
-
+    
       if (res) {
         setStreamingData(null);
         setStreamingData({
@@ -144,13 +144,13 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           matchStatus: res.matchStatus,
           streamType: res.streamType,
           streamData: res.streamData,
-          venueNo: res.venue.no,
-          clubName: res.club.name,
+          venueNo: res.venue ? res.venue.no : null,
+          clubName: res.club ? res.club.name : null,
           noOfFrames: res.noOfSets,
           actualStartTimeDate: res.actualStartTimeDate,
           overlayType: res.overlayType,
           actualEndTimeDate: res.actualEndTimeDate,
-          clubLogo: res.club.imageUrl ? res.club.imageUrl : null,
+          clubLogo: res.club && res.club.imageUrl ? res.club.imageUrl : null,
           tournamentLogo: res.tournament && res.tournament.logo ? res.tournament.logo : null,
           teamOneLogo: res.tournamentTeamOne && res.tournamentTeamOne.logo ? res.tournamentTeamOne.logo : null,
           teamTwoLogo: res.tournamentTeamTwo && res.tournamentTeamTwo.logo ? res.tournamentTeamTwo.logo : null,
@@ -186,13 +186,13 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           matchStatus: res.matchStatus,
           streamType: res.streamType,
           streamData: res.streamData,
-          venueNo: res.venue.no,
-          clubName: res.club.name,
+          venueNo: res.venue ? res.venue.no : null,
+          clubName: res.club ? res.club.name : null,
           noOfFrames: res.noOfSets,
           actualStartTimeDate: res.actualStartTimeDate,
           overlayType: res.overlayType,
           actualEndTimeDate: res.actualEndTimeDate,
-          clubLogo: res.club.imageUrl ? res.club.imageUrl : null,
+          clubLogo: res.club && res.club.imageUrl ? res.club.imageUrl : null,
           tournamentLogo: res.tournament && res.tournament.logo ? res.tournament.logo : null,
           teamOneLogo: res.tournamentTeamOne && res.tournamentTeamOne.logo ? res.tournamentTeamOne.logo : null,
           teamTwoLogo: res.tournamentTeamTwo && res.tournamentTeamTwo.logo ? res.tournamentTeamTwo.logo : null,
@@ -226,6 +226,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         });
       }
     } catch (error) {
+      console.log(error);
       toast({
         title: 'Error',
         description: 'Failed to load match data. Please try again.',

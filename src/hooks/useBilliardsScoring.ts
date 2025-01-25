@@ -3,6 +3,7 @@ import {
   handleBackendUpdateOfData,
   handleBilliardsPointTrigger,
   handleEndFrame,
+  handleEndGameThrunk,
   handleMatchStart,
   handlePlayerSelectState,
   handleReversePlayersState,
@@ -241,20 +242,20 @@ const useBilliardsScoring = () => {
 
   const handleEndGame = async () => {
     setShowLoadingModal(true);
-    const activeSet = getActiveSet(billiardsScoring.scoreHistory);
-    if (activeSet && activeSet.status === 'ONGOING') {
-      await dispatch(handleEndFrame({ updateUndoStack: true }));
-    }
+    try {
+      await dispatch(handleEndGameThrunk({}));
 
-    const res = await matchEndGameRequest({
-      matchId: billiardsScoring.matchId!,
-      teamWinningIndex: billiardsScoring.team1Score > billiardsScoring.team2Score ? 0 : 1,
-    });
-    if (res === true) {
       await handleGoToHome();
+    } catch (error) {
+      console.error('Error ending game:', error);
+      toast({
+        title: 'Error', 
+        description: 'Failed to end game. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setShowLoadingModal(false);
     }
-
-    setShowLoadingModal(false);
   };
 
   const handleTimerButtonAction = async (state: 'CONFIRM' | 'CANCEL') => {

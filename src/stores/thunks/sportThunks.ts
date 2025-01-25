@@ -56,7 +56,7 @@ import {
   getTeamKey,
 } from '../selectors/commonSport';
 import { clearUndoStack, popFromUndoStack, pushToUndoStack } from '../slices/undoSlice';
-import { matchUpdateDataRequest, reversePlayersRequest } from '@/api/scoring/scoringFunctions';
+import { matchEndGameRequest, matchUpdateDataRequest, reversePlayersRequest } from '@/api/scoring/scoringFunctions';
 import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
 import { MatchStartResponse } from '@/api/app/useGetMatchData';
@@ -294,6 +294,26 @@ export const handleMatchStart = createAsyncThunk<
 
   await dispatch(changeBackendUpdatedState({ value: false }));
   await dispatch(pushToUndoStackSnooker({}));
+});
+
+
+export const handleEndGameThrunk = createAsyncThunk<
+  void,
+  { },
+  { state: RootState; dispatch: AppDispatch }
+>('sport/handleMatchStart', async ({ }, { dispatch, getState }) => {
+  let state = getState();
+  const activeSet = getActiveSet(state.sport.scoreHistory);
+
+  if (activeSet && activeSet.status === 'ONGOING') {
+    await dispatch(handleEndFrame({ updateUndoStack: true }));
+  }
+
+  state = getState();
+  const res = await matchEndGameRequest({
+    matchId: state.sport.matchId!,
+    teamWinningIndex: state.sport.team1Score > state.sport.team2Score ? 0 : 1,
+  });
 });
 
 export const handleBreakOff = createAsyncThunk<

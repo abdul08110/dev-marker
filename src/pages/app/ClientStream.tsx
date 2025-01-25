@@ -1,6 +1,5 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
 import { PortraitData } from '@/components/sections/stream/PortraitData';
-// import { PortraitData } from '@/components/sections/stream/PortraitData';
 import { StreamContainer } from '@/components/sections/stream/StreamContainer';
 import useDeviceOrientation from '@/hooks/useDeviceOrientation';
 import useStreaming from '@/hooks/useStreaming';
@@ -40,10 +39,7 @@ export function ClientStream() {
   return (
     <div className="h-screen w-screen flex flex-col">
       <div
-        className={clsx('w-full', {
-          'h-auto': isPortrait,
-          'h-full': !isPortrait,
-        })}
+        className={clsx('w-full h-full flex flex-col')}
       >
         <StreamContainer
           updateTimer={updateTime}
@@ -56,12 +52,10 @@ export function ClientStream() {
             streamingData && streamingData.overlayType === 'SOURCE_WITH_FINAL_SCORES' ? streamingData : viewershipData
           }
         />
-        {isPortrait && (
+        {isPortrait && streamingData?.overlayType === 'DESTINATION' && (
           <PortraitData
             timeLeft={timeLeft}
-            state={
-              streamingData && streamingData.overlayType === 'SOURCE_WITH_FINAL_SCORES' ? streamingData : viewershipData
-            }
+            state={viewershipData}
           />
         )}
       </div>

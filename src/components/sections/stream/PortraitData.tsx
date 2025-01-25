@@ -22,7 +22,7 @@ export function PortraitData(props: PortraitStreamDataProps) {
   }
 
   return (
-    <div className="flex-grow overflow-y-scroll flex flex-col px-2 gap-2 mt-5">
+    <div className="flex-grow overflow-y-scroll flex flex-col px-2 gap-2 mt-5 mb-5">
       <div className="uppercase text-white text-center font-bold text-sm">
         <span>
           {props.state.clubName} | Table {props.state.venueNo}
@@ -62,7 +62,7 @@ export function PortraitData(props: PortraitStreamDataProps) {
         </div>
       </Card>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2 flex-grow">
         <div
           className={clsx('col-span-1 overflow-auto rounded-md text-center flex flex-col gap-4 text-white p-4', {
             'bg-[#5E5E5E]': !isTeamOneActive,

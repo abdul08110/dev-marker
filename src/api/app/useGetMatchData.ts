@@ -74,10 +74,10 @@ export interface MatchStartResponse {
     name: string;
     profilePhoto: string;
   };
-  venue: {
+  venue?: {
     no: number;
   },
-  club: {
+  club?: {
     name: string;
     imageUrl?: string;
   },

@@ -97,6 +97,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
           className={clsx({
             'h-[50%]': props.contentfrom === 'top',
             'w-[20%] h-full flex justify-center items-center rotate-180': props.contentfrom === 'left',
+            'hidden': props.sport === 'BILLIARDS'
           })}
         >
           {props.sport === 'SNOOKER' && props.teamTurns ? (
@@ -167,7 +168,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             },
           )}
         >
-          <div className="flex gap-4 justify-start items-center">
+          <div className="flex justify-start items-center">
             {props.sport === 'BILLIARDS' && props.showBilliardsBall !== null ? (
               <img
                 className="h-10 w-10 object-contain"
@@ -184,7 +185,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
                 'text-center',
               )}
             >
-              <span>
+              <span className='leading-[1px]'>
                 {props.playerOne.name.split(' ')[0]}
                 <br />
                 {props.playerOne.name.split(' ').length > 1 ? (
@@ -224,7 +225,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             ) : (
               <></>
             )}
-            <span>
+            <span className='leading-[1px]'>
               {props.playerTwo.name.split(' ')[0]}
               <br />
               {props.playerTwo.name.split(' ')[1]}

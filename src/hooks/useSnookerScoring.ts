@@ -22,6 +22,7 @@ import {
   handleConcedeFrame,
   handleCorrectionState,
   handleEndFrame,
+  handleEndGameThrunk,
   handleFoulScore,
   handleMatchStart,
   handlePlayerSelectState,
@@ -438,20 +439,20 @@ const useSnookerScoring = () => {
 
   const handleEndGame = async () => {
     setShowLoadingModal(true);
-    const activeSet = getActiveSet(snookerScoring.scoreHistory);
-    if (activeSet && activeSet.status === 'ONGOING') {
-      await dispatch(handleEndFrame({ updateUndoStack: true }));
-    }
+    try {
+      await dispatch(handleEndGameThrunk({}));
 
-    const res = await matchEndGameRequest({
-      matchId: snookerScoring.matchId!,
-      teamWinningIndex: snookerScoring.team1Score > snookerScoring.team2Score ? 0 : 1,
-    });
-    if (res === true) {
       await handleGoToHome();
+    } catch (error) {
+      console.error('Error ending game:', error);
+      toast({
+        title: 'Error', 
+        description: 'Failed to end game. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setShowLoadingModal(false);
     }
-
-    setShowLoadingModal(false);
   };
 
   const handleConcedeFrameSelection = async (values: SnookerConcedeFrameData) => {
