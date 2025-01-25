@@ -27,6 +27,18 @@ export function VideoOverlay() {
   } = useStreaming(undefined, matchId ? matchId : undefined);
 
   useEffect(() => {
+    const body = document.body;
+
+    body.style.setProperty('background-color', 'transparent', 'important');
+    body.style.setProperty('pointer-events', 'none', 'important');
+
+    return () => {
+      body.style.removeProperty('background-color');
+      body.style.removeProperty('pointer-events');
+    };
+  }, []);
+
+  useEffect(() => {
     (window as any).onTimerUpdate = (timeInMilliseconds: number) => {
       updateTime(timeInMilliseconds);
     };
