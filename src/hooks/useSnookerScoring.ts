@@ -42,7 +42,7 @@ import { SnookerFoulData } from '@/components/forms/app/snookerFoul';
 import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
 import useInterval from './useInterval';
-import { matchEndGameRequest, matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
+import { matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';

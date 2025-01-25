@@ -157,9 +157,9 @@ const useScoreboard = () => {
             tournamentTeamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
             tournamentTeamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
             actualStartTimeDate: res.actualStartTimeDate,
-            clubLogo: res.club.imageUrl ? res.club.imageUrl : null,
+            clubLogo: res.club && res.club.imageUrl ? res.club.imageUrl : null,
             format: res.format,
-            venueNo: res.venue.no
+            venueNo: res.venue ? res.venue.no : null
           });
         } else {
           toast({

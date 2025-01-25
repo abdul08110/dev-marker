@@ -26,7 +26,7 @@ import { addMillisecondsToUTC } from '@/utils/functions';
 import { toast } from '@/components/ui/use-toast';
 import { getActiveSet, getActiveTeam, getActiveTurn } from '@/stores/selectors/commonSport';
 import { BilliardPointType, Player } from '@/stores/types';
-import { matchEndGameRequest, matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
+import { matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@/stores/selectors/billiardsSelector';
 import { BilliardsPracticeSettingsData } from '@/components/forms/app/billiardsPracticeSettings';
 import { BilliardsScoringButtonEnum } from '@/components/sections/scoring/billiardsScoringButton';

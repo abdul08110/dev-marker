@@ -310,7 +310,7 @@ export const handleEndGameThrunk = createAsyncThunk<
   }
 
   state = getState();
-  const res = await matchEndGameRequest({
+  await matchEndGameRequest({
     matchId: state.sport.matchId!,
     teamWinningIndex: state.sport.team1Score > state.sport.team2Score ? 0 : 1,
   });
