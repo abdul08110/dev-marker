@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axiosInstance from '../axios';
 import { handleApiResponse } from '@/utils/handlers';
 import { ApiResponse } from '@/types';
-import { Set } from '@/stores/types';
+import { Set, TournamentItem, TournamentSubItem } from '@/stores/types';
 
 interface MatchGetLiveDataProps {
   matchId: string;
@@ -43,17 +43,17 @@ export interface MatchStartResponse {
     id: string;
     name: string;
     logo?: string;
-  },
+  };
   tournamentTeamOne?: {
     name: string;
     logo: string;
     code: string;
-  },
+  };
   tournamentTeamTwo?: {
     name: string;
     logo: string;
     code: string;
-  },
+  };
   sideOnePlayerOne: {
     id: string;
     name: string;
@@ -76,11 +76,11 @@ export interface MatchStartResponse {
   };
   venue?: {
     no: number;
-  },
+  };
   club?: {
     name: string;
     imageUrl?: string;
-  },
+  };
   sport: 'SNOOKER' | 'BILLIARDS';
   sportType: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED';
   teamOneScore: number;
@@ -91,20 +91,24 @@ export interface MatchStartResponse {
   maxScorePerSet: number | null;
   streamData?: StreamData;
   streamType?: StreamType;
-  matchStatus: 'LIVE' | 'COMPLETED',
-  overlayType?: 'SOURCE' | 'DESTINATION'
-  showPlayerMatchHistory?: boolean,
-  cumulativeScoring?: boolean,
-  tournamentTeamOneScore?: number,
-  tournamentTeamTwoScore?: number,
-  teamOneHandicap?: number,
-  teamTwoHandicap?: number
-  tournamentTeamOneId?: string,
-  tournamentTeamTwoId?: string,
-  tournamentId?: string
-  isTeamOneHandicapApplied?: boolean,
-  isTeamTwoHandicapApplied?: boolean,
-  format: string
+  matchStatus: 'LIVE' | 'COMPLETED';
+  overlayType?: 'SOURCE' | 'DESTINATION';
+  showPlayerMatchHistory?: boolean;
+  cumulativeScoring?: boolean;
+  tournamentTeamOneScore?: number;
+  tournamentTeamTwoScore?: number;
+  teamOneHandicap?: number;
+  teamTwoHandicap?: number;
+  tournamentTeamOneId?: string;
+  tournamentTeamTwoId?: string;
+  tournamentId?: string;
+  isTeamOneHandicapApplied?: boolean;
+  isTeamTwoHandicapApplied?: boolean;
+  format: string;
+  tournamentSubItemId?: string;
+  tournamentSubItem?: TournamentSubItem & {
+    tournamentItem: TournamentItem;
+  };
 }
 
 const useGetMatchLiveData = () => {

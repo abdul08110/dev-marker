@@ -350,11 +350,12 @@ const useBilliardsScoring = () => {
         : undefined,
       teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
-      format: billiardsSportTypeToFormat(
+      format: billiardsScoring.formatName ? billiardsScoring.formatName : billiardsSportTypeToFormat(
         billiardsScoring.format,
         billiardsScoring.maxScorePerSet,
         billiardsScoring.noOfSets,
       ),
+      tournamentSubItemId: billiardsScoring.tournamentSubItemId ? billiardsScoring.tournamentSubItemId : undefined,
     });
 
     if (matchId) {

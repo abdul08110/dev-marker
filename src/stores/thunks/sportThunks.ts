@@ -34,7 +34,7 @@ import {
   updateTeamHandicapApplied,
   setExpectedEndTimeDate,
 } from '../slices/sportSlice';
-import { BilliardPointType, Player, SnookerPointType } from '../types';
+import { BilliardPointType, Player, SnookerPointType, SportType, TournamentItem, TournamentSubItem } from '../types';
 import {
   adjustColorBallsPottedWithFreeBall,
   ballsToPointsEnum,
@@ -68,24 +68,21 @@ export const setStateTournament = createAsyncThunk<
   void,
   {
     data: {
-      sideOnePlayerOne: Player;
-      sideTwoPlayerOne: Player;
-      raceTo: string;
-      teamOneId: string;
-      teamTwoId: string;
-      teamOneHandicap: string;
-      teamTwoHandicap: string;
+      teamOnePlayers: Player[];
+      teamTwoPlayers: Player[];
+      teamOneHandicap?: number;
+      teamTwoHandicap?: number;
     };
-    tournamentId: string;
+    tournamentItem: TournamentItem;
+    tournamentSubItem: TournamentSubItem;
   },
   { dispatch: AppDispatch }
->('sport/setStateTournament', async ({ data, tournamentId }, { dispatch }) => {
-  let sportType: 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED' = 'BILLIARDS_RACE_TO';
-  let isCumulativeScore = false;
-
-  let streamType: 'PUBLIC' | 'PRIVATE' = 'PUBLIC';
-
-  const sport: 'SNOOKER' | 'BILLIARDS' = 'BILLIARDS';
+>('sport/setStateTournament', async ({ data, tournamentItem, tournamentSubItem }, { dispatch }) => {
+  let sport = tournamentSubItem.format.sport;
+  let sportType: SportType = sport === 'SNOOKER' ? 'SNOOKER_15_RED' : 'BILLIARDS_RACE_TO';
+  let isCumulativeScore =
+    tournamentSubItem.format.isCumulativeScoring && tournamentSubItem.format.isCumulativeScoring === true;
+  let streamType: 'PUBLIC' | 'PRIVATE' = 'PRIVATE';
 
   let newState = {
     format: sportType,
@@ -97,47 +94,47 @@ export const setStateTournament = createAsyncThunk<
     numberAhead: 0,
     numberOn: 0,
     team1: {
-      players: [
-        {
-          name: data.sideOnePlayerOne.name,
-          isActive: false,
-          id: data.sideOnePlayerOne.id,
-          profilePhoto: data.sideOnePlayerOne.profilePhoto,
-        },
-      ],
+      players: data.teamOnePlayers.map((player) => ({
+        name: player.name,
+        isActive: false,
+        id: player.id,
+        profilePhoto: player.profilePhoto,
+      })),
       score: 0,
     },
     team2: {
-      players: [
-        {
-          name: data.sideTwoPlayerOne.name,
-          isActive: false,
-          id: data.sideTwoPlayerOne.id,
-          profilePhoto: data.sideTwoPlayerOne.profilePhoto,
-        },
-      ],
+      players: data.teamTwoPlayers.map((player) => ({
+        name: player.name,
+        isActive: false,
+        id: player.id,
+        profilePhoto: player.profilePhoto,
+      })),
       score: 0,
     },
     handicap: 0,
     streaming: streamType,
-    timeInMinutes: 0,
+    timeInMinutes:
+      tournamentSubItem.format.maxTimePerSetInMilliSeconds && tournamentSubItem.format.maxTimePerSetInMilliSeconds > 0
+        ? tournamentSubItem.format.maxTimePerSetInMilliSeconds / 60000
+        : 0,
     startTimeDate: null,
     scoreHistory: [],
-    noOfSets: null,
-    maxScorePerSet: Number(data.raceTo),
-    isCumulativeScoring: isCumulativeScore,
-    tournamentTeamOneId: data.teamOneId,
-    tournamentTeamTwoId: data.teamTwoId,
-    tournamentId: tournamentId,
+    noOfSets: tournamentSubItem.format.noOfSets ? tournamentSubItem.format.noOfSets : null,
+    maxScorePerSet: tournamentSubItem.format.maxScorePerSet ? tournamentSubItem.format.maxScorePerSet : null,
+    isCumulativeScoring: isCumulativeScore ? true : false,
+    tournamentTeamOneId: tournamentItem.id,
+    tournamentTeamTwoId: tournamentItem.id,
+    tournamentId: tournamentItem.tournament.id,
     tournamentTeamOneScore: 0,
     tournamentTeamTwoScore: 0,
-    teamOneHandicap: Number(data.teamOneHandicap) * -1,
-    teamTwoHandicap: Number(data.teamTwoHandicap) * -1,
+    teamOneHandicap: data.teamOneHandicap ? data.teamOneHandicap : null,
+    teamTwoHandicap: data.teamTwoHandicap ? data.teamTwoHandicap : null,
     isTeamOneHandicapApplied: false,
     isTeamTwoHandicapApplied: false,
     expectedEndTimeDate: null,
+    tournamentSubItemId: tournamentSubItem.id,
+    formatName: tournamentSubItem.format.name,
   };
-
   await dispatch(
     setState({
       data: newState,
@@ -199,6 +196,8 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       isTeamOneHandicapApplied: data.isTeamOneHandicapApplied ? data.isTeamOneHandicapApplied : false,
       isTeamTwoHandicapApplied: data.isTeamTwoHandicapApplied ? data.isTeamTwoHandicapApplied : false,
       expectedEndTimeDate: data.expectedEndTimeDate ? data.expectedEndTimeDate : null,
+      tournamentSubItemId: data.tournamentSubItemId ? data.tournamentSubItemId : null,
+      formatName: null,
     };
 
     if (data.sideTwoPlayerTwo !== null) {
@@ -296,25 +295,23 @@ export const handleMatchStart = createAsyncThunk<
   await dispatch(pushToUndoStackSnooker({}));
 });
 
+export const handleEndGameThrunk = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
+  'sport/handleMatchStart',
+  async ({}, { dispatch, getState }) => {
+    let state = getState();
+    const activeSet = getActiveSet(state.sport.scoreHistory);
 
-export const handleEndGameThrunk = createAsyncThunk<
-  void,
-  { },
-  { state: RootState; dispatch: AppDispatch }
->('sport/handleMatchStart', async ({ }, { dispatch, getState }) => {
-  let state = getState();
-  const activeSet = getActiveSet(state.sport.scoreHistory);
+    if (activeSet && activeSet.status === 'ONGOING') {
+      await dispatch(handleEndFrame({ updateUndoStack: true }));
+    }
 
-  if (activeSet && activeSet.status === 'ONGOING') {
-    await dispatch(handleEndFrame({ updateUndoStack: true }));
-  }
-
-  state = getState();
-  await matchEndGameRequest({
-    matchId: state.sport.matchId!,
-    teamWinningIndex: state.sport.team1Score > state.sport.team2Score ? 0 : 1,
-  });
-});
+    state = getState();
+    await matchEndGameRequest({
+      matchId: state.sport.matchId!,
+      teamWinningIndex: state.sport.team1Score > state.sport.team2Score ? 0 : 1,
+    });
+  },
+);
 
 export const handleBreakOff = createAsyncThunk<
   void,

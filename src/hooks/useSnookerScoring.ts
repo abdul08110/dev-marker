@@ -238,7 +238,8 @@ const useSnookerScoring = () => {
       tournamentTeamTwoScore: snookerScoring.tournamentTeamTwoScore ? snookerScoring.tournamentTeamTwoScore : undefined,
       teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
-      format: snookerSportTypeToFormat(snookerScoring.format, snookerScoring.isCumulativeScoring),
+      format: snookerScoring.formatName ? snookerScoring.formatName : snookerSportTypeToFormat(snookerScoring.format, snookerScoring.isCumulativeScoring),
+      tournamentSubItemId: snookerScoring.tournamentSubItemId ? snookerScoring.tournamentSubItemId : undefined,
     });
 
     if (matchId) {

@@ -8,6 +8,7 @@ interface TeamSelectorProps {
   onChange: (player: Player) => void;
   teamId: string;
   value: Player;
+  disabledPlayerIds?: string[];
 }
 
 export function TeamPlayerSelector(props: TeamSelectorProps) {
@@ -48,6 +49,10 @@ export function TeamPlayerSelector(props: TeamSelectorProps) {
     }
   };
 
+  const filteredPlayers = players.filter(
+    (player) => !props.disabledPlayerIds?.includes(player.id!)
+  );
+
   return (
     <div className="h-full w-full relative">
       <Command shouldFilter={false} className="w-full mt-2 bg-transparent text-white">
@@ -60,10 +65,10 @@ export function TeamPlayerSelector(props: TeamSelectorProps) {
 
         <CommandList className="absolute w-full max-h-60 mt-14 bg-white text-black shadow-lg z-10">
           {loading && <CommandEmpty>Loading Players...</CommandEmpty>}
-          {!loading && players.length === 0 && <CommandEmpty>No Player found.</CommandEmpty>}
+          {!loading && filteredPlayers.length === 0 && <CommandEmpty>No Player found.</CommandEmpty>}
           {isDropdownVisible && (
             <CommandGroup>
-              {players.map((player) =>
+              {filteredPlayers.map((player) =>
                 player ? (
                   <CommandItem key={player.id} value={player.id!} onSelect={() => handleSelect(player.id!)}>
                     <div className="flex gap-2 items-center">

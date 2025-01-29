@@ -14,16 +14,17 @@ export interface Player {
   phoneNumber?: string;
 }
 
-export interface TournamentTeam { 
+export interface TournamentTeam {
   id: string;
   name: string;
   logo: string;
-  users: Player[] 
+  users: Player[];
 }
 
 export interface Tournament {
   id: string;
   logo: string;
+  name: string;
 }
 
 export enum SnookerPointType {
@@ -45,7 +46,7 @@ export enum BilliardPointType {
   WHITE_IN_OFF = 'WHITE_IN_OFF',
   WHITE_POT = 'WHITE_POT',
   CANNON = 'CANNON',
-  FOUL = 'FOUL'
+  FOUL = 'FOUL',
 }
 
 export interface Set {
@@ -90,20 +91,22 @@ export interface Point {
     score: number;
   };
   billiardsPoint?: {
-    type: BilliardPointType,
+    type: BilliardPointType;
     penalty: number;
     score: number;
   };
   timeScored: string;
 }
 
+export type SportType = 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED';
+
 export interface GeneralScoringState {
-  format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED';
+  format: SportType;
   numberOn: number | null;
   numberAhead: number | null;
   matchId: null | string;
   isBackendUpdated: boolean;
-  sport: 'SNOOKER' | 'BILLIARDS',
+  sport: 'SNOOKER' | 'BILLIARDS';
   team1Score: number;
   team2Score: number;
   isTeamOneHandicapApplied: boolean;
@@ -114,8 +117,8 @@ export interface GeneralScoringState {
   timeInMinutes: number;
   scoreHistory: Set[];
   startTimeDate: string | null;
-  noOfSets: number | null
-  maxScorePerSet: number | null
+  noOfSets: number | null;
+  maxScorePerSet: number | null;
   handicap: number;
   isCumulativeScoring: boolean;
   tournamentTeamOneId: string | null;
@@ -126,8 +129,9 @@ export interface GeneralScoringState {
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
   expectedEndTimeDate: string | null;
+  tournamentSubItemId: string | null;
+  formatName: string | null;
 }
-
 
 export interface ClubData {
   clubId: string;
@@ -137,4 +141,42 @@ export interface ClubData {
 export interface ClubState {
   clubs: ClubData[];
   activeClub: ClubData | null;
+}
+
+export interface TournamentFormat {
+  id: string;
+  name: string;
+  tournamentId: string;
+  noOfPlayers: number;
+  sport: 'SNOOKER' | 'BILLIARDS';
+  maxScorePerSet?: number;
+  noOfSets?: number;
+  isCumulativeScoring?: boolean;
+  noOfBalls?: number;
+  maxTimePerSetInMilliSeconds?: number;
+  isHandicapAllowed?: boolean;
+}
+
+export interface TournamentItem {
+  id: string;
+  tournamentId: string;
+  tournament: Tournament;
+  tournamentTeamOne: TournamentTeam;
+  tournamentTeamTwo: TournamentTeam;
+  tournamentTeamOneId: string;
+  tournamentTeamTwoId: string;
+  itemType: string;
+  startDate: string;
+  teamOneScore?: number;
+  teamTwoScore?: number;
+  tournamentSubItems: TournamentSubItem[];
+}
+
+export interface TournamentSubItem {
+  id: string;
+  format: TournamentFormat;
+  matchNo: number;
+  tournamentItemId: string;
+  teamWinningIndex?: number;
+  matchId?: string;
 }

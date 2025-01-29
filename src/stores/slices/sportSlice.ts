@@ -55,6 +55,8 @@ const initialState: GeneralScoringState = {
   isTeamOneHandicapApplied: false,
   isTeamTwoHandicapApplied: false,
   expectedEndTimeDate: null,
+  tournamentSubItemId: null,
+  formatName: null,
 };
 
 const sportSlice = createSlice({
@@ -110,6 +112,8 @@ const sportSlice = createSlice({
         isTeamOneHandicapApplied: false,
         isTeamTwoHandicapApplied: false,
         expectedEndTimeDate: null,
+        tournamentSubItemId: null,
+        formatName: null,
       });
     },
     resetStateBilliards(state) {
@@ -154,6 +158,8 @@ const sportSlice = createSlice({
         isTeamOneHandicapApplied: false,
         isTeamTwoHandicapApplied: false,
         expectedEndTimeDate: null,
+        tournamentSubItemId: null,
+        formatName: null,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
