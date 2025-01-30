@@ -34,7 +34,15 @@ import {
   updateTeamHandicapApplied,
   setExpectedEndTimeDate,
 } from '../slices/sportSlice';
-import { BilliardPointType, Player, SnookerPointType, SportType, TournamentItem, TournamentSubItem } from '../types';
+import {
+  BilliardPointType,
+  Player,
+  SnookerPointType,
+  SportType,
+  TournamentFormat,
+  TournamentItem,
+  TournamentSubItem,
+} from '../types';
 import {
   adjustColorBallsPottedWithFreeBall,
   ballsToPointsEnum,
@@ -72,17 +80,19 @@ export const setStateTournament = createAsyncThunk<
       teamTwoPlayers: Player[];
       teamOneHandicap?: number;
       teamTwoHandicap?: number;
+      format: TournamentFormat;
+      tournamentSubItemId: string;
+      tournamentId: string;
+      tournamentTeamOneId: string;
+      tournamentTeamTwoId: string;
     };
-    tournamentItem: TournamentItem;
-    tournamentSubItem: TournamentSubItem;
   },
   { dispatch: AppDispatch }
->('sport/setStateTournament', async ({ data, tournamentItem, tournamentSubItem }, { dispatch }) => {
-  let sport = tournamentSubItem.format.sport;
+>('sport/setStateTournament', async ({ data }, { dispatch }) => {
+  let sport = data.format.sport;
   let sportType: SportType = sport === 'SNOOKER' ? 'SNOOKER_15_RED' : 'BILLIARDS_RACE_TO';
-  let isCumulativeScore =
-    tournamentSubItem.format.isCumulativeScoring && tournamentSubItem.format.isCumulativeScoring === true;
-  let streamType: 'PUBLIC' | 'PRIVATE' = 'PRIVATE';
+  let isCumulativeScore = data.format.isCumulativeScoring && data.format.isCumulativeScoring === true;
+  let streamType: 'PUBLIC' | 'PRIVATE' = 'PUBLIC';
 
   let newState = {
     format: sportType,
@@ -114,17 +124,17 @@ export const setStateTournament = createAsyncThunk<
     handicap: 0,
     streaming: streamType,
     timeInMinutes:
-      tournamentSubItem.format.maxTimePerSetInMilliSeconds && tournamentSubItem.format.maxTimePerSetInMilliSeconds > 0
-        ? tournamentSubItem.format.maxTimePerSetInMilliSeconds / 60000
+      data.format.maxTimePerSetInMilliSeconds && data.format.maxTimePerSetInMilliSeconds > 0
+        ? data.format.maxTimePerSetInMilliSeconds / 60000
         : 0,
     startTimeDate: null,
     scoreHistory: [],
-    noOfSets: tournamentSubItem.format.noOfSets ? tournamentSubItem.format.noOfSets : null,
-    maxScorePerSet: tournamentSubItem.format.maxScorePerSet ? tournamentSubItem.format.maxScorePerSet : null,
+    noOfSets: data.format.noOfSets ? data.format.noOfSets : null,
+    maxScorePerSet: data.format.maxScorePerSet ? data.format.maxScorePerSet : null,
     isCumulativeScoring: isCumulativeScore ? true : false,
-    tournamentTeamOneId: tournamentItem.id,
-    tournamentTeamTwoId: tournamentItem.id,
-    tournamentId: tournamentItem.tournament.id,
+    tournamentTeamOneId: data.tournamentTeamOneId,
+    tournamentTeamTwoId: data.tournamentTeamTwoId,
+    tournamentId: data.tournamentId,
     tournamentTeamOneScore: 0,
     tournamentTeamTwoScore: 0,
     teamOneHandicap: data.teamOneHandicap ? data.teamOneHandicap : null,
@@ -132,8 +142,9 @@ export const setStateTournament = createAsyncThunk<
     isTeamOneHandicapApplied: false,
     isTeamTwoHandicapApplied: false,
     expectedEndTimeDate: null,
-    tournamentSubItemId: tournamentSubItem.id,
-    formatName: tournamentSubItem.format.name,
+    tournamentSubItemId: data.tournamentSubItemId,
+    formatName: data.format.name,
+    switchType: data.format.switchType ? data.format.switchType : null,
   };
   await dispatch(
     setState({
@@ -198,6 +209,7 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       expectedEndTimeDate: data.expectedEndTimeDate ? data.expectedEndTimeDate : null,
       tournamentSubItemId: data.tournamentSubItemId ? data.tournamentSubItemId : null,
       formatName: null,
+      switchType: data.switchType
     };
 
     if (data.sideTwoPlayerTwo !== null) {

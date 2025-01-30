@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { RootState } from '@/stores';
 import { useSelector } from 'react-redux';
 import useGetTournamentSchedule from '@/api/app/useGetTournamentSchedule';
+import useGetTournamentTeams from '@/api/app/useGetTournamentTeams';
 
 const useTournamentSchedule = () => {
   // HOOKS
@@ -13,6 +14,7 @@ const useTournamentSchedule = () => {
 
   // API
   const { getTournamentSchedule, schedule, loading } = useGetTournamentSchedule();
+  const { getTournamentTeams, teams, loading: teamsLoading } = useGetTournamentTeams();
 
   // SIDE EFFECTS
   useEffect(() => {
@@ -28,6 +30,7 @@ const useTournamentSchedule = () => {
 
     const fetchDataOnMount = async () => {
       await getTournamentSchedule({ id: tournamentId! });
+      await getTournamentTeams({ id: tournamentId! });
     };
 
     fetchDataOnMount();
@@ -35,7 +38,9 @@ const useTournamentSchedule = () => {
 
   return {
     loading,
+    teamsLoading,
     schedule,
+    teams,
   };
 };
 

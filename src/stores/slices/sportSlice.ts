@@ -57,6 +57,7 @@ const initialState: GeneralScoringState = {
   expectedEndTimeDate: null,
   tournamentSubItemId: null,
   formatName: null,
+  switchType: null,
 };
 
 const sportSlice = createSlice({
@@ -114,6 +115,7 @@ const sportSlice = createSlice({
         expectedEndTimeDate: null,
         tournamentSubItemId: null,
         formatName: null,
+        switchType: 'VISIT',
       });
     },
     resetStateBilliards(state) {
@@ -160,6 +162,7 @@ const sportSlice = createSlice({
         expectedEndTimeDate: null,
         tournamentSubItemId: null,
         formatName: null,
+        switchType: null,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {

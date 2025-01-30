@@ -105,6 +105,7 @@ export interface MatchStartResponse {
   isTeamOneHandicapApplied?: boolean;
   isTeamTwoHandicapApplied?: boolean;
   format: string;
+  switchType: 'FRAME' | 'VISIT' | null;
   tournamentSubItemId?: string;
   tournamentSubItem?: TournamentSubItem & {
     tournamentItem: TournamentItem;

@@ -131,6 +131,7 @@ export interface GeneralScoringState {
   expectedEndTimeDate: string | null;
   tournamentSubItemId: string | null;
   formatName: string | null;
+  switchType: 'FRAME' | 'VISIT' | null;
 }
 
 export interface ClubData {
@@ -146,7 +147,6 @@ export interface ClubState {
 export interface TournamentFormat {
   id: string;
   name: string;
-  tournamentId: string;
   noOfPlayers: number;
   sport: 'SNOOKER' | 'BILLIARDS';
   maxScorePerSet?: number;
@@ -155,17 +155,28 @@ export interface TournamentFormat {
   noOfBalls?: number;
   maxTimePerSetInMilliSeconds?: number;
   isHandicapAllowed?: boolean;
+  matchNo?: number;
+  switchType?: 'FRAME' | 'VISIT';
 }
+
+export interface TournamentPhase {
+  id: string;
+  name: string;
+  tournamentId: string;
+  tournament: Tournament;
+  tournamentFormats: TournamentFormat[];
+  phaseStatus: 'ACTIVE' | 'COMPLETED' | 'INACTIVE';
+}
+
 
 export interface TournamentItem {
   id: string;
-  tournamentId: string;
-  tournament: Tournament;
+  tournamentPhaseId: string;
+  tournamentPhase: TournamentPhase;
   tournamentTeamOne: TournamentTeam;
   tournamentTeamTwo: TournamentTeam;
   tournamentTeamOneId: string;
   tournamentTeamTwoId: string;
-  itemType: string;
   startDate: string;
   teamOneScore?: number;
   teamTwoScore?: number;
@@ -174,9 +185,9 @@ export interface TournamentItem {
 
 export interface TournamentSubItem {
   id: string;
-  format: TournamentFormat;
   matchNo: number;
   tournamentItemId: string;
   teamWinningIndex?: number;
   matchId?: string;
+  gameFormat: TournamentFormat;
 }

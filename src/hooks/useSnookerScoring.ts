@@ -240,6 +240,7 @@ const useSnookerScoring = () => {
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
       format: snookerScoring.formatName ? snookerScoring.formatName : snookerSportTypeToFormat(snookerScoring.format, snookerScoring.isCumulativeScoring),
       tournamentSubItemId: snookerScoring.tournamentSubItemId ? snookerScoring.tournamentSubItemId : undefined,
+      switchType: snookerScoring.switchType ? snookerScoring.switchType : null,
     });
 
     if (matchId) {
