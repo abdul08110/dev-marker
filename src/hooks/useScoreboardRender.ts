@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import useTimer from './useTimer';
 import { toast } from '@/components/ui/use-toast';
-import { Player, Set } from '@/stores/types';
+import { Player, Set, TournamentItem, TournamentSubItem } from '@/stores/types';
 import useBodyRotation from './useBodyRotation';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 
@@ -37,6 +37,10 @@ export interface ScoreBoardState {
   clubLogo: string | null;
   format: string | null;
   venueNo: number | null;
+  clubName: string | null;
+  tournamentSubItem?: TournamentSubItem & {
+    tournamentItem: TournamentItem;
+  };
 }
 
 const useScoreboardRender = () => {
@@ -162,7 +166,9 @@ const useScoreboardRender = () => {
             actualStartTimeDate: res.actualStartTimeDate,
             clubLogo: res.club && res.club.imageUrl ? res.club.imageUrl : null,
             format: res.format,
-            venueNo: res.venue ? res.venue.no : null
+            venueNo: res.venue ? res.venue.no : null,
+            tournamentSubItem: res.tournamentSubItem,
+            clubName: res.club?.name ? res.club.name : null,
           });
         } else {
           toast({

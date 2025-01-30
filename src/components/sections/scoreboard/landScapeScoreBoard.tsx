@@ -28,8 +28,13 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             },
           )}
         >
-          <div className="h-[30%] w-full">
-            <PlayerImage player={state.sideOnePlayerOne} />
+          <div className="h-[30%] w-full relative">
+            <span className="ml-14 absolute top-1/2  transform -translate-y-1/2 text-white font-bold 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
+              {state.tournamentId && state.tournamentSubItem
+                ? state.tournamentSubItem?.tournamentItem.teamOneScore!
+                : state.teamOneScore}
+            </span>
+            <PlayerImage profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto} />
           </div>
 
           <div className="h-[20%] pt-8">
@@ -43,12 +48,20 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             )}
           </div>
 
-          <div className="h-[40%] w-full pt-4">
-            <TeamScore
-              score={activeSet ? activeSet.teamOneScore : 0}
-              isActive={isTeamOneActive}
-              breakScore={activeTurn?.score}
-            />
+          <div className="h-[35%] w-full pt-4">
+            <div className="flex flex-col gap-4 h-full">
+              <TeamScore
+                score={activeSet ? activeSet.teamOneScore : 0}
+                isActive={isTeamOneActive}
+                breakScore={activeTurn?.score}
+              />
+              <Player
+                playerOneName={state.sideOnePlayerOne.name}
+                playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
+                ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'YELLOW' : null}
+                isActive={isTeamOneActive}
+              />
+            </div>
           </div>
         </div>
 
@@ -61,8 +74,13 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             },
           )}
         >
-          <div className="h-[30%] w-full">
-            <PlayerImage player={state.sideTwoPlayerOne} />
+          <div className="h-[30%] w-full relative">
+            <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
+            <span className="right-14 absolute top-1/2  transform -translate-y-1/2 text-white font-bold 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
+              {state.tournamentId && state.tournamentSubItem
+                ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
+                : state.teamTwoScore}
+            </span>
           </div>
 
           <div className="h-[20%] pt-8">
@@ -76,12 +94,20 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             )}
           </div>
 
-          <div className="h-[40%] w-full pt-4">
-            <TeamScore
-              score={activeSet ? activeSet.teamTwoScore : 0}
-              isActive={isTeamTwoActive}
-              breakScore={activeTurn?.score}
-            />
+          <div className="h-[35%] w-full pt-4">
+            <div className="flex flex-col gap-4 h-full">
+              <TeamScore
+                score={activeSet ? activeSet.teamTwoScore : 0}
+                isActive={isTeamTwoActive}
+                breakScore={activeTurn?.score}
+              />
+              <Player
+                playerOneName={state.sideTwoPlayerOne.name}
+                playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
+                ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'WHITE' : null}
+                isActive={isTeamTwoActive}
+              />
+            </div>
           </div>
         </div>
 
@@ -91,122 +117,57 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
 
         <div className="absolute h-[40%] top-[50%] left-1/2 transform -translate-x-1/2">
           <div className="flex flex-col 360p:gap-1 480p:gap-2 720p:gap-2 1080p:gap-3 2k:gap-4 4k:gap-6 overflow-auto h-full justify-start items-center col-span-1">
-            <div className="bg-black p-2 2k:p-4 4k:p-6 border border-white rounded-xl flex flex-col justify-start items-center">
-              <span className="text-center text-white 360p:text-[0.6rem] 480p:text-[1rem] 720p:text-[1.6rem] 1080p:text-[1.8rem] 2k:text-[4rem] 4k:text-[6rem]">
-                Time Left (mins):
-              </span>
-              <strong className="text-center text-white 360p:text-[2.2rem] 480p:text-[3.1rem] 720p:text-[5rem] 1080p:text-[5.4rem] 2k:text-[4.8rem] 4k:text-[6.8rem] leading-[1]">
-                {formatTime(timeLeft)}
-              </strong>
-              <span className="text-white font-bold uppercase 360p:text-[0.6rem]  480p:text-[1rem] 720p:text-[1.6rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
-                {state.format} {state.sport}
-              </span>
-            </div>
+            {state.tournamentSubItem && state.tournamentSubItem?.gameFormat.isCumulativeScoring ? (
+              <></>
+            ) : (
+              <div className="bg-black p-2 2k:p-4 4k:p-6 border border-white rounded-xl flex flex-col justify-start items-center">
+                {state.tournamentId && state.tournamentSubItem ? (
+                  <PlayerScore
+                    teamOneScore={state.teamOneScore}
+                    teamTwoScore={state.teamTwoScore}
+                    noOfFrames={
+                      state.tournamentSubItem.gameFormat.noOfSets ? state.tournamentSubItem.gameFormat.noOfSets : 0
+                    }
+                  />
+                ) : (
+                  <>
+                    <span className="text-center text-white 360p:text-[0.6rem] 480p:text-[1rem] 720p:text-[1.6rem] 1080p:text-[1.8rem] 2k:text-[4rem] 4k:text-[6rem]">
+                      Time Left (mins):
+                    </span>
+                    <strong className="text-center text-white 360p:text-[2.2rem] 480p:text-[3.1rem] 720p:text-[5rem] 1080p:text-[5.4rem] 2k:text-[4.8rem] 4k:text-[6.8rem] leading-[1]">
+                      {formatTime(timeLeft)}
+                    </strong>
+                    <span className="text-white font-bold uppercase 360p:text-[0.6rem]  480p:text-[1rem] 720p:text-[1.6rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
+                      {state.format} {state.sport}
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="h-[10%] absolute w-[95%] left-1/2 transform -translate-x-1/2 top-[88%] rounded-md border border-white grid grid-cols-12 py-1 bg-black">
-          <Player
-            playerOneName={state.sideOnePlayerOne.name}
-            playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
-            ballToShow={state.sport === 'BILLIARDS' ? 'YELLOW' : null}
-            isActive={isTeamOneActive}
-          />
-          <PlayerScore
-            teamOneScore={state.teamOneScore}
-            teamTwoScore={state.teamTwoScore}
-            noOfFrames={state.sets.length}
-          />
-          <Player
-            playerOneName={state.sideTwoPlayerOne.name}
-            playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
-            ballToShow={state.sport === 'BILLIARDS' ? 'WHITE' : null}
-            isActive={isTeamTwoActive}
-          />
+        <div className="h-[10%] flex gap-2 absolute w-[98%] left-1/2 transform -translate-x-1/2 top-[88%] rounded-md border border-white py-1 px-2 bg-black items-center">
+          <img src="/images/clublogo.png" className="h-10 w-10 rounded-full overflow-hidden" />
+
+          <div className="flex-grow text-center text-white font-bold 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase">
+            {state.tournamentId && state.tournamentSubItem
+              ? `GAME #${state.tournamentSubItem.gameFormat.matchNo} | ${state.tournamentSubItem.gameFormat.name} | ${state.tournamentSubItem.tournamentItem.tournamentPhase.name}`
+              : `PRACTICE | ${state.format} | ${state.clubName}`}
+          </div>
         </div>
       </div>
     </section>
-    // <section className="h-screen w-screen flex flex-col 480p:p-5 720p:p-5 1080p:p-8 2k:p-12 4k:p-16 relative">
-    //   {/* Player and Club Images */}
-    //   <div className="h-[30%] w-full grid grid-cols-3">
-    //     <PlayerImage player={state.sideOnePlayerOne} />
-    //     <div></div>
-    //     {/* <ClubLogo src={state.clubLogo!} /> */}
-    //     <PlayerImage player={state.sideTwoPlayerOne} />
-    //   </div>
-
-    //   <div className="absolute w-[28%] left-1/2 transform -translate-x-1/2 h-[50%] flex flex-col gap-10">
-    //     <ClubLogo src={state.clubLogo!} />
-    //   </div>
-
-    //   {state.sport === 'SNOOKER' ? (
-    //     <div className="h-[20%] w-full grid grid-cols-3 pt-8 2xl:pt-14">
-    //       <SnookerPointDisplay turns={activeSet?.turns} players={[state.sideOnePlayerOne, state.sideOnePlayerTwo]} />
-    //       <div className="flex justify-center items-center h-full"></div>
-    //       <SnookerPointDisplay turns={activeSet?.turns} players={[state.sideTwoPlayerOne, state.sideTwoPlayerTwo]} />
-    //     </div>
-    //   ) : (
-    //     <div className="h-[20%]"></div>
-    //   )}
-
-    //   {/* Team Scores */}
-    //   <div className="h-[40%] w-full grid grid-cols-3 pt-8">
-    //     <TeamScore
-    //       score={activeSet ? activeSet.teamOneScore : 0}
-    //       isActive={isTeamOneActive}
-    //       breakScore={activeTurn?.score}
-    //     />
-    //     <div className="flex flex-col 480p:gap-2 720p:gap-2 1080p:gap-3 2k:gap-4 4k:gap-6 overflow-auto h-full justify-start items-center col-span-1">
-    //       <div className="bg-black p-2 2k:p-4 4k:p-6 border border-white rounded-xl flex flex-col justify-start items-center">
-    //         <span className="text-center text-white 480p:text-[1rem] 720p:text-[1.6rem] 1080p:text-[1.8rem] 2k:text-[4rem] 4k:text-[6rem]">
-    //           Time Left (mins):
-    //         </span>
-    //         <strong className="text-center text-white 480p:text-[3.1rem] 720p:text-[5rem] 1080p:text-[5.4rem] 2k:text-[4.8rem] 4k:text-[6.8rem] leading-[1]">
-    //           {formatTime(timeLeft)}
-    //         </strong>
-    //         <span className="text-white font-bold uppercase  480p:text-[1rem] 720p:text-[1.6rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
-    //           {state.format} {state.sport}
-    //         </span>
-    //       </div>
-    //     </div>
-    //     <TeamScore
-    //       score={activeSet ? activeSet.teamTwoScore : 0}
-    //       isActive={isTeamTwoActive}
-    //       breakScore={activeTurn?.score}
-    //     />
-    //   </div>
-
-    //   {/* Player Scores */}
-    //   <div className="h-[10%] w-full rounded-md border border-white grid grid-cols-12 py-1 bg-black">
-    //     <Player
-    //       playerOneName={state.sideOnePlayerOne.name}
-    //       playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
-    //       ballToShow={state.sport === 'BILLIARDS' ? 'YELLOW' : null}
-    //       isActive={isTeamOneActive}
-    //     />
-    //     <PlayerScore
-    //       teamOneScore={state.teamOneScore}
-    //       teamTwoScore={state.teamTwoScore}
-    //       noOfFrames={state.sets.length}
-    //     />
-    //     <Player
-    //       playerOneName={state.sideTwoPlayerOne.name}
-    //       playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
-    //       ballToShow={state.sport === 'BILLIARDS' ? 'WHITE' : null}
-    //       isActive={isTeamTwoActive}
-    //     />
-    //   </div>
-    // </section>
   );
 }
 
 // Player Image Component
-function PlayerImage({ player }: { player: { profilePhoto?: string | null } }) {
+function PlayerImage({ profilePhoto }: { profilePhoto?: string | null }) {
   return (
     <div className="flex justify-center items-center col-span-1 h-full overflow-auto">
       <img
         className="rounded-md overflow-hidden h-full w-auto aspect-square object-cover"
-        src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.jpg'}
+        src={profilePhoto ? profilePhoto : '/images/user-dummy-pic.jpg'}
       />
     </div>
   );
@@ -215,9 +176,9 @@ function PlayerImage({ player }: { player: { profilePhoto?: string | null } }) {
 // Club Logo Component
 function ClubLogo({ venueNo }: { venueNo: number }) {
   return (
-    <div className="flex justify-center items-center bg-white rounded-full 360p:size-12 480p:size-36 720p:size-36">
-      <span className="text-black font-bold uppercase 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
-        {venueNo}
+    <div className="flex justify-center items-center bg-black rounded border border-white 360p:size-12 480p:size-36 720p:size-36">
+      <span className="text-white font-bold uppercase 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
+        T{venueNo}
       </span>
     </div>
     // <img src={src!} className="180p:w-4 360p:w-16 480p:w-20  720p:w-32 1080p:w-44 2k:w-56 4k:w-96 h-auto !important" />
@@ -269,12 +230,12 @@ function PlayerScore({
 }: {
   teamOneScore: number;
   teamTwoScore: number;
-  noOfFrames: number;
+  noOfFrames?: number;
 }) {
   return (
-    <div className="flex justify-center items-center col-span-4">
-      <span className="480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] text-center text-white font-bold leading-[1]">
-        {teamOneScore} ({noOfFrames}) {teamTwoScore}
+    <div className="flex justify-center items-center col-span-4 p-3">
+      <span className="480p:text-[2rem] 720p:text-[3rem] 1080p:text-[3.5rem]  2k:text-[3.8rem] 4k:text-[4.4rem] text-center text-white font-bold leading-[1]">
+        {teamOneScore} {noOfFrames ? `(${noOfFrames})` : ''} {teamTwoScore}
       </span>
     </div>
   );
@@ -294,7 +255,7 @@ function Player({
   return (
     <div
       className={clsx(
-        'col-span-4 flex gap-4 justify-center items-center  font-bold 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase',
+        'flex  mt-auto gap-4 w-full justify-center items-center  font-bold 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase',
         {
           'text-yellow-500': isActive,
           'text-white': !isActive,
@@ -302,11 +263,17 @@ function Player({
       )}
     >
       {ballToShow === 'YELLOW' && (
-        <img className="360p:size-4 480p:size-6 720p:size-10 object-contain aspect-square" src={'/images/yellow-ball.png'} />
+        <img
+          className="360p:size-4 480p:size-6 720p:size-10 object-contain aspect-square"
+          src={'/images/yellow-ball.png'}
+        />
       )}
       {truncateText(generatePlayerName(playerOneName, playerTwoName))}
       {ballToShow === 'WHITE' && (
-        <img className="360p:size-4 480p:size-6 720p:size-10 object-contain aspect-square" src={'/images/white-ball.png'} />
+        <img
+          className="360p:size-4 480p:size-6 720p:size-10 object-contain aspect-square"
+          src={'/images/white-ball.png'}
+        />
       )}
     </div>
   );
