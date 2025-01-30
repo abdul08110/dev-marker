@@ -40,8 +40,6 @@ import {
   SnookerPointType,
   SportType,
   TournamentFormat,
-  TournamentItem,
-  TournamentSubItem,
 } from '../types';
 import {
   adjustColorBallsPottedWithFreeBall,

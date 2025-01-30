@@ -54,8 +54,6 @@ export function Tournament() {
   const { loading, schedule, teamsLoading, teams } = useTournamentSchedule();
   const {
     getTournamentSubItem,
-    loading: tournamentSubItemLoading,
-    error: tournamentSubItemError,
   } = useGetTournamentSubItem();
 
   const [selectedFormat, setSelectedFormat] = useState<TournamentFormat | null>(null);
