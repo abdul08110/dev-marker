@@ -90,59 +90,6 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
         <></>
       )}
 
-      {props.state.tournamentId !== null ? (
-        <div
-          className={clsx(
-            'absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 flex justify-center items-center',
-            {
-              '-rotate-90': props.orientation === 'portrait',
-              '': props.orientation === 'landscape',
-            },
-          )}
-        >
-          {props.state.sport === 'BILLIARDS' ? (
-            <></>
-          ) : (
-            <div className="bg-[#2D2D2D] p-2 border border-white rounded-xl flex flex-col justify-center items-center">
-              <strong
-                className={clsx('text-center text-white leading-[1]', {
-                  'text-4xl': props.orientation === 'landscape',
-                  'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
-                })}
-              >
-                <span>{props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore : 0}</span>{' '}
-                <span>(3)</span>{' '}
-                <span>{props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore : 0}</span>
-              </strong>
-            </div>
-          )}
-        </div>
-      ) : (
-        <></>
-      )}
-
-      {/* {props.state.tournamentId !== null ? (
-        <div
-          className={clsx('absolute right-10 top-10 z-10 bg-[#2D2D2D] p-2 border-white border', {
-            '-rotate-90 -top-14': props.orientation === 'portrait',
-            'top-[12%]': props.orientation === 'landscape',
-          })}
-        >
-          {
-            <strong
-              className={clsx('text-center text-white leading-[1]', {
-                'text-4xl': props.orientation === 'landscape',
-                'md:text-6xl text-2xl flex flex-col': props.orientation === 'portrait',
-              })}
-            >
-              {props.state.tournamentTeamOneScore}
-            </strong>
-          }
-        </div>
-      ) : (
-        <></>
-      )} */}
-
       <div className={clsx('w-full h-full gap-2 grid grid-cols-2')}>
         <ScoreBoardTeamCard
           contentfrom={props.orientation === 'portrait' ? 'left' : 'top'}

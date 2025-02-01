@@ -1,6 +1,6 @@
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
-import { generatePlayerName, truncateText } from '@/utils/functions';
+import { generatePlayerName } from '@/utils/functions';
 
 interface BBSLTemplateProps {
   state: StreamingState | null;
