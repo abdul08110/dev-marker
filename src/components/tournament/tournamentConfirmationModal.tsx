@@ -31,7 +31,7 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
       <DialogContent className="top-0 left-0 absolute h-full bg-black/60 w-full flex justify-center items-center">
         <DialogTitle></DialogTitle>
         <div className="container">
-          <div className="p-2 flex justify-center">
+          <div className=" p-2 flex justify-center">
             <div className="w-full bg-[#1F1F1F] p-6 rounded-lg shadow-xl max-w-2xl">
               <h2 className="text-white text-base font-bold text-center mb-6">
                 {props.format.name} #Game - {props.format.matchNo}
@@ -65,15 +65,17 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
                 <div>
                   <h3 className="text-white/70 mb-3 text-xs text-center">Team One Players</h3>
                   <div className="space-y-2">
-                    {props.teamOnePlayers.map((player) => (
-                      <div key={player.id} className="flex items-center gap-2">
-                        <img
-                          src={player.profilePhoto || '/images/user-dummy-pic.png'}
-                          alt={player.name}
-                          className="h-8 w-8 rounded-full object-cover"
-                        />
-                        <span className="text-white text-xs">{player.name}</span>
-                      </div>
+                    {props.teamOnePlayers?.map((player) => (
+                      player && (
+                        <div key={player.id} className="flex items-center gap-2">
+                          <img
+                            src={player.profilePhoto || '/images/user-dummy-pic.png'}
+                            alt={player.name}
+                            className="h-8 w-8 rounded-full object-cover"
+                          />
+                          <span className="text-white text-xs">{player.name}</span>
+                        </div>
+                      )
                     ))}
                   </div>
                 </div>
@@ -81,15 +83,17 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
                 <div>
                   <h3 className="text-white/70 mb-3 text-xs text-center">Team Two Players</h3>
                   <div className="space-y-2">
-                    {props.teamTwoPlayers.map((player) => (
-                      <div key={player.id} className="flex items-center gap-2">
-                        <img
-                          src={player.profilePhoto || '/images/user-dummy-pic.png'}
-                          alt={player.name}
-                          className="h-8 w-8 rounded-full object-cover"
-                        />
-                        <span className="text-white text-xs">{player.name}</span>
-                      </div>
+                    {props.teamTwoPlayers?.map((player) => (
+                      player && (
+                        <div key={player.id} className="flex items-center gap-2">
+                          <img
+                            src={player.profilePhoto || '/images/user-dummy-pic.png'}
+                            alt={player.name}
+                            className="h-8 w-8 rounded-full object-cover"
+                          />
+                          <span className="text-white text-xs">{player.name}</span>
+                        </div>
+                      )
                     ))}
                   </div>
                 </div>

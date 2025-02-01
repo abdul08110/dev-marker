@@ -15,6 +15,10 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
   const activeTurn = getActiveTurn(activeSet);
   const isTeamOneActive = state.sideOnePlayerOne.id === state.activePlayerId;
   const isTeamTwoActive = state.sideTwoPlayerOne.id === state.activePlayerId;
+  const isTeamReveresed =
+    state.tournamentId && state.tournamentSubItem
+      ? state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== state.tournamentTeamOneId
+      : false;
 
   return (
     <section className="h-screen w-screen 480p:p-2 720p:p-4 1080p:p-6 2k:p-12 4k:p-16  360p:p-1">
@@ -31,7 +35,9 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           <div className="h-[30%] w-full relative">
             <span className="ml-14 absolute top-1/2  transform -translate-y-1/2 text-white font-bold 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
               {state.tournamentId && state.tournamentSubItem
-                ? state.tournamentSubItem?.tournamentItem.teamOneScore!
+                ? isTeamReveresed
+                  ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
+                  : state.tournamentSubItem?.tournamentItem.teamOneScore!
                 : state.teamOneScore}
             </span>
             <PlayerImage profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto} />
@@ -78,7 +84,9 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
             <span className="right-14 absolute top-1/2  transform -translate-y-1/2 text-white font-bold 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
               {state.tournamentId && state.tournamentSubItem
-                ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
+                ? isTeamReveresed
+                  ? state.tournamentSubItem?.tournamentItem.teamOneScore!
+                  : state.tournamentSubItem?.tournamentItem.teamTwoScore!
                 : state.teamTwoScore}
             </span>
           </div>

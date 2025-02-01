@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import mqtt from 'mqtt';
 import useGetMatchLiveData, { StreamData, StreamType } from '@/api/app/useGetMatchData';
 import { toast } from '@/components/ui/use-toast';
-import { Player, Set } from '@/stores/types';
+import { Player, Set, TournamentItem, TournamentSubItem } from '@/stores/types';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useTimer from './useTimer';
 import { addMillisecondsToUTC } from '@/utils/functions';
@@ -48,7 +48,13 @@ export interface StreamingState {
   tournamentId: string | null;
   teamOneName: string | null;
   teamTwoName: string | null;
+  tournamentTeamOneId: string | null;
+  tournamentTeamTwoId: string | null;
+  format: string | null;
   expectedEndTimeDate: string | null;
+  tournamentSubItem?: TournamentSubItem & {
+    tournamentItem: TournamentItem;
+  };
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -170,6 +176,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
           teamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
           expectedEndTimeDate: res.expectedEndTimeDate ? res.expectedEndTimeDate : null,
+          format: res.format ? res.format : null,
+          tournamentSubItem: res.tournamentSubItem,
+          tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
+            tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
         });
 
         setViewershipData({
@@ -212,6 +222,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
           teamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
           expectedEndTimeDate: res.expectedEndTimeDate ? res.expectedEndTimeDate : null,
+          format: res.format ? res.format : null,
+          tournamentSubItem: res.tournamentSubItem,
+          tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
+            tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -417,6 +431,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           teamOneName: currentStreamingData.teamOneName,
           teamTwoName: currentStreamingData.teamTwoName,
           expectedEndTimeDate: currentStreamingData.expectedEndTimeDate,
+          format: currentStreamingData.format,
+          tournamentSubItem: currentStreamingData.tournamentSubItem,
+          tournamentTeamOneId: currentStreamingData.tournamentTeamOneId,
+            tournamentTeamTwoId: currentStreamingData.tournamentTeamTwoId,
         });
       }
     }

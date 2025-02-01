@@ -11,6 +11,7 @@ import { GeneralTemplate } from './templates/General';
 import { SourceWithFinalScores } from './templates/SourceFinalScores';
 import { useState } from 'react';
 import clsx from 'clsx';
+import { BBSLTemplate } from './templates/BBSL';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -103,27 +104,35 @@ export function StreamContainer(props: StreamContainerProps) {
 
               {props.state.overlayType === 'DESTINATION' &&
                 !props.isPortrait &&
-                isOverlayEnabled &&
-                (props.state.tournamentId === '671f4acf089a3a701c79071f' ? (
-                  <EcaTemplate
-                    teamOneLogo={props.state.teamOneLogo}
-                    teamTwoLogo={props.state.teamTwoLogo}
-                    activePlayerId={props.state.activePlayerId}
-                    activeTurn={activeTurn}
-                    tournamentName={props.state.tournamentName!}
-                    sideOnePlayerOne={props.state.sideOnePlayerOne}
-                    sideTwoPlayerOne={props.state.sideTwoPlayerOne}
-                    isTeamOneHandicapApplied={props.state.isTeamOneHandicapApplied!}
-                    isTeamTwoHandicapApplied={props.state.isTeamTwoHandicapApplied!}
-                    teamOneHandicap={props.state.teamOneHandicap!}
-                    teamTwoHandicap={props.state.teamTwoHandicap!}
-                    maxScorePerSet={props.state.maxScorePerSet!}
-                    teamOneScore={props.state.teamOneScore}
-                    teamTwoScore={props.state.teamTwoScore}
-                  />
-                ) : (
-                  <GeneralTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} timeLeft={props.timeLeft} />
-                ))}
+                isOverlayEnabled && (
+                  props.state.tournamentId ? (
+                    {
+                      '671f4acf089a3a701c79071f': (
+                        <EcaTemplate
+                          teamOneLogo={props.state.teamOneLogo}
+                          teamTwoLogo={props.state.teamTwoLogo}
+                          activePlayerId={props.state.activePlayerId}
+                          activeTurn={activeTurn}
+                          tournamentName={props.state.tournamentName!}
+                          sideOnePlayerOne={props.state.sideOnePlayerOne}
+                          sideTwoPlayerOne={props.state.sideTwoPlayerOne}
+                          isTeamOneHandicapApplied={props.state.isTeamOneHandicapApplied!}
+                          isTeamTwoHandicapApplied={props.state.isTeamTwoHandicapApplied!}
+                          teamOneHandicap={props.state.teamOneHandicap!}
+                          teamTwoHandicap={props.state.teamTwoHandicap!}
+                          maxScorePerSet={props.state.maxScorePerSet!}
+                          teamOneScore={props.state.teamOneScore}
+                          teamTwoScore={props.state.teamTwoScore}
+                        />
+                      ),
+                      '679321b846b356ef640ca3d2': (
+                        <BBSLTemplate state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
+                      )
+                    }[props.state.tournamentId] || <GeneralTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} timeLeft={props.timeLeft} />
+                  ) : (
+                    <GeneralTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} timeLeft={props.timeLeft} />
+                  )
+                )}
               {props.state.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && isOverlayEnabled && (
                 <SourceWithFinalScores state={props.state} />
               )}

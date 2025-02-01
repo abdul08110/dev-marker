@@ -25,8 +25,8 @@ export interface ScoreBoardState {
   teamOneLogo: string | null;
   teamTwoLogo: string | null;
   tournamentId: string | null;
-  tournamentTeamOneScore: number | null;
-  tournamentTeamTwoScore: number | null;
+  tournamentTeamOneId: string | null;
+  tournamentTeamTwoId: string | null;
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
   isTeamOneHandicapApplied?: boolean;
@@ -151,8 +151,6 @@ const useScoreboard = () => {
             teamOneLogo: res.tournamentTeamOne ? res.tournamentTeamOne.logo : null,
             teamTwoLogo: res.tournamentTeamTwo ? res.tournamentTeamTwo.logo : null,
             tournamentId: res.tournament ? res.tournament.id : null,
-            tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
-            tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
             teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
             teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
             isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
@@ -166,6 +164,8 @@ const useScoreboard = () => {
             venueNo: res.venue ? res.venue.no : null,
             tournamentSubItem: res.tournamentSubItem,
             clubName: res.club?.name ? res.club.name : null,
+            tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
+            tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
           });
         } else {
           toast({

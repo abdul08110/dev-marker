@@ -114,7 +114,9 @@ const useSnookerScoring = () => {
   const timeLeft = useTimer({
     endTime: snookerScoring.expectedEndTimeDate ? new Date(snookerScoring.expectedEndTimeDate) : null,
     startTime: null,
-    onTimerComplete: () => { setShowTimeModal(true); },
+    onTimerComplete: () => {
+      setShowTimeModal(true);
+    },
   });
 
   useEffect(() => {
@@ -231,14 +233,26 @@ const useSnookerScoring = () => {
       maxScorePerSet: snookerScoring.maxScorePerSet,
       noOfSets: snookerScoring.noOfSets,
       cumulativeScoring: snookerScoring.isCumulativeScoring,
-      tournamentTeamOneId: snookerScoring.tournamentTeamOneId ? snookerScoring.tournamentTeamOneId : undefined,
-      tournamentTeamTwoId: snookerScoring.tournamentTeamTwoId ? snookerScoring.tournamentTeamTwoId : undefined,
+      tournamentTeamOneId:
+        snookerScoring.tournamentTeamOneId !== null && snookerScoring.tournamentTeamTwoId !== null
+          ? isTeamReveresed
+            ? snookerScoring.tournamentTeamTwoId
+            : snookerScoring.tournamentTeamOneId
+          : undefined,
+      tournamentTeamTwoId:
+        snookerScoring.tournamentTeamOneId !== null && snookerScoring.tournamentTeamTwoId !== null
+          ? isTeamReveresed
+            ? snookerScoring.tournamentTeamOneId
+            : snookerScoring.tournamentTeamTwoId
+          : undefined,
       tournamentId: snookerScoring.tournamentId ? snookerScoring.tournamentId : undefined,
       tournamentTeamOneScore: snookerScoring.tournamentTeamOneScore ? snookerScoring.tournamentTeamOneScore : undefined,
       tournamentTeamTwoScore: snookerScoring.tournamentTeamTwoScore ? snookerScoring.tournamentTeamTwoScore : undefined,
       teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
-      format: snookerScoring.formatName ? snookerScoring.formatName : snookerSportTypeToFormat(snookerScoring.format, snookerScoring.isCumulativeScoring),
+      format: snookerScoring.formatName
+        ? snookerScoring.formatName
+        : snookerSportTypeToFormat(snookerScoring.format, snookerScoring.isCumulativeScoring),
       tournamentSubItemId: snookerScoring.tournamentSubItemId ? snookerScoring.tournamentSubItemId : undefined,
       switchType: snookerScoring.switchType ? snookerScoring.switchType : null,
     });
@@ -248,7 +262,7 @@ const useSnookerScoring = () => {
         handleMatchStart({
           matchId,
           scoreOrder: playerOrder,
-          expectedEndTimeDate
+          expectedEndTimeDate,
         }),
       );
     } else {
@@ -448,7 +462,7 @@ const useSnookerScoring = () => {
     } catch (error) {
       console.error('Error ending game:', error);
       toast({
-        title: 'Error', 
+        title: 'Error',
         description: 'Failed to end game. Please try again.',
         variant: 'destructive',
       });

@@ -11,12 +11,15 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAppDispatch } from '@/stores';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TournamentFormat, TournamentTeam } from '@/stores/types';
 import { TournamentConfirmationModal } from '@/components/tournament/tournamentConfirmationModal';
 import useGetTournamentSubItem from '@/api/app/useCreateTournamentSubItem';
 import { setStateTournament } from '@/stores/thunks/sportThunks';
 import { ScoreUpdateLoadingModal } from '@/components/modals/scoreUpdateLoading';
+
+const STORAGE_KEY_TEAM_ONE = 'selectedTournamentTeamOne';
+const STORAGE_KEY_TEAM_TWO = 'selectedTournamentTeamTwo';
 
 const createFormSchema = (numberOfPlayers: number) => {
   return z.object({
@@ -69,8 +72,86 @@ export function Tournament() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      formatId: '',
+    },
   });
+
+  useEffect(() => {
+    if (!loading && !teamsLoading && schedule && teams && selectedFormat) {
+      const cachedTeamOneId = localStorage.getItem(STORAGE_KEY_TEAM_ONE);
+      if (cachedTeamOneId) {
+        const teamOne = teams.find(t => t.id === cachedTeamOneId);
+        if (teamOne) {
+          setSelectedTeamOne(teamOne);
+          form.setValue('teamOneId', teamOne.id);
+          form.setValue(
+            'teamOnePlayers',
+            Array(numberOfPlayersPerTeam).fill({
+              id: '',
+              name: '',
+              phoneNumber: '',
+              profilePhoto: null,
+            })
+          );
+        }
+      }
+
+      const cachedTeamTwoId = localStorage.getItem(STORAGE_KEY_TEAM_TWO);
+      if (cachedTeamTwoId) {
+        const teamTwo = teams.find(t => t.id === cachedTeamTwoId);
+        if (teamTwo) {
+          setSelectedTeamTwo(teamTwo);
+          form.setValue('teamTwoId', teamTwo.id);
+          form.setValue(
+            'teamTwoPlayers',
+            Array(numberOfPlayersPerTeam).fill({
+              id: '',
+              name: '',
+              phoneNumber: '',
+              profilePhoto: null,
+            })
+          );
+        }
+      }
+    }
+  }, [loading, teamsLoading, schedule, teams, selectedFormat]);
+
+  const handleFormatChange = (value: string) => {
+    const format = schedule!.tournamentFormats!.find((f) => f.id === value)!;
+    setSelectedFormat(format);
+    form.setValue('formatId', value);
+  };
+
+  const handleTeamOneChange = (value: string) => {
+    const team = teams?.find((t) => t.id === value);
+    setSelectedTeamOne(team || null);
+    form.setValue(
+      'teamOnePlayers',
+      Array(numberOfPlayersPerTeam).fill({
+        id: '',
+        name: '',
+        phoneNumber: '',
+        profilePhoto: null,
+      })
+    );
+    localStorage.setItem(STORAGE_KEY_TEAM_ONE, value);
+  };
+
+  const handleTeamTwoChange = (value: string) => {
+    const team = teams?.find((t) => t.id === value);
+    setSelectedTeamTwo(team || null);
+    form.setValue(
+      'teamTwoPlayers',
+      Array(numberOfPlayersPerTeam).fill({
+        id: '',
+        name: '',
+        phoneNumber: '',
+        profilePhoto: null,
+      })
+    );
+    localStorage.setItem(STORAGE_KEY_TEAM_TWO, value);
+  };
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!selectedFormat || !selectedTeamOne || !selectedTeamTwo) {
@@ -144,14 +225,7 @@ export function Tournament() {
                 <FormItem>
                   <FormLabel className="text-white">Select Format</FormLabel>
                   <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setSelectedFormat(schedule.tournamentFormats!.find((f) => f.id === value)!);
-                      setSelectedTeamOne(null);
-                      setSelectedTeamTwo(null);
-                      form.setValue('teamOneId', '');
-                      form.setValue('teamTwoId', '');
-                    }}
+                    onValueChange={handleFormatChange}
                     value={field.value ? field.value : ''}
                   >
                     <FormControl>
@@ -182,20 +256,7 @@ export function Tournament() {
                     <FormItem>
                       <FormLabel className="text-white">Select Team One</FormLabel>
                       <Select
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          const team = teams?.find((t) => t.id === value);
-                          setSelectedTeamOne(team || null);
-                          form.setValue(
-                            'teamOnePlayers',
-                            Array(numberOfPlayersPerTeam).fill({
-                              id: '',
-                              name: '',
-                              phoneNumber: '',
-                              profilePhoto: null,
-                            }),
-                          );
-                        }}
+                        onValueChange={handleTeamOneChange}
                         value={field.value}
                       >
                         <FormControl>
@@ -215,49 +276,8 @@ export function Tournament() {
                   )}
                 />
 
-                {/* Team Two Selection */}
-                <FormField
-                  control={form.control}
-                  name="teamTwoId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white">Select Team Two</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          const team = teams?.find((t) => t.id === value);
-                          setSelectedTeamTwo(team || null);
-                          form.setValue(
-                            'teamTwoPlayers',
-                            Array(numberOfPlayersPerTeam).fill({
-                              id: '',
-                              name: '',
-                              phoneNumber: '',
-                              profilePhoto: null,
-                            }),
-                          );
-                        }}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="text-white">
-                            <SelectValue placeholder="Select Team Two" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {teams?.map((team) => (
-                            <SelectItem key={team.id} value={team.id} disabled={field.value === selectedTeamOne?.id}>
-                              {team.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-
-                {/* Player Selection for Team One */}
-                {selectedTeamOne &&
+                  {/* Player Selection for Team One */}
+                  {selectedTeamOne &&
                   Array(numberOfPlayersPerTeam)
                     .fill(0)
                     .map((_, index) => (
@@ -282,6 +302,36 @@ export function Tournament() {
                       />
                     ))}
 
+
+                {/* Team Two Selection */}
+                <FormField
+                  control={form.control}
+                  name="teamTwoId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Select Team Two</FormLabel>
+                      <Select
+                        onValueChange={handleTeamTwoChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="text-white">
+                            <SelectValue placeholder="Select Team Two" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {teams?.map((team) => (
+                            <SelectItem key={team.id} value={team.id} disabled={field.value === selectedTeamOne?.id}>
+                              {team.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+
+              
                 {/* Player Selection for Team Two */}
                 {selectedTeamTwo &&
                   Array(numberOfPlayersPerTeam)
