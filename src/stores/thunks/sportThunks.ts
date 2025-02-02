@@ -34,13 +34,7 @@ import {
   updateTeamHandicapApplied,
   setExpectedEndTimeDate,
 } from '../slices/sportSlice';
-import {
-  BilliardPointType,
-  Player,
-  SnookerPointType,
-  SportType,
-  TournamentFormat,
-} from '../types';
+import { BilliardPointType, Player, SnookerPointType, SportType, TournamentFormat } from '../types';
 import {
   adjustColorBallsPottedWithFreeBall,
   ballsToPointsEnum,
@@ -53,6 +47,7 @@ import {
 } from '../selectors/snookerSelector';
 import { getTimeInMinutes, timeStringToDecimalMinutes } from '@/utils/functions';
 import {
+  calculateStatsForPlayer,
   getActivePlayer,
   getActiveSet,
   getActiveSetIndex,
@@ -207,7 +202,7 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       expectedEndTimeDate: data.expectedEndTimeDate ? data.expectedEndTimeDate : null,
       tournamentSubItemId: data.tournamentSubItemId ? data.tournamentSubItemId : null,
       formatName: null,
-      switchType: data.switchType
+      switchType: data.switchType,
     };
 
     if (data.sideTwoPlayerTwo !== null) {
@@ -316,9 +311,29 @@ export const handleEndGameThrunk = createAsyncThunk<void, {}, { state: RootState
     }
 
     state = getState();
+
+    const sideOnePlayerOneStats = await calculateStatsForPlayer(
+      state.sport.team1.players[0].id!,
+      state.sport.scoreHistory,
+    );
+    const sideOnePlayerTwoStats = state.sport.team1.players[1]
+      ? await calculateStatsForPlayer(state.sport.team1.players[1].id!, state.sport.scoreHistory)
+      : null;
+    const sideTwoPlayerOneStats = await calculateStatsForPlayer(
+      state.sport.team2.players[0].id!,
+      state.sport.scoreHistory,
+    );
+    const sideTwoPlayerTwoStats = state.sport.team2.players[1]
+      ? await calculateStatsForPlayer(state.sport.team2.players[1].id!, state.sport.scoreHistory)
+      : null;
+
     await matchEndGameRequest({
       matchId: state.sport.matchId!,
       teamWinningIndex: state.sport.team1Score > state.sport.team2Score ? 0 : 1,
+      sideOnePlayerOneStats: sideOnePlayerOneStats,
+      sideOnePlayerTwoStats: sideOnePlayerTwoStats,
+      sideTwoPlayerOneStats: sideTwoPlayerOneStats,
+      sideTwoPlayerTwoStats: sideTwoPlayerTwoStats,
     });
   },
 );

@@ -23,9 +23,20 @@ interface MatchUpdateDataProps {
   isTeamTwoHandicapApplied?: boolean;
 }
 
+interface PlayerStats {
+  highestBreak: number;
+  noOfFiftyPlusBreaks: number;
+  noOfHundredPlusBreaks: number;
+  potSuccessRatio: number;
+}
+
 interface MarkerEndGameProps {
   matchId: string;
   teamWinningIndex: number;
+  sideOnePlayerOneStats: PlayerStats | null;
+  sideTwoPlayerOneStats: PlayerStats | null;
+  sideOnePlayerTwoStats: PlayerStats | null;
+  sideTwoPlayerTwoStats: PlayerStats | null;
 }
 
 interface MatchResetTimerRequestProps {

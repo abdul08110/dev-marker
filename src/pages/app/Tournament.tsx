@@ -125,6 +125,7 @@ export function Tournament() {
 
   const handleTeamOneChange = (value: string) => {
     const team = teams?.find((t) => t.id === value);
+    form.setValue('teamOneId', value);
     setSelectedTeamOne(team || null);
     form.setValue(
       'teamOnePlayers',
@@ -140,6 +141,7 @@ export function Tournament() {
 
   const handleTeamTwoChange = (value: string) => {
     const team = teams?.find((t) => t.id === value);
+    form.setValue('teamTwoId', value);
     setSelectedTeamTwo(team || null);
     form.setValue(
       'teamTwoPlayers',
@@ -154,6 +156,8 @@ export function Tournament() {
   };
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+
     if (!selectedFormat || !selectedTeamOne || !selectedTeamTwo) {
       alert('Please select format and teams');
       return;
@@ -402,9 +406,30 @@ export function Tournament() {
             )}
 
             {selectedFormat && selectedTeamOne && selectedTeamTwo && (
-              <Button type="submit" className="w-full">
-                Start Game
-              </Button>
+              <>
+                {/* Display form errors */}
+                {Object.keys(form.formState.errors).length > 0 && (
+                  <div className="bg-red-500/10 border border-red-500 rounded-md p-3 mb-4">
+                    <ul className="text-red-500 text-sm list-disc list-inside">
+                      {Object.entries(form.formState.errors).map(([key, error]) => {
+                        const fieldName = key
+                          .replace(/([A-Z])/g, ' $1') 
+                          .replace(/^./, (str) => str.toUpperCase());
+                        
+                        return (
+                          <li key={key}>
+                            {`${fieldName} ${error?.message?.toString() || 'is required'}`}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+
+                <Button type="submit" className="w-full">
+                  Start Game
+                </Button>
+              </>
             )}
           </form>
         </Form>

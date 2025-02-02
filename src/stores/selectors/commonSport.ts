@@ -132,6 +132,60 @@ export const calculateTotalTeamScore = (sets: Set[]) => {
   return totalScores;
 };
 
+export const calculateStatsForPlayer = async(playerId: string, sets: Set[]) => {
+  let highestBreak = 0;
+  let fiftyPlusBreaks = 0;
+  let hundredPlusBreaks = 0;
+  let totalPots = 0;
+  let successfulPots = 0;
+
+  sets.forEach(set => {
+    const playerTurns = set.turns.filter(turn => turn.turnPlayerId === playerId);
+
+    playerTurns.forEach(turn => {
+      const breakScore = turn.points.reduce((total, point) => {
+        if (point.snookerPoint) {
+          return total + point.snookerPoint.score;
+        } else if (point.billiardsPoint) {
+          return total + point.billiardsPoint.score;
+        }
+        return total;
+      }, 0);
+
+      if (breakScore > highestBreak) {
+        highestBreak = breakScore;
+      }
+
+      if (breakScore >= 100) {
+        hundredPlusBreaks++;
+        fiftyPlusBreaks++;
+      } else if (breakScore >= 50) {
+        fiftyPlusBreaks++;
+      }
+
+      turn.points.forEach(point => {
+        if (point.snookerPoint) {
+          if (point.snookerPoint.type !== 'FOUL') {
+            totalPots++;
+          }
+          if (point.snookerPoint.score > 0 || point.snookerPoint.type === 'PLAY_SAFE') {
+            successfulPots++;
+          }
+        }
+      });
+    });
+  });
+
+  const potSuccessRatio = totalPots > 0 ? Math.round((successfulPots / totalPots) * 100) : 0;
+
+  return {
+    highestBreak,
+    noOfFiftyPlusBreaks: fiftyPlusBreaks,
+    noOfHundredPlusBreaks: hundredPlusBreaks,
+    potSuccessRatio,
+  };
+};
+
 export const calculatePointsBySide = (
   turns: Turn[],
   sideOnePlayerOne: Player,
