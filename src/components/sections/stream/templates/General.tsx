@@ -1,5 +1,6 @@
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
+import { formatTime } from '@/utils/functions';
 
 interface GeneralTemplateProps {
   state: StreamingState;
@@ -104,7 +105,7 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
                     {' '}
                     <span className="xl:text-3xl lg:text-xl text-base text-white">
                       <span className={'font-bold'}>{props.activeSet ? props.state.teamOneScore : 0}</span>
-                      &nbsp;({props.timeLeft})&nbsp;
+                      &nbsp;({formatTime(props.timeLeft)})&nbsp;
                       <span className={'font-bold'}>{props.activeSet ? props.state.teamTwoScore : 0}</span>
                     </span>
                   </div>
