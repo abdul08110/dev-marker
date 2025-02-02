@@ -18,8 +18,8 @@ import useGetTournamentSubItem from '@/api/app/useCreateTournamentSubItem';
 import { setStateTournament } from '@/stores/thunks/sportThunks';
 import { ScoreUpdateLoadingModal } from '@/components/modals/scoreUpdateLoading';
 
-const STORAGE_KEY_TEAM_ONE = 'selectedTournamentTeamOne';
-const STORAGE_KEY_TEAM_TWO = 'selectedTournamentTeamTwo';
+// const STORAGE_KEY_TEAM_ONE = 'selectedTournamentTeamOne';
+// const STORAGE_KEY_TEAM_TWO = 'selectedTournamentTeamTwo';
 
 const createFormSchema = (numberOfPlayers: number) => {
   return z.object({
@@ -79,41 +79,41 @@ export function Tournament() {
 
   useEffect(() => {
     if (!loading && !teamsLoading && schedule && teams && selectedFormat) {
-      const cachedTeamOneId = localStorage.getItem(STORAGE_KEY_TEAM_ONE);
-      if (cachedTeamOneId) {
-        const teamOne = teams.find(t => t.id === cachedTeamOneId);
-        if (teamOne) {
-          setSelectedTeamOne(teamOne);
-          form.setValue('teamOneId', teamOne.id);
-          form.setValue(
-            'teamOnePlayers',
-            Array(numberOfPlayersPerTeam).fill({
-              id: '',
-              name: '',
-              phoneNumber: '',
-              profilePhoto: null,
-            })
-          );
-        }
-      }
+      // const cachedTeamOneId = localStorage.getItem(STORAGE_KEY_TEAM_ONE);
+      // if (cachedTeamOneId) {
+      //   const teamOne = teams.find(t => t.id === cachedTeamOneId);
+      //   if (teamOne) {
+      //     setSelectedTeamOne(teamOne);
+      //     form.setValue('teamOneId', teamOne.id);
+      //     form.setValue(
+      //       'teamOnePlayers',
+      //       Array(numberOfPlayersPerTeam).fill({
+      //         id: '',
+      //         name: '',
+      //         phoneNumber: '',
+      //         profilePhoto: null,
+      //       })
+      //     );
+      //   }
+      // }
 
-      const cachedTeamTwoId = localStorage.getItem(STORAGE_KEY_TEAM_TWO);
-      if (cachedTeamTwoId) {
-        const teamTwo = teams.find(t => t.id === cachedTeamTwoId);
-        if (teamTwo) {
-          setSelectedTeamTwo(teamTwo);
-          form.setValue('teamTwoId', teamTwo.id);
-          form.setValue(
-            'teamTwoPlayers',
-            Array(numberOfPlayersPerTeam).fill({
-              id: '',
-              name: '',
-              phoneNumber: '',
-              profilePhoto: null,
-            })
-          );
-        }
-      }
+      // const cachedTeamTwoId = localStorage.getItem(STORAGE_KEY_TEAM_TWO);
+      // if (cachedTeamTwoId) {
+      //   const teamTwo = teams.find(t => t.id === cachedTeamTwoId);
+      //   if (teamTwo) {
+      //     setSelectedTeamTwo(teamTwo);
+      //     form.setValue('teamTwoId', teamTwo.id);
+      //     form.setValue(
+      //       'teamTwoPlayers',
+      //       Array(numberOfPlayersPerTeam).fill({
+      //         id: '',
+      //         name: '',
+      //         phoneNumber: '',
+      //         profilePhoto: null,
+      //       })
+      //     );
+      //   }
+      // }
     }
   }, [loading, teamsLoading, schedule, teams, selectedFormat]);
 
@@ -135,7 +135,7 @@ export function Tournament() {
         profilePhoto: null,
       })
     );
-    localStorage.setItem(STORAGE_KEY_TEAM_ONE, value);
+    // localStorage.setItem(STORAGE_KEY_TEAM_ONE, value);
   };
 
   const handleTeamTwoChange = (value: string) => {
@@ -150,7 +150,7 @@ export function Tournament() {
         profilePhoto: null,
       })
     );
-    localStorage.setItem(STORAGE_KEY_TEAM_TWO, value);
+    // localStorage.setItem(STORAGE_KEY_TEAM_TWO, value);
   };
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
