@@ -238,11 +238,13 @@ export function Tournament() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {schedule!.tournamentFormats.map((format) => (
-                        <SelectItem key={format.id} value={format.id}>
-                          {format.name} - Game{format.matchNo}
-                        </SelectItem>
-                      ))}
+                      {schedule!.tournamentFormats
+                        .sort((a, b) => a.matchNo! - b.matchNo!)
+                        .map((format) => (
+                          <SelectItem key={format.id} value={format.id}>
+                             Game {format.matchNo} - {format.name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </FormItem>
