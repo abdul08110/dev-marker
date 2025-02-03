@@ -15,15 +15,15 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
       : false;
 
   return (
-    <div className="absolute 360p:bottom-1 360p:mx-1 bottom-2 flex flex-col items-center bg-black mx-2 border border-white">
-      <div className="w-full h-auto grid grid-cols-12 items-center">
-        <div className="col-span-1 360p:p-2 p-4">
+    <div className="absolute 360p:bottom-1 360p:mx-1 bottom-2 flex flex-col items-center bg-black mx-2 border border-white w-full">
+      <div className="w-full h-auto flex items-center">
+        <div className="360p:p-2 p-4">
           <img
-            className="h-auto w-full aspect-square rounded-full object-cover"
+            className="360p:size-10  size-[4rem] aspect-square rounded-full object-cover"
             src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.png'}
           />
         </div>
-        <div className="col-span-10 flex flex-col h-full">
+        <div className="flex-grow flex flex-col h-full">
           <div className="w-full h-1/3 grid grid-cols-3 items-center">
             <div className="col-span-1">
               {props.state!.activePlayerId === props.state!.sideOnePlayerOne.id ||
@@ -102,9 +102,9 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
             </div>
           </div>
         </div>
-        <div className="col-span-1 360p:p-2  p-4">
+        <div className="360p:p-2  p-4">
           <img
-            className="h-auto w-full aspect-square rounded-full object-cover"
+            className=" aspect-square rounded-full object-cover 360p:size-10 size-[4rem]"
             src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.png'}
           />
         </div>
