@@ -2,6 +2,7 @@ import { Player, Turn } from '@/stores/types';
 import clsx from 'clsx';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
+import { generatePlayerName, truncateText } from '@/utils/functions';
 
 interface ScoreBoardTeamCardProps {
   playerOne: Player;
@@ -186,13 +187,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
               )}
             >
               <span className='leading-[1px]'>
-                {props.playerOne.name.split(' ')[0]}
-                <br />
-                {props.playerOne.name.split(' ').length > 1 ? (
-                  props.playerOne.name.split(' ')[props.playerOne.name.split(' ').length - 1]
-                ) : (
-                  <span>&nbsp;&nbsp;&nbsp;</span>
-                )}
+                {truncateText(generatePlayerName(props.playerOne.name, props.playerTwo?.name))}
               </span>
               <span className={props.isHandicapApplied === true ? 'line-through' : ''}>
                 {props.teamHandicap ? `${props.teamHandicap}` : ''}
@@ -207,7 +202,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
             <></>
           )} */}
         </div>
-        {props.playerTwo ? (
+        {/* {props.playerTwo ? (
           <div
             style={{ fontSize: props.contentfrom === 'top' ? 'clamp(1rem, 2vw, 10rem)' : 'clamp(4rem, 40vw, 60rem)' }}
             className={clsx(
@@ -234,7 +229,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
           </div>
         ) : (
           <></>
-        )}
+        )} */}
       </div>
     </div>
   );
