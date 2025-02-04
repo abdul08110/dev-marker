@@ -218,7 +218,7 @@ function SnookerPointDisplay({ turns, players }: { turns?: any[]; players: any[]
 function TeamScore({ score, isActive, breakScore }: { score: number; isActive: boolean; breakScore?: number }) {
   return (
     <div className="flex flex-col gap-1 overflow-auto h-full justify-start items-center col-span-1">
-      <span className=" 360p:text-[3rem] 480p:text-[3.8rem] 720p:text-[6rem] 1080p:text-[9rem] 2k:text-[10rem] text-white font-bold leading-[1] 4k:text-[18rem]">
+      <span className=" 360p:text-[4rem] 480p:text-[4.4rem] 720p:text-[6rem] 1080p:text-[9rem] 2k:text-[10rem] text-white font-bold leading-[1] 4k:text-[18rem]">
         {score}
       </span>
       {isActive && (
@@ -263,7 +263,7 @@ function Player({
   return (
     <div
       className={clsx(
-        'flex  mt-auto gap-4 w-full justify-center items-center  font-bold 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase',
+        'flex  mt-auto gap-4 w-full justify-center items-center  font-bold 360p:text-[1.5rem] 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase',
         {
           'text-yellow-500': isActive,
           'text-white': !isActive,
