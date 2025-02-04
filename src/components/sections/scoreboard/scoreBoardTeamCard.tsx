@@ -199,13 +199,13 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
               </span>
             </span>
           </div>
-          {props.tournamentTeamName ? (
+          {/* {props.tournamentTeamName ? (
             <div>
               <span>{props.tournamentTeamName}</span>{' '}
             </div>
           ) : (
             <></>
-          )}
+          )} */}
         </div>
         {props.playerTwo ? (
           <div
