@@ -44,6 +44,7 @@ export function Tv() {
         state={viewershipData}
         isPortrait={false}
         showBottomScrubber={false}
+        isTv={true}
       />
     </div>
   );

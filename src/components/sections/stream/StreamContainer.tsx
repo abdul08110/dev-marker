@@ -22,6 +22,7 @@ interface StreamContainerProps {
   onVideoEnd: () => void;
   stopWatchTime: number;
   updateTimer: (timeInMillseconds: number) => void;
+  isTv: boolean;
 }
 
 export function StreamContainer(props: StreamContainerProps) {
@@ -181,10 +182,10 @@ export function StreamContainer(props: StreamContainerProps) {
                       />
                     ),
                     '679321b846b356ef640ca3d2': (
-                      <BBSLTemplate state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
+                      <BBSLTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
                     ),
                     '679b307af7eaaf399004a914': (
-                      <BBSLTemplate state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
+                      <BBSLTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
                     ),
                   }[props.state.tournamentId] || (
                     <GeneralTemplate

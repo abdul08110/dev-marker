@@ -30,6 +30,7 @@ export function TvRender() {
         state={viewershipData}
         isPortrait={false}
         showBottomScrubber={false}
+        isTv={true}
       />
     </div>
   );

@@ -48,6 +48,7 @@ export function ClientStream() {
           onVideoEnd={onVideoEnd}
           timeLeft={timeLeft}
           isPortrait={isPortrait}
+          isTv={false}
           state={
             streamingData && streamingData.overlayType === 'SOURCE_WITH_FINAL_SCORES' ? streamingData : viewershipData
           }
