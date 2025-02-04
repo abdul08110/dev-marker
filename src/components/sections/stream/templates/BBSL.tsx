@@ -19,7 +19,7 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
       <div className="w-full h-auto flex items-center">
         <div className="360p:p-2 p-4">
           <img
-            className="360p:size-6  size-[4rem] aspect-square rounded-full object-cover"
+            className="360p:size-6 720p:size-[4rem]  1080p:size-[5rem] aspect-square rounded-full object-cover"
             src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.png'}
           />
         </div>
@@ -28,7 +28,7 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
             <div className="col-span-1">
               {props.state!.activePlayerId === props.state!.sideOnePlayerOne.id ||
               props.state!.activePlayerId === props.state!.sideOnePlayerTwo?.id ? (
-                <h5 className="360p:text-[0.5rem] 720p:text-base 1080p:text-2xl text-yellow-500 font-bold text-left uppercase whitespace-nowrap">
+                <h5 className="360p:text-[0.5rem] 720p:text-lg 1080p:text-2xl text-yellow-500 font-bold text-left uppercase whitespace-nowrap">
                   Break {props.activeTurn ? props.activeTurn?.score : 0}
                 </h5>
               ) : (
@@ -36,14 +36,14 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
               )}
             </div>
             <div className="col-span-1">
-              <h5 className="360p:text-[0.5rem] 720p:text-base 1080p:text-2xl text-white font-bold text-center uppercase whitespace-nowrap">
+              <h5 className="360p:text-[0.5rem] 720p:text-lg 1080p:text-2xl text-white font-bold text-center uppercase whitespace-nowrap">
                 {props.state?.tournamentName} | {props.state?.tournamentSubItem?.tournamentItem.tournamentPhase.name}
               </h5>
             </div>
             <div className="col-span-1">
               {props.state!.activePlayerId === props.state!.sideTwoPlayerOne.id ||
               props.state!.activePlayerId === props.state!.sideTwoPlayerTwo?.id ? (
-                <h5 className="360p:text-[0.5rem] 720p:text-base 1080p:text-2xl text-yellow-500 font-bold text-right uppercase whitespace-nowrap">
+                <h5 className="360p:text-[0.5rem] 720p:text-lg 1080p:text-2xl text-yellow-500 font-bold text-right uppercase whitespace-nowrap">
                   Break {props.activeTurn ? props.activeTurn?.score : 0}
                 </h5>
               ) : (
@@ -53,12 +53,12 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
           </div>
           <div className="w-full h-1/3 bg-primary grid grid-cols-3 items-center px-4">
             <div className="col-span-1">
-              <h5 className="360p:text-[0.5rem] 720p:text-base 1080p:text-2xl text-white text-left uppercase whitespace-nowrap">
+              <h5 className="360p:text-[0.5rem] 720p:text-lg 1080p:text-2xl text-white text-left uppercase whitespace-nowrap">
                 {generatePlayerName(props.state!.sideOnePlayerOne.name, props.state!.sideOnePlayerTwo?.name)}
               </h5>
             </div>
             <div className="col-span-1">
-              <h5 className="360p:text-[0.5rem] 720p:text-base 1080p:text-2xl text-white font-bold uppercase whitespace-nowrap text-center flex justify-between">
+              <h5 className="360p:text-[0.5rem] 720p:text-lg 1080p:text-2xl text-white font-bold uppercase whitespace-nowrap text-center flex justify-between">
                 <div className="font-bold">{props.activeSet ? props.activeSet?.teamOneScore : 0}</div>
 
                 <div>
@@ -73,28 +73,28 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
               </h5>
             </div>
             <div className="col-span-1">
-              <h5 className="360p:text-[0.5rem] 720p:text-base 1080p:text-2xl text-white text-right uppercase whitespace-nowrap">
+              <h5 className="360p:text-[0.5rem] 720p:text-lg 1080p:text-2xl text-white text-right uppercase whitespace-nowrap">
                 {generatePlayerName(props.state!.sideTwoPlayerOne.name, props.state!.sideTwoPlayerTwo?.name)}
               </h5>
             </div>
           </div>
           <div className="w-full h-1/3 grid grid-cols-3 items-center">
             <div className="col-span-1">
-              <h5 className="360p:text-[0.5rem] 720p:text-base 1080p:text-2xl text-white font-bold text-left uppercase whitespace-nowrap">
-                {props.state?.teamOneName} -{' '}
+              <h5 className="360p:text-[0.5rem] 720p:text-lg 1080p:text-2xl text-white font-bold text-left uppercase whitespace-nowrap">
+                {props.state?.teamOneName}{'  '}
                 {isTeamReveresed
                   ? props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!
                   : props.state!.tournamentSubItem?.tournamentItem.teamOneScore!}
               </h5>
             </div>
             <div className="col-span-1">
-              <h5 className="360p:text-[0.5rem] 720p:text-base 1080p:text-2xl text-white font-bold text-center uppercase whitespace-nowrap">
+              <h5 className="360p:text-[0.5rem] 720p:text-lg 1080p:text-2xl text-white font-bold text-center uppercase whitespace-nowrap">
                 {props.state?.format} | GAME #{props.state!.tournamentSubItem?.gameFormat.matchNo}
               </h5>
             </div>
             <div className="col-span-1">
-              <h5 className="360p:text-[0.5rem] 720p:text-base 1080p:text-2xl text-white font-bold text-right uppercase whitespace-nowrap">
-                {props.state?.teamTwoName} -{' '}
+              <h5 className="360p:text-[0.5rem] 720p:text-lg 1080p:text-2xl text-white font-bold text-right uppercase whitespace-nowrap">
+                {props.state?.teamTwoName}{'  '}
                 {isTeamReveresed
                   ? props.state!.tournamentSubItem?.tournamentItem.teamOneScore!
                   : props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!}
@@ -104,7 +104,7 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
         </div>
         <div className="360p:p-2  p-4">
           <img
-            className=" aspect-square rounded-full object-cover 360p:size-6 size-[4rem]"
+            className=" aspect-square rounded-full object-cover 360p:size-6 720p:size-[4rem] 1080p:size-[5rem]"
             src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.png'}
           />
         </div>

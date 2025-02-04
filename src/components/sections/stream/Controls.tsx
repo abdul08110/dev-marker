@@ -20,6 +20,14 @@ interface VideoControlsProps {
 }
 
 export function VideoControls(props: VideoControlsProps) {
+  // Update time formatting helper function to handle milliseconds
+  const formatTime = (timeInMilliseconds: number): string => {
+    const seconds = Math.floor(timeInMilliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="px-4 w-full flex flex-col gap-2 bg-gradient-to-b from-transparent to-black py-4 absolute bottom-0 left-0 z-50">
       <div className="flex w-full items-center gap-4">
@@ -39,6 +47,12 @@ export function VideoControls(props: VideoControlsProps) {
             value={props.currentTime}
           />
         </div>
+
+        {!props.isMatchTypeLive && (
+          <div className="text-white text-sm">
+            {formatTime(props.currentTime)} / {formatTime(props.videoDuration)}
+          </div>
+        )}
 
         {props.isMatchTypeLive && (
           <div className="flex">
