@@ -73,9 +73,9 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
                 <div className="font-bold">{props.activeSet ? props.activeSet?.teamOneScore : 0}</div>
 
                 <div>
-                  {props.state?.teamOneScore}
+                  {props.state!.format !== '6 Reds Cumulative' && props.state?.format !== '125 UP' ? props.state?.teamOneScore : ''}
                   &nbsp;({props.state?.tournamentSubItem?.gameFormat.noOfSets})&nbsp;
-                  {props.state?.teamTwoScore}
+                  {props.state!.format !== '6 Reds Cumulative' && props.state?.format !== '125 UP' ? props.state?.teamTwoScore : ''}
                 </div>
 
                 <div>
