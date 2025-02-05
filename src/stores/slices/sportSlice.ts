@@ -114,6 +114,11 @@ const sportSlice = createSlice({
         isTeamTwoHandicapApplied: false,
         expectedEndTimeDate: null,
         tournamentSubItemId: null,
+        tournamentTeamOneId: null,
+        tournamentTeamTwoId: null,
+        tournamentId: null,
+        tournamentTeamOneScore: null,
+        tournamentTeamTwoScore: null,
         formatName: null,
         switchType: 'VISIT',
       });
@@ -161,6 +166,11 @@ const sportSlice = createSlice({
         isTeamTwoHandicapApplied: false,
         expectedEndTimeDate: null,
         tournamentSubItemId: null,
+        tournamentTeamOneId: null,
+        tournamentTeamTwoId: null,
+        tournamentId: null,
+        tournamentTeamOneScore: null,
+        tournamentTeamTwoScore: null,
         formatName: null,
         switchType: null,
       });
