@@ -15,6 +15,7 @@ interface VideoControlsProps {
   onSliderChange: (value: number) => void;
   onPlayPauseClick: () => void;
   onMuteUnmuteClick: () => void;
+  onLiveClick: () => void;
   isStreamLive: boolean;
   isMatchTypeLive: boolean;
 }
@@ -57,6 +58,7 @@ export function VideoControls(props: VideoControlsProps) {
         {props.isMatchTypeLive && (
           <div className="flex">
             <Button
+              onClick={props.onLiveClick}
               className={clsx('p-1 h-auto text-sm font-bold', {
                 'bg-red-500 text-white': props.isStreamLive,
                 'bg-red-500/30 text-white': !props.isStreamLive,

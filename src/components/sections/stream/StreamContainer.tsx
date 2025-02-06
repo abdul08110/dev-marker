@@ -41,6 +41,7 @@ export function StreamContainer(props: StreamContainerProps) {
     handleMuteUnmute,
     handlePlayPause,
     handleScrub,
+    goLive,
   } = useYouTubePlayer({
     onTimerUpdate: props.updateTimer,
     isMatchLive: props.state && props.state.matchStatus === 'LIVE' ? true : false,
@@ -211,6 +212,7 @@ export function StreamContainer(props: StreamContainerProps) {
                   isVideoPlaying={isVideoPlaying}
                   isSoundOn={isSoundOn}
                   videoDuration={videoDuration}
+                  onLiveClick={goLive}
                   currentTime={props.stopWatchTime}
                   onSliderChange={handleScrub}
                   onMuteUnmuteClick={handleMuteUnmute}

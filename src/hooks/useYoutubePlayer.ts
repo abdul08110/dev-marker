@@ -15,6 +15,7 @@ interface YouTubePlayer {
   getCurrentTime: () => number;
   getDuration: () => number;
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
+  goLive: () => void;
 }
 
 export function useYouTubePlayer({ onTimerUpdate, isMatchLive, matchStartTime }: UseYouTubePlayerProps) {
@@ -89,6 +90,12 @@ export function useYouTubePlayer({ onTimerUpdate, isMatchLive, matchStartTime }:
     }
   }
 
+  const goLive = () => {
+    if (youTubePlayerRef.current) {
+      youTubePlayerRef.current.seekTo(youTubePlayerRef.current.getDuration(), true);
+    }
+  }
+
   useEffect(() => {
     const durationUpdateInterval = window.setInterval(() => {
       if (youTubePlayerRef.current) {
@@ -116,6 +123,7 @@ export function useYouTubePlayer({ onTimerUpdate, isMatchLive, matchStartTime }:
     handleYouTubeStateChange,
     handleMuteUnmute,
     handlePlayPause,
-    handleScrub
+    handleScrub,
+    goLive
   };
 }
