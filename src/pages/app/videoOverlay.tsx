@@ -1,4 +1,5 @@
 import { TopOverlay } from '@/components/sections/stream/overlays/TopOverlay';
+import { BBSLTemplate } from '@/components/sections/stream/templates/BBSL';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { GeneralTemplate } from '@/components/sections/stream/templates/General';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
@@ -62,30 +63,40 @@ export function VideoOverlay() {
         tournamentLogo={viewershipData.tournamentLogo}
         venueNo={viewershipData.venueNo!}
       />
-      {streamingData.overlayType !== 'SOURCE_WITH_FINAL_SCORES' ? (
-        viewershipData.tournamentId === '671f4acf089a3a701c79071f' ? (
-          <EcaTemplate
-            teamOneLogo={viewershipData.teamOneLogo}
-            teamTwoLogo={viewershipData.teamTwoLogo}
-            activePlayerId={viewershipData.activePlayerId}
-            activeTurn={activeTurn}
-            tournamentName={viewershipData.tournamentName!}
-            sideOnePlayerOne={viewershipData.sideOnePlayerOne}
-            sideTwoPlayerOne={viewershipData.sideTwoPlayerOne}
-            isTeamOneHandicapApplied={viewershipData.isTeamOneHandicapApplied!}
-            isTeamTwoHandicapApplied={viewershipData.isTeamTwoHandicapApplied!}
-            teamOneHandicap={viewershipData.teamOneHandicap!}
-            teamTwoHandicap={viewershipData.teamTwoHandicap!}
-            maxScorePerSet={viewershipData.maxScorePerSet!}
-            teamOneScore={viewershipData.teamOneScore}
-            teamTwoScore={viewershipData.teamTwoScore}
-          />
+      {viewershipData.overlayType === 'DESTINATION' &&
+        (viewershipData.tournamentId ? (
+          {
+            '671f4acf089a3a701c79071f': (
+              <EcaTemplate
+                teamOneLogo={viewershipData.teamOneLogo}
+                teamTwoLogo={viewershipData.teamTwoLogo}
+                activePlayerId={viewershipData.activePlayerId}
+                activeTurn={activeTurn}
+                tournamentName={viewershipData.tournamentName!}
+                sideOnePlayerOne={viewershipData.sideOnePlayerOne}
+                sideTwoPlayerOne={viewershipData.sideTwoPlayerOne}
+                isTeamOneHandicapApplied={viewershipData.isTeamOneHandicapApplied!}
+                isTeamTwoHandicapApplied={viewershipData.isTeamTwoHandicapApplied!}
+                teamOneHandicap={viewershipData.teamOneHandicap!}
+                teamTwoHandicap={viewershipData.teamTwoHandicap!}
+                maxScorePerSet={viewershipData.maxScorePerSet!}
+                teamOneScore={viewershipData.teamOneScore}
+                teamTwoScore={viewershipData.teamTwoScore}
+              />
+            ),
+            '679321b846b356ef640ca3d2': (
+              <BBSLTemplate isTv={false} state={viewershipData} activeTurn={activeTurn} activeSet={activeSet} />
+            ),
+            '679b307af7eaaf399004a914': (
+              <BBSLTemplate isTv={false} state={viewershipData} activeTurn={activeTurn} activeSet={activeSet} />
+            ),
+          }[viewershipData.tournamentId] || (
+            <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} timeLeft={timeLeft} />
+          )
         ) : (
           <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} timeLeft={timeLeft} />
-        )
-      ) : (
-        <SourceWithFinalScores state={streamingData!} />
-      )}
+        ))}
+      {viewershipData.overlayType === 'SOURCE_WITH_FINAL_SCORES' && <SourceWithFinalScores state={viewershipData} />}
     </div>
   );
 }
