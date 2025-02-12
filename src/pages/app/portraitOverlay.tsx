@@ -27,6 +27,7 @@ export function PortraitOverlay() {
 
     body.style.setProperty('background-color', 'transparent', 'important');
     body.style.setProperty('pointer-events', 'none', 'important');
+    body.style.setProperty('place-items', 'start', 'important');
 
     return () => {
       body.style.removeProperty('background-color');
