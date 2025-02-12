@@ -9,13 +9,13 @@ interface GetTournamentScheduleProps {
 }
 
 interface GetTournamentScheduleResponse {
-  results: TournamentPhase;
+  results: TournamentPhase[];
 }
 
 const useGetTournamentSchedule = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [schedule, setSchedule] = useState<TournamentPhase | null>(null);
+  const [schedule, setSchedule] = useState<TournamentPhase[] | null>(null);
 
   const getTournamentSchedule = async ({
     id,

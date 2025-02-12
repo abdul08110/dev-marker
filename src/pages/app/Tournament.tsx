@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAppDispatch } from '@/stores';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { TournamentFormat, TournamentTeam } from '@/stores/types';
+import { TournamentFormat, TournamentPhase, TournamentTeam } from '@/stores/types';
 import { TournamentConfirmationModal } from '@/components/tournament/tournamentConfirmationModal';
 import useGetTournamentSubItem from '@/api/app/useCreateTournamentSubItem';
 import { setStateTournament } from '@/stores/thunks/sportThunks';
@@ -23,6 +23,7 @@ import { ScoreUpdateLoadingModal } from '@/components/modals/scoreUpdateLoading'
 
 const createFormSchema = (numberOfPlayers: number) => {
   return z.object({
+    phaseId: z.string(),
     formatId: z.string(),
     teamOneId: z.string(),
     teamTwoId: z.string(),
@@ -59,6 +60,7 @@ export function Tournament() {
     getTournamentSubItem,
   } = useGetTournamentSubItem();
 
+  const [selectedPhase, setSelectedPhase] =  useState<TournamentPhase | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<TournamentFormat | null>(null);
   const [selectedTeamOne, setSelectedTeamOne] = useState<TournamentTeam | null>(null);
   const [selectedTeamTwo, setSelectedTeamTwo] = useState<TournamentTeam | null>(null);
@@ -118,10 +120,17 @@ export function Tournament() {
   }, [loading, teamsLoading, schedule, teams, selectedFormat]);
 
   const handleFormatChange = (value: string) => {
-    const format = schedule!.tournamentFormats!.find((f) => f.id === value)!;
+    const format = selectedPhase!.tournamentFormats!.find((f) => f.id === value)!;
     setSelectedFormat(format);
     form.setValue('formatId', value);
   };
+
+  const handlePhaseChange = (value: string) => {
+    const phase = schedule?.find((f)=> f.id === value)!;
+    setSelectedFormat(null);
+    setSelectedPhase(phase);
+    form.setValue('phaseId', value);
+  }
 
   const handleTeamOneChange = (value: string) => {
     const team = teams?.find((t) => t.id === value);
@@ -182,11 +191,11 @@ export function Tournament() {
     const data = await getTournamentSubItem(
       {
         formatId: selectedFormat!.id,
-        tournamentPhaseId: schedule!.id,
+        tournamentPhaseId: selectedPhase!.id,
         teamOneId: selectedTeamOne!.id,
         teamTwoId: selectedTeamTwo!.id,
       },
-      schedule!.tournament.id,
+      schedule![0].tournament.id,
     );
 
     await dispatch(
@@ -198,7 +207,7 @@ export function Tournament() {
           teamTwoHandicap: values.teamTwoHandicap,
           format: selectedFormat!,
           tournamentSubItemId: data!.id,
-          tournamentId: schedule!.tournament.id,
+          tournamentId: schedule![0].tournament.id,
           tournamentTeamOneId: selectedTeamOne!.id,
           tournamentTeamTwoId: selectedTeamTwo!.id,
         },
@@ -210,26 +219,26 @@ export function Tournament() {
     setBannerLoading(false);
   };
 
-  if (loading || teamsLoading || !schedule || !teams) {
+  if (loading || teamsLoading || !schedule || !teams || schedule.length === 0) {
     return <SnookerMarkingLoading />;
   }
 
   return (
     <div className="h-screen w-screen flex flex-col">
-      <TournamentHeader logo={schedule!.tournament.logo} name={schedule!.tournament.name} />
+      <TournamentHeader logo={schedule![0].tournament.logo} name={schedule![0].tournament.name} />
 
       <div className="container mx-auto p-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-            {/* Format Selection */}
-            <FormField
+
+          <FormField
               control={form.control}
-              name="formatId"
+              name="phaseId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Select Format</FormLabel>
+                  <FormLabel className="text-white">Select Phase</FormLabel>
                   <Select
-                    onValueChange={handleFormatChange}
+                    onValueChange={handlePhaseChange}
                     value={field.value ? field.value : ''}
                   >
                     <FormControl>
@@ -238,11 +247,10 @@ export function Tournament() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {schedule!.tournamentFormats
-                        .sort((a, b) => a.matchNo! - b.matchNo!)
-                        .map((format) => (
-                          <SelectItem key={format.id} value={format.id}>
-                             Game {format.matchNo} - {format.name}
+                      {schedule!
+                        .map((sch) => (
+                          <SelectItem key={sch.id} value={sch.id}>
+                             {sch.name}
                           </SelectItem>
                         ))}
                     </SelectContent>
@@ -250,6 +258,38 @@ export function Tournament() {
                 </FormItem>
               )}
             />
+
+            {selectedPhase && (
+               <FormField
+               control={form.control}
+               name="formatId"
+               render={({ field }) => (
+                 <FormItem>
+                   <FormLabel className="text-white">Select Format</FormLabel>
+                   <Select
+                     onValueChange={handleFormatChange}
+                     value={field.value ? field.value : ''}
+                   >
+                     <FormControl>
+                       <SelectTrigger className="text-white">
+                         <SelectValue placeholder="Select Format" />
+                       </SelectTrigger>
+                     </FormControl>
+                     <SelectContent>
+                       {selectedPhase!.tournamentFormats
+                         .sort((a, b) => a.matchNo! - b.matchNo!)
+                         .map((format) => (
+                           <SelectItem key={format.id} value={format.id}>
+                              Game {format.matchNo} - {format.name}
+                           </SelectItem>
+                         ))}
+                     </SelectContent>
+                   </Select>
+                 </FormItem>
+               )}
+             />
+            )}
+           
 
             {/* Team Selection */}
             {selectedFormat && (

@@ -233,9 +233,9 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       }),
     );
 
-    if (data.sport === 'SNOOKER') {
-      await dispatch(handleSelectionOfOnAndAheadScores({}));
-    }
+    // if (data.sport === 'SNOOKER') {
+    //   await dispatch(handleSelectionOfOnAndAheadScores({}));
+    // }
   },
 );
 
@@ -258,9 +258,9 @@ export const handleStartTournamentMatch = createAsyncThunk<
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
 
-  if (state.sport.sport === 'SNOOKER') {
-    await dispatch(handleSelectionOfOnAndAheadScores({}));
-  }
+  // if (state.sport.sport === 'SNOOKER') {
+  //   await dispatch(handleSelectionOfOnAndAheadScores({}));
+  // }
 
   await dispatch(changeBackendUpdatedState({ value: false }));
   await dispatch(pushToUndoStackSnooker({}));
@@ -292,9 +292,9 @@ export const handleMatchStart = createAsyncThunk<
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
 
-  if (state.sport.sport === 'SNOOKER') {
-    await dispatch(handleSelectionOfOnAndAheadScores({}));
-  }
+  // if (state.sport.sport === 'SNOOKER') {
+  //   await dispatch(handleSelectionOfOnAndAheadScores({}));
+  // }
 
   await dispatch(changeBackendUpdatedState({ value: false }));
   await dispatch(pushToUndoStackSnooker({}));
@@ -348,7 +348,7 @@ export const handleBreakOff = createAsyncThunk<
   await dispatch(setActivePlayer({ playerId: scoreOrder[0] }));
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: state.sport.scoreHistory.length, playerId: scoreOrder[0] }));
-  await dispatch(handleSelectionOfOnAndAheadScores({}));
+  // await dispatch(handleSelectionOfOnAndAheadScores({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
   await dispatch(pushToUndoStackSnooker({}));
@@ -390,7 +390,7 @@ export const handleRerackState = createAsyncThunk<void, {}, { state: RootState; 
     await dispatch(handleResetSet({ setIndex: activeSetIndex }));
     await dispatch(setActivePlayer({ playerId: activeSet.scoreOrder[0] }));
     await dispatch(handleCreateTurn({ setIndex: activeSetIndex, playerId: activeSet.scoreOrder[0] }));
-    await dispatch(handleSelectionOfOnAndAheadScores({}));
+    // await dispatch(handleSelectionOfOnAndAheadScores({}));
 
     await dispatch(changeBackendUpdatedState({ value: false }));
     await dispatch(pushToUndoStackSnooker({}));
@@ -419,7 +419,7 @@ export const handleCorrectionState = createAsyncThunk<
 
   await dispatch(changeSetScore({ score: values.teamOneScore, teamIndex: 0, setIndex: activeSetIndex }));
   await dispatch(changeSetScore({ score: values.teamTwoScore, teamIndex: 1, setIndex: activeSetIndex }));
-  await dispatch(handleSelectionOfOnAndAheadScores({}));
+  // await dispatch(handleSelectionOfOnAndAheadScores({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
   await dispatch(pushToUndoStackSnooker({}));
@@ -575,7 +575,7 @@ export const handleChangeScoreOnTrigger = createAsyncThunk<
   }
 
   await dispatch(changeBackendUpdatedState({ value: false }));
-  await dispatch(handleSelectionOfOnAndAheadScores({}));
+  // await dispatch(handleSelectionOfOnAndAheadScores({}));
   await dispatch(pushToUndoStackSnooker({}));
 });
 
@@ -638,7 +638,7 @@ export const handleFoulScore = createAsyncThunk<
   );
 
   await dispatch(handleTeamSwitch({ createUndoAndPushData: false }));
-  await dispatch(handleSelectionOfOnAndAheadScores({}));
+  // await dispatch(handleSelectionOfOnAndAheadScores({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
   await dispatch(pushToUndoStackSnooker({}));
