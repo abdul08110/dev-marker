@@ -133,7 +133,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     setLoading(true);
     try {
       const res = await getLiveMatchHook.getLiveMatchData({ matchId });
-    
+
       if (res) {
         setStreamingData(null);
         setStreamingData({
@@ -179,7 +179,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           format: res.format ? res.format : null,
           tournamentSubItem: res.tournamentSubItem,
           tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
-            tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
+          tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
         });
 
         setViewershipData({
@@ -225,7 +225,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           format: res.format ? res.format : null,
           tournamentSubItem: res.tournamentSubItem,
           tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
-            tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
+          tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
         });
 
         if (res.matchStatus === 'LIVE' && !venueId) {
@@ -316,6 +316,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     if (currentStreamingData) {
       const currentScoreTime = addMillisecondsToUTC(currentStreamingData.actualStartTimeDate, currentTime);
 
+      console.log(currentScoreTime);
+
       let consideredSets = currentStreamingData!.sets
         .filter((value) => new Date(value.turns[0].timeScored) <= new Date(currentScoreTime))
         .map((set) => ({ ...set, turns: [...set.turns] }));
@@ -333,6 +335,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       let consideredPoints = lastTurn.points.filter(
         (value) => new Date(value.timeScored) <= new Date(currentScoreTime),
       );
+
+      console.log(consideredPoints);
 
       const totalLastTurnScore = consideredPoints.reduce((totalScore, point) => {
         if (point.snookerPoint) {
@@ -388,55 +392,51 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         }
       }
 
-      if (currentStreamingData!.streamType === StreamType.CLOUD_PROVIDER) {
-        setViewershipData({
-          matchId: currentStreamingData.matchId,
-          sport: currentStreamingData.sport,
-          sideOnePlayerOne: currentStreamingData.sideOnePlayerOne,
-          sideTwoPlayerOne: currentStreamingData.sideTwoPlayerOne,
-          sideOnePlayerTwo: currentStreamingData.sideOnePlayerTwo,
-          sideTwoPlayerTwo: currentStreamingData.sideTwoPlayerTwo,
-          activePlayerId: activePlayerId,
-          teamOneScore:
-            currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side1 : totalTeamScores.side1,
-          teamTwoScore:
-            currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side2 : totalTeamScores.side2,
-          sets: consideredSets,
-          matchStatus: currentStreamingData.matchStatus,
-          streamType: currentStreamingData.streamType,
-          streamData: currentStreamingData.streamData,
-          venueNo: currentStreamingData.venueNo,
-          clubName: currentStreamingData.clubName,
-          noOfFrames: currentStreamingData.noOfFrames,
-          actualStartTimeDate: currentStreamingData.actualStartTimeDate,
-          overlayType: currentStreamingData.overlayType,
-          actualEndTimeDate: currentStreamingData.actualEndTimeDate,
-          clubLogo: currentStreamingData.clubLogo,
-          tournamentLogo: currentStreamingData.tournamentLogo,
-          teamOneLogo: currentStreamingData.teamOneLogo,
-          teamTwoLogo: currentStreamingData.teamTwoLogo,
-          tournamentTeamOneScore: currentStreamingData.tournamentTeamOneScore,
-          tournamentTeamTwoScore: currentStreamingData.tournamentTeamTwoScore,
-          tournamentTeamOneabb: currentStreamingData.tournamentTeamOneabb,
-          tournamentTeamTwoabb: currentStreamingData.tournamentTeamTwoabb,
-          teamOneHandicap: currentStreamingData.teamOneHandicap,
-          teamTwoHandicap: currentStreamingData.teamTwoHandicap,
-          sportType: currentStreamingData.sportType,
-          handicap: currentStreamingData.handicap,
-          maxScorePerSet: currentStreamingData.maxScorePerSet,
-          isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== teamScoresForCurrentSet.side1,
-          isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== teamScoresForCurrentSet.side2,
-          tournamentName: currentStreamingData.tournamentName,
-          tournamentId: currentStreamingData.tournamentId,
-          teamOneName: currentStreamingData.teamOneName,
-          teamTwoName: currentStreamingData.teamTwoName,
-          expectedEndTimeDate: currentStreamingData.expectedEndTimeDate,
-          format: currentStreamingData.format,
-          tournamentSubItem: currentStreamingData.tournamentSubItem,
-          tournamentTeamOneId: currentStreamingData.tournamentTeamOneId,
-            tournamentTeamTwoId: currentStreamingData.tournamentTeamTwoId,
-        });
-      }
+      setViewershipData({
+        matchId: currentStreamingData.matchId,
+        sport: currentStreamingData.sport,
+        sideOnePlayerOne: currentStreamingData.sideOnePlayerOne,
+        sideTwoPlayerOne: currentStreamingData.sideTwoPlayerOne,
+        sideOnePlayerTwo: currentStreamingData.sideOnePlayerTwo,
+        sideTwoPlayerTwo: currentStreamingData.sideTwoPlayerTwo,
+        activePlayerId: activePlayerId,
+        teamOneScore: currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side1 : totalTeamScores.side1,
+        teamTwoScore: currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side2 : totalTeamScores.side2,
+        sets: consideredSets,
+        matchStatus: currentStreamingData.matchStatus,
+        streamType: currentStreamingData.streamType,
+        streamData: currentStreamingData.streamData,
+        venueNo: currentStreamingData.venueNo,
+        clubName: currentStreamingData.clubName,
+        noOfFrames: currentStreamingData.noOfFrames,
+        actualStartTimeDate: currentStreamingData.actualStartTimeDate,
+        overlayType: currentStreamingData.overlayType,
+        actualEndTimeDate: currentStreamingData.actualEndTimeDate,
+        clubLogo: currentStreamingData.clubLogo,
+        tournamentLogo: currentStreamingData.tournamentLogo,
+        teamOneLogo: currentStreamingData.teamOneLogo,
+        teamTwoLogo: currentStreamingData.teamTwoLogo,
+        tournamentTeamOneScore: currentStreamingData.tournamentTeamOneScore,
+        tournamentTeamTwoScore: currentStreamingData.tournamentTeamTwoScore,
+        tournamentTeamOneabb: currentStreamingData.tournamentTeamOneabb,
+        tournamentTeamTwoabb: currentStreamingData.tournamentTeamTwoabb,
+        teamOneHandicap: currentStreamingData.teamOneHandicap,
+        teamTwoHandicap: currentStreamingData.teamTwoHandicap,
+        sportType: currentStreamingData.sportType,
+        handicap: currentStreamingData.handicap,
+        maxScorePerSet: currentStreamingData.maxScorePerSet,
+        isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== teamScoresForCurrentSet.side1,
+        isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== teamScoresForCurrentSet.side2,
+        tournamentName: currentStreamingData.tournamentName,
+        tournamentId: currentStreamingData.tournamentId,
+        teamOneName: currentStreamingData.teamOneName,
+        teamTwoName: currentStreamingData.teamTwoName,
+        expectedEndTimeDate: currentStreamingData.expectedEndTimeDate,
+        format: currentStreamingData.format,
+        tournamentSubItem: currentStreamingData.tournamentSubItem,
+        tournamentTeamOneId: currentStreamingData.tournamentTeamOneId,
+        tournamentTeamTwoId: currentStreamingData.tournamentTeamTwoId,
+      });
     }
   };
 
@@ -447,6 +447,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   };
 
   const updateTime = async (timeInMillseconds: number) => {
+    console.log(timeInMillseconds);
+
     await setCurrentTime(timeInMillseconds);
     await handlePlayBackScoreCheck(timeInMillseconds);
   };
