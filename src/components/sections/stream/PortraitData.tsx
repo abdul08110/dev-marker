@@ -41,7 +41,17 @@ export function PortraitData(props: PortraitStreamDataProps) {
           {props.state.sport === 'SNOOKER' ? (
             <>
               <span>{activeSet ? props.state.teamOneScore : 0}</span>
-              <span> ({props.state.sets.length})</span>
+              <span>
+                {' '}
+                (
+                {props.state.tournamentId &&
+                props.state.tournamentSubItem! &&
+                props.state.tournamentSubItem.gameFormat.isCumulativeScoring === false
+                  ? props.state.tournamentSubItem.gameFormat.noOfSets
+                  : props.state.sets.length}
+                )
+                {' '}
+              </span>
               <span> {activeSet ? props.state.teamTwoScore : 0}</span>
             </>
           ) : (
