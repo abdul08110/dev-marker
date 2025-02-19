@@ -135,6 +135,7 @@ export const calculateTotalTeamScore = (sets: Set[]) => {
 export const calculateStatsForPlayer = async(playerId: string, sets: Set[]) => {
   let highestBreak = 0;
   let fiftyPlusBreaks = 0;
+  let thirtyPlusBreaks = 0;
   let hundredPlusBreaks = 0;
   let totalPots = 0;
   let successfulPots = 0;
@@ -161,6 +162,8 @@ export const calculateStatsForPlayer = async(playerId: string, sets: Set[]) => {
         fiftyPlusBreaks++;
       } else if (breakScore >= 50) {
         fiftyPlusBreaks++;
+      } else if (breakScore >= 30) {
+        thirtyPlusBreaks++;
       }
 
       turn.points.forEach(point => {
@@ -182,6 +185,7 @@ export const calculateStatsForPlayer = async(playerId: string, sets: Set[]) => {
     highestBreak,
     noOfFiftyPlusBreaks: fiftyPlusBreaks,
     noOfHundredPlusBreaks: hundredPlusBreaks,
+    noOfThirtyPlusBreaks: thirtyPlusBreaks,
     potSuccessRatio,
   };
 };
