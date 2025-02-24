@@ -94,7 +94,7 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
                       <span className="font-bold">{props.activeSet ? props.activeSet?.teamOneScore : 0}</span>
                       &nbsp;&nbsp;&nbsp;
                       {props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore : 0}
-                      &nbsp;(3)&nbsp;
+                      &nbsp;({props.state.sets.length})&nbsp;
                       {props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore : 0}
                       &nbsp;&nbsp;&nbsp;
                       <span className="font-bold">{props.activeSet ? props.activeSet?.teamTwoScore : 0}</span>
