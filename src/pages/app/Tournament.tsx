@@ -11,15 +11,12 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAppDispatch } from '@/stores';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { TournamentFormat, TournamentPhase, TournamentTeam } from '@/stores/types';
 import { TournamentConfirmationModal } from '@/components/tournament/tournamentConfirmationModal';
 import useGetTournamentSubItem from '@/api/app/useCreateTournamentSubItem';
 import { setStateTournament } from '@/stores/thunks/sportThunks';
 import { ScoreUpdateLoadingModal } from '@/components/modals/scoreUpdateLoading';
-
-// const STORAGE_KEY_TEAM_ONE = 'selectedTournamentTeamOne';
-// const STORAGE_KEY_TEAM_TWO = 'selectedTournamentTeamTwo';
 
 const createFormSchema = (numberOfPlayers: number) => {
   return z.object({
@@ -56,11 +53,9 @@ export function Tournament() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { loading, schedule, teamsLoading, teams } = useTournamentSchedule();
-  const {
-    getTournamentSubItem,
-  } = useGetTournamentSubItem();
+  const { getTournamentSubItem } = useGetTournamentSubItem();
 
-  const [selectedPhase, setSelectedPhase] =  useState<TournamentPhase | null>(null);
+  const [selectedPhase, setSelectedPhase] = useState<TournamentPhase | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<TournamentFormat | null>(null);
   const [selectedTeamOne, setSelectedTeamOne] = useState<TournamentTeam | null>(null);
   const [selectedTeamTwo, setSelectedTeamTwo] = useState<TournamentTeam | null>(null);
@@ -79,46 +74,6 @@ export function Tournament() {
     },
   });
 
-  useEffect(() => {
-    if (!loading && !teamsLoading && schedule && teams && selectedFormat) {
-      // const cachedTeamOneId = localStorage.getItem(STORAGE_KEY_TEAM_ONE);
-      // if (cachedTeamOneId) {
-      //   const teamOne = teams.find(t => t.id === cachedTeamOneId);
-      //   if (teamOne) {
-      //     setSelectedTeamOne(teamOne);
-      //     form.setValue('teamOneId', teamOne.id);
-      //     form.setValue(
-      //       'teamOnePlayers',
-      //       Array(numberOfPlayersPerTeam).fill({
-      //         id: '',
-      //         name: '',
-      //         phoneNumber: '',
-      //         profilePhoto: null,
-      //       })
-      //     );
-      //   }
-      // }
-
-      // const cachedTeamTwoId = localStorage.getItem(STORAGE_KEY_TEAM_TWO);
-      // if (cachedTeamTwoId) {
-      //   const teamTwo = teams.find(t => t.id === cachedTeamTwoId);
-      //   if (teamTwo) {
-      //     setSelectedTeamTwo(teamTwo);
-      //     form.setValue('teamTwoId', teamTwo.id);
-      //     form.setValue(
-      //       'teamTwoPlayers',
-      //       Array(numberOfPlayersPerTeam).fill({
-      //         id: '',
-      //         name: '',
-      //         phoneNumber: '',
-      //         profilePhoto: null,
-      //       })
-      //     );
-      //   }
-      // }
-    }
-  }, [loading, teamsLoading, schedule, teams, selectedFormat]);
-
   const handleFormatChange = (value: string) => {
     const format = selectedPhase!.tournamentFormats!.find((f) => f.id === value)!;
     setSelectedFormat(format);
@@ -126,47 +81,69 @@ export function Tournament() {
   };
 
   const handlePhaseChange = (value: string) => {
-    const phase = schedule?.find((f)=> f.id === value)!;
+    const phase = schedule?.find((f) => f.id === value)!;
     setSelectedFormat(null);
     setSelectedPhase(phase);
     form.setValue('phaseId', value);
-  }
+  };
 
   const handleTeamOneChange = (value: string) => {
     const team = teams?.find((t) => t.id === value);
     form.setValue('teamOneId', value);
     setSelectedTeamOne(team || null);
-    form.setValue(
-      'teamOnePlayers',
-      Array(numberOfPlayersPerTeam).fill({
-        id: '',
-        name: '',
-        phoneNumber: '',
-        profilePhoto: null,
-      })
-    );
-    // localStorage.setItem(STORAGE_KEY_TEAM_ONE, value);
+
+    if (selectedPhase?.phaseType === 'SINGLES') {
+      form.setValue(
+        'teamOnePlayers',
+        team!.users.map((user) => ({
+          id: user.id!,
+          name: user.name!,
+          phoneNumber: user.phoneNumber!,
+          profilePhoto: user.profilePhoto!,
+        })),
+      );
+    } else {
+      form.setValue(
+        'teamOnePlayers',
+        Array(numberOfPlayersPerTeam).fill({
+          id: '',
+          name: '',
+          phoneNumber: '',
+          profilePhoto: null,
+        }),
+      );
+    }
   };
 
   const handleTeamTwoChange = (value: string) => {
     const team = teams?.find((t) => t.id === value);
     form.setValue('teamTwoId', value);
     setSelectedTeamTwo(team || null);
-    form.setValue(
-      'teamTwoPlayers',
-      Array(numberOfPlayersPerTeam).fill({
-        id: '',
-        name: '',
-        phoneNumber: '',
-        profilePhoto: null,
-      })
-    );
-    // localStorage.setItem(STORAGE_KEY_TEAM_TWO, value);
+
+    if (selectedPhase?.phaseType === 'SINGLES') {
+      form.setValue(
+        'teamTwoPlayers',
+        team!.users.map((user) => ({
+          id: user.id!,
+          name: user.name!,
+          phoneNumber: user.phoneNumber!,
+          profilePhoto: user.profilePhoto!,
+        })),
+      );
+    } else {
+      form.setValue(
+        'teamTwoPlayers',
+        Array(numberOfPlayersPerTeam).fill({
+          id: '',
+          name: '',
+          phoneNumber: '',
+          profilePhoto: null,
+        }),
+      );
+    }
   };
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-
     if (!selectedFormat || !selectedTeamOne || !selectedTeamTwo) {
       alert('Please select format and teams');
       return;
@@ -230,29 +207,24 @@ export function Tournament() {
       <div className="container mx-auto p-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-
-          <FormField
+            <FormField
               control={form.control}
               name="phaseId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-white">Select Phase</FormLabel>
-                  <Select
-                    onValueChange={handlePhaseChange}
-                    value={field.value ? field.value : ''}
-                  >
+                  <Select onValueChange={handlePhaseChange} value={field.value ? field.value : ''}>
                     <FormControl>
                       <SelectTrigger className="text-white">
                         <SelectValue placeholder="Select Format" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {schedule!
-                        .map((sch) => (
-                          <SelectItem key={sch.id} value={sch.id}>
-                             {sch.name}
-                          </SelectItem>
-                        ))}
+                      {schedule!.map((sch) => (
+                        <SelectItem key={sch.id} value={sch.id}>
+                          {sch.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormItem>
@@ -260,36 +232,32 @@ export function Tournament() {
             />
 
             {selectedPhase && (
-               <FormField
-               control={form.control}
-               name="formatId"
-               render={({ field }) => (
-                 <FormItem>
-                   <FormLabel className="text-white">Select Format</FormLabel>
-                   <Select
-                     onValueChange={handleFormatChange}
-                     value={field.value ? field.value : ''}
-                   >
-                     <FormControl>
-                       <SelectTrigger className="text-white">
-                         <SelectValue placeholder="Select Format" />
-                       </SelectTrigger>
-                     </FormControl>
-                     <SelectContent>
-                       {selectedPhase!.tournamentFormats
-                         .sort((a, b) => a.matchNo! - b.matchNo!)
-                         .map((format) => (
-                           <SelectItem key={format.id} value={format.id}>
+              <FormField
+                control={form.control}
+                name="formatId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Select Format</FormLabel>
+                    <Select onValueChange={handleFormatChange} value={field.value ? field.value : ''}>
+                      <FormControl>
+                        <SelectTrigger className="text-white">
+                          <SelectValue placeholder="Select Format" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {selectedPhase!.tournamentFormats
+                          .sort((a, b) => a.matchNo! - b.matchNo!)
+                          .map((format) => (
+                            <SelectItem key={format.id} value={format.id}>
                               Game {format.matchNo} - {format.name}
-                           </SelectItem>
-                         ))}
-                     </SelectContent>
-                   </Select>
-                 </FormItem>
-               )}
-             />
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
             )}
-           
 
             {/* Team Selection */}
             {selectedFormat && (
@@ -300,20 +268,25 @@ export function Tournament() {
                   name="teamOneId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">Select Team One</FormLabel>
-                      <Select
-                        onValueChange={handleTeamOneChange}
-                        value={field.value}
-                      >
+                      <FormLabel className="text-white">
+                        {selectedPhase?.phaseType === 'TEAMS' ? 'Select Team One' : 'Select Player One'}
+                      </FormLabel>
+                      <Select onValueChange={handleTeamOneChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger className="text-white">
-                            <SelectValue placeholder="Select Team One" />
+                            <SelectValue
+                              placeholder={
+                                selectedPhase?.phaseType === 'TEAMS' ? 'Select Team One' : 'Select Player One'
+                              }
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {teams?.map((team) => (
                             <SelectItem key={team.id} value={team.id}>
-                              {team.name}
+                              {selectedPhase?.phaseType === 'TEAMS'
+                                ? team.name
+                                : `${team.users[0].name} (${team.name})`}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -322,8 +295,8 @@ export function Tournament() {
                   )}
                 />
 
-                  {/* Player Selection for Team One */}
-                  {selectedTeamOne &&
+                {selectedTeamOne &&
+                  selectedPhase?.phaseType === 'TEAMS' &&
                   Array(numberOfPlayersPerTeam)
                     .fill(0)
                     .map((_, index) => (
@@ -348,6 +321,25 @@ export function Tournament() {
                       />
                     ))}
 
+                {hasHandicap && selectedTeamOne && (
+                  <FormField
+                    control={form.control}
+                    name="teamOneHandicap"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-white">Team One Handicap</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            className="text-white"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 {/* Team Two Selection */}
                 <FormField
@@ -355,20 +347,25 @@ export function Tournament() {
                   name="teamTwoId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white">Select Team Two</FormLabel>
-                      <Select
-                        onValueChange={handleTeamTwoChange}
-                        value={field.value}
-                      >
+                      <FormLabel className="text-white">
+                        {selectedPhase?.phaseType === 'TEAMS' ? 'Select Team Two' : 'Select Player Two'}
+                      </FormLabel>
+                      <Select onValueChange={handleTeamTwoChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger className="text-white">
-                            <SelectValue placeholder="Select Team Two" />
+                            <SelectValue
+                              placeholder={
+                                selectedPhase?.phaseType === 'TEAMS' ? 'Select Team Two' : 'Select Player Two'
+                              }
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {teams?.map((team) => (
-                            <SelectItem key={team.id} value={team.id} disabled={field.value === selectedTeamOne?.id}>
-                              {team.name}
+                            <SelectItem key={team.id} value={team.id}>
+                              {selectedPhase?.phaseType === 'TEAMS'
+                                ? team.name
+                                : `${team.users[0].name} (${team.name})`}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -377,9 +374,9 @@ export function Tournament() {
                   )}
                 />
 
-              
                 {/* Player Selection for Team Two */}
                 {selectedTeamTwo &&
+                  selectedPhase?.phaseType === 'TEAMS' &&
                   Array(numberOfPlayersPerTeam)
                     .fill(0)
                     .map((_, index) => (
@@ -404,65 +401,37 @@ export function Tournament() {
                       />
                     ))}
 
-                {/* Handicap Fields */}
-                {hasHandicap && (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name="teamOneHandicap"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-white">Team One Handicap</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              {...field}
-                              onChange={(e) => field.onChange(Number(e.target.value))}
-                              className="text-white"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="teamTwoHandicap"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-white">Team Two Handicap</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              {...field}
-                              onChange={(e) => field.onChange(Number(e.target.value))}
-                              className="text-white"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </>
+                {hasHandicap && selectedTeamTwo && (
+                  <FormField
+                    control={form.control}
+                    name="teamTwoHandicap"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-white">Team Two Handicap</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            className="text-white"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                 )}
               </>
             )}
 
             {selectedFormat && selectedTeamOne && selectedTeamTwo && (
               <>
-                {/* Display form errors */}
                 {Object.keys(form.formState.errors).length > 0 && (
                   <div className="bg-red-500/10 border border-red-500 rounded-md p-3 mb-4">
                     <ul className="text-red-500 text-sm list-disc list-inside">
                       {Object.entries(form.formState.errors).map(([key, error]) => {
-                        const fieldName = key
-                          .replace(/([A-Z])/g, ' $1') 
-                          .replace(/^./, (str) => str.toUpperCase());
-                        
-                        return (
-                          <li key={key}>
-                            {`${fieldName} ${error?.message?.toString() || 'is required'}`}
-                          </li>
-                        );
+                        const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+
+                        return <li key={key}>{`${fieldName} ${error?.message?.toString() || 'is required'}`}</li>;
                       })}
                     </ul>
                   </div>

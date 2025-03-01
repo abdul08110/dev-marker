@@ -166,6 +166,7 @@ export interface TournamentPhase {
   tournament: Tournament;
   tournamentFormats: TournamentFormat[];
   phaseStatus: 'ACTIVE' | 'COMPLETED' | 'INACTIVE';
+  phaseType: 'SINGLES' | 'TEAMS'
 }
 
 
