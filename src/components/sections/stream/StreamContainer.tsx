@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { BBSLTemplate } from './templates/BBSL';
 import { SeekIndicator } from './SeekIndicator';
+import { CatholicTemplate } from './templates/Catholic';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -187,6 +188,9 @@ export function StreamContainer(props: StreamContainerProps) {
                     ),
                     '679b307af7eaaf399004a914': (
                       <BBSLTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
+                    ),
+                    '679ce81ed0202e686e8a96f6': (
+                      <CatholicTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
                     ),
                   }[props.state.tournamentId] || (
                     <GeneralTemplate

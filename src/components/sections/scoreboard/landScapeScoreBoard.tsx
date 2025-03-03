@@ -1,6 +1,6 @@
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
-import { formatTime, generatePlayerName, truncateText } from '@/utils/functions';
+import { convertHandicapToString, formatTime, generatePlayerName, truncateText } from '@/utils/functions';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import clsx from 'clsx';
@@ -66,6 +66,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
                 playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
                 ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'YELLOW' : null}
                 isActive={isTeamOneActive}
+                handicap={state.teamOneHandicap}
               />
             </div>
           </div>
@@ -114,6 +115,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
                 playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
                 ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'WHITE' : null}
                 isActive={isTeamTwoActive}
+                handicap={state.teamTwoHandicap}
               />
             </div>
           </div>
@@ -254,11 +256,13 @@ function Player({
   playerTwoName,
   ballToShow,
   isActive,
+  handicap,
 }: {
   playerOneName: string;
   playerTwoName?: string;
   ballToShow: 'YELLOW' | 'WHITE' | null;
   isActive: boolean;
+  handicap?: number | null;
 }) {
   return (
     <div
@@ -277,6 +281,7 @@ function Player({
         />
       )}
       {truncateText(generatePlayerName(playerOneName, playerTwoName))}
+      {handicap && <span>({convertHandicapToString(handicap)})</span>}
       {ballToShow === 'WHITE' && (
         <img
           className="360p:size-4 480p:size-6 720p:size-10 object-contain aspect-square"

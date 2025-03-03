@@ -108,3 +108,17 @@ export function truncateText(text: string, limit = 20) {
   }
   return text;
 }
+
+export function convertHandicapToString(handicap?: number | null) {
+  if (!handicap) {
+    return '';
+  }
+
+  if (handicap > 0) {
+    return `+${handicap}`;
+  } else if (handicap < 0) {
+    return `${handicap}`;
+  } else {
+    return '';
+  }
+}

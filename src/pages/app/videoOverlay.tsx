@@ -1,5 +1,6 @@
 import { TopOverlay } from '@/components/sections/stream/overlays/TopOverlay';
 import { BBSLTemplate } from '@/components/sections/stream/templates/BBSL';
+import { CatholicTemplate } from '@/components/sections/stream/templates/Catholic';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { GeneralTemplate } from '@/components/sections/stream/templates/General';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
@@ -89,6 +90,9 @@ export function VideoOverlay() {
             ),
             '679b307af7eaaf399004a914': (
               <BBSLTemplate isTv={false} state={viewershipData} activeTurn={activeTurn} activeSet={activeSet} />
+            ),
+            '679ce81ed0202e686e8a96f6': (
+              <CatholicTemplate isTv={false} state={viewershipData} activeTurn={activeTurn} activeSet={activeSet} />
             ),
           }[viewershipData.tournamentId] || (
             <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} timeLeft={timeLeft} />
