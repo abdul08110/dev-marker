@@ -15,10 +15,10 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
   const activeTurn = getActiveTurn(activeSet);
   const isTeamOneActive = state.sideOnePlayerOne.id === state.activePlayerId;
   const isTeamTwoActive = state.sideTwoPlayerOne.id === state.activePlayerId;
-  const isTeamReveresed =
-    state.tournamentId && state.tournamentSubItem
-      ? state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== state.tournamentTeamOneId
-      : false;
+  // const isTeamReveresed =
+  //   state.tournamentId && state.tournamentSubItem
+  //     ? state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== state.tournamentTeamOneId
+  //     : false;
 
   return (
     <section className="h-screen w-screen 480p:p-2 720p:p-4 1080p:p-6 2k:p-12 4k:p-16  360p:p-1">
