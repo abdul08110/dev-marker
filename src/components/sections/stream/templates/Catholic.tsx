@@ -10,11 +10,6 @@ interface CatholicTemplateProps {
 }
 
 export function CatholicTemplate(props: CatholicTemplateProps) {
-  const isTeamReveresed =
-    props.state && props.state.tournamentId && props.state.tournamentSubItem
-      ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId
-      : false;
-
   return (
     <div className="absolute 360p:bottom-1 360p:mx-1 bottom-2 flex flex-col items-center bg-black mx-2 border border-white w-full">
       <div className="w-full h-auto flex items-center">
