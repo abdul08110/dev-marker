@@ -34,11 +34,11 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         >
           <div className="h-[30%] w-full relative">
             <span className="ml-14 absolute top-1/2  transform -translate-y-1/2 text-white font-bold 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
-              {state.tournamentId && state.tournamentSubItem
+              {/* {state.tournamentId && state.tournamentSubItem
                 ? isTeamReveresed
                   ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
                   : state.tournamentSubItem?.tournamentItem.teamOneScore!
-                : state.teamOneScore}
+                : state.teamOneScore} */}
             </span>
             <PlayerImage profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto} />
           </div>
@@ -84,11 +84,11 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           <div className="h-[30%] w-full relative">
             <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
             <span className="right-14 absolute top-1/2  transform -translate-y-1/2 text-white font-bold 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
-              {state.tournamentId && state.tournamentSubItem
+              {/* {state.tournamentId && state.tournamentSubItem
                 ? isTeamReveresed
                   ? state.tournamentSubItem?.tournamentItem.teamOneScore!
                   : state.tournamentSubItem?.tournamentItem.teamTwoScore!
-                : state.teamTwoScore}
+                : state.teamTwoScore} */}
             </span>
           </div>
 
