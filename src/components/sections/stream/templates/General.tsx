@@ -93,9 +93,9 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
                     <span className="xl:text-3xl lg:text-xl text-base text-white">
                       <span className="font-bold">{props.activeSet ? props.activeSet?.teamOneScore : 0}</span>
                       &nbsp;&nbsp;&nbsp;
-                      {props.state.tournamentTeamOneScore ? props.state.tournamentTeamOneScore : 0}
+                      {props.state.teamOneScore ? props.state.teamOneScore : 0}
                       &nbsp;({props.state.sets.length})&nbsp;
-                      {props.state.tournamentTeamTwoScore ? props.state.tournamentTeamTwoScore : 0}
+                      {props.state.teamTwoScore ? props.state.teamTwoScore : 0}
                       &nbsp;&nbsp;&nbsp;
                       <span className="font-bold">{props.activeSet ? props.activeSet?.teamTwoScore : 0}</span>
                     </span>
