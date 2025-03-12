@@ -49,8 +49,8 @@ export function StreamContainer(props: StreamContainerProps) {
     matchStartTime: props.state && props.state.actualStartTimeDate ? props.state.actualStartTimeDate : null,
   });
 
-  const [isOverlayEnabled, setIsOverlayEnabled] = useState<boolean>(true);
   const [seekIndicator, setSeekIndicator] = useState<'left' | 'right' | null>(null);
+  const [showControls, setShowControls] = useState(false);
 
   useEffect(() => {
     if (seekIndicator) {
@@ -61,8 +61,8 @@ export function StreamContainer(props: StreamContainerProps) {
     }
   }, [seekIndicator]);
 
-  const toogleOverlay = async () => {
-    setIsOverlayEnabled(!isOverlayEnabled);
+  const toggleOverlay = () => {
+    setShowControls(prev => !prev);
   };
 
   const handleTap = (e: React.TouchEvent | React.MouseEvent) => {
@@ -93,7 +93,7 @@ export function StreamContainer(props: StreamContainerProps) {
       setLastTap(0);
     } else {
       setLastTap(currentTime);
-      toogleOverlay();
+      toggleOverlay();
     }
   };
 
@@ -162,7 +162,6 @@ export function StreamContainer(props: StreamContainerProps) {
 
               {props.state.overlayType === 'DESTINATION' &&
                 !props.isPortrait &&
-                isOverlayEnabled &&
                 (props.state.tournamentId ? (
                   {
                     '671f4acf089a3a701c79071f': (
@@ -208,11 +207,14 @@ export function StreamContainer(props: StreamContainerProps) {
                     timeLeft={props.timeLeft}
                   />
                 ))}
-              {props.state.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && isOverlayEnabled && (
+              {props.state.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && (
                 <SourceWithFinalScores state={props.state} />
               )}
-              {!isOverlayEnabled && (
+              {showControls && (
                 <VideoControls
+                  onInactive={() => {
+                    setShowControls(false);
+                  }}
                   isVideoPlaying={isVideoPlaying}
                   isSoundOn={isSoundOn}
                   videoDuration={videoDuration}

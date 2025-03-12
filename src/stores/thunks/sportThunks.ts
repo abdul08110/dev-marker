@@ -334,6 +334,11 @@ export const handleEndGameThrunk = createAsyncThunk<void, {}, { state: RootState
       sideOnePlayerTwoStats: sideOnePlayerTwoStats,
       sideTwoPlayerOneStats: sideTwoPlayerOneStats,
       sideTwoPlayerTwoStats: sideTwoPlayerTwoStats,
+      sets: state.sport.scoreHistory,
+      teamOneScore: state.sport.team1Score,
+      teamTwoScore: state.sport.team2Score,
+      currentSetTeamOneScore: state.sport.scoreHistory[state.sport.scoreHistory.length - 1].teamOneScore,
+      currentSetTeamTwoScore: state.sport.scoreHistory[state.sport.scoreHistory.length - 1].teamTwoScore,
     });
   },
 );

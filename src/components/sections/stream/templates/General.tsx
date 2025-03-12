@@ -1,6 +1,6 @@
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
-import { formatTime } from '@/utils/functions';
+import { formatTime, generatePlayerName } from '@/utils/functions';
 
 interface GeneralTemplateProps {
   state: StreamingState;
@@ -77,8 +77,14 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
 
               <div className="grid grid-cols-12 justify-center bg-primary border border-white w-full rounded-md items-center px-2">
                 <div className="col-span-5 flex gap-2 items-center">
-                  <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
-                    {props.state.sideOnePlayerOne.name}{' '}
+                  <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold flex gap-2 items-center">
+                    {props.state.sport === 'BILLIARDS' && (
+                      <img className="h-4 lg:h-5 xl:h-6 w-auto" src={'/images/yellow-ball.png'} />
+                    )}
+                    {generatePlayerName(
+                      props.state.sideOnePlayerOne.name,
+                      props.state.sideOnePlayerTwo ? props.state.sideOnePlayerTwo.name : undefined,
+                    )}{' '}
                     <span className={props.state.isTeamOneHandicapApplied === true ? 'line-through' : ''}>
                       {props.state.teamOneHandicap}
                     </span>{' '}
@@ -112,14 +118,20 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
                 )}
 
                 <div className="col-span-5 text-right flex gap-2 justify-end items-center">
-                  <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold">
+                  <small className="text-white xl:text-3xl lg:text-xl text-base whitespace-nowrap uppercase font-bold flex gap-3 items-center">
                     {props.state.tournamentTeamTwoabb && props.state.sport === 'SNOOKER'
                       ? props.state.tournamentTeamTwoabb
                       : ''}{' '}
                     <span className={props.state.isTeamTwoHandicapApplied === true ? 'line-through' : ''}>
                       {props.state.teamTwoHandicap}
                     </span>{' '}
-                    {props.state.sideTwoPlayerOne.name}
+                    {generatePlayerName(
+                      props.state.sideTwoPlayerOne.name,
+                      props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
+                    )}
+                    {props.state.sport === 'BILLIARDS' && (
+                      <img className="h-4 lg:h-5 xl:h-6 w-auto" src={'/images/white-ball.png'} />
+                    )}
                   </small>
                 </div>
               </div>

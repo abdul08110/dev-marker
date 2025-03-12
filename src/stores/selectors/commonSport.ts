@@ -159,10 +159,9 @@ export const calculateStatsForPlayer = async(playerId: string, sets: Set[]) => {
 
       if (breakScore >= 100) {
         hundredPlusBreaks++;
+      } else if (breakScore >= 50 && breakScore < 100) {
         fiftyPlusBreaks++;
-      } else if (breakScore >= 50) {
-        fiftyPlusBreaks++;
-      } else if (breakScore >= 30) {
+      } else if (breakScore >= 30 && breakScore < 50) {
         thirtyPlusBreaks++;
       }
 

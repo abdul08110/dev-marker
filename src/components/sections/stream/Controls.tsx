@@ -6,6 +6,7 @@ import VolumeLogo from '@/icons/volume';
 import clsx from 'clsx';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import { useEffect } from 'react';
 
 interface VideoControlsProps {
   isVideoPlaying: boolean;
@@ -18,10 +19,38 @@ interface VideoControlsProps {
   onLiveClick: () => void;
   isStreamLive: boolean;
   isMatchTypeLive: boolean;
+  onInactive: () => void;
 }
 
 export function VideoControls(props: VideoControlsProps) {
-  // Update time formatting helper function to handle milliseconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      props.onInactive();
+    }, 6000);
+
+    const resetTimer = () => {
+      clearTimeout(timer);
+      const newTimer = setTimeout(() => {
+        props.onInactive();
+      }, 6000);
+      return newTimer;
+    };
+
+    const controlsElement = document.querySelector('.video-controls');
+    if (controlsElement) {
+      controlsElement.addEventListener('mousemove', resetTimer);
+      controlsElement.addEventListener('click', resetTimer);
+    }
+
+    return () => {
+      clearTimeout(timer);
+      if (controlsElement) {
+        controlsElement.removeEventListener('mousemove', resetTimer);
+        controlsElement.removeEventListener('click', resetTimer);
+      }
+    };
+  }, []);
+
   const formatTime = (timeInMilliseconds: number): string => {
     const seconds = Math.floor(timeInMilliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -30,7 +59,7 @@ export function VideoControls(props: VideoControlsProps) {
   };
 
   return (
-    <div className="px-4 w-full flex flex-col gap-2 bg-gradient-to-b from-transparent to-black py-4 absolute bottom-0 left-0 z-50">
+    <div className="px-4 w-full flex flex-col gap-2 bg-gradient-to-b from-transparent to-black py-4 absolute bottom-0 left-0 z-50 video-controls">
       <div className="flex w-full items-center gap-4">
         <div onClick={props.onPlayPauseClick} className="p-2 cursor-pointer">
           {props.isVideoPlaying ? (

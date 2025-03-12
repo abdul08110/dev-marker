@@ -37,6 +37,11 @@ interface MarkerEndGameProps {
   sideTwoPlayerOneStats: PlayerStats | null;
   sideOnePlayerTwoStats: PlayerStats | null;
   sideTwoPlayerTwoStats: PlayerStats | null;
+  sets: Set[];
+  teamOneScore: number;
+  teamTwoScore: number;
+  currentSetTeamOneScore: number;
+  currentSetTeamTwoScore: number;
 }
 
 interface MatchResetTimerRequestProps {

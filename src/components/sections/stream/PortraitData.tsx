@@ -29,7 +29,10 @@ export function PortraitData(props: PortraitStreamDataProps) {
         </span>
       </div>
       <Card className="gap-4 border-white p-2 grid grid-cols-3 rounded-md">
-        <div className="grid-cols-1 uppercase text-white font-bold text-sm text-left flex items-center justify-start">
+        <div className="grid-cols-1 uppercase text-white font-bold text-sm text-left flex items-center justify-start gap-2">
+          {props.state.sport === 'BILLIARDS' && (
+            <img className="h-4 lg:h-5 xl:h-6 w-auto" src={'/images/yellow-ball.png'} />
+          )}
           {truncateText(
             generatePlayerName(
               props.state.sideOnePlayerOne.name,
@@ -49,8 +52,7 @@ export function PortraitData(props: PortraitStreamDataProps) {
                 props.state.tournamentSubItem.gameFormat.isCumulativeScoring === false
                   ? props.state.tournamentSubItem.gameFormat.noOfSets
                   : props.state.sets.length}
-                )
-                {' '}
+                ){' '}
               </span>
               <span> {activeSet ? props.state.teamTwoScore : 0}</span>
             </>
@@ -62,12 +64,15 @@ export function PortraitData(props: PortraitStreamDataProps) {
             </>
           )}
         </div>
-        <div className="grid-cols-1 uppercase text-white font-bold text-sm text-right flex items-center justify-end">
+        <div className="grid-cols-1 uppercase text-white font-bold text-sm text-right flex items-center justify-end gap-2">
           {truncateText(
             generatePlayerName(
               props.state.sideTwoPlayerOne.name,
               props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
             ),
+          )}
+          {props.state.sport === 'BILLIARDS' && (
+            <img className="h-4 lg:h-5 xl:h-6 w-auto" src={'/images/white-ball.png'} />
           )}
         </div>
       </Card>
@@ -113,11 +118,6 @@ export function PortraitData(props: PortraitStreamDataProps) {
                 )}
               />
             )}
-            {props.state.sport === 'BILLIARDS' && props.state && (
-              <div className="w-full justify-center items-center flex">
-                <img className="size-6 object-contain aspect-square" src={'/images/yellow-ball.png'} />
-              </div>
-            )}
           </div>
         </div>
         <div
@@ -160,11 +160,6 @@ export function PortraitData(props: PortraitStreamDataProps) {
                   ) || [],
                 )}
               />
-            )}
-            {props.state.sport === 'BILLIARDS' && props.state && (
-              <div className="w-full justify-center items-center flex">
-                <img className="size-6 object-contain aspect-square" src={'/images/white-ball.png'} />
-              </div>
             )}
           </div>
         </div>

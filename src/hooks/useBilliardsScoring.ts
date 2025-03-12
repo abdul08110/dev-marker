@@ -350,11 +350,7 @@ const useBilliardsScoring = () => {
         : undefined,
       teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
-      format: billiardsScoring.formatName ? billiardsScoring.formatName : billiardsSportTypeToFormat(
-        billiardsScoring.format,
-        billiardsScoring.maxScorePerSet,
-        billiardsScoring.noOfSets,
-      ),
+      format: billiardsScoring.formatName ? billiardsScoring.formatName : `${billiardsScoring.timeInMinutes} Mins`,
       tournamentSubItemId: billiardsScoring.tournamentSubItemId ? billiardsScoring.tournamentSubItemId : undefined,
       switchType: billiardsScoring.switchType ? billiardsScoring.switchType : null,
     });

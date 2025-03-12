@@ -17,6 +17,7 @@ import { TvRender } from './pages/app/TvRender';
 import { BowringArena } from './pages/app/bowringArena';
 import { VideoOverlay } from './pages/app/videoOverlay';
 import { PortraitOverlay } from './pages/app/portraitOverlay';
+import { LiveScoring } from './pages/app/liveScoring';
 
 const App: React.FC = () => {
   const token = getToken();
@@ -41,6 +42,7 @@ const App: React.FC = () => {
         <Route path="/app/bowring-render" element={<BowringArena />} />
         <Route path="/app/video-overlay" element={<VideoOverlay />} />
         <Route path="/app/portrait-overlay" element={<PortraitOverlay />} />
+        <Route path="/app/live-scoring" element={<LiveScoring />} />
       </Routes>
     </Router>
   );
