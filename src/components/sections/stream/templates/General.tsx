@@ -1,6 +1,7 @@
+import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
-import { formatTime, generatePlayerName } from '@/utils/functions';
+import { generatePlayerName } from '@/utils/functions';
 
 interface GeneralTemplateProps {
   state: StreamingState;
@@ -16,7 +17,8 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
         <div className="flex px-1 w-full gap-1 h-full justify-center">
           <div className="flex items-end">
             {props.state.tournamentLogo ? (
-              <img
+              <ImageWithFallback
+                fallback="/images/user-dummy-pic.png"
                 className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                 src={props.state.teamOneLogo ? props.state.teamOneLogo : '/images/user-dummy-pic.png'}
               />
@@ -24,7 +26,8 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
               <></>
             )}
             {props.state.tournamentLogo === null ? (
-              <img
+              <ImageWithFallback
+                fallback="/images/user-dummy-pic.png"
                 className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                 src={
                   props.state.sideOnePlayerOne.profilePhoto
@@ -111,7 +114,7 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
                     {' '}
                     <span className="xl:text-3xl lg:text-xl text-base text-white">
                       <span className={'font-bold'}>{props.activeSet ? props.state.teamOneScore : 0}</span>
-                      &nbsp;({formatTime(props.timeLeft)})&nbsp;
+                      &nbsp;({props.state.format})&nbsp;
                       <span className={'font-bold'}>{props.activeSet ? props.state.teamTwoScore : 0}</span>
                     </span>
                   </div>
@@ -141,7 +144,8 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
           <div className="flex justify-end">
             <div className="flex items-end">
               {props.state.tournamentLogo ? (
-                <img
+                <ImageWithFallback
+                  fallback="/images/user-dummy-pic.png"
                   className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                   src={props.state.teamTwoLogo ? props.state.teamTwoLogo : '/images/user-dummy-pic.png'}
                 />
@@ -149,7 +153,8 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
                 <></>
               )}
               {props.state.tournamentLogo === null ? (
-                <img
+                <ImageWithFallback
+                  fallback="/images/user-dummy-pic.png"
                   className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                   src={
                     props.state.sideTwoPlayerOne.profilePhoto

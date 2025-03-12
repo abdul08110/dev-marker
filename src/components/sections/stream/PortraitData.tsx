@@ -5,6 +5,7 @@ import { generatePlayerName, truncateText } from '@/utils/functions';
 import clsx from 'clsx';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
+import ImageWithFallback from '@/components/ui/image-with-fallback';
 
 interface PortraitStreamDataProps {
   state: StreamingState | null;
@@ -59,7 +60,7 @@ export function PortraitData(props: PortraitStreamDataProps) {
           ) : (
             <>
               <span>{activeSet ? props.state.teamOneScore : 0}</span>
-              <span> ({props.timeLeft})</span>
+              <span> ({props.state.format})</span>
               <span> {activeSet ? props.state.teamTwoScore : 0}</span>
             </>
           )}
@@ -86,8 +87,9 @@ export function PortraitData(props: PortraitStreamDataProps) {
         >
           {props.state.teamOneName && <span className="font-bold text-xs">{props.state.teamOneName}</span>}
           <div className="w-full flex justify-center items-center">
-            <img
+            <ImageWithFallback
               className="rounded-full border-white w-12 h-12 object-cover"
+              fallback="/images/user-dummy-pic.png"
               src={
                 props.state.teamOneLogo
                   ? props.state.teamOneLogo
@@ -95,7 +97,7 @@ export function PortraitData(props: PortraitStreamDataProps) {
                     ? props.state.sideOnePlayerOne.profilePhoto
                     : '/images/user-dummy-pic.png'
               }
-            ></img>
+            ></ImageWithFallback>
           </div>
           <div className="flex flex-col w-full h-18">
             <span className="text-center text-white text-3xl font-bold">{activeSet && activeSet.teamOneScore}</span>
@@ -128,7 +130,8 @@ export function PortraitData(props: PortraitStreamDataProps) {
         >
           {props.state.teamTwoName && <span className="font-bold text-xs">{props.state.teamTwoName}</span>}
           <div className="w-full flex justify-center items-center">
-            <img
+            <ImageWithFallback
+              fallback="/images/user-dummy-pic.png"
               className="rounded-full border-white size-12 object-cover"
               src={
                 props.state.teamTwoLogo
@@ -137,7 +140,7 @@ export function PortraitData(props: PortraitStreamDataProps) {
                     ? props.state.sideTwoPlayerOne.profilePhoto
                     : '/images/user-dummy-pic.png'
               }
-            ></img>
+            ></ImageWithFallback>
           </div>
 
           <div className="flex flex-col w-full h-18">

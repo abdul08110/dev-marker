@@ -1,3 +1,4 @@
+import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
 import { convertHandicapToString, generatePlayerName } from '@/utils/functions';
@@ -14,7 +15,8 @@ export function CatholicTemplate(props: CatholicTemplateProps) {
     <div className="absolute 360p:bottom-1 360p:mx-1 bottom-2 flex flex-col items-center bg-black mx-2 border border-white w-full">
       <div className="w-full h-auto flex items-center">
         <div className={`${props.isTv ? 'p-2' : '360p:p-2  p-4'}`}>
-          <img
+          <ImageWithFallback
+            fallback="/images/user-dummy-pic.png"
             className={`${props.isTv ? 'size-[4rem]' : '360p:size-6 720p:size-[4rem]  1080p:size-[8rem]'} aspect-square rounded-full object-cover`}
             src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.png'}
           />
@@ -116,7 +118,8 @@ export function CatholicTemplate(props: CatholicTemplateProps) {
           </div>
         </div>
         <div className={`${props.isTv ? 'p-2' : '360p:p-2  p-4'}`}>
-          <img
+          <ImageWithFallback
+            fallback="/images/user-dummy-pic.png"
             className={`${props.isTv ? 'size-[4rem]' : '360p:size-6 720p:size-[4rem] 1080p:size-[8rem]'} aspect-square rounded-full object-cover`}
             src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.png'}
           />

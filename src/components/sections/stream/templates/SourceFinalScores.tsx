@@ -1,3 +1,4 @@
+import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { StreamingState } from '@/hooks/useStreaming';
 
 interface SourceFinalScoresTemplateProps {
@@ -11,7 +12,8 @@ export function SourceWithFinalScores(props: SourceFinalScoresTemplateProps) {
         <div className="flex px-1 w-full gap-1 h-full justify-center">
           <div>
             {props.state.tournamentLogo ? (
-              <img
+              <ImageWithFallback
+                fallback="/images/user-dummy-pic.png"
                 className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                 src={props.state.teamOneLogo ? props.state.teamOneLogo : '/images/user-dummy-pic.png'}
               />
@@ -19,7 +21,8 @@ export function SourceWithFinalScores(props: SourceFinalScoresTemplateProps) {
               <></>
             )}
             {props.state.tournamentLogo === null ? (
-              <img
+              <ImageWithFallback
+                fallback="/images/user-dummy-pic.png"
                 className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                 src={
                   props.state.sideOnePlayerOne.profilePhoto
@@ -63,7 +66,8 @@ export function SourceWithFinalScores(props: SourceFinalScoresTemplateProps) {
           <div className="flex justify-end">
             <div>
               {props.state.tournamentLogo ? (
-                <img
+                <ImageWithFallback
+                  fallback="/images/user-dummy-pic.png"
                   className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                   src={props.state.teamTwoLogo ? props.state.teamTwoLogo : '/images/user-dummy-pic.png'}
                 />
@@ -71,7 +75,8 @@ export function SourceWithFinalScores(props: SourceFinalScoresTemplateProps) {
                 <></>
               )}
               {props.state.tournamentLogo === null ? (
-                <img
+                <ImageWithFallback
+                  fallback="/images/user-dummy-pic.png"
                   className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                   src={
                     props.state.sideTwoPlayerOne.profilePhoto
