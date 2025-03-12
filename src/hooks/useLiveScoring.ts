@@ -66,7 +66,6 @@ const useLiveScoring = (matchId: string) => {
     onTimerComplete: () => {},
   });
 
-  const scoreCheckIntervalRef = useRef<number | null>(null);
   const streamingDataRef = useRef<StreamingState | null>(null);
   const timeLeftRef = useRef<number>(timeLeft);
 

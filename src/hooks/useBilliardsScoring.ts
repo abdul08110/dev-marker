@@ -278,20 +278,20 @@ const useBilliardsScoring = () => {
     setShowTimeModal(false);
   };
 
-  const billiardsSportTypeToFormat = (
-    data: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED',
-    raceToValue: number | null,
-    noOfSets: number | null,
-  ) => {
-    switch (data) {
-      case 'BILLIARDS_RACE_TO':
-        return `${raceToValue ? raceToValue : '100'} UP`;
-      case 'BILLIARDS_TIME_BASED':
-        return `BEST OF ${noOfSets ? noOfSets : '1'}`;
-      default:
-        return `${raceToValue ? raceToValue : '100'} UP`;
-    }
-  };
+  // const billiardsSportTypeToFormat = (
+  //   data: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED',
+  //   raceToValue: number | null,
+  //   noOfSets: number | null,
+  // ) => {
+  //   switch (data) {
+  //     case 'BILLIARDS_RACE_TO':
+  //       return `${raceToValue ? raceToValue : '100'} UP`;
+  //     case 'BILLIARDS_TIME_BASED':
+  //       return `BEST OF ${noOfSets ? noOfSets : '1'}`;
+  //     default:
+  //       return `${raceToValue ? raceToValue : '100'} UP`;
+  //   }
+  // };
 
   const handleBilliardsSelectColorBall = async (type: 'white' | 'yellow') => {
     setShowBallColorModal(false);
