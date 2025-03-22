@@ -4,7 +4,7 @@ import { CatholicTemplate } from '@/components/sections/stream/templates/Catholi
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { GeneralTemplate } from '@/components/sections/stream/templates/General';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
-import useStreaming from '@/hooks/useStreaming';
+import useStreaming, { StreamState } from '@/hooks/useStreaming';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { useEffect, useState } from 'react';
 
@@ -56,6 +56,7 @@ export function VideoOverlay() {
 
   const activeSet = getActiveSet(viewershipData ? viewershipData.sets : []);
   const activeTurn = getActiveTurn(activeSet);
+  const [stream] = useState<StreamState | null>(viewershipData.streams?.find((stream) => stream.isPrimary) ?? null);
 
   return (
     <div className="h-screen w-screen bg-transparent pointer-events-none">
@@ -64,7 +65,8 @@ export function VideoOverlay() {
         tournamentLogo={viewershipData.tournamentLogo}
         venueNo={viewershipData.venueNo!}
       />
-      {viewershipData.overlayType === 'DESTINATION' &&
+      {stream &&
+        stream.overlayType === 'DESTINATION' &&
         (viewershipData.tournamentId ? (
           {
             '671f4acf089a3a701c79071f': (
@@ -100,7 +102,7 @@ export function VideoOverlay() {
         ) : (
           <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} timeLeft={timeLeft} />
         ))}
-      {viewershipData.overlayType === 'SOURCE_WITH_FINAL_SCORES' && <SourceWithFinalScores state={viewershipData} />}
+      {stream && stream.overlayType === 'SOURCE_WITH_FINAL_SCORES' && <SourceWithFinalScores state={viewershipData} />}
     </div>
   );
 }

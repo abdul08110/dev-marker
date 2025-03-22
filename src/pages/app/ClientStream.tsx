@@ -38,9 +38,7 @@ export function ClientStream() {
 
   return (
     <div className="h-screen w-screen flex flex-col">
-      <div
-        className={clsx('w-full h-full flex flex-col')}
-      >
+      <div className={clsx('w-full h-full flex flex-col')}>
         <StreamContainer
           updateTimer={updateTime}
           stopWatchTime={currentTime}
@@ -49,15 +47,10 @@ export function ClientStream() {
           timeLeft={timeLeft}
           isPortrait={isPortrait}
           isTv={false}
-          state={
-            streamingData && streamingData.overlayType === 'SOURCE_WITH_FINAL_SCORES' ? streamingData : viewershipData
-          }
+          state={viewershipData}
         />
-        {isPortrait && streamingData?.overlayType === 'DESTINATION' && (
-          <PortraitData
-            timeLeft={timeLeft}
-            state={viewershipData}
-          />
+        {isPortrait && streamingData?.streams.find((stream) => stream.overlayType === 'DESTINATION') && (
+          <PortraitData timeLeft={timeLeft} state={viewershipData} />
         )}
       </div>
     </div>

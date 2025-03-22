@@ -9,6 +9,7 @@ interface MatchPlayerReverseProps {
 
 interface MatchReversePlayersResponse {
   response: true;
+
 }
 
 interface MatchUpdateDataProps {
@@ -21,6 +22,7 @@ interface MatchUpdateDataProps {
   currentSetTeamTwoScore: number;
   isTeamOneHandicapApplied?: boolean;
   isTeamTwoHandicapApplied?: boolean;
+  currentVisitScore: number;
 }
 
 interface PlayerStats {

@@ -1,5 +1,5 @@
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
-import { StreamingState } from '@/hooks/useStreaming';
+import { StreamingState, StreamState } from '@/hooks/useStreaming';
 import { StreamType } from '@/api/app/useGetMatchData';
 import YouTube from 'react-youtube';
 import 'rc-slider/assets/index.css';
@@ -51,6 +51,9 @@ export function StreamContainer(props: StreamContainerProps) {
 
   const [seekIndicator, setSeekIndicator] = useState<'left' | 'right' | null>(null);
   const [showControls, setShowControls] = useState(false);
+  const [stream] = useState<StreamState | null>(
+    props.state?.streams.find((stream) => stream.isPrimary) ?? null,
+  );
 
   useEffect(() => {
     if (seekIndicator) {
@@ -62,7 +65,7 @@ export function StreamContainer(props: StreamContainerProps) {
   }, [seekIndicator]);
 
   const toggleOverlay = () => {
-    setShowControls(prev => !prev);
+    setShowControls((prev) => !prev);
   };
 
   const handleTap = (e: React.TouchEvent | React.MouseEvent) => {
@@ -104,13 +107,11 @@ export function StreamContainer(props: StreamContainerProps) {
         'h-full': !props.isPortrait,
       })}
     >
-      {props.state ? (
+
+      {props.state && stream ? (
         <div className="relative flex justify-center items-center w-full h-full">
-          {props.state.streamType === StreamType.CLOUD_PROVIDER &&
-          props.state.streamData !== null &&
-          props.state.streamData !== undefined &&
-          props.state.streamData.provider &&
-          props.state.streamData.provider === 'YOUTUBE' ? (
+          {stream.streamType === StreamType.CLOUD_PROVIDER &&
+          stream.streamProvider === 'YOUTUBE' ? (
             <div
               className="relative w-full h-full max-w-full max-h-full overflow-hidden"
               style={{
@@ -123,8 +124,8 @@ export function StreamContainer(props: StreamContainerProps) {
               }}
             >
               <YouTube
-                videoId={props.state.streamData.brodcastId!}
-                id={props.state.streamData.brodcastId!}
+                videoId={stream.brodcastId!}
+                id={stream.brodcastId!}
                 onReady={handleYouTubeReady}
                 onEnd={props.onVideoEnd}
                 onStateChange={handleYouTubeStateChange}
@@ -152,7 +153,7 @@ export function StreamContainer(props: StreamContainerProps) {
                 <SeekIndicator direction="right" isVisible={seekIndicator === 'right'} />
               </div>
 
-              {props.state.overlayType === 'DESTINATION' && !props.isPortrait && (
+              {stream.overlayType === 'DESTINATION' && !props.isPortrait && (
                 <TopOverlay
                   clubLogo={props.state.clubLogo!}
                   tournamentLogo={props.state.tournamentLogo}
@@ -160,7 +161,7 @@ export function StreamContainer(props: StreamContainerProps) {
                 />
               )}
 
-              {props.state.overlayType === 'DESTINATION' &&
+              {stream.overlayType === 'DESTINATION' &&
                 !props.isPortrait &&
                 (props.state.tournamentId ? (
                   {
@@ -183,13 +184,28 @@ export function StreamContainer(props: StreamContainerProps) {
                       />
                     ),
                     '679321b846b356ef640ca3d2': (
-                      <BBSLTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
+                      <BBSLTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
                     ),
                     '679b307af7eaaf399004a914': (
-                      <BBSLTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
+                      <BBSLTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
                     ),
                     '679ce81ed0202e686e8a96f6': (
-                      <CatholicTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
+                      <CatholicTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
                     ),
                   }[props.state.tournamentId] || (
                     <GeneralTemplate
@@ -207,7 +223,7 @@ export function StreamContainer(props: StreamContainerProps) {
                     timeLeft={props.timeLeft}
                   />
                 ))}
-              {props.state.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && (
+              {stream.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && (
                 <SourceWithFinalScores state={props.state} />
               )}
               {showControls && (
