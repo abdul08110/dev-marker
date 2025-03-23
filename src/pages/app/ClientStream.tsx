@@ -6,6 +6,7 @@ import useStreaming from '@/hooks/useStreaming';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
+
 export function ClientStream() {
   const [matchId, setMatchId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -37,7 +38,7 @@ export function ClientStream() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col">
+    <div className="h-screen w-screen flex flex-col relative">
       <div className={clsx('w-full h-full flex flex-col')}>
         <StreamContainer
           updateTimer={updateTime}

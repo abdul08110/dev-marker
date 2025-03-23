@@ -7,6 +7,8 @@ import clsx from 'clsx';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { useEffect } from 'react';
+import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
+import { StreamState } from '@/hooks/useStreaming';
 
 interface VideoControlsProps {
   isVideoPlaying: boolean;
@@ -20,6 +22,9 @@ interface VideoControlsProps {
   isStreamLive: boolean;
   isMatchTypeLive: boolean;
   onInactive: () => void;
+  streams?: StreamState[];
+  onCameraSwitch?: (stream: StreamState) => void;
+  selectedStreamId?: string | null;
 }
 
 export function VideoControls(props: VideoControlsProps) {
@@ -106,6 +111,42 @@ export function VideoControls(props: VideoControlsProps) {
               <MuteLogo className="h-4 w-4 text-white" />
             )}
           </div>
+
+          {props.streams && props.streams.length > 1 && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="p-2 cursor-pointer">
+                  <img src="/switch-icon.png" alt="switch camera" className="h-4 w-4" />
+                </div>
+              </DialogTrigger>
+              <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] rounded-lg overflow-hidden">
+                <DialogTitle></DialogTitle>
+                <div className="bg-[#424242] flex gap-4 p-3 items-center justify-center">
+                  {props.streams.map((streamItem) => (
+                    <DialogClose className='cursor-pointer p-0 outline-none border-none' key={streamItem.brodcastId}>
+                      <div
+                        onClick={() => {
+                          props.onCameraSwitch?.(streamItem);
+                        }}
+                        className={clsx(
+                          streamItem.brodcastId === props.selectedStreamId
+                            ? 'bg-white border-white'
+                            : 'bg-transparent border-transparent',
+                          'border-2 rounded-lg overflow-hidden cursor-pointer'
+                        )}
+                      >
+                        <img
+                          src={streamItem.isPrimary ? '/primary-angle.png' : '/secondnary-angle.png'}
+                          alt="stream"
+                          className="w-14 h-14"
+                        />
+                      </div>
+                    </DialogClose>
+                  ))}
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
     </div>

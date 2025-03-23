@@ -9,11 +9,13 @@ import { TopOverlay } from './overlays/TopOverlay';
 import { EcaTemplate } from './templates/Eca';
 import { GeneralTemplate } from './templates/General';
 import { SourceWithFinalScores } from './templates/SourceFinalScores';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { BBSLTemplate } from './templates/BBSL';
 import { SeekIndicator } from './SeekIndicator';
 import { CatholicTemplate } from './templates/Catholic';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogClose } from '@radix-ui/react-dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -33,6 +35,9 @@ export function StreamContainer(props: StreamContainerProps) {
   const [lastTap, setLastTap] = useState<number>(0);
   const DOUBLE_TAP_DELAY = 300;
 
+  const [isVideoLoading, setIsVideoLoading] = useState(false);
+  const [selectedStreamId, setSelectedStreamId] = useState<string | null>(null);
+
   const {
     videoDuration,
     isSoundOn,
@@ -43,17 +48,17 @@ export function StreamContainer(props: StreamContainerProps) {
     handlePlayPause,
     handleScrub,
     goLive,
+    handleSwitchCamera,
   } = useYouTubePlayer({
     onTimerUpdate: props.updateTimer,
     isMatchLive: props.state && props.state.matchStatus === 'LIVE' ? true : false,
     matchStartTime: props.state && props.state.actualStartTimeDate ? props.state.actualStartTimeDate : null,
+    onLoadingStateChange: setIsVideoLoading,
   });
 
   const [seekIndicator, setSeekIndicator] = useState<'left' | 'right' | null>(null);
   const [showControls, setShowControls] = useState(false);
-  const [stream] = useState<StreamState | null>(
-    props.state?.streams.find((stream) => stream.isPrimary) ?? null,
-  );
+  const [stream] = useState<StreamState | null>(props.state?.streams.find((stream) => stream.isPrimary) ?? null);
 
   useEffect(() => {
     if (seekIndicator) {
@@ -100,6 +105,18 @@ export function StreamContainer(props: StreamContainerProps) {
     }
   };
 
+  const handleCameraAngleSwitch = useCallback(
+    (stream: StreamState) => {
+      if (stream.brodcastId === selectedStreamId) {
+        return;
+      }
+
+      handleSwitchCamera(props.stopWatchTime);
+      setSelectedStreamId(stream.brodcastId!);
+    },
+    [selectedStreamId, props.stopWatchTime, handleSwitchCamera],
+  );
+
   return (
     <div
       className={clsx('w-full flex justify-center items-center', {
@@ -107,11 +124,9 @@ export function StreamContainer(props: StreamContainerProps) {
         'h-full': !props.isPortrait,
       })}
     >
-
       {props.state && stream ? (
         <div className="relative flex justify-center items-center w-full h-full">
-          {stream.streamType === StreamType.CLOUD_PROVIDER &&
-          stream.streamProvider === 'YOUTUBE' ? (
+          {stream.streamType === StreamType.CLOUD_PROVIDER && stream.streamProvider === 'YOUTUBE' ? (
             <div
               className="relative w-full h-full max-w-full max-h-full overflow-hidden"
               style={{
@@ -123,9 +138,15 @@ export function StreamContainer(props: StreamContainerProps) {
                 alignItems: 'center',
               }}
             >
+              {isVideoLoading && (
+                <div className="absolute inset-0 z-40 bg-black">
+                  <Skeleton className="w-full h-full" />
+                </div>
+              )}
+
               <YouTube
-                videoId={stream.brodcastId!}
-                id={stream.brodcastId!}
+                videoId={selectedStreamId || stream.brodcastId!}
+                id={selectedStreamId || stream.brodcastId!}
                 onReady={handleYouTubeReady}
                 onEnd={props.onVideoEnd}
                 onStateChange={handleYouTubeStateChange}
@@ -241,6 +262,9 @@ export function StreamContainer(props: StreamContainerProps) {
                   onPlayPauseClick={handlePlayPause}
                   isStreamLive={true}
                   isMatchTypeLive={props.state.matchStatus === 'LIVE'}
+                  streams={props.state.streams}
+                  onCameraSwitch={handleCameraAngleSwitch}
+                  selectedStreamId={selectedStreamId || stream?.brodcastId}
                 />
               )}
             </div>
@@ -256,6 +280,45 @@ export function StreamContainer(props: StreamContainerProps) {
           src="https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/ECA%20Raman%20Nair%202024%20Gina%20Artize.mp4"
           className="w-full h-auto"
         />
+      )}
+
+      {props.isPortrait && props.state && props.state.streams.length > 1 && (
+        <Dialog>
+          <DialogTrigger asChild>
+            <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 rounded-lg overflow-hidden">
+              <div className="bg-[#424242] flex gap-2 justify-center items-center p-3">
+                <img src="/switch-icon.png" alt="stream" className="w-6 h-6" />
+                <span className="text-white text-sm">Change Video Angle</span>
+              </div>
+            </div>
+          </DialogTrigger>
+          <DialogContent className="absolute bottom-20 w-[60%] rounded-lg overflow-hidden transform -translate-x-1/2 left-1/2">
+            <DialogTitle></DialogTitle>
+
+            <div className="bg-[#424242] flex gap-4 p-3 items-center justify-center">
+              {props.state.streams.map((streamItem) => (
+                <DialogClose className="cursor-pointer p-0 outline-none border-none" key={streamItem.brodcastId}>
+                  <div
+                    key={streamItem.brodcastId}
+                    onClick={() => handleCameraAngleSwitch(streamItem)}
+                    className={clsx(
+                      streamItem.brodcastId === (selectedStreamId || stream?.brodcastId)
+                        ? 'bg-white border-white'
+                        : 'bg-transparent border-transparent',
+                      'border-2 rounded-lg overflow-hidden cursor-pointer',
+                    )}
+                  >
+                    <img
+                      src={streamItem.isPrimary ? '/primary-angle.png' : '/secondnary-angle.png'}
+                      alt="stream"
+                      className="w-14 h-14"
+                    />
+                  </div>
+                </DialogClose>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
