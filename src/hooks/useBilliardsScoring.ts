@@ -85,7 +85,9 @@ const useBilliardsScoring = () => {
   const timeLeft = useTimer({
     endTime: billiardsScoring.expectedEndTimeDate ? new Date(billiardsScoring.expectedEndTimeDate) : null,
     startTime: null,
-    onTimerComplete: () => { setShowTimeModal(true); },
+    onTimerComplete: () => {
+      setShowTimeModal(true);
+    },
   });
 
   useEffect(() => {
@@ -198,6 +200,12 @@ const useBilliardsScoring = () => {
   };
 
   const handlePlayerConfirm = async (player: Player) => {
+    let showSettingsScreen: boolean = false;
+
+    if (selectedPlayerIndex === 0 && selectedTeamIndex === 1 && billiardsScoring.team2.players[0].id === null) {
+      showSettingsScreen = true;
+    }
+
     await dispatch(
       await handlePlayerSelectState({
         player,
@@ -209,6 +217,10 @@ const useBilliardsScoring = () => {
       setSelectedTeamIndex(1);
     } else {
       setOpenPlayerSelectCard(false);
+    }
+
+    if (showSettingsScreen) {
+      setOpenSettingsDrawer(true);
     }
   };
 
@@ -249,7 +261,7 @@ const useBilliardsScoring = () => {
     } catch (error) {
       console.error('Error ending game:', error);
       toast({
-        title: 'Error', 
+        title: 'Error',
         description: 'Failed to end game. Please try again.',
         variant: 'destructive',
       });
@@ -353,6 +365,7 @@ const useBilliardsScoring = () => {
       format: billiardsScoring.formatName ? billiardsScoring.formatName : `${billiardsScoring.timeInMinutes} Mins`,
       tournamentSubItemId: billiardsScoring.tournamentSubItemId ? billiardsScoring.tournamentSubItemId : undefined,
       switchType: billiardsScoring.switchType ? billiardsScoring.switchType : null,
+      isRankingEvent: billiardsScoring.isRankingEvent,
     });
 
     if (matchId) {

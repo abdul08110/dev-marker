@@ -132,6 +132,7 @@ export interface GeneralScoringState {
   tournamentSubItemId: string | null;
   formatName: string | null;
   switchType: 'FRAME' | 'VISIT' | null;
+  isRankingEvent: boolean;
 }
 
 export interface ClubData {

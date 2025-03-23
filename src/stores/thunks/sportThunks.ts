@@ -33,6 +33,8 @@ import {
   updateMaxScorePerSet,
   updateTeamHandicapApplied,
   setExpectedEndTimeDate,
+  updateIsRankingEvent,
+  setFormatName,
 } from '../slices/sportSlice';
 import { BilliardPointType, Player, SnookerPointType, SportType, TournamentFormat } from '../types';
 import {
@@ -138,6 +140,7 @@ export const setStateTournament = createAsyncThunk<
     tournamentSubItemId: data.tournamentSubItemId,
     formatName: data.format.name,
     switchType: data.format.switchType ? data.format.switchType : null,
+    isRankingEvent: false,
   };
   await dispatch(
     setState({
@@ -203,6 +206,7 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       tournamentSubItemId: data.tournamentSubItemId ? data.tournamentSubItemId : null,
       formatName: null,
       switchType: data.switchType,
+      isRankingEvent: false,
     };
 
     if (data.sideTwoPlayerTwo !== null) {
@@ -683,15 +687,26 @@ export const handleSettingsStateUpdateBilliards = createAsyncThunk<
     maxPointsPerFrame: number;
     streaming: 'PUBLIC' | 'PRIVATE';
     handicap: number;
+    isRankingEvent: boolean;
   },
   { state: RootState; dispatch: AppDispatch }
 >(
   'sport/handleSettingsUpdateBilliards',
-  async ({ format, durationInMinutes, noOfFrames, maxPointsPerFrame, streaming, handicap }, { dispatch }) => {
+  async (
+    { format, durationInMinutes, noOfFrames, maxPointsPerFrame, streaming, handicap, isRankingEvent },
+    { dispatch },
+  ) => {
     await dispatch(updateFormat({ format }));
-    await dispatch(updateTimeInMinutes({ timeInMinutes: timeStringToDecimalMinutes(durationInMinutes) }));
+    await dispatch(
+      updateTimeInMinutes({ timeInMinutes: isRankingEvent ? 0 : timeStringToDecimalMinutes(durationInMinutes) }),
+    );
     await dispatch(updateStreaming({ streaming }));
     await dispatch(updateHandicap({ handicap }));
+    await dispatch(updateIsRankingEvent({ isRankingEvent }));
+
+    if (isRankingEvent) {
+      await dispatch(setFormatName({ formatName: 'Ranking 100 UP' }));
+    }
 
     if (format === 'BILLIARDS_RACE_TO') {
       await dispatch(updateNoOfSets({ no: noOfFrames }));

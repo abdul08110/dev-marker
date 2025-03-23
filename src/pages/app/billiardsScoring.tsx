@@ -63,11 +63,11 @@ export function BilliardsScoring() {
           <SnookerMenuDrawer
             setOpen={(value) => setShowMenuDrawer(value)}
             open={showMenuDrawer}
-            showCorrection={false}
-            showConcedeFrame={false}
-            showRerack={false}
+            showCorrection={getActiveSet(billiardsScoring.scoreHistory) !== undefined}
+            showConcedeFrame={getActiveSet(billiardsScoring.scoreHistory) !== undefined}
+            showRerack={getActiveSet(billiardsScoring.scoreHistory) !== undefined}
             showEndGame={true}
-            showEndFrame={billiardsScoring.noOfSets !== null && billiardsScoring.noOfSets > 1}
+            showEndFrame={true}
             onConcedeFrame={() => {}}
             onEndGame={handleEndGame}
             onRerack={() => {}}

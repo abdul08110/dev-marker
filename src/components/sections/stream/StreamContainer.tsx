@@ -212,7 +212,7 @@ export function StreamContainer(props: StreamContainerProps) {
                       state={props.state}
                       activeSet={activeSet}
                       activeTurn={activeTurn}
-                      timeLeft={props.timeLeft}
+                      isTv={props.isTv}
                     />
                   )
                 ) : (
@@ -220,7 +220,7 @@ export function StreamContainer(props: StreamContainerProps) {
                     state={props.state}
                     activeSet={activeSet}
                     activeTurn={activeTurn}
-                    timeLeft={props.timeLeft}
+                    isTv={props.isTv}
                   />
                 ))}
               {stream.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && (

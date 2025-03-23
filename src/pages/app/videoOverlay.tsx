@@ -22,7 +22,6 @@ export function VideoOverlay() {
 
   const {
     loading: streamingLoading,
-    timeLeft,
     viewershipData,
     updateTime,
     streamingData,
@@ -96,10 +95,10 @@ export function VideoOverlay() {
               <CatholicTemplate isTv={false} state={viewershipData} activeTurn={activeTurn} activeSet={activeSet} />
             ),
           }[viewershipData.tournamentId] || (
-            <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} timeLeft={timeLeft} />
+            <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
           )
         ) : (
-          <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} timeLeft={timeLeft} />
+          <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
         ))}
       {viewershipData && viewershipData.streams[0].overlayType === 'SOURCE_WITH_FINAL_SCORES' && <SourceWithFinalScores state={viewershipData} />}
     </div>

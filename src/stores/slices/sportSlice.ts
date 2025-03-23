@@ -58,6 +58,7 @@ const initialState: GeneralScoringState = {
   tournamentSubItemId: null,
   formatName: null,
   switchType: null,
+  isRankingEvent: false,
 };
 
 const sportSlice = createSlice({
@@ -121,6 +122,7 @@ const sportSlice = createSlice({
         tournamentTeamTwoScore: null,
         formatName: null,
         switchType: 'VISIT',
+        isRankingEvent: false,
       });
     },
     resetStateBilliards(state) {
@@ -173,10 +175,14 @@ const sportSlice = createSlice({
         tournamentTeamTwoScore: null,
         formatName: null,
         switchType: null,
+        isRankingEvent: false,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
       state.matchId = action.payload.matchId;
+    },
+    setFormatName(state, action: PayloadAction<{ formatName: string }>) {
+      state.formatName = action.payload.formatName;
     },
     setActivePlayer(state, action: PayloadAction<{ playerId: string }>) {
       const id = action.payload.playerId;
@@ -301,6 +307,9 @@ const sportSlice = createSlice({
     updateNoOfSets(state, action: PayloadAction<{ no: number }>) {
       state.noOfSets = action.payload.no;
     },
+    updateIsRankingEvent(state, action: PayloadAction<{ isRankingEvent: boolean }>) {
+      state.isRankingEvent = action.payload.isRankingEvent;
+    },
     updateMaxScorePerSet(state, action: PayloadAction<{ maxScorePerSet: number }>) {
       state.maxScorePerSet = action.payload.maxScorePerSet;
     },
@@ -382,6 +391,8 @@ export const {
   updateNoOfSets,
   updateMaxScorePerSet,
   updateTeamHandicapApplied,
-  setExpectedEndTimeDate
+  setExpectedEndTimeDate,
+  updateIsRankingEvent,
+  setFormatName
 } = sportSlice.actions;
 export default sportSlice.reducer;
