@@ -2,6 +2,7 @@ import { RootState, useAppDispatch } from '@/stores';
 import {
   handleBackendUpdateOfData,
   handleBilliardsPointTrigger,
+  handleBreakOff,
   handleEndFrame,
   handleEndGameThrunk,
   handleMatchStart,
@@ -185,6 +186,16 @@ const useBilliardsScoring = () => {
             return;
           }
           setShowBallColorModal(true);
+        } else {
+          const activeTeamInfo = getActiveTeam(billiardsScoring.team1, billiardsScoring.team2);
+          await dispatch(
+            handleBreakOff({
+              scoreOrder: [
+                activeTeamInfo === 0 ? billiardsScoring.team1.players[0].id : billiardsScoring.team2.players[0].id,
+                activeTeamInfo === 0 ? billiardsScoring.team2.players[0].id : billiardsScoring.team1.players[0].id,
+              ],
+            }),
+          );
         }
         setShowLoadingModal(false);
         break;
