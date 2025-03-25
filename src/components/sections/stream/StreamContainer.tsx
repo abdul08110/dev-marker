@@ -16,6 +16,7 @@ import { SeekIndicator } from './SeekIndicator';
 import { CatholicTemplate } from './templates/Catholic';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogClose } from '@radix-ui/react-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CatholicSinglesTemplate } from './templates/CatholicSingles';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -222,6 +223,14 @@ export function StreamContainer(props: StreamContainerProps) {
                     ),
                     '679ce81ed0202e686e8a96f6': (
                       <CatholicTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
+                    ),
+                    '67c68050f08592439d5c5a55': (
+                      <CatholicSinglesTemplate
                         isTv={props.isTv}
                         state={props.state}
                         activeTurn={activeTurn}
