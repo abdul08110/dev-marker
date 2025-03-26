@@ -13,8 +13,12 @@ interface LandscapeScoreBoardProps {
 export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProps) {
   const activeSet = getActiveSet(state.sets);
   const activeTurn = getActiveTurn(activeSet);
-  const isTeamOneActive = state.sideOnePlayerOne.id === state.activePlayerId;
-  const isTeamTwoActive = state.sideTwoPlayerOne.id === state.activePlayerId;
+  const isTeamOneActive =
+    (state.sideOnePlayerOne?.id === state.activePlayerId) ||
+    (state.sideOnePlayerTwo?.id === state.activePlayerId);
+  const isTeamTwoActive =
+    (state.sideTwoPlayerOne?.id === state.activePlayerId) ||
+    (state.sideTwoPlayerTwo?.id === state.activePlayerId);
   // const isTeamReveresed =
   //   state.tournamentId && state.tournamentSubItem
   //     ? state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== state.tournamentTeamOneId
