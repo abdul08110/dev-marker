@@ -3,6 +3,7 @@ import { BBSLTemplate } from '@/components/sections/stream/templates/BBSL';
 import { CatholicTemplate } from '@/components/sections/stream/templates/Catholic';
 import { CatholicSinglesTemplate } from '@/components/sections/stream/templates/CatholicSingles';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
+import { NewEca } from '@/components/sections/stream/templates/Eca-new';
 import { GeneralTemplate } from '@/components/sections/stream/templates/General';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
 import useStreaming from '@/hooks/useStreaming';
@@ -103,6 +104,14 @@ export function VideoOverlay() {
                 activeSet={activeSet}
               />
             ),
+            '67ee7037eb254339e7ee8857': (
+              <NewEca
+                state={viewershipData}
+                isTv={false}
+                activeTurn={activeTurn}
+                activeSet={activeSet}
+              />
+            )
           }[viewershipData.tournamentId] || (
             <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
           )

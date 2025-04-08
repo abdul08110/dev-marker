@@ -17,6 +17,7 @@ import { CatholicTemplate } from './templates/Catholic';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogClose } from '@radix-ui/react-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CatholicSinglesTemplate } from './templates/CatholicSingles';
+import { NewEca } from './templates/Eca-new';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -237,6 +238,14 @@ export function StreamContainer(props: StreamContainerProps) {
                         activeSet={activeSet}
                       />
                     ),
+                    '67ee7037eb254339e7ee8857': (
+                      <NewEca
+                        state={props.state}
+                        isTv={props.isTv}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
+                    )
                   }[props.state.tournamentId] || (
                     <GeneralTemplate
                       state={props.state}
