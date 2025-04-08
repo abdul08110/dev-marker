@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import useGetTournamentPlayers from '@/api/app/useGetTournamentPlayers';
 import useDebounce from '@/hooks/useDebounce';

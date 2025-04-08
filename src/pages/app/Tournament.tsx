@@ -20,7 +20,7 @@ import { ScoreUpdateLoadingModal } from '@/components/modals/scoreUpdateLoading'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Create a dynamic form schema based on tournament type and number of players
-const createFormSchema = (numberOfPlayers: number, isSingles: boolean = false) => {
+const createFormSchema = (numberOfPlayers: number) => {
   return z.object({
     phaseId: z.string(),
     formatId: z.string(),
@@ -86,7 +86,7 @@ export function Tournament() {
   
   const hasHandicap = selectedFormat?.isHandicapAllowed || false;
 
-  const formSchema = createFormSchema(numberOfPlayersPerTeam, isSinglesEvent);
+  const formSchema = createFormSchema(numberOfPlayersPerTeam);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
