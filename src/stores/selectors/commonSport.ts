@@ -132,7 +132,48 @@ export const calculateTotalTeamScore = (sets: Set[]) => {
   return totalScores;
 };
 
-export const calculateStatsForPlayer = async(playerId: string, sets: Set[]) => {
+export const calculateAllBreaksAboveThirtyForASet = async (set: Set) => {
+  const breakAchievements: Array<{
+    achievementType: 'THIRTY_PLUS' | 'FIFTY_PLUS' | 'HUNDRED_PLUS';
+    playerId: string;
+    score: number;
+  }> = [];
+
+  set.turns.forEach((turn) => {
+    if (!turn.turnPlayerId) return;
+
+    const breakScore = turn.points.reduce((total, point) => {
+      if (point.snookerPoint) {
+        return total + point.snookerPoint.score;
+      } else if (point.billiardsPoint) {
+        return total + point.billiardsPoint.score;
+      }
+      return total;
+    }, 0);
+
+    if (breakScore < 30) return;
+
+    let achievementType: 'THIRTY_PLUS' | 'FIFTY_PLUS' | 'HUNDRED_PLUS';
+
+    if (breakScore >= 100) {
+      achievementType = 'HUNDRED_PLUS';
+    } else if (breakScore >= 50) {
+      achievementType = 'FIFTY_PLUS';
+    } else {
+      achievementType = 'THIRTY_PLUS';
+    }
+
+    breakAchievements.push({
+      achievementType,
+      playerId: turn.turnPlayerId,
+      score: breakScore,
+    });
+  });
+
+  return breakAchievements;
+};
+
+export const calculateStatsForPlayer = async (playerId: string, sets: Set[]) => {
   let highestBreak = 0;
   let fiftyPlusBreaks = 0;
   let thirtyPlusBreaks = 0;
@@ -140,10 +181,10 @@ export const calculateStatsForPlayer = async(playerId: string, sets: Set[]) => {
   let totalPots = 0;
   let successfulPots = 0;
 
-  sets.forEach(set => {
-    const playerTurns = set.turns.filter(turn => turn.turnPlayerId === playerId);
+  sets.forEach((set) => {
+    const playerTurns = set.turns.filter((turn) => turn.turnPlayerId === playerId);
 
-    playerTurns.forEach(turn => {
+    playerTurns.forEach((turn) => {
       const breakScore = turn.points.reduce((total, point) => {
         if (point.snookerPoint) {
           return total + point.snookerPoint.score;
@@ -165,7 +206,7 @@ export const calculateStatsForPlayer = async(playerId: string, sets: Set[]) => {
         thirtyPlusBreaks++;
       }
 
-      turn.points.forEach(point => {
+      turn.points.forEach((point) => {
         if (point.snookerPoint) {
           if (point.snookerPoint.type !== 'FOUL') {
             totalPots++;
@@ -187,6 +228,17 @@ export const calculateStatsForPlayer = async(playerId: string, sets: Set[]) => {
     noOfThirtyPlusBreaks: thirtyPlusBreaks,
     potSuccessRatio,
   };
+};
+
+export const getStartTimeOfSet = async (set: Set) => {
+  for (const turn of set.turns) {
+    for (const point of turn.points) {
+      if (point.timeScored) {
+        return point.timeScored;
+      }
+    }
+  }
+  return null;
 };
 
 export const calculatePointsBySide = (

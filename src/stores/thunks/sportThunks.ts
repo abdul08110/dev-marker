@@ -49,6 +49,7 @@ import {
 } from '../selectors/snookerSelector';
 import { getTimeInMinutes, timeStringToDecimalMinutes } from '@/utils/functions';
 import {
+  calculateAllBreaksAboveThirtyForASet,
   calculateStatsForPlayer,
   getActivePlayer,
   getActiveSet,
@@ -56,10 +57,16 @@ import {
   getActiveTeam,
   getActiveTurn,
   getActiveTurnIndex,
+  getStartTimeOfSet,
   getTeamKey,
 } from '../selectors/commonSport';
 import { clearUndoStack, popFromUndoStack, pushToUndoStack } from '../slices/undoSlice';
-import { matchEndGameRequest, matchUpdateDataRequest, reversePlayersRequest } from '@/api/scoring/scoringFunctions';
+import {
+  markerFrameEndSendNotificationRequest,
+  matchEndGameRequest,
+  matchUpdateDataRequest,
+  reversePlayersRequest,
+} from '@/api/scoring/scoringFunctions';
 import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
 import { MatchStartResponse } from '@/api/app/useGetMatchData';
@@ -725,6 +732,17 @@ export const handleEndFrame = createAsyncThunk<
   const activeSetIndex = getActiveSetIndex(state.sport.scoreHistory);
 
   if (!activeSet) return;
+
+  const achievements = await calculateAllBreaksAboveThirtyForASet(activeSet);
+  const setStartTime = await getStartTimeOfSet(activeSet);
+
+  if (setStartTime && achievements.length > 0) {
+    await markerFrameEndSendNotificationRequest({
+      matchId: state.sport.matchId!,
+      achievements,
+      frameStartTimeDate: setStartTime,
+    });
+  }
 
   const winningTeamIndex = activeSet?.teamOneScore > activeSet?.teamTwoScore ? 0 : 1;
   await dispatch(incrementTotalScore({ teamIndex: winningTeamIndex, score: 1 }));

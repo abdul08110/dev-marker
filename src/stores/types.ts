@@ -25,6 +25,7 @@ export interface Tournament {
   id: string;
   logo: string;
   name: string;
+  eventFormat: 'SINGLES' | 'TEAMS';
 }
 
 export enum SnookerPointType {

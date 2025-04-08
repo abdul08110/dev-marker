@@ -9,7 +9,6 @@ interface MatchPlayerReverseProps {
 
 interface MatchReversePlayersResponse {
   response: true;
-
 }
 
 interface MatchUpdateDataProps {
@@ -49,6 +48,16 @@ interface MarkerEndGameProps {
 interface MatchResetTimerRequestProps {
   matchId: string;
   expectedEndTimeDate: Date;
+}
+
+interface MarkerFrameEndSendNotificationProps {
+  matchId: string;
+  achievements: {
+    achievementType: 'THIRTY_PLUS' | 'FIFTY_PLUS' | 'HUNDRED_PLUS';
+    playerId: string;
+    score: number;
+  }[];
+  frameStartTimeDate: string;
 }
 
 export const reversePlayersRequest = async (props: MatchPlayerReverseProps): Promise<boolean | null> => {
@@ -93,6 +102,19 @@ export const matchResetTimerRequest = async (props: MatchResetTimerRequestProps)
       false,
     );
 
+    return true;
+  } catch (err) {
+    return null;
+  }
+};
+
+export const markerFrameEndSendNotificationRequest = async (
+  props: MarkerFrameEndSendNotificationProps,
+): Promise<boolean | null> => {
+  try {
+    await handleApiResponse(
+      axiosInstance.post<ApiResponse<MatchReversePlayersResponse>>(`match/marker/frame-end-achievements`, props),
+    );
     return true;
   } catch (err) {
     return null;

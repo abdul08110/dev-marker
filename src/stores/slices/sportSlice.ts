@@ -201,9 +201,15 @@ const sportSlice = createSlice({
       const scoreOrder = action.payload.scoreOrder;
       const shouldCalculateHandicap = action.payload.calculateHandicap;
 
+      let relativeHandicap = state.handicap;
+
+      if (state.teamOneHandicap || state.teamTwoHandicap) {
+        relativeHandicap = (state.teamOneHandicap || 0) - (state.teamTwoHandicap || 0);
+      }
+
       state.scoreHistory.push({
-        teamOneScore: state.handicap > 0 && shouldCalculateHandicap ? state.handicap : 0,
-        teamTwoScore: state.handicap < 0 && shouldCalculateHandicap ? Math.abs(state.handicap) : 0,
+        teamOneScore: relativeHandicap > 0 && shouldCalculateHandicap ? relativeHandicap : 0,
+        teamTwoScore: relativeHandicap < 0 && shouldCalculateHandicap ? Math.abs(relativeHandicap) : 0,
         turns: [],
         status: 'ONGOING',
         snookerCorrections: [],
@@ -246,7 +252,7 @@ const sportSlice = createSlice({
     completeSet(state, action: PayloadAction<{ setIndex: number }>) {
       state.scoreHistory[action.payload.setIndex].status = 'COMPLETED';
     },
-    setExpectedEndTimeDate(state, action: PayloadAction< { expectedEndTimeDate: string | null }>) {
+    setExpectedEndTimeDate(state, action: PayloadAction<{ expectedEndTimeDate: string | null }>) {
       state.expectedEndTimeDate = action.payload.expectedEndTimeDate;
     },
     changeSetStatus(state, action: PayloadAction<{ setIndex: number; status: 'COMPLETED' | 'ONGOING' | 'CONCEDED' }>) {
@@ -393,6 +399,6 @@ export const {
   updateTeamHandicapApplied,
   setExpectedEndTimeDate,
   updateIsRankingEvent,
-  setFormatName
+  setFormatName,
 } = sportSlice.actions;
 export default sportSlice.reducer;

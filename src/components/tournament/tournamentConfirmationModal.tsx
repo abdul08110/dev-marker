@@ -28,10 +28,10 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
 
   return (
     <Dialog open={props.isOpen}>
-      <DialogContent className="top-0 left-0 absolute h-full bg-black/60 w-full flex justify-center items-center">
+      <DialogContent className="fixed inset-0 z-50 bg-black/60 flex justify-center items-center overflow-auto">
         <DialogTitle></DialogTitle>
-        <div className="container">
-          <div className=" p-2 flex justify-center">
+        <div className="container max-h-screen py-8">
+          <div className="flex justify-center">
             <div className="w-full bg-[#1F1F1F] p-6 rounded-lg shadow-xl max-w-2xl">
               <h2 className="text-white text-base font-bold text-center mb-6">
                 {props.format.name} #Game - {props.format.matchNo}

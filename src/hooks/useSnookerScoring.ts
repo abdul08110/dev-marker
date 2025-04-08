@@ -193,6 +193,7 @@ const useSnookerScoring = () => {
 
   const handleMatchCreation = async (playerOrder: string[]) => {
     let isTeamReveresed = false;
+    const currentImplementationSnookerScoring = snookerScoring;
     const activeTeam = getActiveTeam(snookerScoring.team1, snookerScoring.team2);
 
     if (activeTeam === 1) {
@@ -200,8 +201,8 @@ const useSnookerScoring = () => {
       isTeamReveresed = true;
     }
 
-    const teamOneHandicap = isTeamReveresed ? snookerScoring.teamTwoHandicap : snookerScoring.teamOneHandicap;
-    const teamTwoHandicap = isTeamReveresed ? snookerScoring.teamOneHandicap : snookerScoring.teamTwoHandicap;
+    const teamOneHandicap = isTeamReveresed ? currentImplementationSnookerScoring.teamTwoHandicap : currentImplementationSnookerScoring.teamOneHandicap;
+    const teamTwoHandicap = isTeamReveresed ? currentImplementationSnookerScoring.teamOneHandicap : currentImplementationSnookerScoring.teamTwoHandicap;
 
     const currentDate = new Date();
     const expectedEndTimeDate =
@@ -211,49 +212,49 @@ const useSnookerScoring = () => {
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
       expectedEndTimeDate: expectedEndTimeDate,
-      sideOnePlayerOneId: isTeamReveresed ? snookerScoring.team2.players[0].id! : snookerScoring.team1.players[0].id!,
-      sideTwoPlayerOneId: isTeamReveresed ? snookerScoring.team1.players[0].id! : snookerScoring.team2.players[0].id!,
+      sideOnePlayerOneId: isTeamReveresed ? currentImplementationSnookerScoring.team2.players[0].id! : currentImplementationSnookerScoring.team1.players[0].id!,
+      sideTwoPlayerOneId: isTeamReveresed ? currentImplementationSnookerScoring.team1.players[0].id! : currentImplementationSnookerScoring.team2.players[0].id!,
       sideOnePlayerTwoId:
-        snookerScoring.team1.players.length > 1
+        currentImplementationSnookerScoring.team1.players.length > 1
           ? isTeamReveresed
-            ? snookerScoring.team2.players[1].id!
-            : snookerScoring.team1.players[1].id!
+            ? currentImplementationSnookerScoring.team2.players[1].id!
+            : currentImplementationSnookerScoring.team1.players[1].id!
           : undefined,
       sideTwoPlayerTwoId:
-        snookerScoring.team2.players.length > 1
+        currentImplementationSnookerScoring.team2.players.length > 1
           ? isTeamReveresed
-            ? snookerScoring.team1.players[1].id!
-            : snookerScoring.team2.players[1].id!
+            ? currentImplementationSnookerScoring.team1.players[1].id!
+            : currentImplementationSnookerScoring.team2.players[1].id!
           : undefined,
       sport: 'SNOOKER',
       sportType: snookerScoring.format,
       streamingType: snookerScoring.streaming,
       venueId: clubs.activeClub!.venueId,
-      handicap: isTeamReveresed ? -snookerScoring.handicap : snookerScoring.handicap,
-      maxScorePerSet: snookerScoring.maxScorePerSet,
-      noOfSets: snookerScoring.noOfSets,
-      cumulativeScoring: snookerScoring.isCumulativeScoring,
+      handicap: isTeamReveresed ? -currentImplementationSnookerScoring.handicap : currentImplementationSnookerScoring.handicap,
+      maxScorePerSet: currentImplementationSnookerScoring.maxScorePerSet,
+      noOfSets: currentImplementationSnookerScoring.noOfSets,
+      cumulativeScoring: currentImplementationSnookerScoring.isCumulativeScoring,
       tournamentTeamOneId:
-        snookerScoring.tournamentTeamOneId !== null && snookerScoring.tournamentTeamTwoId !== null
+        currentImplementationSnookerScoring.tournamentTeamOneId !== null && currentImplementationSnookerScoring.tournamentTeamTwoId !== null
           ? isTeamReveresed
-            ? snookerScoring.tournamentTeamTwoId
-            : snookerScoring.tournamentTeamOneId
+            ? currentImplementationSnookerScoring.tournamentTeamTwoId
+            : currentImplementationSnookerScoring.tournamentTeamOneId
           : undefined,
       tournamentTeamTwoId:
-        snookerScoring.tournamentTeamOneId !== null && snookerScoring.tournamentTeamTwoId !== null
+        currentImplementationSnookerScoring.tournamentTeamOneId !== null && currentImplementationSnookerScoring.tournamentTeamTwoId !== null
           ? isTeamReveresed
-            ? snookerScoring.tournamentTeamOneId
-            : snookerScoring.tournamentTeamTwoId
+            ? currentImplementationSnookerScoring.tournamentTeamOneId
+            : currentImplementationSnookerScoring.tournamentTeamTwoId
           : undefined,
-      tournamentId: snookerScoring.tournamentId ? snookerScoring.tournamentId : undefined,
-      tournamentTeamOneScore: snookerScoring.tournamentTeamOneScore ? snookerScoring.tournamentTeamOneScore : undefined,
-      tournamentTeamTwoScore: snookerScoring.tournamentTeamTwoScore ? snookerScoring.tournamentTeamTwoScore : undefined,
+      tournamentId: currentImplementationSnookerScoring.tournamentId ? currentImplementationSnookerScoring.tournamentId : undefined,
+      tournamentTeamOneScore: currentImplementationSnookerScoring.tournamentTeamOneScore ? currentImplementationSnookerScoring.tournamentTeamOneScore : undefined,
+      tournamentTeamTwoScore: currentImplementationSnookerScoring.tournamentTeamTwoScore ? currentImplementationSnookerScoring.tournamentTeamTwoScore : undefined,
       teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
-      format: snookerScoring.formatName
-        ? snookerScoring.formatName
-        : snookerSportTypeToFormat(snookerScoring.format, snookerScoring.isCumulativeScoring),
-      tournamentSubItemId: snookerScoring.tournamentSubItemId ? snookerScoring.tournamentSubItemId : undefined,
+      format: currentImplementationSnookerScoring.formatName
+        ? currentImplementationSnookerScoring.formatName
+        : snookerSportTypeToFormat(currentImplementationSnookerScoring.format, currentImplementationSnookerScoring.isCumulativeScoring),
+      tournamentSubItemId: currentImplementationSnookerScoring.tournamentSubItemId ? currentImplementationSnookerScoring.tournamentSubItemId : undefined,
       switchType: snookerScoring.switchType ? snookerScoring.switchType : null,
     });
 
