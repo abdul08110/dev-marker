@@ -59,9 +59,7 @@ export function PortraitData(props: PortraitStreamDataProps) {
             </>
           ) : (
             <>
-              <span>{activeSet ? props.state.teamOneScore : 0}</span>
               <span> ({props.state.format})</span>
-              <span> {activeSet ? props.state.teamTwoScore : 0}</span>
             </>
           )}
         </div>
