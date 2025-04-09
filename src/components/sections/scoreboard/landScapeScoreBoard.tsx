@@ -32,13 +32,13 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           })}
         >
           <div className="h-[25%] w-full relative">
-            <span className="ml-[min(3vh,3vw)] absolute top-1/2 transform -translate-y-1/2 text-white font-bold text-[min(10vh,10vw)]">
+            {/* <span className="ml-[min(3vh,3vw)] absolute top-1/2 transform -translate-y-1/2 text-white font-bold text-[min(10vh,10vw)]">
               {state.tournamentId && state.tournamentSubItem
                 ? isTeamReveresed
                   ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
                   : state.tournamentSubItem?.tournamentItem.teamOneScore!
                 : state.teamOneScore}
-            </span>
+            </span> */}
             <PlayerImage profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto} />
           </div>
 
@@ -79,13 +79,13 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         >
           <div className="h-[25%] w-full relative">
             <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
-            <span className="right-[min(3vh,3vw)] absolute top-1/2 transform -translate-y-1/2 text-white font-bold text-[min(10vh,10vw)]">
+            {/* <span className="right-[min(3vh,3vw)] absolute top-1/2 transform -translate-y-1/2 text-white font-bold text-[min(10vh,10vw)]">
               {state.tournamentId && state.tournamentSubItem
                 ? isTeamReveresed
                   ? state.tournamentSubItem?.tournamentItem.teamOneScore!
                   : state.tournamentSubItem?.tournamentItem.teamTwoScore!
                 : state.teamTwoScore}
-            </span>
+            </span> */}
           </div>
 
           <div className="h-[15%] pt-[min(2vh,2vw)]">
@@ -128,19 +128,25 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             ) : (
               <>
                 {state.tournamentId && state.tournamentSubItem ? (
-                  state.tournamentSubItem.gameFormat.noOfSets && state.tournamentSubItem.gameFormat.noOfSets > 1 ? (
-                    <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
-                      <PlayerScore
-                        teamOneScore={state.teamOneScore}
-                        teamTwoScore={state.teamTwoScore}
-                        noOfFrames={
-                          state.tournamentSubItem.gameFormat.noOfSets ? state.tournamentSubItem.gameFormat.noOfSets : 0
-                        }
-                      />
-                    </div>
-                  ) : (
-                    <></>
-                  )
+                  <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
+                    <PlayerScore
+                      teamOneScore={
+                        state.tournamentId && state.tournamentSubItem
+                          ? isTeamReveresed
+                            ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
+                            : state.tournamentSubItem?.tournamentItem.teamOneScore!
+                          : state.teamOneScore
+                      }
+                      teamTwoScore={
+                        state.tournamentId && state.tournamentSubItem
+                          ? isTeamReveresed
+                            ? state.tournamentSubItem?.tournamentItem.teamOneScore!
+                            : state.tournamentSubItem?.tournamentItem.teamTwoScore!
+                          : state.teamTwoScore
+                      }
+                      noOfFrames={4}
+                    />
+                  </div>
                 ) : (
                   <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
                     <span className="text-center text-white text-[min(3vh,3vw)]">Time Left (mins):</span>

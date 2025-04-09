@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { StreamingState } from '@/hooks/useStreaming';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
-import { generatePlayerName, truncateText } from '@/utils/functions';
+import { convertHandicapToString, generatePlayerName } from '@/utils/functions';
 import clsx from 'clsx';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
@@ -29,17 +29,17 @@ export function PortraitData(props: PortraitStreamDataProps) {
           {props.state.clubName} | Table {props.state.venueNo}
         </span>
       </div>
-      <Card className="gap-4 border-white p-2 grid grid-cols-3 rounded-md">
+      <Card className="gap-1 border-white p-2 grid grid-cols-3 rounded-md">
         <div className="grid-cols-1 uppercase text-white font-bold text-sm text-left flex items-center justify-start gap-2">
           {props.state.sport === 'BILLIARDS' && (
             <img className="h-4 lg:h-5 xl:h-6 w-auto" src={'/images/yellow-ball.png'} />
           )}
-          {truncateText(
-            generatePlayerName(
-              props.state.sideOnePlayerOne.name,
-              props.state.sideOnePlayerTwo ? props.state.sideOnePlayerTwo.name : undefined,
-            ),
+          {generatePlayerName(
+            props.state.sideOnePlayerOne.name,
+            props.state.sideOnePlayerTwo ? props.state.sideOnePlayerTwo.name : undefined,
           )}
+          &nbsp;&nbsp;
+          {props.state?.teamOneHandicap ? `(${convertHandicapToString(props.state?.teamOneHandicap)})` : <></>}
         </div>
         <div className="grid-cols-1 flex text-center items-center justify-center gap-2 text-white font-bold text-sm">
           {props.state.sport === 'SNOOKER' ? (
@@ -64,12 +64,12 @@ export function PortraitData(props: PortraitStreamDataProps) {
           )}
         </div>
         <div className="grid-cols-1 uppercase text-white font-bold text-sm text-right flex items-center justify-end gap-2">
-          {truncateText(
-            generatePlayerName(
-              props.state.sideTwoPlayerOne.name,
-              props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
-            ),
+          {generatePlayerName(
+            props.state.sideTwoPlayerOne.name,
+            props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
           )}
+          &nbsp;&nbsp;
+          {props.state?.teamTwoHandicap ? `(${convertHandicapToString(props.state?.teamTwoHandicap)})` : <></>}
           {props.state.sport === 'BILLIARDS' && (
             <img className="h-4 lg:h-5 xl:h-6 w-auto" src={'/images/white-ball.png'} />
           )}
