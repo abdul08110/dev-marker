@@ -1,3 +1,4 @@
+import { number } from 'zod';
 import { type Set, TeamDetails, Turn, Point, Player } from '../types';
 
 const getLastElement = <T>(array: T[]): T | null => (array.length > 0 ? array[array.length - 1] : null);
@@ -248,16 +249,23 @@ export const calculatePointsBySide = (
   sideTwoPlayerOne: Player,
   sideTwoPlayerTwo: Player | null,
   handicap: number,
+  teamOneHandicap?: number | null,
+  teamTwoHandicap?: number | null
 ) => {
+
+  let teamHandicaps = teamOneHandicap || teamTwoHandicap ? (teamOneHandicap ? teamOneHandicap : 0)  - (teamTwoHandicap ? teamTwoHandicap : 0 ) : null;
+
+  const handicapToTake  = teamHandicaps ? teamHandicaps : handicap;
+
   let isHandicapTeamOneOrTeamTwo: 'teamA' | 'teamB' = 'teamA';
 
-  if (handicap < 0) {
+  if (handicapToTake < 0) {
     isHandicapTeamOneOrTeamTwo = 'teamB';
   }
 
   const sidePoints = {
-    side1: isHandicapTeamOneOrTeamTwo === 'teamA' ? 0 + handicap : 0,
-    side2: isHandicapTeamOneOrTeamTwo === 'teamB' ? 0 + -1 * handicap : 0,
+    side1: isHandicapTeamOneOrTeamTwo === 'teamA' ? 0 + handicapToTake : 0,
+    side2: isHandicapTeamOneOrTeamTwo === 'teamB' ? 0 + -1 * handicapToTake : 0,
   };
 
   const side1Players = new Set<string | null>(

@@ -328,6 +328,12 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         currentStreamingData?.sideTwoPlayerOne,
         currentStreamingData?.sideTwoPlayerTwo,
         currentStreamingData?.handicap,
+        currentStreamingData && currentStreamingData?.teamOneHandicap && currentStreamingData.sport === 'SNOOKER'
+          ? currentStreamingData?.teamOneHandicap
+          : null,
+        currentStreamingData && currentStreamingData?.teamTwoHandicap && currentStreamingData.sport === 'SNOOKER'
+          ? currentStreamingData?.teamTwoHandicap
+          : null,
       );
 
       consideredSets[consideredSets.length - 1] = {
