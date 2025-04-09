@@ -60,7 +60,13 @@ export function StreamContainer(props: StreamContainerProps) {
 
   const [seekIndicator, setSeekIndicator] = useState<'left' | 'right' | null>(null);
   const [showControls, setShowControls] = useState(false);
-  const [stream] = useState<StreamState | null>(props.state?.streams.find((stream) => stream.isPrimary) ?? null);
+  const [stream, setStream] = useState<StreamState | null>(null);
+
+  useEffect(() => {
+    if (props.state?.streams) {
+      setStream(props.state.streams.find((s) => s.isPrimary) ?? null);
+    }
+  }, [props.state]);
 
   useEffect(() => {
     if (seekIndicator) {

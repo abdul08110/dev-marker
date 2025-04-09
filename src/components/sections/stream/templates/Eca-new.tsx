@@ -62,7 +62,7 @@ export function NewEca(props: NewEcaProps) {
             <div className="col-span-1">
               <h5 className="text-[min(3.5vh,3.5vw)] text-white text-left uppercase whitespace-nowrap">
                 {generatePlayerName(props.state!.sideOnePlayerOne.name, props.state!.sideOnePlayerTwo?.name)}
-                &nbsp;&nbsp;({convertHandicapToString(props.state?.teamOneHandicap)})
+                &nbsp;&nbsp;{props.state?.teamOneHandicap ? `  (${convertHandicapToString(props.state?.teamOneHandicap)})` : ''}
               </h5>
             </div>
             <div className="col-span-1">
@@ -86,7 +86,7 @@ export function NewEca(props: NewEcaProps) {
             <div className="col-span-1">
               <h5 className="text-[min(3.5vh,3.5vw)] text-white text-right uppercase whitespace-nowrap">
                 {generatePlayerName(props.state!.sideTwoPlayerOne.name, props.state!.sideTwoPlayerTwo?.name)}
-                &nbsp;&nbsp;({convertHandicapToString(props.state?.teamTwoHandicap)})
+                &nbsp;&nbsp;{props.state?.teamTwoHandicap ? `  (${convertHandicapToString(props.state?.teamTwoHandicap)})` : ''}
               </h5>
             </div>
           </div>
