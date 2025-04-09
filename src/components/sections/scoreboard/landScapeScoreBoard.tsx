@@ -36,7 +36,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             },
           )}
         >
-          <div className="h-[30%] w-full relative">
+          <div className="h-[25%] w-full relative">
             <span className="ml-14 absolute top-1/2  transform -translate-y-1/2 text-white font-bold 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
               {/* {state.tournamentId && state.tournamentSubItem
                 ? isTeamReveresed
@@ -47,7 +47,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             <PlayerImage profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto} />
           </div>
 
-          <div className="h-[20%] pt-8">
+          <div className="h-[15%] pt-8">
             {state.sport === 'SNOOKER' ? (
               <SnookerPointDisplay
                 turns={activeSet?.turns}
@@ -58,7 +58,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             )}
           </div>
 
-          <div className="h-[35%] w-full pt-4">
+          <div className="h-[45%] w-full pt-4">
             <div className="flex flex-col gap-4 h-full">
               <TeamScore
                 score={activeSet ? activeSet.teamOneScore : 0}
@@ -85,7 +85,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             },
           )}
         >
-          <div className="h-[30%] w-full relative">
+          <div className="h-[25%] w-full relative">
             <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
             <span className="right-14 absolute top-1/2  transform -translate-y-1/2 text-white font-bold 360p:text-[2rem]  480p:text-[1rem] 720p:text-[5.5rem] 1080p:text-[1.8rem] 2k:text-[3.1rem] 4k:text-[5rem]">
               {/* {state.tournamentId && state.tournamentSubItem
@@ -96,7 +96,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             </span>
           </div>
 
-          <div className="h-[20%] pt-8">
+          <div className="h-[15%] pt-8">
             {state.sport === 'SNOOKER' ? (
               <SnookerPointDisplay
                 turns={activeSet?.turns}
@@ -107,7 +107,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             )}
           </div>
 
-          <div className="h-[35%] w-full pt-4">
+          <div className="h-[45%] w-full pt-4">
             <div className="flex flex-col gap-4 h-full">
               <TeamScore
                 score={activeSet ? activeSet.teamTwoScore : 0}
@@ -224,11 +224,11 @@ function SnookerPointDisplay({ turns, players }: { turns?: any[]; players: any[]
 function TeamScore({ score, isActive, breakScore }: { score: number; isActive: boolean; breakScore?: number }) {
   return (
     <div className="flex flex-col gap-1 overflow-auto h-full justify-start items-center col-span-1">
-      <span className=" 360p:text-[4rem] 480p:text-[4.4rem] 720p:text-[6rem] 1080p:text-[9rem] 2k:text-[10rem] text-white font-bold leading-[1] 4k:text-[18rem]">
+      <span className=" 360p:text-[4rem] 480p:text-[4.4rem] 720p:text-[10rem] 1080p:text-[9rem] 2k:text-[10rem] text-white font-bold leading-[1] 4k:text-[18rem]">
         {score}
       </span>
       {isActive && (
-        <span className="text-yellow-500 360p:text-[1rem] 480p:text-[1.2rem] 720p:text-[1.9rem] 1080p:text-[2.6rem]  2k:text-[3rem] 4k:text-[4rem] font-medium">
+        <span className="text-yellow-500 360p:text-[1rem] 480p:text-[1.2rem] 720p:text-[2rem] 1080p:text-[2.6rem]  2k:text-[3rem] 4k:text-[4rem] font-bold">
           BREAK {breakScore}
         </span>
       )}
@@ -271,7 +271,7 @@ function Player({
   return (
     <div
       className={clsx(
-        'flex  mt-auto gap-4 w-full justify-center items-center  font-bold 360p:text-[1.5rem] 480p:text-[1.3rem] 720p:text-[1.8rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase',
+        'flex  mt-auto gap-4 w-full justify-center items-center  font-bold 360p:text-[1.5rem] 480p:text-[1.3rem] 720p:text-[2rem] 1080p:text-[2.8rem]  2k:text-[3rem] 4k:text-[4rem] uppercase',
         {
           'text-yellow-500': isActive,
           'text-white': !isActive,
