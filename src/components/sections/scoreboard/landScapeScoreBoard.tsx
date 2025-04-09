@@ -32,7 +32,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           })}
         >
           <div className="h-[25%] w-full relative">
-            <span className="ml-[min(3vh,3vw)] absolute top-1/2 transform -translate-y-1/2 text-white font-bold text-[min(6vh,6vw)]">
+            <span className="ml-[min(3vh,3vw)] absolute top-1/2 transform -translate-y-1/2 text-white font-bold text-[min(10vh,10vw)]">
               {state.tournamentId && state.tournamentSubItem
                 ? isTeamReveresed
                   ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
@@ -79,7 +79,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         >
           <div className="h-[25%] w-full relative">
             <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
-            <span className="right-[min(3vh,3vw)] absolute top-1/2 transform -translate-y-1/2 text-white font-bold text-[min(6vh,6vw)]">
+            <span className="right-[min(3vh,3vw)] absolute top-1/2 transform -translate-y-1/2 text-white font-bold text-[min(10vh,10vw)]">
               {state.tournamentId && state.tournamentSubItem
                 ? isTeamReveresed
                   ? state.tournamentSubItem?.tournamentItem.teamOneScore!
@@ -158,9 +158,9 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         </div>
 
         <div className="h-[10%] flex gap-[min(1vh,1vw)] absolute w-[98%] left-1/2 transform -translate-x-1/2 top-[88%] rounded-md border border-white py-[min(0.5vh,0.5vw)] px-[min(1vh,1vw)] bg-black items-center">
-          <img src="/images/clublogo.png" className="h-[min(5vh,5vw)] w-[min(5vh,5vw)] rounded-full overflow-hidden" />
+          <img src="/images/clublogo.png" className="h-[min(6vh,6vw)] w-[min(6vh,6vw)] rounded-full overflow-hidden" />
 
-          <div className="flex-grow text-center text-white font-bold text-[min(3vh,3vw)] uppercase">
+          <div className="flex-grow text-center text-white font-bold text-[min(4vh,4vw)] uppercase">
             {state.tournamentId && state.tournamentSubItem
               ? `GAME #${state.tournamentSubItem.gameFormat.matchNo} | ${state.tournamentSubItem.gameFormat.name} | ${state.tournamentSubItem.tournamentItem.tournamentPhase.name}`
               : `PRACTICE | ${state.format} | ${state.clubName}`}
@@ -258,7 +258,7 @@ function Player({
   return (
     <div
       className={clsx(
-        'flex mt-auto mb-[min(2vh,2vw)] gap-[min(2vh,2vw)] w-full justify-center items-center font-bold text-[min(3.5vh,3.5vw)] uppercase',
+        'flex mt-auto mb-[min(2vh,2vw)] gap-[min(2vh,2vw)] w-full justify-center items-center font-bold text-[min(4vh,4vw)] uppercase',
         {
           'text-yellow-500': isActive,
           'text-white': !isActive,
@@ -266,12 +266,12 @@ function Player({
       )}
     >
       {ballToShow === 'YELLOW' && (
-        <img className="size-[min(3vh,3vw)] object-contain aspect-square" src={'/images/yellow-ball.png'} />
+        <img className="size-[min(3.5vh,3.5vw)] object-contain aspect-square" src={'/images/yellow-ball.png'} />
       )}
       {truncateText(generatePlayerName(playerOneName, playerTwoName))}
       {handicap && <span>({convertHandicapToString(handicap)})</span>}
       {ballToShow === 'WHITE' && (
-        <img className="size-[min(3vh,3vw)] object-contain aspect-square" src={'/images/white-ball.png'} />
+        <img className="size-[min(3.5vh,3.5vw)] object-contain aspect-square" src={'/images/white-ball.png'} />
       )}
     </div>
   );
