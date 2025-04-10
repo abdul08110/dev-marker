@@ -90,21 +90,21 @@ export function NewEca(props: NewEcaProps) {
               </h5>
             </div>
           </div>
-          <div className="w-full h-1/3 grid grid-cols-3 items-center">
-            <div className="col-span-1">
+          <div className="w-full h-1/3 flex items-center justify-between">
+            <div className="min-w-[20%]">
               <h5 className="text-[min(3.5vh,3.5vw)] text-white font-bold text-left uppercase whitespace-nowrap">
                 {props.state?.teamOneName}
                 {'  '}
               </h5>
             </div>
-            <div className="col-span-1 flex justify-center">
+            <div className="min-w-[60%] flex justify-center">
               <div className="overflow-x-auto scrollbar-hide mx-auto">
                 <h5 className="text-[min(3.5vh,3.5vw)] text-white font-bold text-center uppercase whitespace-nowrap px-[min(1vh,1vw)]">
                   {props.state?.format} | GAME #{props.state!.tournamentSubItem?.gameFormat.matchNo}
                 </h5>
               </div>
             </div>
-            <div className="col-span-1">
+            <div className="min-w-[20%]">
               <h5 className="text-[min(3.5vh,3.5vw)] text-white font-bold text-right uppercase whitespace-nowrap">
                 {props.state?.teamTwoName}
               </h5>
