@@ -123,42 +123,36 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
 
         <div className="absolute h-[40%] top-[50%] left-1/2 transform -translate-x-1/2 w-auto">
           <div className="flex flex-col gap-[min(2vh,2vw)] overflow-auto h-full justify-start items-center">
-            {state.tournamentSubItem && state.tournamentSubItem?.gameFormat.isCumulativeScoring ? (
-              <></>
+            {state.tournamentId && state.tournamentSubItem ? (
+              <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
+                <PlayerScore
+                  teamOneScore={
+                    state.tournamentId && state.tournamentSubItem
+                      ? isTeamReveresed
+                        ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
+                        : state.tournamentSubItem?.tournamentItem.teamOneScore!
+                      : state.teamOneScore
+                  }
+                  teamTwoScore={
+                    state.tournamentId && state.tournamentSubItem
+                      ? isTeamReveresed
+                        ? state.tournamentSubItem?.tournamentItem.teamOneScore!
+                        : state.tournamentSubItem?.tournamentItem.teamTwoScore!
+                      : state.teamTwoScore
+                  }
+                  noOfFrames={4}
+                />
+              </div>
             ) : (
-              <>
-                {state.tournamentId && state.tournamentSubItem ? (
-                  <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
-                    <PlayerScore
-                      teamOneScore={
-                        state.tournamentId && state.tournamentSubItem
-                          ? isTeamReveresed
-                            ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
-                            : state.tournamentSubItem?.tournamentItem.teamOneScore!
-                          : state.teamOneScore
-                      }
-                      teamTwoScore={
-                        state.tournamentId && state.tournamentSubItem
-                          ? isTeamReveresed
-                            ? state.tournamentSubItem?.tournamentItem.teamOneScore!
-                            : state.tournamentSubItem?.tournamentItem.teamTwoScore!
-                          : state.teamTwoScore
-                      }
-                      noOfFrames={4}
-                    />
-                  </div>
-                ) : (
-                  <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
-                    <span className="text-center text-white text-[min(3vh,3vw)]">Time Left (mins):</span>
-                    <strong className="text-center text-white text-[min(8vh,8vw)] leading-[1]">
-                      {formatTime(timeLeft)}
-                    </strong>
-                    <span className="text-white font-bold uppercase text-[min(3vh,3vw)]">
-                      {state.format} {state.sport}
-                    </span>
-                  </div>
-                )}
-              </>
+              <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
+                <span className="text-center text-white text-[min(3vh,3vw)]">Time Left (mins):</span>
+                <strong className="text-center text-white text-[min(8vh,8vw)] leading-[1]">
+                  {formatTime(timeLeft)}
+                </strong>
+                <span className="text-white font-bold uppercase text-[min(3vh,3vw)]">
+                  {state.format} {state.sport}
+                </span>
+              </div>
             )}
           </div>
         </div>
