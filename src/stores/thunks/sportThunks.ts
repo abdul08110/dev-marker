@@ -712,7 +712,7 @@ export const handleSettingsStateUpdateBilliards = createAsyncThunk<
     await dispatch(updateIsRankingEvent({ isRankingEvent }));
 
     if (isRankingEvent) {
-      await dispatch(setFormatName({ formatName: 'Ranking 100 UP' }));
+      await dispatch(setFormatName({ formatName: 'Ranking 150 UP' }));
     }
 
     if (format === 'BILLIARDS_RACE_TO') {
