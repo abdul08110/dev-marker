@@ -256,6 +256,7 @@ const useSnookerScoring = () => {
         : snookerSportTypeToFormat(currentImplementationSnookerScoring.format, currentImplementationSnookerScoring.isCumulativeScoring),
       tournamentSubItemId: currentImplementationSnookerScoring.tournamentSubItemId ? currentImplementationSnookerScoring.tournamentSubItemId : undefined,
       switchType: snookerScoring.switchType ? snookerScoring.switchType : null,
+      isRankingEvent: currentImplementationSnookerScoring.isRankingEvent,
     });
 
     if (matchId) {

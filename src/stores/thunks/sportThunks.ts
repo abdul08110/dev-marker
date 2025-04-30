@@ -668,15 +668,23 @@ export const handleSettingsStateUpdate = createAsyncThunk<
     noOfPlayers: '2' | '4';
     streaming: 'PUBLIC' | 'PRIVATE';
     handicap: number;
+    isRankingEvent: boolean;
   },
   { state: RootState; dispatch: AppDispatch }
 >(
   'sport/handleSettingsUpdate',
-  async ({ format, durationInMinutes, noOfPlayers, streaming, handicap }, { dispatch }) => {
-    await dispatch(updateTimeInMinutes({ timeInMinutes: timeStringToDecimalMinutes(durationInMinutes) }));
+  async ({ format, durationInMinutes, noOfPlayers, streaming, handicap, isRankingEvent }, { dispatch }) => {
+    await dispatch(
+      updateTimeInMinutes({ timeInMinutes: isRankingEvent ? 0 : timeStringToDecimalMinutes(durationInMinutes) }),
+    );
     await dispatch(updateFormat({ format: format }));
     await dispatch(updateStreaming({ streaming }));
     await dispatch(updateHandicap({ handicap }));
+    await dispatch(updateIsRankingEvent({ isRankingEvent }));
+
+    if (isRankingEvent) {
+      await dispatch(setFormatName({ formatName: 'Snooker ranking 2025' }));
+    }
 
     if (noOfPlayers === '4') {
       await dispatch(addPlayer({ teamIndex: 0 }));

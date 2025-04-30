@@ -8,6 +8,7 @@ import DurationPicker from '@/components/ui/durationPicker';
 import NumberOfPlayersSelector from '@/components/ui/noOfPlayersPicker';
 import HandicapSelector from '@/components/ui/handicapSelector';
 import StreamingSelector from '@/components/ui/streamingSelector';
+import { Switch } from '@/components/ui/switch';
 
 export interface SnookerPracticeSettingsData {
   format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED';
@@ -15,6 +16,7 @@ export interface SnookerPracticeSettingsData {
   noOfPlayers: '2' | '4';
   streaming: 'PUBLIC' | 'PRIVATE';
   handicap: number;
+  isRankingEvent: boolean;
 }
 
 const formSchema = z.object({
@@ -23,6 +25,7 @@ const formSchema = z.object({
   noOfPlayers: z.enum(['2', '4']),
   streaming: z.enum(['PUBLIC', 'PRIVATE']),
   handicap: z.number().min(-147).max(147),
+  isRankingEvent: z.boolean(),
 });
 
 interface SnookerSettingsFormSchema {
@@ -38,6 +41,7 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
       noOfPlayers: '2',
       streaming: 'PRIVATE',
       handicap: 0,
+      isRankingEvent: false,
     },
   });
 
@@ -122,6 +126,21 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
               </div>
               <FormControl>
                 <StreamingSelector value={field.value} onChange={field.onChange} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="isRankingEvent"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-white text-sm">Ranking</FormLabel>
+              </div>
+              <FormControl>
+                <Switch className="w-14 h-6" checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
             </FormItem>
           )}
