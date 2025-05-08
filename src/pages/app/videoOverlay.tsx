@@ -111,6 +111,14 @@ export function VideoOverlay() {
                 activeTurn={activeTurn}
                 activeSet={activeSet}
               />
+            ),
+            '681a27430799a4ccbfb175fa': (
+              <CatholicSinglesTemplate
+                isTv={false}
+                state={viewershipData}
+                activeTurn={activeTurn}
+                activeSet={activeSet}
+              />
             )
           }[viewershipData.tournamentId] || (
             <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />

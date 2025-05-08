@@ -251,6 +251,14 @@ export function StreamContainer(props: StreamContainerProps) {
                         activeTurn={activeTurn}
                         activeSet={activeSet}
                       />
+                    ),
+                    '681a27430799a4ccbfb175fa': (
+                      <CatholicSinglesTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
                     )
                   }[props.state.tournamentId] || (
                     <GeneralTemplate
