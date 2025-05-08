@@ -1,6 +1,7 @@
 import { TopOverlay } from '@/components/sections/stream/overlays/TopOverlay';
 import { BBSLTemplate } from '@/components/sections/stream/templates/BBSL';
 import { CatholicTemplate } from '@/components/sections/stream/templates/Catholic';
+import { CatholicAprilTemplate } from '@/components/sections/stream/templates/CatholicApril';
 import { CatholicSinglesTemplate } from '@/components/sections/stream/templates/CatholicSingles';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { NewEca } from '@/components/sections/stream/templates/Eca-new';
@@ -113,7 +114,7 @@ export function VideoOverlay() {
               />
             ),
             '681a27430799a4ccbfb175fa': (
-              <CatholicSinglesTemplate
+              <CatholicAprilTemplate
                 isTv={false}
                 state={viewershipData}
                 activeTurn={activeTurn}

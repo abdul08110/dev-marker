@@ -10,7 +10,7 @@ interface CatholicSinglesTemplateProps {
   isTv: boolean;
 }
 
-export function CatholicSinglesTemplate(props: CatholicSinglesTemplateProps) {
+export function CatholicAprilTemplate(props: CatholicSinglesTemplateProps) {
     const isTeamReveresed =
     props.state && props.state.tournamentId && props.state.tournamentSubItem
       ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId
@@ -66,7 +66,9 @@ export function CatholicSinglesTemplate(props: CatholicSinglesTemplateProps) {
                 className={`${props.isTv ? 'text-lg' : '360p:text-[0.5rem] 720p:text-lg 1080p:text-4xl'} text-white text-left uppercase whitespace-nowrap`}
               >
                 {generatePlayerName(props.state!.sideOnePlayerOne.name, props.state!.sideOnePlayerTwo?.name)}
-                &nbsp;&nbsp;({convertHandicapToString(props.state?.teamOneHandicap)})
+                {props.state?.teamOneHandicap && (
+                  <>&nbsp;&nbsp;({convertHandicapToString(props.state.teamOneHandicap)})</>
+                )}
               </h5>
             </div>
             <div className="col-span-1">
@@ -75,7 +77,7 @@ export function CatholicSinglesTemplate(props: CatholicSinglesTemplateProps) {
               >
                 <div className="font-bold">{props.activeSet ? props.activeSet?.teamOneScore : 0}</div>
 
-                <div>(&nbsp;&nbsp;)</div>
+                <div>&nbsp;&nbsp;</div>
 
                 <div>
                   <span className="font-bold">{props.activeSet ? props.activeSet?.teamTwoScore : 0}</span>
@@ -87,7 +89,9 @@ export function CatholicSinglesTemplate(props: CatholicSinglesTemplateProps) {
                 className={`${props.isTv ? 'text-lg' : '360p:text-[0.5rem] 720p:text-lg 1080p:text-4xl'} text-white text-right uppercase whitespace-nowrap`}
               >
                 {generatePlayerName(props.state!.sideTwoPlayerOne.name, props.state!.sideTwoPlayerTwo?.name)}
-                &nbsp;&nbsp;({convertHandicapToString(props.state?.teamTwoHandicap)})
+                {props.state?.teamTwoHandicap && (
+                  <>&nbsp;&nbsp;({convertHandicapToString(props.state.teamTwoHandicap)})</>
+                )}
               </h5>
             </div>
           </div>
@@ -107,7 +111,7 @@ export function CatholicSinglesTemplate(props: CatholicSinglesTemplateProps) {
               <h5
                 className={`${props.isTv ? 'text-lg' : '360p:text-[0.5rem] 720p:text-lg 1080p:text-4xl'} text-white font-bold text-center uppercase whitespace-nowrap`}
               >
-                {props.state?.format} GAME NO #{props.state?.tournamentSubItem?.gameFormat.matchNo}
+                {props.state?.format} | GAME NO #{props.state?.tournamentSubItem?.gameFormat.matchNo}
               </h5>
             </div>
             <div className="col-span-1">

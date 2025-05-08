@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogClose } from '
 import { Skeleton } from '@/components/ui/skeleton';
 import { CatholicSinglesTemplate } from './templates/CatholicSingles';
 import { NewEca } from './templates/Eca-new';
+import { CatholicAprilTemplate } from './templates/CatholicApril';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -253,7 +254,7 @@ export function StreamContainer(props: StreamContainerProps) {
                       />
                     ),
                     '681a27430799a4ccbfb175fa': (
-                      <CatholicSinglesTemplate
+                      <CatholicAprilTemplate
                         isTv={props.isTv}
                         state={props.state}
                         activeTurn={activeTurn}
