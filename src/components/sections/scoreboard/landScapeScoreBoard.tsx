@@ -140,7 +140,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
                         : state.tournamentSubItem?.tournamentItem.teamTwoScore!
                       : state.teamTwoScore
                   }
-                  noOfFrames={4}
+                  noOfFrames={state.tournamentSubItem.gameFormat.matchNo}
                 />
               </div>
             ) : (
