@@ -73,14 +73,6 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
   return (
     <div className="w-full h-full">
       <div className="flex items-center justify-between w-full mt-2 mb-2">
-        <Command shouldFilter={false} className="w-full bg-transparent text-white">
-          <CommandInput
-            className="text-white w-full"
-            placeholder="Search player..."
-            value={searchQuery}
-            onValueChange={handleSearchChange}
-          />
-        </Command>
         <button
           onClick={() => setIsQrModalOpen(true)}
           className="p-2 rounded-full hover:bg-gray-800 transition-colors ml-2"
@@ -90,6 +82,12 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
         </button>
       </div>
       <Command shouldFilter={false} className="w-full bg-transparent text-white">
+        <CommandInput
+          className="text-white w-full"
+          placeholder="Search player..."
+          value={searchQuery}
+          onValueChange={handleSearchChange}
+        />
         <CommandList>
           {loading && <CommandEmpty>Loading players...</CommandEmpty>}
           {error && <CommandEmpty>Error loading players</CommandEmpty>}

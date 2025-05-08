@@ -11,7 +11,7 @@ interface CatholicSinglesTemplateProps {
 }
 
 export function CatholicAprilTemplate(props: CatholicSinglesTemplateProps) {
-    const isTeamReveresed =
+  const isTeamReveresed =
     props.state && props.state.tournamentId && props.state.tournamentSubItem
       ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId
       : false;
@@ -77,7 +77,19 @@ export function CatholicAprilTemplate(props: CatholicSinglesTemplateProps) {
               >
                 <div className="font-bold">{props.activeSet ? props.activeSet?.teamOneScore : 0}</div>
 
-                <div>&nbsp;&nbsp;</div>
+                <div className="flex items-center justify-center gap-2">
+                  {isTeamReveresed
+                    ? props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!
+                    : props.state!.tournamentSubItem?.tournamentItem.teamOneScore!}
+
+                  {props.state?.tournamentSubItem?.gameFormat.matchNo && (
+                    <div>({props.state?.tournamentSubItem?.gameFormat.matchNo})</div>
+                  )}
+
+                  {isTeamReveresed
+                    ? props.state!.tournamentSubItem?.tournamentItem.teamOneScore!
+                    : props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!}
+                </div>
 
                 <div>
                   <span className="font-bold">{props.activeSet ? props.activeSet?.teamTwoScore : 0}</span>
@@ -101,10 +113,6 @@ export function CatholicAprilTemplate(props: CatholicSinglesTemplateProps) {
                 className={`${props.isTv ? 'text-lg' : '360p:text-[0.5rem] 720p:text-lg 1080p:text-4xl'} text-white font-bold text-left uppercase whitespace-nowrap`}
               >
                 {props.state?.teamOneName}
-                {'  '}
-                {isTeamReveresed
-                  ? props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!
-                  : props.state!.tournamentSubItem?.tournamentItem.teamOneScore!}
               </h5>
             </div>
             <div className="col-span-1">
@@ -120,9 +128,6 @@ export function CatholicAprilTemplate(props: CatholicSinglesTemplateProps) {
               >
                 {props.state?.teamTwoName}
                 {'  '}
-                {isTeamReveresed
-                  ? props.state!.tournamentSubItem?.tournamentItem.teamOneScore!
-                  : props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!}
               </h5>
             </div>
           </div>
