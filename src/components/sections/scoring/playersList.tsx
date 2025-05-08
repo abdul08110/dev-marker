@@ -88,7 +88,7 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
           value={searchQuery}
           onValueChange={handleSearchChange}
         />
-        <CommandList>
+        <CommandList className='max-h-full'>
           {loading && <CommandEmpty>Loading players...</CommandEmpty>}
           {error && <CommandEmpty>Error loading players</CommandEmpty>}
           {isFetchingPlayer && <CommandEmpty>Fetching player details...</CommandEmpty>}
