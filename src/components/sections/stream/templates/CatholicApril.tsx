@@ -83,7 +83,7 @@ export function CatholicAprilTemplate(props: CatholicSinglesTemplateProps) {
                     : props.state!.tournamentSubItem?.tournamentItem.teamOneScore!}
 
                   {props.state?.tournamentSubItem?.gameFormat.matchNo && (
-                    <div>({props.state?.tournamentSubItem?.gameFormat.matchNo})</div>
+                    <div>(7)</div>
                   )}
 
                   {isTeamReveresed
