@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import mqtt from 'mqtt';
 import useGetMatchLiveData, { StreamType } from '@/api/app/useGetMatchData';
 import { toast } from '@/components/ui/use-toast';
-import { Player, Set, TournamentItem, TournamentSubItem } from '@/stores/types';
+import { Player, Set, TournamentItem, TournamentPhase, TournamentSubItem } from '@/stores/types';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useTimer from './useTimer';
 import { addMillisecondsToUTC } from '@/utils/functions';
@@ -60,7 +60,15 @@ export interface StreamingState {
   format: string | null;
   expectedEndTimeDate: string | null;
   tournamentSubItem?: TournamentSubItem & {
-    tournamentItem: TournamentItem;
+    tournamentItem: TournamentItem & {
+      tournamentPhase: TournamentPhase & {
+        tournamentFormats: [
+          {
+            id: string;
+          }
+        ]
+      };
+    };
   };
   streams: StreamState[];
 }
