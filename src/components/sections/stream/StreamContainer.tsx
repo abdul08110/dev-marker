@@ -127,14 +127,11 @@ export function StreamContainer(props: StreamContainerProps) {
     [selectedStreamId, props.stopWatchTime, handleSwitchCamera],
   );
 
-  console.log(props.state);
-  console.log(stream);
-
   return (
     <div
       className={clsx('w-full flex justify-center items-center', {
         'h-auto': props.isPortrait,
-        'h-full': !props.isPortrait,
+        'h-screen max-h-screen': !props.isPortrait,
       })}
     >
       {props.state && stream ? (
@@ -144,11 +141,12 @@ export function StreamContainer(props: StreamContainerProps) {
               className="relative w-full h-full max-w-full max-h-full overflow-hidden"
               style={{
                 width: '100%',
-                height: 'auto',
+                height: props.isPortrait ? '100%' : '100vh',
                 aspectRatio: '16 / 9',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
+                position: 'relative'
               }}
             >
               {isVideoLoading && (

@@ -50,7 +50,7 @@ export function ClientStream() {
           isTv={false}
           state={viewershipData}
         />
-        {isPortrait && streamingData?.streams.find((stream) => stream.overlayType === 'DESTINATION') && (
+        {isPortrait && streamingData && streamingData?.sets && streamingData?.sets.length > 0 && (
           <PortraitData timeLeft={timeLeft} state={viewershipData} />
         )}
       </div>
