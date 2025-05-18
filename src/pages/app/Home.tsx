@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@radix-ui/rea
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { ScanQrCode } from 'lucide-react';
+import { Smartphone } from 'lucide-react';
 import { ScanQrModal } from '@/components/modals/scanQrModal';
 
 export function Home() {
@@ -101,7 +101,7 @@ export function Home() {
                   </div>
                 </div>
                 <div className="flex gap-2 justify-center items-center">
-                  <ScanQrCode onClick={() => setIsQrModalOpen(true)} className="size-6 text-white" />
+                  <Smartphone onClick={() => setIsQrModalOpen(true)} className="size-6 text-white" />
                   <div onClick={() => navigate('/app/scoreboard')} className="flex cursor-pointer">
                     <TvLogo className="h-6 w-auto" />
                   </div>

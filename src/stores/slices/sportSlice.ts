@@ -59,6 +59,7 @@ const initialState: GeneralScoringState = {
   formatName: null,
   switchType: null,
   isRankingEvent: false,
+  snookerHandicapType: 'DIFFERENCE',
 };
 
 const sportSlice = createSlice({
@@ -201,15 +202,26 @@ const sportSlice = createSlice({
       const scoreOrder = action.payload.scoreOrder;
       const shouldCalculateHandicap = action.payload.calculateHandicap;
 
-      let relativeHandicap = state.handicap;
+      let teamOneStartScore = 0;
+      let teamTwoStartScore = 0;
 
-      if (state.teamOneHandicap || state.teamTwoHandicap) {
-        relativeHandicap = (state.teamOneHandicap || 0) - (state.teamTwoHandicap || 0);
+      if (shouldCalculateHandicap) {
+        if (state.snookerHandicapType === 'DIFFERENCE') {
+          let relativeHandicap = state.handicap;
+          if (state.teamOneHandicap || state.teamTwoHandicap) {
+            relativeHandicap = (state.teamOneHandicap || 0) - (state.teamTwoHandicap || 0);
+          }
+          teamOneStartScore = relativeHandicap > 0 ? relativeHandicap : 0;
+          teamTwoStartScore = relativeHandicap < 0 ? Math.abs(relativeHandicap) : 0;
+        } else {
+          teamOneStartScore = state.teamOneHandicap || 0;
+          teamTwoStartScore = state.teamTwoHandicap || 0;
+        }
       }
 
       state.scoreHistory.push({
-        teamOneScore: relativeHandicap > 0 && shouldCalculateHandicap ? relativeHandicap : 0,
-        teamTwoScore: relativeHandicap < 0 && shouldCalculateHandicap ? Math.abs(relativeHandicap) : 0,
+        teamOneScore: teamOneStartScore,
+        teamTwoScore: teamTwoStartScore,
         turns: [],
         status: 'ONGOING',
         snookerCorrections: [],

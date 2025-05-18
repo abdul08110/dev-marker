@@ -87,6 +87,7 @@ export const setStateTournament = createAsyncThunk<
       tournamentId: string;
       tournamentTeamOneId: string;
       tournamentTeamTwoId: string;
+      visibility: 'PUBLIC' | 'PRIVATE';
     };
   },
   { dispatch: AppDispatch }
@@ -94,7 +95,6 @@ export const setStateTournament = createAsyncThunk<
   let sport = data.format.sport;
   let sportType: SportType = sport === 'SNOOKER' ? 'SNOOKER_15_RED' : 'BILLIARDS_RACE_TO';
   let isCumulativeScore = data.format.isCumulativeScoring && data.format.isCumulativeScoring === true;
-  let streamType: 'PUBLIC' | 'PRIVATE' = 'PUBLIC';
 
   let newState = {
     format: sportType,
@@ -124,7 +124,7 @@ export const setStateTournament = createAsyncThunk<
       score: 0,
     },
     handicap: 0,
-    streaming: streamType,
+    streaming: data.visibility,
     timeInMinutes:
       data.format.maxTimePerSetInMilliSeconds && data.format.maxTimePerSetInMilliSeconds > 0
         ? data.format.maxTimePerSetInMilliSeconds / 60000
@@ -148,6 +148,7 @@ export const setStateTournament = createAsyncThunk<
     formatName: data.format.name,
     switchType: data.format.switchType ? data.format.switchType : null,
     isRankingEvent: false,
+    snookerHandicapType: data.format.snookerHandicapType ? data.format.snookerHandicapType : 'DIFFERENCE',
   };
   await dispatch(
     setState({
@@ -214,6 +215,7 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       formatName: null,
       switchType: data.switchType,
       isRankingEvent: false,
+      snookerHandicapType: 'DIFFERENCE' as 'DIFFERENCE' | 'UPFRONT',
     };
 
     if (data.sideTwoPlayerTwo !== null) {

@@ -125,7 +125,17 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           <div className="flex flex-col gap-[min(2vh,2vw)] overflow-auto h-full justify-start items-center">
             {state.tournamentId && state.tournamentSubItem ? (
               <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
-                <PlayerScore
+                <div className="flex justify-center items-center p-[min(1.5vh,1.5vw)]">
+                  <span className="text-white font-bold text-[min(10vh,10vw)] leading-none whitespace-nowrap">
+                    {isTeamReveresed
+                      ? state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore
+                      : state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore}{' '}
+                    - {isTeamReveresed
+                      ? state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore
+                      : state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore}
+                  </span>
+                </div>
+                {/* <PlayerScore
                   teamOneScore={
                     state.tournamentId && state.tournamentSubItem
                       ? isTeamReveresed
@@ -140,8 +150,8 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
                         : state.tournamentSubItem?.tournamentItem.teamTwoScore!
                       : state.teamTwoScore
                   }
-                  noOfFrames={7}
-                />
+                  noOfFrames={state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}
+                /> */}
               </div>
             ) : (
               <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">

@@ -237,6 +237,7 @@ export function Tournament() {
           tournamentId: schedule![0].tournament.id,
           tournamentTeamOneId: selectedTeamOne!.id,
           tournamentTeamTwoId: selectedTeamTwo!.id,
+          visibility: schedule![0].tournament.tournamentVisibility || 'PUBLIC',
         },
       }),
     );

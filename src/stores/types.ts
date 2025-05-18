@@ -26,6 +26,7 @@ export interface Tournament {
   logo: string;
   name: string;
   eventFormat: 'SINGLES' | 'TEAMS';
+  tournamentVisibility: 'PUBLIC' | 'PRIVATE' | null;
 }
 
 export enum SnookerPointType {
@@ -134,6 +135,7 @@ export interface GeneralScoringState {
   formatName: string | null;
   switchType: 'FRAME' | 'VISIT' | null;
   isRankingEvent: boolean;
+  snookerHandicapType: 'DIFFERENCE' | 'UPFRONT';
 }
 
 export interface ClubData {
@@ -159,6 +161,7 @@ export interface TournamentFormat {
   isHandicapAllowed?: boolean;
   matchNo?: number;
   switchType?: 'FRAME' | 'VISIT';
+  snookerHandicapType?: 'DIFFERENCE' | 'UPFRONT';
 }
 
 export interface TournamentPhase {
@@ -184,6 +187,10 @@ export interface TournamentItem {
   teamOneScore?: number;
   teamTwoScore?: number;
   tournamentSubItems: TournamentSubItem[];
+  teamOneCumulativeFinalFrameScore?: number;
+  teamTwoCumulativeFinalFrameScore?: number;
+  teamOneLastestGameHandicap?: number;
+  teamTwoLastestGameHandicap?: number;
 }
 
 export interface TournamentSubItem {

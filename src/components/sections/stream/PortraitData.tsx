@@ -42,24 +42,17 @@ export function PortraitData(props: PortraitStreamDataProps) {
           {props.state?.teamOneHandicap ? `(${convertHandicapToString(props.state?.teamOneHandicap)})` : <></>}
         </div>
         <div className="grid-cols-1 flex text-center items-center justify-center gap-2 text-white font-bold text-sm">
-          {props.state.sport === 'SNOOKER' ? (
+          {props.state.sport === 'SNOOKER' && props.state.tournamentId === null ? (
             <>
               <span>{activeSet ? props.state.teamOneScore : 0}</span>
-              <span>
-                {' '}
-                (
-                {props.state.tournamentId &&
-                props.state.tournamentSubItem! &&
-                props.state.tournamentSubItem.gameFormat.isCumulativeScoring === false
-                  ? props.state.tournamentSubItem.gameFormat.noOfSets
-                  : props.state.sets.length}
-                ){' '}
-              </span>
+              <span> ({props.state.sets.length}) </span>
               <span> {activeSet ? props.state.teamTwoScore : 0}</span>
             </>
           ) : (
             <>
-              <span> ({props.state.format})</span>
+              <span>
+                {props.state.tournamentId === null ? `(${props.state.format})` : ''}
+              </span>
             </>
           )}
         </div>

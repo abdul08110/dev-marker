@@ -19,6 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CatholicSinglesTemplate } from './templates/CatholicSingles';
 import { NewEca } from './templates/Eca-new';
 import { CatholicAprilTemplate } from './templates/CatholicApril';
+import { CenturyTemplate } from './templates/Century';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -125,6 +126,9 @@ export function StreamContainer(props: StreamContainerProps) {
     },
     [selectedStreamId, props.stopWatchTime, handleSwitchCamera],
   );
+
+  console.log(props.state);
+  console.log(stream);
 
   return (
     <div
@@ -260,6 +264,14 @@ export function StreamContainer(props: StreamContainerProps) {
                         activeTurn={activeTurn}
                         activeSet={activeSet}
                       />
+                    ),
+                    '681a3e790799a4ccbfb17615': (
+                      <CenturyTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
                     )
                   }[props.state.tournamentId] || (
                     <GeneralTemplate
@@ -310,7 +322,7 @@ export function StreamContainer(props: StreamContainerProps) {
           autoPlay
           loop
           muted
-          src="https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/CCSBL%20%2025%20Sponsor%20Vid.mp4"
+          src="https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/CCSBL%2025%20Sponsor%20Vid.mp4"
           className="w-full h-auto"
         />
       )}
