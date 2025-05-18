@@ -234,23 +234,23 @@ function TeamScore({ score, isActive, breakScore }: { score: number; isActive: b
 }
 
 // Player Score Component
-function PlayerScore({
-  teamOneScore,
-  teamTwoScore,
-  noOfFrames,
-}: {
-  teamOneScore: number;
-  teamTwoScore: number;
-  noOfFrames?: number;
-}) {
-  return (
-    <div className="flex justify-center items-center p-[min(1.5vh,1.5vw)]">
-      <span className="text-white font-bold text-[min(10vh,10vw)] leading-none whitespace-nowrap">
-        {teamOneScore} {noOfFrames ? `(${noOfFrames})` : ''} {teamTwoScore}
-      </span>
-    </div>
-  );
-}
+// function PlayerScore({
+//   teamOneScore,
+//   teamTwoScore,
+//   noOfFrames,
+// }: {
+//   teamOneScore: number;
+//   teamTwoScore: number;
+//   noOfFrames?: number;
+// }) {
+//   return (
+//     <div className="flex justify-center items-center p-[min(1.5vh,1.5vw)]">
+//       <span className="text-white font-bold text-[min(10vh,10vw)] leading-none whitespace-nowrap">
+//         {teamOneScore} {noOfFrames ? `(${noOfFrames})` : ''} {teamTwoScore}
+//       </span>
+//     </div>
+//   );
+// }
 
 function Player({
   playerOneName,
