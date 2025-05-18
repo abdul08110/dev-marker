@@ -3,6 +3,7 @@ import { BBSLTemplate } from '@/components/sections/stream/templates/BBSL';
 import { CatholicTemplate } from '@/components/sections/stream/templates/Catholic';
 import { CatholicAprilTemplate } from '@/components/sections/stream/templates/CatholicApril';
 import { CatholicSinglesTemplate } from '@/components/sections/stream/templates/CatholicSingles';
+import { CenturyTemplate } from '@/components/sections/stream/templates/Century';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { NewEca } from '@/components/sections/stream/templates/Eca-new';
 import { GeneralTemplate } from '@/components/sections/stream/templates/General';
@@ -120,7 +121,23 @@ export function VideoOverlay() {
                 activeTurn={activeTurn}
                 activeSet={activeSet}
               />
-            )
+            ),
+            '681a3e790799a4ccbfb17615': (
+              <CenturyTemplate
+                isTv={false}
+                state={streamingData}
+                activeTurn={activeTurn}
+                activeSet={activeSet}
+              />
+            ),
+            '68298983ffe9aacb1655b1f4': (
+              <CenturyTemplate
+                isTv={false}
+                state={streamingData}
+                activeTurn={activeTurn}
+                activeSet={activeSet}
+              />
+            )  
           }[viewershipData.tournamentId] || (
             <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
           )

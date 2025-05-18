@@ -272,6 +272,14 @@ export function StreamContainer(props: StreamContainerProps) {
                         activeTurn={activeTurn}
                         activeSet={activeSet}
                       />
+                    ),
+                    '68298983ffe9aacb1655b1f4': (
+                      <CenturyTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
                     )
                   }[props.state.tournamentId] || (
                     <GeneralTemplate

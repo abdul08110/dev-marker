@@ -1,6 +1,7 @@
 import { TopOverlay } from '@/components/sections/stream/overlays/TopOverlay';
 import { BBSLTemplate } from '@/components/sections/stream/templates/BBSL';
 import { CatholicTemplate } from '@/components/sections/stream/templates/Catholic';
+import { CenturyTemplate } from '@/components/sections/stream/templates/Century';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { GeneralTemplate } from '@/components/sections/stream/templates/General';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
@@ -77,6 +78,22 @@ export function LiveScoring() {
           '679ce81ed0202e686e8a96f6': (
             <CatholicTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
+          '681a3e790799a4ccbfb17615': (
+            <CenturyTemplate
+              isTv={false}
+              state={streamingData}
+              activeTurn={activeTurn}
+              activeSet={activeSet}
+            />
+          ),
+          '68298983ffe9aacb1655b1f4': (
+            <CenturyTemplate
+              isTv={false}
+              state={streamingData}
+              activeTurn={activeTurn}
+              activeSet={activeSet}
+            />
+          )
         }[streamingData.tournamentId] || (
           <GeneralTemplate state={streamingData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
         )
