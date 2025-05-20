@@ -81,18 +81,14 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
                   {props.activeSet ? props.activeSet?.teamOneScore : 0}
                 </div>
                 <div className="bg-[#424242] px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
-                  {isTeamReveresed
-                    ? props.state.tournamentSubItem?.tournamentItem.teamOneCumulativeFinalFrameScore
-                    : props.state.tournamentSubItem?.tournamentItem.teamTwoCumulativeFinalFrameScore}
+                  {props.state.tournamentSubItem?.tournamentItem.teamOneCumulativeFinalFrameScore}
                 </div>
                 <div className="bg-primary px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
                   ({props.state.tournamentSubItem?.gameFormat.matchNo}/
                   {props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length})
                 </div>
                 <div className="bg-[#424242] px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
-                  {isTeamReveresed
-                    ? props.state.tournamentSubItem?.tournamentItem.teamTwoCumulativeFinalFrameScore
-                    : props.state.tournamentSubItem?.tournamentItem.teamOneCumulativeFinalFrameScore}
+                  {props.state.tournamentSubItem?.tournamentItem.teamTwoCumulativeFinalFrameScore}
                 </div>
                 <div className="bg-primary px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
                   {props.activeSet ? props.activeSet?.teamTwoScore : 0}

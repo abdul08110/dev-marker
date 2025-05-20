@@ -139,12 +139,8 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
               <div className="bg-black p-[min(1vh,1vw)] border border-white rounded-xl flex flex-col justify-start items-center">
                 <div className="flex justify-center items-center p-[min(0.75vh,0.75vw)]">
                   <span className="text-white font-bold text-[min(6vh,6vw)] leading-none whitespace-nowrap">
-                    {isTeamReveresed
-                      ? state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore
-                      : state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore}{' '}
-                    - {isTeamReveresed
-                      ? state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore
-                      : state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore}
+                    {state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore}{' '}
+                    - {state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore}
                   </span>
                 </div>
                 {/* <PlayerScore
