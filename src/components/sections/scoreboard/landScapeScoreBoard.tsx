@@ -22,6 +22,18 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
       ? state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== state.tournamentTeamOneId
       : false;
 
+  const teamOneScore = activeSet ? (
+    state.tournamentId && state.tournamentSubItem?.gameFormat.matchNo === 1
+      ? activeSet.teamOneScore - (isTeamReveresed ? state.teamTwoHandicap || 0 : state.teamOneHandicap || 0)
+      : activeSet.teamOneScore
+  ) : 0;
+
+  const teamTwoScore = activeSet ? (
+    state.tournamentId && state.tournamentSubItem?.gameFormat.matchNo === 1
+      ? activeSet.teamTwoScore - (isTeamReveresed ? state.teamOneHandicap || 0 : state.teamTwoHandicap || 0)
+      : activeSet.teamTwoScore
+  ) : 0;
+
   return (
     <section className="h-screen w-screen p-[min(2vh,2vw)]">
       <div className="relative h-full w-full grid grid-cols-2 gap-[min(3vh,3vw)]">
@@ -54,7 +66,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           })}>
             <div className="flex flex-col gap-[min(2vh,2vw)] h-full">
               <TeamScore
-                score={activeSet ? activeSet.teamOneScore : 0}
+                score={teamOneScore}
                 isActive={isTeamOneActive}
                 breakScore={activeTurn?.score}
                 isTournament={!!state.tournamentId}
@@ -100,7 +112,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           })}>
             <div className="flex flex-col gap-[min(2vh,2vw)] h-full">
               <TeamScore
-                score={activeSet ? activeSet.teamTwoScore : 0}
+                score={teamTwoScore}
                 isActive={isTeamTwoActive}
                 breakScore={activeTurn?.score}
                 isTournament={!!state.tournamentId}
