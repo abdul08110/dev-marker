@@ -328,7 +328,7 @@ export function StreamContainer(props: StreamContainerProps) {
           autoPlay
           loop
           muted
-          src="https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/CCSBL%2025%20Sponsor%20Vid.mp4"
+          src="https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/ECA%20Raman%20Nair%202024%20Gina%20Artize.mp4"
           className="w-full h-auto"
         />
       )}

@@ -446,6 +446,7 @@ const useSnookerScoring = () => {
 
   const handleEndFrameButton = async () => {
     setShowLoadingModal(true);
+    setShowMenuDrawer(false);
 
     const activeSet = getActiveSet(snookerScoring.scoreHistory);
     if (activeSet && activeSet.status === 'ONGOING') {
@@ -457,6 +458,8 @@ const useSnookerScoring = () => {
 
   const handleEndGame = async () => {
     setShowLoadingModal(true);
+    setShowMenuDrawer(false);
+    
     try {
       await dispatch(handleEndGameThrunk({}));
 
