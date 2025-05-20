@@ -11,10 +11,10 @@ interface CenturyTemplateProps {
 }
 
 export function CenturyTemplate(props: CenturyTemplateProps) {
-  const isTeamReveresed =
-    props.state && props.state.tournamentId && props.state.tournamentSubItem
-      ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId
-      : false;
+  // const isTeamReveresed =
+  //   props.state && props.state.tournamentId && props.state.tournamentSubItem
+  //     ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId
+  //     : false;
 
   return (
     <div className="absolute bottom-0 mx-[min(1vh,1vw)] flex flex-col items-center bg-black w-[calc(100%-min(2vh,2vw))]">
