@@ -296,7 +296,7 @@ function Player({
         })} src={'/images/yellow-ball.png'} />
       )}
       {truncateText(generatePlayerName(playerOneName, playerTwoName))}
-      {handicap && <span>({convertHandicapToString(handicap)})</span>}
+      {handicap && !isTournament && <span>({convertHandicapToString(handicap)})</span>}
       {ballToShow === 'WHITE' && (
         <img className={clsx("object-contain aspect-square", {
           "size-[min(4.5vh,4.5vw)]": isTournament,
