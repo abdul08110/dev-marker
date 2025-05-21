@@ -11,10 +11,10 @@ interface CenturyTemplateProps {
 }
 
 export function CenturyTemplate(props: CenturyTemplateProps) {
-  // const isTeamReveresed =
-  //   props.state && props.state.tournamentId && props.state.tournamentSubItem
-  //     ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId
-  //     : false;
+  const isTeamReveresed =
+    props.state && props.state.tournamentId && props.state.tournamentSubItem
+      ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId
+      : false;
 
   return (
     <div className="absolute bottom-0 mx-[min(1vh,1vw)] flex flex-col items-center bg-black w-[calc(100%-min(2vh,2vw))]">
@@ -81,14 +81,18 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
                   {props.activeSet ? props.activeSet?.teamOneScore : 0}
                 </div>
                 <div className="bg-[#424242] px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
-                  {props.state.tournamentSubItem?.tournamentItem.teamOneCumulativeFinalFrameScore}
+                  {isTeamReveresed === true
+                    ? props.state.tournamentSubItem?.tournamentItem.teamTwoCumulativeFinalFrameScore
+                    : props.state.tournamentSubItem?.tournamentItem.teamOneCumulativeFinalFrameScore}
                 </div>
                 <div className="bg-primary px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
                   ({props.state.tournamentSubItem?.gameFormat.matchNo}/
                   {props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length})
                 </div>
                 <div className="bg-[#424242] px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
-                  {props.state.tournamentSubItem?.tournamentItem.teamTwoCumulativeFinalFrameScore}
+                  {isTeamReveresed === true
+                    ? props.state.tournamentSubItem?.tournamentItem.teamOneCumulativeFinalFrameScore
+                    : props.state.tournamentSubItem?.tournamentItem.teamTwoCumulativeFinalFrameScore}
                 </div>
                 <div className="bg-primary px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
                   {props.activeSet ? props.activeSet?.teamTwoScore : 0}
@@ -107,8 +111,13 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
                 {props.state?.teamOneName}
                 {props.state?.tournamentSubItem?.tournamentItem.teamOneLastestGameHandicap !== undefined && (
                   <span className="ml-2 text-yellow-400">
-                    {props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap > 0 ? '+' : ''}
-                    {props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap}
+                    {isTeamReveresed === true
+                      ? props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap > 0 ? '+' : ''
+                      : props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap > 0 ? '+' : ''
+                    }
+                    {isTeamReveresed === true
+                      ? props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap
+                      : props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap}
                   </span>
                 )}
               </h5>
@@ -120,8 +129,13 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
                 {props.state?.teamTwoName}
                 {props.state?.tournamentSubItem?.tournamentItem.teamTwoLastestGameHandicap !== undefined && (
                   <span className="ml-2 text-yellow-400">
-                    {props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap > 0 ? '+' : ''}
-                    {props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap}
+                    {isTeamReveresed === true
+                      ? props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap > 0 ? '+' : ''
+                      : props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap > 0 ? '+' : ''
+                    }
+                    {isTeamReveresed === true
+                      ? props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap
+                      : props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap}
                   </span>
                 )}
               </h5>
