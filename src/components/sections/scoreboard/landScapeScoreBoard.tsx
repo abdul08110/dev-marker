@@ -22,17 +22,9 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
       ? state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== state.tournamentTeamOneId
       : false;
 
-  const teamOneScore = activeSet ? (
-    state.tournamentId && state.tournamentSubItem?.gameFormat.matchNo === 1
-      ? activeSet.teamOneScore - (isTeamReveresed ? state.teamTwoHandicap || 0 : state.teamOneHandicap || 0)
-      : activeSet.teamOneScore
-  ) : 0;
+  const teamOneScore = activeSet ? activeSet.teamOneScore : 0;
 
-  const teamTwoScore = activeSet ? (
-    state.tournamentId && state.tournamentSubItem?.gameFormat.matchNo === 1
-      ? activeSet.teamTwoScore - (isTeamReveresed ? state.teamOneHandicap || 0 : state.teamTwoHandicap || 0)
-      : activeSet.teamTwoScore
-  ) : 0;
+  const teamTwoScore = activeSet ? activeSet.teamTwoScore : 0;
 
   return (
     <section className="h-screen w-screen p-[min(2vh,2vw)]">

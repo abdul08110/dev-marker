@@ -214,8 +214,8 @@ const sportSlice = createSlice({
           teamOneStartScore = relativeHandicap > 0 ? relativeHandicap : 0;
           teamTwoStartScore = relativeHandicap < 0 ? Math.abs(relativeHandicap) : 0;
         } else {
-          teamOneStartScore = state.teamOneHandicap || 0;
-          teamTwoStartScore = state.teamTwoHandicap || 0;
+          teamOneStartScore = 0;
+          teamTwoStartScore = 0;
         }
       }
 
