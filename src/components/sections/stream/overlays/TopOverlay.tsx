@@ -15,9 +15,9 @@ export function TopOverlay(props: TopOverlayProps) {
       </div>
 
       <div className="flex flex-col gap-2 items-center h-fit">
-        <img src={props.clubLogo} className="lg:h-14 xl:h-24 xl:w-24 lg:w-14 h-8 w-8 " />
+        <img src={props.clubLogo} className="lg:h-14 xl:h-24 xl:w-24 lg:w-14 h-8 w-8 rounded-full overflow-hidden" />
         <small className="text-white font-medium lg:text-xl text-base xl:text-xl">T-{props.venueNo}</small>
-        {props.tournamentLogo ? <img src={props.tournamentLogo!} className="lg:h-14 lg:w-auto h-8 w-auto" /> : <></>}
+        {props.tournamentLogo ? <img src={props.tournamentLogo!} className="lg:h-14 xl:h-24 xl:w-24 lg:w-14 h-8 w-8 rounded-full overflow-hidden" /> : <></>}
       </div>
     </div>
   );
