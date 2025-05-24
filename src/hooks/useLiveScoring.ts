@@ -33,10 +33,6 @@ export interface StreamingState {
   teamTwoLogo: string | null;
   tournamentTeamOneScore: number | null;
   tournamentTeamTwoScore: number | null;
-  tournamentTeamOneCumulativeFinalFrameScore: number | null;
-  tournamentTeamTwoCumulativeFinalFrameScore: number | null;
-  tournamentTeamOneLastestGameHandicap: number | null;
-  tournamentTeamTwoLastestGameHandicap: number | null;
   tournamentTeamOneabb: string | null;
   tournamentTeamTwoabb: string | null;
   teamOneHandicap: number | null;
@@ -183,12 +179,6 @@ const useLiveScoring = (matchId: string) => {
           tournamentSubItem: res.tournamentSubItem,
           tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
           tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
-
-          tournamentTeamOneCumulativeFinalFrameScore: res.tournamentId && res.tournamentSubItem && res.tournamentSubItem.tournamentItem && res.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ? res.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore : null,
-          tournamentTeamTwoCumulativeFinalFrameScore: res.tournamentId && res.tournamentSubItem && res.tournamentSubItem.tournamentItem && res.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ? res.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore : null,
-          tournamentTeamOneLastestGameHandicap: res.tournamentId && res.tournamentSubItem && res.tournamentSubItem.tournamentItem && res.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap ? res.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap : null,
-          tournamentTeamTwoLastestGameHandicap: res.tournamentId && res.tournamentSubItem && res.tournamentSubItem.tournamentItem && res.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap ? res.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap : null,
-
           streams: []
         };
 
@@ -228,6 +218,18 @@ const useLiveScoring = (matchId: string) => {
           if (!prevData) return null;
           return {
             ...prevData,
+            tournamentTeamOneScore: parsedMessage.teamOneScore,
+            tournamentTeamTwoScore: parsedMessage.teamTwoScore,
+            tournamentSubItem: prevData.tournamentSubItem ? {
+              ...prevData.tournamentSubItem,
+              tournamentItem: {
+                ...prevData.tournamentSubItem.tournamentItem,
+                tournamentTeamOneCumulativeFinalFrameScore: parsedMessage.teamOneCumulativeFinalFrameScore,
+                tournamentTeamTwoCumulativeFinalFrameScore: parsedMessage.teamTwoCumulativeFinalFrameScore,
+                tournamentTeamOneLastestGameHandicap: parsedMessage.teamOneLastestGameHandicap,
+                tournamentTeamTwoLastestGameHandicap: parsedMessage.teamTwoLastestGameHandicap,
+              }
+            } : prevData.tournamentSubItem,
           };
         });
         break;
@@ -237,13 +239,7 @@ const useLiveScoring = (matchId: string) => {
           return {
             ...prevData,
             matchStatus: 'COMPLETED',
-            actualEndTimeDate: new Date().toISOString(),
-            tournamentTeamOneScore: parsedMessage.teamOneScore,
-            tournamentTeamTwoScore: parsedMessage.teamTwoScore,
-            tournamentTeamOneCumulativeFinalFrameScore: parsedMessage.teamOneCumulativeFinalFrameScore,
-            tournamentTeamTwoCumulativeFinalFrameScore: parsedMessage.teamTwoCumulativeFinalFrameScore,
-            tournamentTeamOneLastestGameHandicap: parsedMessage.teamOneLastestGameHandicap,
-            tournamentTeamTwoLastestGameHandicap: parsedMessage.teamTwoLastestGameHandicap,
+            actualEndTimeDate: new Date().toISOString()
           };
         });
         break;

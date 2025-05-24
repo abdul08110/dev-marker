@@ -1,5 +1,5 @@
 import ImageWithFallback from '@/components/ui/image-with-fallback';
-import { StreamingState } from '@/hooks/useLiveScoring';
+import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
 import { generatePlayerName } from '@/utils/functions';
 
@@ -82,8 +82,8 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
                 </div>
                 <div className="bg-[#424242] px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
                   {isTeamReveresed === true
-                    ? props.state.tournamentTeamTwoCumulativeFinalFrameScore
-                    : props.state.tournamentTeamOneCumulativeFinalFrameScore}
+                    ? props.state.tournamentSubItem?.tournamentItem.teamTwoCumulativeFinalFrameScore
+                    : props.state.tournamentSubItem?.tournamentItem.teamOneCumulativeFinalFrameScore}
                 </div>
                 <div className="bg-primary px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
                   ({props.state.tournamentSubItem?.gameFormat.matchNo}/
@@ -91,8 +91,8 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
                 </div>
                 <div className="bg-[#424242] px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
                   {isTeamReveresed === true
-                    ? props.state.tournamentTeamOneCumulativeFinalFrameScore
-                    : props.state.tournamentTeamTwoCumulativeFinalFrameScore}
+                    ? props.state.tournamentSubItem?.tournamentItem.teamOneCumulativeFinalFrameScore
+                    : props.state.tournamentSubItem?.tournamentItem.teamTwoCumulativeFinalFrameScore}
                 </div>
                 <div className="bg-primary px-[min(1.5vh,1.5vw)] py-[min(0.4vh,0.4vw)]">
                   {props.activeSet ? props.activeSet?.teamTwoScore : 0}
@@ -106,36 +106,36 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
             </div>
           </div>
           <div className="w-full h-1/3 flex items-center justify-between">
-            <div className="min-w-[40%] px-[min(2vh,2vw)]">
+            <div className="min-w-[20%] px-[min(2vh,2vw)]">
               <h5 className="text-[min(2.2vh,2.2vw)] text-white font-bold text-left uppercase whitespace-nowrap">
                 {props.state?.teamOneName}
                 {props.state?.tournamentSubItem?.tournamentItem.teamOneLastestGameHandicap !== undefined && (
                   <span className="ml-2 text-yellow-400">
                     {isTeamReveresed === true
-                      ? props.state.tournamentTeamTwoLastestGameHandicap && props.state.tournamentTeamTwoLastestGameHandicap > 0 ? '+' : ''
-                      : props.state.tournamentTeamOneLastestGameHandicap && props.state.tournamentTeamOneLastestGameHandicap > 0 ? '+' : ''
+                      ? props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap > 0 ? '+' : ''
+                      : props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap > 0 ? '+' : ''
                     }
                     {isTeamReveresed === true
-                      ? props.state.tournamentTeamTwoLastestGameHandicap
-                      : props.state.tournamentTeamOneLastestGameHandicap}
+                      ? props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap
+                      : props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap}
                   </span>
                 )}
               </h5>
             </div>
-            <div className="min-w-[20%] flex justify-center">
+            <div className="min-w-[60%] flex justify-center">
             </div>
-            <div className="min-w-[40%] px-[min(2vh,2vw)]">
+            <div className="min-w-[20%] px-[min(2vh,2vw)]">
               <h5 className="text-[min(2.2vh,2.2vw)] text-white font-bold text-right uppercase whitespace-nowrap">
                 {props.state?.teamTwoName}
                 {props.state?.tournamentSubItem?.tournamentItem.teamTwoLastestGameHandicap !== undefined && (
                   <span className="ml-2 text-yellow-400">
                     {isTeamReveresed === true
-                      ? props.state.tournamentTeamOneLastestGameHandicap && props.state.tournamentTeamOneLastestGameHandicap > 0 ? '+' : ''
-                      : props.state.tournamentTeamTwoLastestGameHandicap && props.state.tournamentTeamTwoLastestGameHandicap > 0 ? '+' : ''
+                      ? props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap > 0 ? '+' : ''
+                      : props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap > 0 ? '+' : ''
                     }
                     {isTeamReveresed === true
-                      ? props.state.tournamentTeamOneLastestGameHandicap
-                      : props.state.tournamentTeamTwoLastestGameHandicap}
+                      ? props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap
+                      : props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap}
                   </span>
                 )}
               </h5>
