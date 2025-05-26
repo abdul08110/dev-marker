@@ -106,7 +106,7 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
             </div>
           </div>
           <div className="w-full h-1/3 flex items-center justify-between">
-            <div className="min-w-[20%] px-[min(2vh,2vw)]">
+            <div className="min-w-[45%] px-[min(2vh,2vw)]">
               <h5 className="text-[min(2.2vh,2.2vw)] text-white font-bold text-left uppercase whitespace-nowrap">
                 {props.state?.teamOneName}
                 {props.state?.tournamentSubItem?.tournamentItem.teamOneLastestGameHandicap !== undefined && (
@@ -122,9 +122,9 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
                 )}
               </h5>
             </div>
-            <div className="min-w-[60%] flex justify-center">
+            <div className="min-w-[10%] flex justify-center">
             </div>
-            <div className="min-w-[20%] px-[min(2vh,2vw)]">
+            <div className="min-w-[45%] px-[min(2vh,2vw)]">
               <h5 className="text-[min(2.2vh,2.2vw)] text-white font-bold text-right uppercase whitespace-nowrap">
                 {props.state?.teamTwoName}
                 {props.state?.tournamentSubItem?.tournamentItem.teamTwoLastestGameHandicap !== undefined && (
