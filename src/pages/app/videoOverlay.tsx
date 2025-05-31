@@ -68,7 +68,6 @@ export function VideoOverlay() {
         venueNo={viewershipData.venueNo!}
       />
       {viewershipData &&
-        viewershipData.streams[0].overlayType === 'DESTINATION' &&
         (viewershipData.tournamentId ? (
           {
             '671f4acf089a3a701c79071f': (
@@ -125,7 +124,7 @@ export function VideoOverlay() {
             '681a3e790799a4ccbfb17615': (
               <CenturyTemplate
                 isTv={false}
-                state={streamingData}
+                state={viewershipData}
                 activeTurn={activeTurn}
                 activeSet={activeSet}
               />
@@ -133,7 +132,7 @@ export function VideoOverlay() {
             '68298983ffe9aacb1655b1f4': (
               <CenturyTemplate
                 isTv={false}
-                state={streamingData}
+                state={viewershipData}
                 activeTurn={activeTurn}
                 activeSet={activeSet}
               />
