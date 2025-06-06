@@ -129,33 +129,28 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           <div className="flex flex-col gap-[min(2vh,2vw)] overflow-auto h-full justify-start items-center">
             {state.tournamentId && state.tournamentSubItem ? (
               <div className="bg-black p-[min(1vh,1vw)] border border-white rounded-xl flex flex-col justify-start items-center">
-                <div className="flex justify-center items-center p-[min(0.75vh,0.75vw)]">
-                  <span className="text-white font-bold text-[min(6vh,6vw)] leading-none whitespace-nowrap">
-                    {isTeamReveresed === true
-                      ? state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore
-                      : state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore}{' '}
-                    - {isTeamReveresed === true
-                      ? state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore
-                      : state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore}
-                  </span>
-                </div>
-                {/* <PlayerScore
-                  teamOneScore={
-                    state.tournamentId && state.tournamentSubItem
-                      ? isTeamReveresed
-                        ? state.tournamentSubItem?.tournamentItem.teamTwoScore!
-                        : state.tournamentSubItem?.tournamentItem.teamOneScore!
-                      : state.teamOneScore
-                  }
-                  teamTwoScore={
-                    state.tournamentId && state.tournamentSubItem
-                      ? isTeamReveresed
-                        ? state.tournamentSubItem?.tournamentItem.teamOneScore!
-                        : state.tournamentSubItem?.tournamentItem.teamTwoScore!
-                      : state.teamTwoScore
-                  }
-                  noOfFrames={state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}
-                /> */}
+                {state.tournamentId === '681631fef773a447a1e34254' ? (
+                  <PlayerScore
+                    teamOneScore={
+                     state.teamOneScore
+                    }
+                    teamTwoScore={
+                      state.teamTwoScore
+                    }
+                    noOfFrames={state.tournamentSubItem.gameFormat.noOfSets}
+                  />
+                ) : (
+                  <div className="flex justify-center items-center p-[min(0.75vh,0.75vw)]">
+                    <span className="text-white font-bold text-[min(6vh,6vw)] leading-none whitespace-nowrap">
+                      {isTeamReveresed === true
+                        ? state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore
+                        : state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore}{' '}
+                      - {isTeamReveresed === true
+                        ? state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore
+                        : state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore}
+                    </span>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
@@ -176,7 +171,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
 
           <div className="flex-grow text-center text-white font-bold text-[min(4vh,4vw)] uppercase">
             {state.tournamentId && state.tournamentSubItem
-              ? `GAME #${state.tournamentSubItem.gameFormat.matchNo} | ${state.tournamentSubItem.gameFormat.name} | ${state.tournamentSubItem.tournamentItem.tournamentPhase.name}`
+              ? `${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length > 1 ? `GAME #${state.tournamentSubItem.gameFormat.matchNo} | ` : ''}${state.tournamentSubItem.gameFormat.name} | ${state.tournamentSubItem.tournamentItem.tournamentPhase.name}`
               : `PRACTICE | ${state.format} | ${state.clubName}`}
           </div>
         </div>
@@ -244,23 +239,23 @@ function TeamScore({ score, isActive, breakScore, isTournament }: { score: numbe
 }
 
 // Player Score Component
-// function PlayerScore({
-//   teamOneScore,
-//   teamTwoScore,
-//   noOfFrames,
-// }: {
-//   teamOneScore: number;
-//   teamTwoScore: number;
-//   noOfFrames?: number;
-// }) {
-//   return (
-//     <div className="flex justify-center items-center p-[min(1.5vh,1.5vw)]">
-//       <span className="text-white font-bold text-[min(10vh,10vw)] leading-none whitespace-nowrap">
-//         {teamOneScore} {noOfFrames ? `(${noOfFrames})` : ''} {teamTwoScore}
-//       </span>
-//     </div>
-//   );
-// }
+function PlayerScore({
+  teamOneScore,
+  teamTwoScore,
+  noOfFrames,
+}: {
+  teamOneScore: number;
+  teamTwoScore: number;
+  noOfFrames?: number;
+}) {
+  return (
+    <div className="flex justify-center items-center p-[min(1.5vh,1.5vw)]">
+      <span className="text-white font-bold text-[min(10vh,10vw)] leading-none whitespace-nowrap">
+        {teamOneScore} {noOfFrames ? `(${noOfFrames})` : ''} {teamTwoScore}
+      </span>
+    </div>
+  );
+}
 
 function Player({
   playerOneName,

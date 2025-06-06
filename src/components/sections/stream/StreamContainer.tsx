@@ -20,6 +20,7 @@ import { CatholicSinglesTemplate } from './templates/CatholicSingles';
 import { NewEca } from './templates/Eca-new';
 import { CatholicAprilTemplate } from './templates/CatholicApril';
 import { CenturyTemplate } from './templates/Century';
+import { NewEcaTemplate } from './templates/NewEca';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -278,7 +279,15 @@ export function StreamContainer(props: StreamContainerProps) {
                         activeTurn={activeTurn}
                         activeSet={activeSet}
                       />
-                    )
+                    ),
+                    '681631fef773a447a1e34254': (
+                      <NewEcaTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
+                    ),
                   }[props.state.tournamentId] || (
                     <GeneralTemplate
                       state={props.state}

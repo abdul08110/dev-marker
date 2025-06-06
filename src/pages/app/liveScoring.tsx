@@ -4,6 +4,7 @@ import { CatholicTemplate } from '@/components/sections/stream/templates/Catholi
 import { CenturyTemplate } from '@/components/sections/stream/templates/Century';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { GeneralTemplate } from '@/components/sections/stream/templates/General';
+import { NewEcaTemplate } from '@/components/sections/stream/templates/NewEca';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
 import useLiveScoring from '@/hooks/useLiveScoring';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
@@ -88,6 +89,14 @@ export function LiveScoring() {
           ),
           '68298983ffe9aacb1655b1f4': (
             <CenturyTemplate
+              isTv={false}
+              state={streamingData}
+              activeTurn={activeTurn}
+              activeSet={activeSet}
+            />
+          ),
+          '681631fef773a447a1e34254': (
+            <NewEcaTemplate
               isTv={false}
               state={streamingData}
               activeTurn={activeTurn}

@@ -7,6 +7,7 @@ import { CenturyTemplate } from '@/components/sections/stream/templates/Century'
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { NewEca } from '@/components/sections/stream/templates/Eca-new';
 import { GeneralTemplate } from '@/components/sections/stream/templates/General';
+import { NewEcaTemplate } from '@/components/sections/stream/templates/NewEca';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
 import useStreaming from '@/hooks/useStreaming';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
@@ -136,7 +137,15 @@ export function VideoOverlay() {
                 activeTurn={activeTurn}
                 activeSet={activeSet}
               />
-            )  
+            ),
+            '681631fef773a447a1e34254': (
+              <NewEcaTemplate
+                isTv={false}
+                state={viewershipData}
+                activeTurn={activeTurn}
+                activeSet={activeSet}
+              />
+            )
           }[viewershipData.tournamentId] || (
             <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
           )

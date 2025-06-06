@@ -29,7 +29,10 @@ export function PortraitData(props: PortraitStreamDataProps) {
           {props.state.clubName} | Table {props.state.venueNo}
         </span>
       </div>
-      <Card className="gap-1 border-white p-2 grid grid-cols-3 rounded-md">
+      <Card className={clsx("gap-1 border-white p-2 grid rounded-md", {
+        "grid-cols-3": props.state.tournamentId === null,
+        "grid-cols-2": props.state.tournamentId !== null
+      })}>
         <div className="grid-cols-1 uppercase text-white font-bold text-sm text-left flex items-center justify-start gap-2">
           {props.state.sport === 'BILLIARDS' && (
             <img className="h-4 lg:h-5 xl:h-6 w-auto" src={'/images/yellow-ball.png'} />
@@ -41,21 +44,21 @@ export function PortraitData(props: PortraitStreamDataProps) {
           &nbsp;&nbsp;
           {props.state?.teamOneHandicap ? `(${convertHandicapToString(props.state?.teamOneHandicap)})` : <></>}
         </div>
-        <div className="grid-cols-1 flex text-center items-center justify-center gap-2 text-white font-bold text-sm">
-          {props.state.sport === 'SNOOKER' && props.state.tournamentId === null ? (
-            <>
-              <span>{activeSet ? props.state.teamOneScore : 0}</span>
-              <span> ({props.state.sets.length}) </span>
-              <span> {activeSet ? props.state.teamTwoScore : 0}</span>
-            </>
-          ) : (
-            <>
-              <span>
-                {props.state.tournamentId === null ? `(${props.state.format})` : ''}
-              </span>
-            </>
-          )}
-        </div>
+        {props.state.tournamentId === null && (
+          <div className="grid-cols-1 flex text-center items-center justify-center gap-2 text-white font-bold text-sm">
+            {props.state.sport === 'SNOOKER' ? (
+              <>
+                <span>{activeSet ? props.state.teamOneScore : 0}</span>
+                <span> ({props.state.sets.length}) </span>
+                <span> {activeSet ? props.state.teamTwoScore : 0}</span>
+              </>
+            ) : (
+              <>
+                <span>({props.state.format})</span>
+              </>
+            )}
+          </div>
+        )}
         <div className="grid-cols-1 uppercase text-white font-bold text-sm text-right flex items-center justify-end gap-2">
           {generatePlayerName(
             props.state.sideTwoPlayerOne.name,
@@ -79,7 +82,7 @@ export function PortraitData(props: PortraitStreamDataProps) {
           {props.state.teamOneName && <span className="font-bold text-xs">{props.state.teamOneName}</span>}
           <div className="w-full flex justify-center items-center">
             <ImageWithFallback
-              className="rounded-full border-white w-12 h-12 object-cover"
+              className="aspect-square border-white w-12 h-12 object-cover"
               fallback="/images/user-dummy-pic.png"
               src={
                 props.state.teamOneLogo
@@ -123,7 +126,7 @@ export function PortraitData(props: PortraitStreamDataProps) {
           <div className="w-full flex justify-center items-center">
             <ImageWithFallback
               fallback="/images/user-dummy-pic.png"
-              className="rounded-full border-white size-12 object-cover"
+              className="aspect-square border-white size-12 object-cover"
               src={
                 props.state.teamTwoLogo
                   ? props.state.teamTwoLogo

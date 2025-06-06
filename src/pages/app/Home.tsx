@@ -142,9 +142,9 @@ export function Home() {
               </DialogContent>
             </Dialog>
 
-            <div className="bg-[url('/images/practice-match.png')] p-5 flex justify-center items-end aspect-[4/3] h-56 bg-cover rounded-lg w-full">
+            {/* <div className="bg-[url('/images/practice-match.png')] p-5 flex justify-center items-end aspect-[4/3] h-56 bg-cover rounded-lg w-full">
               <h3 className="text-white text-xl">BOOKINGS</h3>
-            </div>
+            </div> */}
 
             <Dialog>
               <DialogTrigger className="p-0 bg-transparent border-0">
