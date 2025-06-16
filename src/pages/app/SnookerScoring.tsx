@@ -219,7 +219,6 @@ export function SnookerScoring() {
                   onClick={() => setShowEndFrameAlert(true)}
                   variant="secondary"
                   className="flex-1"
-                  disabled={getActiveSet(snookerScoring.scoreHistory) === undefined}
                 >
                   End Frame
                 </Button>
@@ -227,7 +226,6 @@ export function SnookerScoring() {
                   onClick={() => setShowEndGameAlert(true)}
                   variant="destructive"
                   className="flex-1"
-                  disabled={getActiveSet(snookerScoring.scoreHistory) === undefined}
                 >
                   End Match
                 </Button>
