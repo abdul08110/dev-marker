@@ -34,6 +34,7 @@ export interface ScoreBoardState {
   maxScorePerSet: number | null;
   tournamentTeamOneName: string | null;
   tournamentTeamTwoName: string | null;
+  tournamentName: string | null;
   actualStartTimeDate: string;
   clubLogo: string | null;
   format: string | null;
@@ -166,6 +167,7 @@ const useScoreboard = () => {
             clubName: res.club?.name ? res.club.name : null,
             tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
             tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
+            tournamentName: res.tournament ? res.tournament.name : null,
           });
         } else {
           toast({

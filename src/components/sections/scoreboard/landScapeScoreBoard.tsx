@@ -27,154 +27,159 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
   const teamTwoScore = activeSet ? activeSet.teamTwoScore : 0;
 
   return (
-    <section className="h-screen w-screen p-[min(2vh,2vw)]">
-      <div className="relative h-full w-full grid grid-cols-2 gap-[min(3vh,3vw)]">
+    <section className="h-screen w-screen flex flex-col">
+      <div className="bg-primary text-center text-white font-bold text-[min(4vh,4vw)] border border-white h-[5vh] flex items-center justify-center">
+        {state.tournamentId && state.tournamentSubItem ? state.tournamentName : state.clubName}
+      </div>
+      <div className="relative flex-grow grid grid-cols-12 h-[90vh] overflow-hidden">
         <div
-          className={clsx('col-span-1 p-[min(4vh,4vw)] h-full overflow-auto rounded-md', {
-            'bg-[#424242]': !isTeamOneActive,
-            'bg-primary': isTeamOneActive,
-          })}
+          className={clsx(
+            'col-span-5 p-[min(4vh,4vw)] h-full overflow-auto rounded-md bg-black flex flex-col gap-[min(2vh,2vw)]',
+          )}
         >
-          <div className="h-[25%] w-full relative">
+          <div className="h-[20%] w-full relative">
             <PlayerImage profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto} />
           </div>
 
-          {!state.tournamentId && (
-            <div className="h-[15%] pt-[min(2vh,2vw)]">
-              {state.sport === 'SNOOKER' ? (
-                <SnookerPointDisplay
-                  turns={activeSet?.turns}
-                  players={[state.sideOnePlayerOne, state.sideOnePlayerTwo]}
-                />
-              ) : (
-                <></>
-              )}
-            </div>
-          )}
-
-          <div className={clsx("w-full pt-[min(2vh,2vw)]", {
-            "h-[60%]": state.tournamentId,
-            "h-[45%]": !state.tournamentId
-          })}>
-            <div className="flex flex-col gap-[min(2vh,2vw)] h-full">
-              <TeamScore
-                score={teamOneScore}
-                isActive={isTeamOneActive}
-                breakScore={activeTurn?.score}
-                isTournament={!!state.tournamentId}
-              />
-              <Player
-                playerOneName={state.sideOnePlayerOne.name}
-                playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
-                ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'YELLOW' : null}
-                isActive={isTeamOneActive}
-                handicap={state.teamOneHandicap}
-                isTournament={!!state.tournamentId}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div
-          className={clsx('col-span-1 p-[min(4vh,4vw)] h-full overflow-auto rounded-md', {
-            'bg-[#424242]': !isTeamTwoActive,
-            'bg-primary': isTeamTwoActive,
-          })}
-        >
-          <div className="h-[25%] w-full relative">
-            <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
+          <div className={clsx('w-full h-[10%]')}>
+            <Player
+              playerOneName={state.sideOnePlayerOne.name}
+              playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
+              ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'YELLOW' : null}
+              isActive={isTeamOneActive}
+              handicap={state.teamOneHandicap}
+              isTournament={!!state.tournamentId}
+              activePlayerId={state.activePlayerId}
+              playerOneId={state.sideOnePlayerOne.id}
+              playerTwoId={state.sideOnePlayerTwo?.id}
+            />
           </div>
 
-          {!state.tournamentId && (
-            <div className="h-[15%] pt-[min(2vh,2vw)]">
-              {state.sport === 'SNOOKER' ? (
-                <SnookerPointDisplay
-                  turns={activeSet?.turns}
-                  players={[state.sideTwoPlayerOne, state.sideTwoPlayerTwo]}
-                />
-              ) : (
-                <></>
-              )}
-            </div>
-          )}
-
-          <div className={clsx("w-full pt-[min(2vh,2vw)]", {
-            "h-[60%]": state.tournamentId,
-            "h-[45%]": !state.tournamentId
-          })}>
-            <div className="flex flex-col gap-[min(2vh,2vw)] h-full">
-              <TeamScore
-                score={teamTwoScore}
-                isActive={isTeamTwoActive}
-                breakScore={activeTurn?.score}
-                isTournament={!!state.tournamentId}
-              />
-              <Player
-                playerOneName={state.sideTwoPlayerOne.name}
-                playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
-                ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'WHITE' : null}
-                isActive={isTeamTwoActive}
-                handicap={state.teamTwoHandicap}
-                isTournament={!!state.tournamentId}
-              />
-            </div>
+          <div className={clsx('w-full h-[55%]')}>
+            <TeamScore
+              score={teamOneScore}
+              isActive={isTeamOneActive}
+              breakScore={activeTurn?.score}
+              isTournament={!!state.tournamentId}
+              big
+            />
           </div>
-        </div>
 
-        <div className="absolute w-[28%] left-1/2 transform -translate-x-1/2 h-[30%] flex justify-center items-center gap-[min(3vh,3vw)]">
-          <ClubLogo venueNo={state.venueNo!} />
-        </div>
-
-        <div className="absolute h-[40%] top-[50%] left-1/2 transform -translate-x-1/2 w-auto">
-          <div className="flex flex-col gap-[min(2vh,2vw)] overflow-auto h-full justify-start items-center">
-            {state.tournamentId && state.tournamentSubItem ? (
-              <div className="bg-black p-[min(1vh,1vw)] border border-white rounded-xl flex flex-col justify-start items-center">
-                {state.tournamentId === '681631fef773a447a1e34254' ? (
-                  <PlayerScore
-                    teamOneScore={
-                     state.teamOneScore
-                    }
-                    teamTwoScore={
-                      state.teamTwoScore
-                    }
-                    noOfFrames={state.tournamentSubItem.gameFormat.noOfSets}
-                  />
-                ) : (
-                  <div className="flex justify-center items-center p-[min(0.75vh,0.75vw)]">
-                    <span className="text-white font-bold text-[min(6vh,6vw)] leading-none whitespace-nowrap">
-                      {isTeamReveresed === true
-                        ? state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore
-                        : state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore}{' '}
-                      - {isTeamReveresed === true
-                        ? state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore
-                        : state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore}
-                    </span>
-                  </div>
-                )}
-              </div>
+          <div
+            className={clsx('w-full h-[15%]', {
+              'flex items-center justify-center': state.sport !== 'SNOOKER',
+            })}
+          >
+            {state.sport === 'SNOOKER' ? (
+              <SnookerPointDisplay
+                turns={activeSet?.turns}
+                players={[state.sideOnePlayerOne, state.sideOnePlayerTwo]}
+              />
             ) : (
-              <div className="bg-black p-[min(2vh,2vw)] border border-white rounded-xl flex flex-col justify-start items-center">
-                <span className="text-center text-white text-[min(3vh,3vw)]">Time Left (mins):</span>
-                <strong className="text-center text-white text-[min(8vh,8vw)] leading-[1]">
-                  {formatTime(timeLeft)}
-                </strong>
-                <span className="text-white font-bold uppercase text-[min(3vh,3vw)]">
-                  {state.format} {state.sport}
-                </span>
-              </div>
+              <img
+                className={clsx('object-contain aspect-square size-[min(8vh,8vw)]')}
+                src={'/images/yellow-ball.png'}
+              />
             )}
           </div>
         </div>
 
-        <div className="h-[10%] flex gap-[min(1vh,1vw)] absolute w-[98%] left-1/2 transform -translate-x-1/2 top-[88%] rounded-md border border-white py-[min(0.5vh,0.5vw)] px-[min(1vh,1vw)] bg-black items-center">
-          <img src="/images/clublogo.png" className="h-[min(6vh,6vw)] w-[min(6vh,6vw)] rounded-full overflow-hidden" />
+        <div className="col-span-2 h-full border-l border-r border-white">
+          <div className="h-1/4 relative flex justify-center items-center">
+            <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-white"></div>
 
-          <div className="flex-grow text-center text-white font-bold text-[min(4vh,4vw)] uppercase">
-            {state.tournamentId && state.tournamentSubItem
-              ? `${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length > 1 ? `GAME #${state.tournamentSubItem.gameFormat.matchNo} | ` : ''}${state.tournamentSubItem.gameFormat.name} | ${state.tournamentSubItem.tournamentItem.tournamentPhase.name}`
-              : `PRACTICE | ${state.format} | ${state.clubName}`}
+            {state.tournamentId === null ? (
+              <Timer timeLeft={timeLeft} />
+            ) : (
+              <TournamentScore
+                teamOneScore={
+                  isTeamReveresed
+                    ? state.tournamentSubItem?.tournamentItem.teamTwoScore || 0
+                    : state.tournamentSubItem?.tournamentItem.teamOneScore || 0
+                }
+                teamTwoScore={
+                  isTeamReveresed
+                    ? state.tournamentSubItem?.tournamentItem.teamOneScore || 0
+                    : state.tournamentSubItem?.tournamentItem.teamTwoScore || 0
+                }
+                noOfFrames={state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length}
+              />
+            )}
+          </div>
+          <div className="h-1/4 relative flex justify-center items-center">
+            <img src="/images/clubliv-icon.png" alt="Logo" className="h-[80%] w-auto aspect-square object-contain" />
+            <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-white"></div>
+          </div>
+          <div className="h-1/4 relative">
+            <GameScore
+              teamOneScore={state.teamOneScore}
+              teamTwoScore={state.teamTwoScore}
+              noOfFrames={state.tournamentId ? state.tournamentSubItem?.gameFormat.noOfSets : state.sets.length}
+            />
+            <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-white"></div>
+          </div>
+          <div className="h-1/4 flex justify-center items-center">
+            <VenueNo venueNo={state.venueNo || 0} />
           </div>
         </div>
+
+        {/* Team Two Side */}
+        <div
+          className={clsx(
+            'col-span-5 p-[min(4vh,4vw)] h-full overflow-auto rounded-md bg-black flex flex-col gap-[min(2vh,2vw)]',
+          )}
+        >
+          <div className="h-[20%] w-full relative">
+            <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
+          </div>
+
+          <div className={clsx('w-full h-[10%]')}>
+            <Player
+              playerOneName={state.sideTwoPlayerOne.name}
+              playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
+              ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'YELLOW' : null}
+              isActive={isTeamTwoActive}
+              handicap={state.teamTwoHandicap}
+              isTournament={!!state.tournamentId}
+              activePlayerId={state.activePlayerId}
+              playerOneId={state.sideTwoPlayerOne.id}
+              playerTwoId={state.sideTwoPlayerTwo?.id}
+            />
+          </div>
+
+          <div className={clsx('w-full h-[55%]')}>
+            <TeamScore
+              score={teamTwoScore}
+              isActive={isTeamTwoActive}
+              breakScore={activeTurn?.score}
+              isTournament={!!state.tournamentId}
+              big
+            />
+          </div>
+
+          <div
+            className={clsx('w-full h-[15%]', {
+              'flex items-center justify-center': state.sport !== 'SNOOKER',
+            })}
+          >
+            {state.sport === 'SNOOKER' ? (
+              <SnookerPointDisplay
+                turns={activeSet?.turns}
+                players={[state.sideOnePlayerOne, state.sideOnePlayerTwo]}
+              />
+            ) : (
+              <img
+                className={clsx('object-contain aspect-square size-[min(8vh,8vw)]')}
+                src={'/images/white-ball.png'}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="bg-primary text-center text-white font-bold text-[min(4vh,4vw)] border border-white h-[5vh] flex items-center justify-center">
+        {state.tournamentId && state.tournamentSubItem
+          ? `GAME #${state.tournamentSubItem.gameFormat.matchNo} | ${state.tournamentSubItem.gameFormat.name} | ${state.tournamentSubItem.tournamentItem.tournamentPhase.name}`
+          : state.format}
       </div>
     </section>
   );
@@ -192,11 +197,19 @@ function PlayerImage({ profilePhoto }: { profilePhoto?: string | null }) {
   );
 }
 
-// Club Logo Component
-function ClubLogo({ venueNo }: { venueNo: number }) {
+// Venue No Component
+function VenueNo({ venueNo }: { venueNo: number }) {
+  return <span className="text-white font-bold uppercase text-[min(12vh,12vw)]">T{venueNo}</span>;
+}
+
+// Timer Component
+function Timer({ timeLeft }: { timeLeft: number }) {
   return (
-    <div className="flex justify-center items-center bg-black rounded border border-white size-[min(15vh,15vw)]">
-      <span className="text-white font-bold uppercase text-[min(6vh,6vw)]">T{venueNo}</span>
+    <div className="flex flex-col justify-start items-center">
+      <span className="text-center text-white text-[min(3vh,3vw)]">Time Left (mins):</span>
+      <strong className="text-center text-white text-[min(9vh,9vw)] leading-[1]">
+        {formatTime(timeLeft)}
+      </strong>
     </div>
   );
 }
@@ -223,23 +236,59 @@ function SnookerPointDisplay({ turns, players }: { turns?: any[]; players: any[]
 }
 
 // Team Score Component
-function TeamScore({ score, isActive, breakScore, isTournament }: { score: number; isActive: boolean; breakScore?: number; isTournament: boolean }) {
+function TeamScore({
+  score,
+  isActive,
+  breakScore,
+  isTournament,
+  big,
+}: {
+  score: number;
+  isActive: boolean;
+  breakScore?: number;
+  isTournament: boolean;
+  big?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-[min(1vh,1vw)] overflow-auto h-full justify-start items-center col-span-1">
-      <span className={clsx("text-white font-bold leading-none", {
-        "text-[min(25vh,25vw)]": isTournament,
-        "text-[min(20vh,20vw)]": !isTournament
-      })}>{score}</span>
-      {isActive && <span className={clsx("text-yellow-500 font-bold", {
-        "text-[min(6vh,6vw)]": isTournament,
-        "text-[min(5vh,5vw)]": !isTournament
-      })}>BREAK {breakScore}</span>}
+      <div
+        className={clsx('rounded-lg flex items-center justify-center border-4', {
+          // Active: yellow/orange gradient box
+          'bg-gradient-to-b from-yellow-400 to-orange-500 border-yellow-300 shadow-lg': isActive,
+          // Not active: white/gray box
+          'bg-gradient-to-b from-gray-100 to-gray-300 border-gray-300': !isActive,
+          'w-[min(32vh,32vw)] h-[min(22vh,22vw)]': big,
+          'w-[min(25vh,25vw)] h-[min(16vh,16vw)]': !big && isTournament,
+          'w-[min(20vh,20vw)] h-[min(14vh,14vw)]': !big && !isTournament,
+        })}
+      >
+        <span
+          className={clsx('font-bold leading-none text-black', {
+            'text-[min(20vh,20vw)]': big,
+            'text-[min(15vh,15vw)]': !big && isTournament,
+            'text-[min(12vh,12vw)]': !big && !isTournament,
+          })}
+        >
+          {score}
+        </span>
+      </div>
+      {isActive && (
+        <span
+          className={clsx('text-yellow-400 font-bold', {
+            'text-[min(8vh,8vw)]': big,
+            'text-[min(6vh,6vw)]': !big && isTournament,
+            'text-[min(5vh,5vw)]': !big && !isTournament,
+          })}
+        >
+          BREAK {breakScore}
+        </span>
+      )}
     </div>
   );
 }
 
 // Player Score Component
-function PlayerScore({
+function TournamentScore({
   teamOneScore,
   teamTwoScore,
   noOfFrames,
@@ -249,8 +298,9 @@ function PlayerScore({
   noOfFrames?: number;
 }) {
   return (
-    <div className="flex justify-center items-center p-[min(1.5vh,1.5vw)]">
-      <span className="text-white font-bold text-[min(10vh,10vw)] leading-none whitespace-nowrap">
+    <div className="flex flex-col items-center justify-center gap-2 h-full">
+      <span className="text-white font-bold text-[min(3.5vh,3.5vw)]">TEAM SCORE</span>
+      <span className="text-white font-bold text-[min(7vh,7vw)]">
         {teamOneScore} {noOfFrames ? `(${noOfFrames})` : ''} {teamTwoScore}
       </span>
     </div>
@@ -264,6 +314,9 @@ function Player({
   isActive,
   handicap,
   isTournament,
+  activePlayerId,
+  playerOneId,
+  playerTwoId,
 }: {
   playerOneName: string;
   playerTwoName?: string;
@@ -271,7 +324,13 @@ function Player({
   isActive: boolean;
   handicap?: number | null;
   isTournament: boolean;
+  activePlayerId?: string | null;
+  playerOneId?: string | null;
+  playerTwoId?: string | null;
 }) {
+  const isPlayerOneActive = activePlayerId && playerOneId && activePlayerId === playerOneId;
+  const isPlayerTwoActive = activePlayerId && playerTwoId && activePlayerId === playerTwoId;
+
   return (
     <div
       className={clsx(
@@ -280,24 +339,52 @@ function Player({
           'text-yellow-500': isActive,
           'text-white': !isActive,
           'text-[min(5vh,5vw)]': isTournament,
-          'text-[min(4vh,4vw)]': !isTournament
+          'text-[min(4vh,4vw)]': !isTournament,
         },
       )}
     >
-      {ballToShow === 'YELLOW' && (
-        <img className={clsx("object-contain aspect-square", {
-          "size-[min(4.5vh,4.5vw)]": isTournament,
-          "size-[min(3.5vh,3.5vw)]": !isTournament
-        })} src={'/images/yellow-ball.png'} />
-      )}
-      {truncateText(generatePlayerName(playerOneName, playerTwoName))}
+      {/* {ballToShow === 'YELLOW' && (
+        <img
+          className={clsx('object-contain aspect-square', {
+            'size-[min(4.5vh,4.5vw)]': isTournament,
+            'size-[min(3.5vh,3.5vw)]': !isTournament,
+          })}
+          src={'/images/yellow-ball.png'}
+        />
+      )} */}
+      <div className="flex flex-col items-center">
+        <span className={clsx({ 'text-yellow-500': isPlayerOneActive })}>{truncateText(playerOneName)}</span>
+        {playerTwoName && (
+          <span className={clsx({ 'text-yellow-500': isPlayerTwoActive })}>{truncateText(playerTwoName)}</span>
+        )}
+      </div>
       {handicap && <span>({convertHandicapToString(handicap)})</span>}
-      {ballToShow === 'WHITE' && (
-        <img className={clsx("object-contain aspect-square", {
-          "size-[min(4.5vh,4.5vw)]": isTournament,
-          "size-[min(3.5vh,3.5vw)]": !isTournament
-        })} src={'/images/white-ball.png'} />
-      )}
+      {/* {ballToShow === 'WHITE' && (
+        <img
+          className={clsx('object-contain aspect-square', {
+            'size-[min(4.5vh,4.5vw)]': isTournament,
+            'size-[min(3.5vh,3.5vw)]': !isTournament,
+          })}
+          src={'/images/white-ball.png'}
+        />
+      )} */}
+    </div>
+  );
+}
+
+interface GameScoreProps {
+  teamOneScore: number;
+  teamTwoScore: number;
+  noOfFrames?: number;
+}
+
+function GameScore({ teamOneScore, teamTwoScore, noOfFrames }: GameScoreProps) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-2 h-full">
+      <span className="text-white font-bold text-[min(3.5vh,3.5vw)]">GAME SCORE</span>
+      <span className="text-white font-bold text-[min(7vh,7vw)]">
+        {teamOneScore} {noOfFrames ? `(${noOfFrames})` : ''} {teamTwoScore}
+      </span>
     </div>
   );
 }

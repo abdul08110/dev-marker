@@ -37,6 +37,7 @@ export interface ScoreBoardState {
   clubLogo: string | null;
   format: string | null;
   venueNo: number | null;
+  tournamentName: string | null;
   clubName: string | null;
   tournamentSubItem?: TournamentSubItem & {
     tournamentItem: TournamentItem;
@@ -169,6 +170,7 @@ const useScoreboardRender = () => {
             clubName: res.club?.name ? res.club.name : null,
             tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
             tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
+            tournamentName: res.tournament ? res.tournament.name : null,
           });
         } else {
           toast({
