@@ -21,6 +21,7 @@ import { NewEca } from './templates/Eca-new';
 import { CatholicAprilTemplate } from './templates/CatholicApril';
 import { CenturyTemplate } from './templates/Century';
 import { NewEcaTemplate } from './templates/NewEca';
+import { CatholicJune } from './templates/CatholicJune';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -282,6 +283,14 @@ export function StreamContainer(props: StreamContainerProps) {
                     ),
                     '681631fef773a447a1e34254': (
                       <NewEcaTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
+                    ),
+                    '68496e3c945ee0fb4985fca4': (
+                      <CatholicJune
                         isTv={props.isTv}
                         state={props.state}
                         activeTurn={activeTurn}

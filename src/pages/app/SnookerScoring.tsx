@@ -1,4 +1,4 @@
-import { MarkerNavigation } from '@/components/sections/scoring/markerNavigation';
+import * as React from 'react';
 import { PlayerTeamManager } from '@/components/sections/scoring/playerTeamManager';
 import { ScoringHeader } from '@/components/sections/scoring/scoringHeader';
 import { SnookerScoringButtons } from '@/components/sections/scoring/snookerScoringButtons';
@@ -10,10 +10,6 @@ import {
   getActivePlayer,
   getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex,
 } from '@/stores/selectors/commonSport';
-import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
-import { TextHeader } from '@/components/sections/scoring/textHeader';
-import { Statistics } from '@/components/sections/scoring/statistics';
-import { Breaks } from '@/components/sections/scoring/breaks';
 import { EndGameModal } from '@/components/modals/endGameModal';
 import { SelectPlayerDrawer } from '@/components/modals/selectPlayerDrawer';
 import useSnookerScoring from '@/hooks/useSnookerScoring';
@@ -26,6 +22,16 @@ import { getNumberOfRedsFromFormat } from '@/stores/selectors/snookerSelector';
 import { SnookerScoreConcedeFrameDrawer } from '@/components/modals/snookerConcedeFrameDrawer';
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
 import { TimerContinueModal } from '@/components/modals/timerContinueModal';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export function SnookerScoring() {
   const {
@@ -48,9 +54,6 @@ export function SnookerScoring() {
     team1score,
     team2score,
     activeTurnPointScore,
-    posnScores,
-    team1HighestTurnScores,
-    team2HighestTurnScores,
     snookerButtonDisabledState,
     numberOfRedsOnTable,
     handleTeamClick,
@@ -87,6 +90,9 @@ export function SnookerScoring() {
     handleTimerButtonAction,
   } = useSnookerScoring();
 
+  const [showEndFrameAlert, setShowEndFrameAlert] = React.useState(false);
+  const [showEndGameAlert, setShowEndGameAlert] = React.useState(false);
+
   // PARENT UI
   return (
     <section>
@@ -100,140 +106,158 @@ export function SnookerScoring() {
             closeModal={() => setShowEndGameModal(false)}
           />
           <ScoreUpdateLoadingModal isModalOpen={showLoadingModal} />
-          <Tabs defaultValue="scoring" className="flex flex-col justify-start h-screen overflow-y-scroll">
-            <TabsContent value="scoring" className="flex-grow mt-0">
-              <div className="flex flex-col gap-4 h-full">
-                <ScoringHeader
-                  onBackClick={handleBackClick}
-                  onMenuClick={() => setShowMenuDrawer(true)}
-                  onSettingsClick={handleSettingsClick}
-                  showMenu={getActiveSet(snookerScoring.scoreHistory) !== undefined || snookerScoring.matchId !== null}
-                  showUndo={snookerScoring.matchId !== null}
-                  onUndoClick={() => handleUndoButtonClick()}
-                />
-                <OnlineOfflineIndicator isOnline={isOnline} />
-                <TimeManager timeLeft={timeLeft} size={'small'} />
-                <PlayerTeamManager
-                  onPlayerButtonClick={handlePlayerSelect}
-                  activeTurnScore={activeTurnPointScore}
-                  activeTurnPointTypes={teamActiveSetPoints}
-                  team1SetScore={team1score}
-                  team2SetScore={team2score}
-                  onTeamClick={handleTeamClick}
-                  team1={snookerScoring.team1}
-                  team2={snookerScoring.team2}
-                  matchId={snookerScoring.matchId}
-                  showBilliardsButtons={false}
-                />
-                <SnookerFramesSummary team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
-                {/* <MaxScore numberAhead={snookerScoring.numberAhead!} numberOn={snookerScoring.numberOn!} /> */}
-                <SnookerScoringButtons
-                  isLongEnabled={isLongActive}
-                  onLongClick={() => setIsLongActive(!isLongActive)}
-                  isBreakOff={!getActiveSet(snookerScoring.scoreHistory)}
-                  disabledState={snookerButtonDisabledState}
-                  onButtonClick={handleScoringButtonClick}
-                />
-                <SnookerFoulDrawer
-                  foulByPlayerName={getActivePlayer(snookerScoring.team1, snookerScoring.team2)}
-                  redsOnTable={numberOfRedsOnTable}
-                  onSubmit={handleFoulUpdate}
-                  open={openFoulDrawer}
-                  setOpen={setOpenFoulDrawer}
-                />
-                <SnookerPracticeSettingsDrawer
-                  onSubmit={handleSettingsUpdate}
-                  open={openSettingsDrawer}
-                  setOpen={setOpenSettingsDrawer}
-                />
-                <SelectPlayerDrawer
-                  onSubmit={handlePlayerConfirm}
-                  setOpen={setOpenPlayerSelectCard}
-                  open={openPlayerSelectCard}
-                  playerIndex={selectedPlayerIndex}
-                  noOfPlayersPerTeam={snookerScoring.team1.players.length === 1 ? 1 : 2}
-                  teamIndex={selectedTeamIndex}
-                  clubId={clubs.activeClub ? clubs.activeClub.clubId : ''}
-                  disabledPlayerList={getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex(
-                    snookerScoring.team1,
-                    snookerScoring.team2,
-                    selectedTeamIndex,
-                    selectedPlayerIndex,
-                  )}
-                  showCancel={
-                    snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id !== null
-                  }
-                  showBack={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id === null}
-                  onBack={() => onBackInPlayerSelectModal()}
-                />
-                <PlayerOrderSelectModal
-                  isModalOpen={showPlayerOrderModal}
-                  activeTeamIndex={getActiveTeam(snookerScoring.team1, snookerScoring.team2)}
-                  onOrderConfirm={handlePlayerOrderSelect}
-                  teamOnePlayers={snookerScoring.team1.players}
-                  teamTwoPlayers={snookerScoring.team2.players}
-                  closeModal={() => setShowPlayerOrderModal(false)}
-                />
-                <SnookerMenuDrawer
-                  setOpen={(value) => setShowMenuDrawer(value)}
-                  open={showMenuDrawer}
-                  showCorrection={getActiveSet(snookerScoring.scoreHistory) !== undefined}
-                  showConcedeFrame={getActiveSet(snookerScoring.scoreHistory) !== undefined}
-                  showRerack={getActiveSet(snookerScoring.scoreHistory) !== undefined}
-                  showEndFrame={true}
-                  showEndGame={true}
-                  onConcedeFrame={() => setShowConcedeFrameDrawer(true)}
-                  onEndGame={handleEndGame}
-                  onRerack={handleRerack}
-                  onCorrection={() => setShowCorrectionDrawer(true)}
-                  onEndFrame={handleEndFrameButton}
-                />
-                <SnookerScoreCorrectionDrawer
-                  setOpen={(value) => setShowCorrectionDrawer(value)}
-                  open={showCorrectionDrawer}
-                  onSubmit={handleCorrection}
-                  redsOnTable={numberOfRedsOnTable}
-                  teamOneScore={team1score}
-                  teamTwoScore={team2score}
-                  teamOne={snookerScoring.team1.players}
-                  teamTwo={snookerScoring.team2.players}
-                  maxReds={getNumberOfRedsFromFormat(snookerScoring.format)}
-                />
-                <SnookerScoreConcedeFrameDrawer
-                  setOpen={(value) => setShowConcedeFrameDrawer(value)}
-                  open={showConcedeFrameDrawer}
-                  onSubmit={handleConcedeFrameSelection}
-                  teamOne={snookerScoring.team1.players}
-                  teamTwo={snookerScoring.team2.players}
-                />
-                <TimerContinueModal
-                  isModalOpen={showTimerModal}
-                  onCancel={() => handleTimerButtonAction('CANCEL')}
-                  onContinue={() => handleTimerButtonAction('CONFIRM')}
-                />
+          <div className="flex flex-col justify-start h-screen overflow-y-scroll">
+            <div className="flex flex-col gap-4 h-full">
+              <ScoringHeader
+                onBackClick={handleBackClick}
+                onMenuClick={() => setShowMenuDrawer(true)}
+                onSettingsClick={handleSettingsClick}
+                showMenu={getActiveSet(snookerScoring.scoreHistory) !== undefined || snookerScoring.matchId !== null}
+                showUndo={snookerScoring.matchId !== null}
+                onUndoClick={() => handleUndoButtonClick()}
+              />
+              <OnlineOfflineIndicator isOnline={isOnline} />
+              <TimeManager timeLeft={timeLeft} size={'small'} />
+              <PlayerTeamManager
+                onPlayerButtonClick={handlePlayerSelect}
+                activeTurnScore={activeTurnPointScore}
+                activeTurnPointTypes={teamActiveSetPoints}
+                team1SetScore={team1score}
+                team2SetScore={team2score}
+                onTeamClick={handleTeamClick}
+                team1={snookerScoring.team1}
+                team2={snookerScoring.team2}
+                matchId={snookerScoring.matchId}
+                showBilliardsButtons={false}
+              />
+              <SnookerFramesSummary team1Score={snookerScoring.team1Score} team2Score={snookerScoring.team2Score} />
+              {/* <MaxScore numberAhead={snookerScoring.numberAhead!} numberOn={snookerScoring.numberOn!} /> */}
+              <SnookerScoringButtons
+                isLongEnabled={isLongActive}
+                onLongClick={() => setIsLongActive(!isLongActive)}
+                isBreakOff={!getActiveSet(snookerScoring.scoreHistory)}
+                disabledState={snookerButtonDisabledState}
+                onButtonClick={handleScoringButtonClick}
+              />
+              <SnookerFoulDrawer
+                foulByPlayerName={getActivePlayer(snookerScoring.team1, snookerScoring.team2)}
+                redsOnTable={numberOfRedsOnTable}
+                onSubmit={handleFoulUpdate}
+                open={openFoulDrawer}
+                setOpen={setOpenFoulDrawer}
+              />
+              <SnookerPracticeSettingsDrawer
+                onSubmit={handleSettingsUpdate}
+                open={openSettingsDrawer}
+                setOpen={setOpenSettingsDrawer}
+              />
+              <SelectPlayerDrawer
+                onSubmit={handlePlayerConfirm}
+                setOpen={setOpenPlayerSelectCard}
+                open={openPlayerSelectCard}
+                playerIndex={selectedPlayerIndex}
+                noOfPlayersPerTeam={snookerScoring.team1.players.length === 1 ? 1 : 2}
+                teamIndex={selectedTeamIndex}
+                clubId={clubs.activeClub ? clubs.activeClub.clubId : ''}
+                disabledPlayerList={getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex(
+                  snookerScoring.team1,
+                  snookerScoring.team2,
+                  selectedTeamIndex,
+                  selectedPlayerIndex,
+                )}
+                showCancel={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id !== null}
+                showBack={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id === null}
+                onBack={() => onBackInPlayerSelectModal()}
+              />
+              <PlayerOrderSelectModal
+                isModalOpen={showPlayerOrderModal}
+                activeTeamIndex={getActiveTeam(snookerScoring.team1, snookerScoring.team2)}
+                onOrderConfirm={handlePlayerOrderSelect}
+                teamOnePlayers={snookerScoring.team1.players}
+                teamTwoPlayers={snookerScoring.team2.players}
+                closeModal={() => setShowPlayerOrderModal(false)}
+              />
+              <SnookerMenuDrawer
+                setOpen={(value) => setShowMenuDrawer(value)}
+                open={showMenuDrawer}
+                showCorrection={getActiveSet(snookerScoring.scoreHistory) !== undefined}
+                showConcedeFrame={getActiveSet(snookerScoring.scoreHistory) !== undefined}
+                showRerack={getActiveSet(snookerScoring.scoreHistory) !== undefined}
+                showEndFrame={true}
+                showEndGame={true}
+                onConcedeFrame={() => setShowConcedeFrameDrawer(true)}
+                onEndGame={handleEndGame}
+                onRerack={handleRerack}
+                onCorrection={() => setShowCorrectionDrawer(true)}
+                onEndFrame={handleEndFrameButton}
+              />
+              <SnookerScoreCorrectionDrawer
+                setOpen={(value) => setShowCorrectionDrawer(value)}
+                open={showCorrectionDrawer}
+                onSubmit={handleCorrection}
+                redsOnTable={numberOfRedsOnTable}
+                teamOneScore={team1score}
+                teamTwoScore={team2score}
+                teamOne={snookerScoring.team1.players}
+                teamTwo={snookerScoring.team2.players}
+                maxReds={getNumberOfRedsFromFormat(snookerScoring.format)}
+              />
+              <SnookerScoreConcedeFrameDrawer
+                setOpen={(value) => setShowConcedeFrameDrawer(value)}
+                open={showConcedeFrameDrawer}
+                onSubmit={handleConcedeFrameSelection}
+                teamOne={snookerScoring.team1.players}
+                teamTwo={snookerScoring.team2.players}
+              />
+              <TimerContinueModal
+                isModalOpen={showTimerModal}
+                onCancel={() => handleTimerButtonAction('CANCEL')}
+                onContinue={() => handleTimerButtonAction('CONFIRM')}
+              />
+              <div className="flex gap-4 mt-4 mb-4 px-4">
+                <Button
+                  onClick={() => setShowEndFrameAlert(true)}
+                  variant="secondary"
+                  className="flex-1"
+                  disabled={getActiveSet(snookerScoring.scoreHistory) === undefined}
+                >
+                  End Frame
+                </Button>
+                <Button
+                  onClick={() => setShowEndGameAlert(true)}
+                  variant="destructive"
+                  className="flex-1"
+                  disabled={getActiveSet(snookerScoring.scoreHistory) === undefined}
+                >
+                  End Match
+                </Button>
               </div>
-            </TabsContent>
-            <TabsContent value="stats" className="mt-0">
-              <div className="flex flex-col gap-6 h-full">
-                <TextHeader name="STATISTICS" />
-                <Statistics
-                  teamOnePOSN={posnScores.team1POSN}
-                  teamTwoPOSM={posnScores.team2POSN}
-                  teamOneAverage={`${posnScores.team1PottedBalls}/${posnScores.team1TotalBallsPlayed}`}
-                  teamTwoAverage={`${posnScores.team2PottedBalls}/${posnScores.team2TotalBallsPlayed}`}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="breaks" className="mt-0">
-              <div className="flex flex-col gap-6 h-full">
-                <TextHeader name="BREAKS" />
-                <Breaks team1Breaks={team1HighestTurnScores} team2Breaks={team2HighestTurnScores} />
-              </div>
-            </TabsContent>
-            <TabsList className="h-auto bg-transparent mt-auto">
-              <MarkerNavigation />
-            </TabsList>
-          </Tabs>
+            </div>
+          </div>
+
+          <AlertDialog open={showEndFrameAlert} onOpenChange={setShowEndFrameAlert}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">Do you want to end this Frame?</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleEndFrameButton}>Confirm</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog open={showEndGameAlert} onOpenChange={setShowEndGameAlert}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">Do you want to end this Match?</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleEndGame}>Confirm</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </section>
       )}
     </section>

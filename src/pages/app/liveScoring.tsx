@@ -1,6 +1,7 @@
 import { TopOverlay } from '@/components/sections/stream/overlays/TopOverlay';
 import { BBSLTemplate } from '@/components/sections/stream/templates/BBSL';
 import { CatholicTemplate } from '@/components/sections/stream/templates/Catholic';
+import { CatholicJune } from '@/components/sections/stream/templates/CatholicJune';
 import { CenturyTemplate } from '@/components/sections/stream/templates/Century';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { GeneralTemplate } from '@/components/sections/stream/templates/General';
@@ -97,6 +98,14 @@ export function LiveScoring() {
           ),
           '681631fef773a447a1e34254': (
             <NewEcaTemplate
+              isTv={false}
+              state={streamingData}
+              activeTurn={activeTurn}
+              activeSet={activeSet}
+            />
+          ),
+          '68496e3c945ee0fb4985fca4': (
+            <CatholicJune
               isTv={false}
               state={streamingData}
               activeTurn={activeTurn}
