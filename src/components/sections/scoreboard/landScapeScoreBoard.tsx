@@ -1,8 +1,6 @@
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { convertHandicapToString, formatTime, truncateText } from '@/utils/functions';
-import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
-import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import clsx from 'clsx';
 
 interface LandscapeScoreBoardProps {
@@ -37,11 +35,11 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             'col-span-5 p-[min(4vh,4vw)] h-full overflow-auto rounded-md bg-black flex flex-col gap-[min(2vh,2vw)]',
           )}
         >
-          <div className="h-[20%] w-full relative">
+          <div className="h-[30%] w-full relative">
             <PlayerImage profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto} />
           </div>
 
-          <div className={clsx('w-full h-[10%]')}>
+          <div className={clsx('w-full h-[15%]')}>
             <Player
               playerOneName={state.sideOnePlayerOne.name}
               playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
@@ -65,7 +63,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             />
           </div>
 
-          <div
+          {/* <div
             className={clsx('w-full h-[15%]', {
               'flex items-center justify-center': state.sport !== 'SNOOKER',
             })}
@@ -81,7 +79,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
                 src={'/images/yellow-ball.png'}
               />
             )}
-          </div>
+          </div> */}
         </div>
 
         <div className="col-span-2 h-full border-l border-r border-white">
@@ -129,11 +127,11 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             'col-span-5 p-[min(4vh,4vw)] h-full overflow-auto rounded-md bg-black flex flex-col gap-[min(2vh,2vw)]',
           )}
         >
-          <div className="h-[20%] w-full relative">
+          <div className="h-[30%] w-full relative">
             <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
           </div>
 
-          <div className={clsx('w-full h-[10%]')}>
+          <div className={clsx('w-full h-[15%]')}>
             <Player
               playerOneName={state.sideTwoPlayerOne.name}
               playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
@@ -157,7 +155,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             />
           </div>
 
-          <div
+          {/* <div
             className={clsx('w-full h-[15%]', {
               'flex items-center justify-center': state.sport !== 'SNOOKER',
             })}
@@ -173,7 +171,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
                 src={'/images/white-ball.png'}
               />
             )}
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="bg-primary text-center text-white font-bold text-[min(4vh,4vw)] border border-white h-[5vh] flex items-center justify-center">
@@ -215,32 +213,31 @@ function Timer({ timeLeft }: { timeLeft: number }) {
 }
 
 // Snooker Point Display Component
-function SnookerPointDisplay({ turns, players }: { turns?: any[]; players: any[] }) {
-  const activeTurnPointTypes = getSnookerPointTypesByTurns(
-    turns?.filter((value) => players.some((player) => player && value.turnPlayerId === player.id)) || [],
-  );
+// function SnookerPointDisplay({ turns, players }: { turns?: any[]; players: any[] }) {
+//   const activeTurnPointTypes = getSnookerPointTypesByTurns(
+//     turns?.filter((value) => players.some((player) => player && value.turnPlayerId === player.id)) || [],
+//   );
 
-  return (
-    <div className="flex justify-center items-start h-full">
-      <div className="w-full h-full">
-        <SnookerPointTypeDisplay
-          class={'360p:gap-[0.125rem] 480p:gap-1 720p:gap-1 1080p:gap-2 2k:gap-3 4k:gap-4'}
-          className={
-            ' 360p:text-[0.4rem] 360p:size-3  480p:text-[0.5rem] 720p:text-[1rem] 1080p:text-[1.3rem] 480p:h-3 480p:w-3  720p:h-5 720p:w-5 1080p:h-8 1080p:w-8 2k:h-10 2k:w-10 2k:text-[1.5rem] 4k:h-16 4k:w-16 4k:text-[2.2rem] flex justify-center'
-          }
-          activeTurnPointTypes={activeTurnPointTypes}
-        />
-      </div>
-    </div>
-  );
-}
+//   return (
+//     <div className="flex justify-center items-start h-full">
+//       <div className="w-full h-full">
+//         <SnookerPointTypeDisplay
+//           class={'360p:gap-[0.125rem] 480p:gap-1 720p:gap-1 1080p:gap-2 2k:gap-3 4k:gap-4'}
+//           className={
+//             ' 360p:text-[0.4rem] 360p:size-3  480p:text-[0.5rem] 720p:text-[1rem] 1080p:text-[1.3rem] 480p:h-3 480p:w-3  720p:h-5 720p:w-5 1080p:h-8 1080p:w-8 2k:h-10 2k:w-10 2k:text-[1.5rem] 4k:h-16 4k:w-16 4k:text-[2.2rem] flex justify-center'
+//           }
+//           activeTurnPointTypes={activeTurnPointTypes}
+//         />
+//       </div>
+//     </div>
+//   );
+// }
 
 // Team Score Component
 function TeamScore({
   score,
   isActive,
   breakScore,
-  isTournament,
   big,
 }: {
   score: number;
@@ -258,15 +255,13 @@ function TeamScore({
           // Not active: white/gray box
           'bg-gradient-to-b from-gray-100 to-gray-300 border-gray-300': !isActive,
           'w-[min(32vh,32vw)] h-[min(22vh,22vw)]': big,
-          'w-[min(25vh,25vw)] h-[min(16vh,16vw)]': !big && isTournament,
-          'w-[min(20vh,20vw)] h-[min(14vh,14vw)]': !big && !isTournament,
+          'w-[min(25vh,25vw)] h-[min(16vh,16vw)]': !big,
         })}
       >
         <span
           className={clsx('font-bold leading-none text-black', {
             'text-[min(20vh,20vw)]': big,
-            'text-[min(15vh,15vw)]': !big && isTournament,
-            'text-[min(12vh,12vw)]': !big && !isTournament,
+            'text-[min(15vh,15vw)]': !big,
           })}
         >
           {score}
@@ -276,8 +271,7 @@ function TeamScore({
         <span
           className={clsx('text-yellow-400 font-bold', {
             'text-[min(8vh,8vw)]': big,
-            'text-[min(6vh,6vw)]': !big && isTournament,
-            'text-[min(5vh,5vw)]': !big && !isTournament,
+            'text-[min(6vh,6vw)]': !big,
           })}
         >
           BREAK {breakScore}
@@ -310,9 +304,9 @@ function TournamentScore({
 function Player({
   playerOneName,
   playerTwoName,
+  ballToShow,
   isActive,
   handicap,
-  isTournament,
   activePlayerId,
   playerOneId,
   playerTwoId,
@@ -337,20 +331,18 @@ function Player({
         {
           'text-yellow-500': isActive,
           'text-white': !isActive,
-          'text-[min(5vh,5vw)]': isTournament,
-          'text-[min(4vh,4vw)]': !isTournament,
+          'text-[min(6vh,6vw)]': true,
         },
       )}
     >
-      {/* {ballToShow === 'YELLOW' && (
+      {ballToShow === 'YELLOW' && (
         <img
           className={clsx('object-contain aspect-square', {
-            'size-[min(4.5vh,4.5vw)]': isTournament,
-            'size-[min(3.5vh,3.5vw)]': !isTournament,
+            'size-[min(4vh,4vw)]': true,
           })}
           src={'/images/yellow-ball.png'}
         />
-      )} */}
+      )}
       <div className="flex flex-col items-center">
         <span className={clsx({ 'text-yellow-500': isPlayerOneActive })}>{truncateText(playerOneName)}</span>
         {playerTwoName && (
@@ -358,15 +350,14 @@ function Player({
         )}
       </div>
       {handicap && <span>({convertHandicapToString(handicap)})</span>}
-      {/* {ballToShow === 'WHITE' && (
+      {ballToShow === 'WHITE' && (
         <img
           className={clsx('object-contain aspect-square', {
-            'size-[min(4.5vh,4.5vw)]': isTournament,
-            'size-[min(3.5vh,3.5vw)]': !isTournament,
+            'size-[min(4vh,4vw)]': true,
           })}
           src={'/images/white-ball.png'}
         />
-      )} */}
+      )}
     </div>
   );
 }
