@@ -1,6 +1,6 @@
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
-import { convertHandicapToString, formatTime, generatePlayerName, truncateText } from '@/utils/functions';
+import { convertHandicapToString, formatTime, truncateText } from '@/utils/functions';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import clsx from 'clsx';
@@ -310,7 +310,6 @@ function TournamentScore({
 function Player({
   playerOneName,
   playerTwoName,
-  ballToShow,
   isActive,
   handicap,
   isTournament,
