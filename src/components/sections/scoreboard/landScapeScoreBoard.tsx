@@ -331,7 +331,7 @@ function Player({
         {
           'text-yellow-500': isActive,
           'text-white': !isActive,
-          'text-[min(6vh,6vw)]': true,
+          'text-[min(4vh,4vw)]': true,
         },
       )}
     >
