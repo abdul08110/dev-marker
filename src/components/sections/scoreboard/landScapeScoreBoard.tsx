@@ -1,6 +1,6 @@
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
-import { convertHandicapToString, formatTime, truncateText } from '@/utils/functions';
+import { convertHandicapToString, formatTime } from '@/utils/functions';
 import clsx from 'clsx';
 
 interface LandscapeScoreBoardProps {
@@ -36,10 +36,13 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           )}
         >
           <div className="h-[30%] w-full relative">
-            <PlayerImage profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto} />
+            <PlayerImage
+              profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto}
+              profilePhoto2={state.tournamentId ? undefined : state.sideOnePlayerTwo?.profilePhoto}
+            />
           </div>
 
-          <div className={clsx('w-full h-[15%]')}>
+          <div className={clsx('w-full h-[35%]')}>
             <Player
               playerOneName={state.sideOnePlayerOne.name}
               playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
@@ -50,10 +53,11 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
               activePlayerId={state.activePlayerId}
               playerOneId={state.sideOnePlayerOne.id}
               playerTwoId={state.sideOnePlayerTwo?.id}
+              isDoubles={!!state.sideOnePlayerTwo}
             />
           </div>
 
-          <div className={clsx('w-full h-[55%]')}>
+          <div className={clsx('w-full h-[35%]')}>
             <TeamScore
               score={teamOneScore}
               isActive={isTeamOneActive}
@@ -128,24 +132,28 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           )}
         >
           <div className="h-[30%] w-full relative">
-            <PlayerImage profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto} />
+            <PlayerImage
+              profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto}
+              profilePhoto2={state.tournamentId ? undefined : state.sideTwoPlayerTwo?.profilePhoto}
+            />
           </div>
 
-          <div className={clsx('w-full h-[15%]')}>
+          <div className={clsx('w-full h-[35%]')}>
             <Player
               playerOneName={state.sideTwoPlayerOne.name}
               playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
-              ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'YELLOW' : null}
+              ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'WHITE' : null}
               isActive={isTeamTwoActive}
               handicap={state.teamTwoHandicap}
               isTournament={!!state.tournamentId}
               activePlayerId={state.activePlayerId}
               playerOneId={state.sideTwoPlayerOne.id}
               playerTwoId={state.sideTwoPlayerTwo?.id}
+              isDoubles={!!state.sideTwoPlayerTwo}
             />
           </div>
 
-          <div className={clsx('w-full h-[55%]')}>
+          <div className={clsx('w-full h-[35%]')}>
             <TeamScore
               score={teamTwoScore}
               isActive={isTeamTwoActive}
@@ -184,7 +192,25 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
 }
 
 // Player Image Component
-function PlayerImage({ profilePhoto }: { profilePhoto?: string | null }) {
+function PlayerImage({ profilePhoto, profilePhoto2 }: { profilePhoto?: string | null; profilePhoto2?: string | null }) {
+  // If doubles (profilePhoto2 is defined), always show two images
+  if (typeof profilePhoto2 !== 'undefined') {
+    return (
+      <div className="flex justify-center items-center h-full w-full relative">
+        <img
+          className="rounded-full overflow-hidden h-[90%] w-auto aspect-square object-cover border-4 border-purple-500 z-10 absolute left-1/4"
+          src={profilePhoto ? profilePhoto : '/images/user-dummy-pic.jpg'}
+          style={{ zIndex: 2 }}
+        />
+        <img
+          className="rounded-full overflow-hidden h-[90%] w-auto aspect-square object-cover border-4 border-purple-500 z-0 absolute right-1/4"
+          src={profilePhoto2 ? profilePhoto2 : '/images/user-dummy-pic.jpg'}
+          style={{ zIndex: 1 }}
+        />
+      </div>
+    );
+  }
+  // Singles: Only one photo
   return (
     <div className="flex justify-center items-center h-full w-full">
       <img
@@ -254,13 +280,13 @@ function TeamScore({
           'bg-gradient-to-b from-yellow-400 to-orange-500 border-yellow-300 shadow-lg': isActive,
           // Not active: white/gray box
           'bg-gradient-to-b from-gray-100 to-gray-300 border-gray-300': !isActive,
-          'w-[min(32vh,32vw)] h-[min(22vh,22vw)]': big,
+          'w-[min(28vh,28vw)] h-[min(18vh,18vw)]': big,
           'w-[min(25vh,25vw)] h-[min(16vh,16vw)]': !big,
         })}
       >
         <span
           className={clsx('font-bold leading-none text-black', {
-            'text-[min(20vh,20vw)]': big,
+            'text-[min(16vh,16vw)]': big,
             'text-[min(15vh,15vw)]': !big,
           })}
         >
@@ -270,8 +296,7 @@ function TeamScore({
       {isActive && (
         <span
           className={clsx('text-yellow-400 font-bold', {
-            'text-[min(8vh,8vw)]': big,
-            'text-[min(6vh,6vw)]': !big,
+            'text-[min(6vh,6vw)]': true,
           })}
         >
           BREAK {breakScore}
@@ -301,6 +326,16 @@ function TournamentScore({
   );
 }
 
+// Helper for name truncation logic
+function getDisplayName(name: string): string {
+  if (!name) return '';
+  if (name.length > 15) {
+    // Show only first word
+    return name.split(' ')[0];
+  }
+  return name;
+}
+
 function Player({
   playerOneName,
   playerTwoName,
@@ -310,6 +345,8 @@ function Player({
   activePlayerId,
   playerOneId,
   playerTwoId,
+  isDoubles,
+  isTournament,
 }: {
   playerOneName: string;
   playerTwoName?: string;
@@ -320,10 +357,11 @@ function Player({
   activePlayerId?: string | null;
   playerOneId?: string | null;
   playerTwoId?: string | null;
+  isDoubles?: boolean;
 }) {
   const isPlayerOneActive = activePlayerId && playerOneId && activePlayerId === playerOneId;
   const isPlayerTwoActive = activePlayerId && playerTwoId && activePlayerId === playerTwoId;
-
+  const isSingles = !isDoubles;
   return (
     <div
       className={clsx(
@@ -331,7 +369,8 @@ function Player({
         {
           'text-yellow-500': isActive,
           'text-white': !isActive,
-          'text-[min(4vh,4vw)]': true,
+          'text-[min(7vh,7vw)]': isSingles,
+          'text-[min(5vh,5vw)]': !isSingles,
         },
       )}
     >
@@ -343,13 +382,29 @@ function Player({
           src={'/images/yellow-ball.png'}
         />
       )}
-      <div className="flex flex-col items-center">
-        <span className={clsx({ 'text-yellow-500': isPlayerOneActive })}>{truncateText(playerOneName)}</span>
-        {playerTwoName && (
-          <span className={clsx({ 'text-yellow-500': isPlayerTwoActive })}>{truncateText(playerTwoName)}</span>
+      <div className="flex flex-col items-center gap-2">
+        {playerTwoName ? (
+          // Team display - show first word or first word if > 15 chars
+          <>
+            <span className={clsx(isPlayerOneActive ? 'text-yellow-500' : 'text-white')}>
+              {getDisplayName(playerOneName)}
+            </span>
+            <span className={clsx(isPlayerTwoActive ? 'text-yellow-500' : 'text-white')}>
+              {getDisplayName(playerTwoName)}
+            </span>
+          </>
+        ) : (
+          // Singles display
+          <span className={clsx({ 'text-yellow-500': isPlayerOneActive })}>
+            {getDisplayName(playerOneName)}
+          </span>
+        )}
+        {handicap && (
+          <span className="text-[min(5vh,5vw)] mt-2">
+            ({convertHandicapToString(handicap)})
+          </span>
         )}
       </div>
-      {handicap && <span>({convertHandicapToString(handicap)})</span>}
       {ballToShow === 'WHITE' && (
         <img
           className={clsx('object-contain aspect-square', {
