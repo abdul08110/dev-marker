@@ -346,7 +346,6 @@ function Player({
   playerOneId,
   playerTwoId,
   isDoubles,
-  isTournament,
 }: {
   playerOneName: string;
   playerTwoName?: string;
