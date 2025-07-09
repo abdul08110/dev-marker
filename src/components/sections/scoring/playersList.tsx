@@ -3,12 +3,8 @@
 import * as React from 'react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import useGetPlayers from '@/api/app/useGetPlayers';
-import useGetPlayerById from '@/api/app/useGetPlayerById';
 import { Player } from '@/stores/types';
 import useDebounce from '@/hooks/useDebounce';
-import { ScanQrCode } from 'lucide-react';
-import { ScanPlayerQrModal } from '@/components/modals/ScanPlayerQrModal';
-import { toast } from '@/components/ui/use-toast';
 
 interface PlayersListProps {
   clubId: string;
@@ -18,11 +14,8 @@ interface PlayersListProps {
 
 export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: PlayersListProps) {
   const [searchQuery, setSearchQuery] = React.useState<string>('');
-  const [isQrModalOpen, setIsQrModalOpen] = React.useState<boolean>(false);
-  const [isFetchingPlayer, setIsFetchingPlayer] = React.useState<boolean>(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const { getPlayers, players, loading, error } = useGetPlayers();
-  const { getPlayerById, loading: loadingPlayerDetails } = useGetPlayerById();
 
   React.useEffect(() => {
     if (clubId) {
@@ -49,38 +42,8 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
     }
   };
 
-  const handlePlayerFound = async (playerId: string) => {
-    try {
-      setIsFetchingPlayer(true);
-      const playerData = await getPlayerById(playerId);
-      if (playerData && playerData.result) {
-        onPlayerSelect(playerData.result);
-      } else {
-        throw new Error('Failed to fetch player details');
-      }
-    } catch (error) {
-      console.error('Error fetching player details:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch player details. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsFetchingPlayer(false);
-    }
-  };
-
   return (
     <div className="w-full h-full">
-      <div className="flex items-center justify-between w-full mt-2 mb-2">
-        <button
-          onClick={() => setIsQrModalOpen(true)}
-          className="p-2 rounded-full hover:bg-gray-800 transition-colors ml-2"
-          disabled={isFetchingPlayer}
-        >
-          <ScanQrCode className={`h-5 w-5 ${isFetchingPlayer ? 'text-gray-500' : 'text-white'}`} />
-        </button>
-      </div>
       <Command shouldFilter={false} className="w-full bg-transparent text-white">
         <CommandInput
           className="text-white w-full"
@@ -91,8 +54,7 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
         <CommandList className='max-h-full'>
           {loading && <CommandEmpty>Loading players...</CommandEmpty>}
           {error && <CommandEmpty>Error loading players</CommandEmpty>}
-          {isFetchingPlayer && <CommandEmpty>Fetching player details...</CommandEmpty>}
-          {!loading && !error && !isFetchingPlayer && players && players.length === 0 && <CommandEmpty>No player found.</CommandEmpty>}
+          {!loading && !error && players && players.length === 0 && <CommandEmpty>No player found.</CommandEmpty>}
           <CommandGroup>
             {players?.map((player) =>
               disabledPlayerList.includes(player.id) ? null : (
@@ -100,7 +62,6 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
                   key={player.id} 
                   value={player.id!} 
                   onSelect={() => handleSelect(player.id!)}
-                  disabled={isFetchingPlayer}
                 >
                   <div className="flex gap-2 items-center">
                     <img
@@ -118,13 +79,6 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
           </CommandGroup>
         </CommandList>
       </Command>
-
-      <ScanPlayerQrModal
-        isOpen={isQrModalOpen}
-        onCloseModal={() => setIsQrModalOpen(false)}
-        onPlayerFound={handlePlayerFound}
-        isLoading={loadingPlayerDetails || isFetchingPlayer}
-      />
     </div>
   );
 }
