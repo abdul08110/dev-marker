@@ -21,10 +21,19 @@ interface TournamentConfirmationModalProps {
     phoneNumber: string;
     profilePhoto: string | null;
   }>;
+  isSinglesEvent?: boolean;
 }
 
 export function TournamentConfirmationModal(props: TournamentConfirmationModalProps) {
-  if (!props.teamOne || !props.teamTwo || !props.format) return null;
+  if (!props.format) return null;
+  
+  // For singles events, we don't need team objects
+  if (props.isSinglesEvent) {
+    if (!props.teamOnePlayers?.length || !props.teamTwoPlayers?.length) return null;
+  } else {
+    // For teams events, we need team objects
+    if (!props.teamOne || !props.teamTwo) return null;
+  }
 
   return (
     <Dialog open={props.isOpen}>
@@ -37,33 +46,67 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
                 {props.format.name} #Game - {props.format.matchNo}
               </h2>
 
-              {/* Teams Section */}
+              {/* Teams/Players Section */}
               <div className="flex justify-between items-center mb-8">
-                <div className="flex flex-col items-center gap-2">
-                  <img
-                    src={props.teamOne.logo}
-                    alt={props.teamOne.name}
-                    className="h-20 w-20 rounded-full object-cover"
-                  />
-                  <span className="text-white text-base font-bold text-center">{props.teamOne.name}</span>
-                </div>
+                {props.isSinglesEvent ? (
+                  // Singles event - show individual players
+                  <>
+                    <div className="flex flex-col items-center gap-2">
+                      <img
+                        src={props.teamOnePlayers[0]?.profilePhoto || '/images/user-dummy-pic.png'}
+                        alt={props.teamOnePlayers[0]?.name || 'Player One'}
+                        className="h-20 w-20 rounded-full object-cover"
+                      />
+                      <span className="text-white text-base font-bold text-center">
+                        {props.teamOnePlayers[0]?.name || 'Player One'}
+                      </span>
+                    </div>
 
-                <span className="text-white/50 text-2xl">vs</span>
+                    <span className="text-white/50 text-2xl">vs</span>
 
-                <div className="flex flex-col items-center gap-2">
-                  <img
-                    src={props.teamTwo.logo}
-                    alt={props.teamTwo.name}
-                    className="h-20 w-20 rounded-full object-cover"
-                  />
-                  <span className="text-white text-base font-bold text-center">{props.teamTwo.name}</span>
-                </div>
+                    <div className="flex flex-col items-center gap-2">
+                      <img
+                        src={props.teamTwoPlayers[0]?.profilePhoto || '/images/user-dummy-pic.png'}
+                        alt={props.teamTwoPlayers[0]?.name || 'Player Two'}
+                        className="h-20 w-20 rounded-full object-cover"
+                      />
+                      <span className="text-white text-base font-bold text-center">
+                        {props.teamTwoPlayers[0]?.name || 'Player Two'}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  // Teams event - show team logos and names
+                  <>
+                    <div className="flex flex-col items-center gap-2">
+                      <img
+                        src={props.teamOne?.logo}
+                        alt={props.teamOne?.name}
+                        className="h-20 w-20 rounded-full object-cover"
+                      />
+                      <span className="text-white text-base font-bold text-center">{props.teamOne?.name}</span>
+                    </div>
+
+                    <span className="text-white/50 text-2xl">vs</span>
+
+                    <div className="flex flex-col items-center gap-2">
+                      <img
+                        src={props.teamTwo?.logo}
+                        alt={props.teamTwo?.name}
+                        className="h-20 w-20 rounded-full object-cover"
+                      />
+                      <span className="text-white text-base font-bold text-center">{props.teamTwo?.name}</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Players Section */}
               <div className="grid grid-cols-2 gap-8 mb-8">
                 <div>
-                  <h3 className="text-white/70 mb-3 text-xs text-center">Team One Players</h3>
+                  <h3 className="text-white/70 mb-3 text-xs text-center">
+                    {props.isSinglesEvent ? 'Player One' : 'Team One Players'}
+                  </h3>
                   <div className="space-y-2">
                     {props.teamOnePlayers?.map((player) => (
                       player && (
@@ -81,7 +124,9 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
                 </div>
 
                 <div>
-                  <h3 className="text-white/70 mb-3 text-xs text-center">Team Two Players</h3>
+                  <h3 className="text-white/70 mb-3 text-xs text-center">
+                    {props.isSinglesEvent ? 'Player Two' : 'Team Two Players'}
+                  </h3>
                   <div className="space-y-2">
                     {props.teamTwoPlayers?.map((player) => (
                       player && (

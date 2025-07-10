@@ -83,10 +83,10 @@ export const setStateTournament = createAsyncThunk<
       teamOneHandicap?: number;
       teamTwoHandicap?: number;
       format: TournamentFormat;
-      tournamentSubItemId: string;
+      tournamentSubItemId: string | null;
       tournamentId: string;
-      tournamentTeamOneId: string;
-      tournamentTeamTwoId: string;
+      tournamentTeamOneId: string | null;
+      tournamentTeamTwoId: string | null;
       visibility: 'PUBLIC' | 'PRIVATE';
     };
   },
