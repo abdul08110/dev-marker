@@ -44,8 +44,8 @@ export function Singles(props: SinglesProps) {
               )}
             </div>
             <div className="flex-1 bg-[#D5D5D5] h-[min(5vh,5vw)] flex items-center justify-center">
-              <h5 className="text-[min(3vh,3vw)] text-black font-bold uppercase whitespace-nowrap text-center w-full">
-                {props.state?.tournamentName || 'Tournament'} <span className="mx-1 text-black">|</span>{' '}
+              <h5 className="text-[min(3.2vh,3.2vw)] text-black font-[800] uppercase whitespace-nowrap text-center w-full">
+                <span className="font-[800]">{props.state?.tournamentName || 'Tournament'}</span>{' '}<span className="mx-1 text-black">|</span>{' '}
                 {props.state?.format}
               </h5>
             </div>
@@ -64,7 +64,7 @@ export function Singles(props: SinglesProps) {
               )}
             </div>
           </div>
-          <div className="w-full h-1/3 bg-black grid grid-cols-3 items-center px-[min(2vh,2vw)]">
+          <div className="w-full h-1/3 bg-black rounded-md grid grid-cols-3 items-center px-[min(2vh,2vw)]">
             <div className="col-span-1">
               <h5 className="text-[min(3vh,3vw)] text-white font-bold text-left uppercase whitespace-nowrap">
                 {generatePlayerName(props.state!.sideOnePlayerOne.name, props.state!.sideOnePlayerTwo?.name)}
@@ -103,15 +103,15 @@ export function Singles(props: SinglesProps) {
               </h5>
             </div>
           </div>
-          {/* <div className="w-full h-1/3 flex items-center justify-between bg-[#212121]">
+          <div className="w-full h-1/3 flex items-center justify-between bg-[#D5D5D5]">
             <div className="min-w-[45%] px-[min(2vh,2vw)]">
-              <h5 className="text-[min(2.2vh,2.2vw)] text-yellow-400 font-bold text-left uppercase whitespace-nowrap">
-                {props.state?.teamOneName}{' '}
-                <span className="bg-primary text-white px-[min(1vh,1vw)] ml-2">
+              <h5 className="text-[min(2.2vh,2.2vw)] text-[#D5D5D5] font-bold text-left uppercase whitespace-nowrap">
+                &nbsp;
+                {/* <span className="bg-primary text-white px-[min(1vh,1vw)] ml-2">
                   {isTeamReveresed
                     ? props.state.tournamentSubItem?.tournamentItem.teamTwoScore
                     : props.state.tournamentSubItem?.tournamentItem.teamOneScore}
-                </span>
+                </span> */}
               </h5>
             </div>
             <div className="min-w-[10%] flex justify-center">
@@ -123,15 +123,15 @@ export function Singles(props: SinglesProps) {
             </div>
             <div className="min-w-[45%] px-[min(2vh,2vw)]">
               <h5 className="text-[min(2.2vh,2.2vw)] text-yellow-400 font-bold text-right uppercase whitespace-nowrap">
-                <span className="bg-primary text-white px-[min(1vh,1vw)] mr-2">
+                {/* <span className="bg-primary text-white px-[min(1vh,1vw)] mr-2">
                   {isTeamReveresed
                     ? props.state.tournamentSubItem?.tournamentItem.teamOneScore
                     : props.state.tournamentSubItem?.tournamentItem.teamTwoScore}
-                </span>{' '}
+                </span>{' '} */}
                 {props.state?.teamTwoName}
               </h5>
             </div>
-          </div> */}
+          </div>
         </div>
         <div className="h-full flex items-center">
           <div className="h-full w-[min(13vh,13vw)] p-1 rounded-lg overflow-hidden">
