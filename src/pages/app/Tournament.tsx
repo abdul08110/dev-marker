@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAppDispatch } from '@/stores';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { TournamentFormat, TournamentPhase, TournamentTeam } from '@/stores/types';
@@ -60,7 +59,6 @@ export function Tournament() {
   const dispatch = useAppDispatch();
   const { loading, schedule, teamsLoading, teams } = useTournamentSchedule();
   const { getTournamentSubItem } = useGetTournamentSubItem();
-  const clubs = useSelector((state: any) => state.club);
 
   const [selectedPhase, setSelectedPhase] = useState<TournamentPhase | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<TournamentFormat | null>(null);
