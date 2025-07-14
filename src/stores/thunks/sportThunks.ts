@@ -685,7 +685,7 @@ export const handleSettingsStateUpdate = createAsyncThunk<
     await dispatch(updateIsRankingEvent({ isRankingEvent }));
 
     if (isRankingEvent) {
-      await dispatch(setFormatName({ formatName: 'Snooker ranking 2025' }));
+      await dispatch(setFormatName({ formatName: '6 Red Handicap' }));
     }
 
     if (noOfPlayers === '4') {
