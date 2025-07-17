@@ -1,3 +1,4 @@
+import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { convertHandicapToString, formatTime } from '@/utils/functions';
@@ -90,7 +91,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
           <div className="h-1/4 relative flex justify-center items-center">
             <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-white"></div>
 
-            {state.tournamentId === null ? (
+            {state.tournamentId === null || state.tournamentSubItem === null ? (
               <Timer timeLeft={timeLeft} />
             ) : (
               <TournamentScore
@@ -116,7 +117,13 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
             <GameScore
               teamOneScore={state.teamOneScore}
               teamTwoScore={state.teamTwoScore}
-              noOfFrames={state.tournamentId ? state.tournamentSubItem?.gameFormat.noOfSets : state.sets.length}
+              noOfFrames={
+                state.tournamentId
+                  ? state.tournamentSubItem
+                    ? state.tournamentSubItem?.gameFormat.noOfSets
+                    : 5
+                  : state.sets.length
+              }
             />
             <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-white"></div>
           </div>
@@ -197,12 +204,14 @@ function PlayerImage({ profilePhoto, profilePhoto2 }: { profilePhoto?: string | 
   if (typeof profilePhoto2 !== 'undefined') {
     return (
       <div className="flex justify-center items-center h-full w-full relative">
-        <img
+        <ImageWithFallback
           className="rounded-full overflow-hidden h-[90%] w-auto aspect-square object-cover border-4 border-purple-500 z-10 absolute left-1/4"
           src={profilePhoto ? profilePhoto : '/images/user-dummy-pic.jpg'}
+          fallback={'/images/user-dummy-pic.jpg'}
           style={{ zIndex: 2 }}
         />
-        <img
+        <ImageWithFallback
+          fallback={'/images/user-dummy-pic.jpg'}
           className="rounded-full overflow-hidden h-[90%] w-auto aspect-square object-cover border-4 border-purple-500 z-0 absolute right-1/4"
           src={profilePhoto2 ? profilePhoto2 : '/images/user-dummy-pic.jpg'}
           style={{ zIndex: 1 }}
@@ -213,7 +222,8 @@ function PlayerImage({ profilePhoto, profilePhoto2 }: { profilePhoto?: string | 
   // Singles: Only one photo
   return (
     <div className="flex justify-center items-center h-full w-full">
-      <img
+      <ImageWithFallback
+        fallback={'/images/user-dummy-pic.jpg'}
         className="rounded-md overflow-hidden h-full w-auto aspect-square object-cover"
         src={profilePhoto ? profilePhoto : '/images/user-dummy-pic.jpg'}
       />
@@ -231,9 +241,7 @@ function Timer({ timeLeft }: { timeLeft: number }) {
   return (
     <div className="flex flex-col justify-start items-center">
       <span className="text-center text-white text-[min(3vh,3vw)]">Time Left (mins):</span>
-      <strong className="text-center text-white text-[min(9vh,9vw)] leading-[1]">
-        {formatTime(timeLeft)}
-      </strong>
+      <strong className="text-center text-white text-[min(9vh,9vw)] leading-[1]">{formatTime(timeLeft)}</strong>
     </div>
   );
 }
@@ -381,7 +389,7 @@ function Player({
           src={'/images/yellow-ball.png'}
         />
       )}
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 text-center">
         {playerTwoName ? (
           // Team display - show first word or first word if > 15 chars
           <>
@@ -394,15 +402,9 @@ function Player({
           </>
         ) : (
           // Singles display
-          <span className={clsx({ 'text-yellow-500': isPlayerOneActive })}>
-            {getDisplayName(playerOneName)}
-          </span>
+          <span className={clsx({ 'text-yellow-500': isPlayerOneActive })}>{getDisplayName(playerOneName)}</span>
         )}
-        {handicap && (
-          <span className="text-[min(5vh,5vw)] mt-2">
-            ({convertHandicapToString(handicap)})
-          </span>
-        )}
+        {handicap && <span className="text-[min(5vh,5vw)] mt-2">({convertHandicapToString(handicap)})</span>}
       </div>
       {ballToShow === 'WHITE' && (
         <img
