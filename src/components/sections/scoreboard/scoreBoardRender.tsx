@@ -66,7 +66,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
         <></>
       )}
 
-      {props.state.tournamentId === null ? (
+      {props.state.tournamentId === null || props.state.tournamentSubItem === null ? (
         <div
           className={clsx('absolute left-1/2 transform -translate-x-1/2 z-40 flex justify-center items-center', {
             '-rotate-90 -top-14': props.orientation === 'portrait',
@@ -107,6 +107,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           teamTurns={teamOneTurns ? teamOneTurns : null}
           isHandicapApplied={props.state.isTeamOneHandicapApplied}
           tournamentTeamName={props.state.tournamentTeamOneName}
+          tournamentSubItem={props.state.tournamentSubItem ? props.state.tournamentSubItem : null}
         />
         <ScoreBoardTeamCard
           contentfrom={props.orientation === 'portrait' ? 'left' : 'top'}
@@ -124,6 +125,7 @@ export function ScoreboardRender(props: ScoreBoardRenderProps) {
           teamTurns={teamTwoTurns ? teamTwoTurns : null}
           isHandicapApplied={props.state.isTeamTwoHandicapApplied}
           tournamentTeamName={props.state.tournamentTeamTwoName}
+          tournamentSubItem={props.state.tournamentSubItem ? props.state.tournamentSubItem : null}
         />
       </div>
     </div>

@@ -38,7 +38,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         >
           <div className="h-[30%] w-full relative">
             <PlayerImage
-              profilePhoto={state.tournamentId ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto}
+              profilePhoto={state.tournamentId && state.tournamentSubItem !== null ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto}
               profilePhoto2={state.tournamentId ? undefined : state.sideOnePlayerTwo?.profilePhoto}
             />
           </div>
@@ -140,7 +140,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
         >
           <div className="h-[30%] w-full relative">
             <PlayerImage
-              profilePhoto={state.tournamentId ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto}
+              profilePhoto={state.tournamentId && state.tournamentSubItem !== null ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto}
               profilePhoto2={state.tournamentId ? undefined : state.sideTwoPlayerTwo?.profilePhoto}
             />
           </div>

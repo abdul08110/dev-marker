@@ -1,8 +1,8 @@
-import { Player, Turn } from '@/stores/types';
+import { Player, TournamentSubItem, Turn } from '@/stores/types';
 import clsx from 'clsx';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
-import { generatePlayerName, truncateText } from '@/utils/functions';
+import { generatePlayerName, truncateText, convertHandicapToString } from '@/utils/functions';
 
 interface ScoreBoardTeamCardProps {
   playerOne: Player;
@@ -20,6 +20,7 @@ interface ScoreBoardTeamCardProps {
   teamHandicap: number | null;
   teamTurns: Turn[] | null;
   isHandicapApplied?: boolean;
+  tournamentSubItem: TournamentSubItem | null;
 }
 
 export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
@@ -38,7 +39,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
         'pl-4 pr-4': props.contentfrom === 'top',
       })}
     >
-      {props.tournamentId === null ? (
+      {props.tournamentId === null || props.tournamentSubItem === null ? (
         <div
           className={clsx(`flex justify-center items-center gap-2 overflow-auto`, {
             'h-[30%]': props.contentfrom === 'top',
@@ -189,8 +190,8 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
               <span className='leading-[1px]'>
                 {truncateText(generatePlayerName(props.playerOne.name, props.playerTwo?.name))}
               </span>
-              <span className={props.isHandicapApplied === true ? 'line-through' : ''}>
-                {props.teamHandicap ? `${props.teamHandicap}` : ''}
+              <span className={props.isHandicapApplied === true ? 'line-through ml-4' : 'ml-4'}>
+                {props.teamHandicap ? `${convertHandicapToString(props.teamHandicap)}` : ''}
               </span>
             </span>
           </div>
