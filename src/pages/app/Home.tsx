@@ -36,6 +36,7 @@ export function Home() {
   useEffect(() => {
     dispatch(resetStateSnooker());
     dispatch(clearUndoStack());
+  
     const fetchData = async () => {
       const result = await getMarkerClubs();
       if (result) {
