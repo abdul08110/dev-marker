@@ -83,7 +83,7 @@ export function Singles(props: SinglesProps) {
                 </div>
                 <div className="bg-black px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">{props.state.teamOneScore}</div>
                 <div className="bg-primary px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">
-                  5
+                  7
                 </div>
                 <div className="bg-black px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">{props.state.teamTwoScore}</div>
                 <div className="bg-primary px-[min(4vh,4vw)] py-[min(0.4vh,0.4vw)]">
