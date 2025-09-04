@@ -23,6 +23,7 @@ import { CenturyTemplate } from './templates/Century';
 import { NewEcaTemplate } from './templates/NewEca';
 import { CatholicJune } from './templates/CatholicJune';
 import { Singles } from './templates/Singles';
+import { IGTemplate } from './templates/IG';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -308,6 +309,14 @@ export function StreamContainer(props: StreamContainerProps) {
                     ),
                     '6874b2bc4c0c210729491427': (
                       <Singles
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
+                    ),
+                    '68ac0599c8a52eb65477c05f': (
+                      <IGTemplate
                         isTv={props.isTv}
                         state={props.state}
                         activeTurn={activeTurn}

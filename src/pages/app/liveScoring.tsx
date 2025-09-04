@@ -8,6 +8,7 @@ import { GeneralTemplate } from '@/components/sections/stream/templates/General'
 import { NewEcaTemplate } from '@/components/sections/stream/templates/NewEca';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
 import { Singles } from '@/components/sections/stream/templates/Singles';
+import { IGTemplate } from '@/components/sections/stream/templates/IG';
 import useLiveScoring from '@/hooks/useLiveScoring';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { useEffect, useState } from 'react';
@@ -127,6 +128,14 @@ export function LiveScoring() {
             state={streamingData}
             activeTurn={activeTurn}
             activeSet={activeSet}
+            />
+          ),
+          '68ac0599c8a52eb65477c05f': (
+            <IGTemplate
+              isTv={false}
+              state={streamingData}
+              activeTurn={activeTurn}
+              activeSet={activeSet}
             />
           )
         }[streamingData.tournamentId] || (
