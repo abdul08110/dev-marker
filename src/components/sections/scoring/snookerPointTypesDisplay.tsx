@@ -13,14 +13,14 @@ interface SnookerPointTypeDisplayProps {
 
 export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
   const pointTypeToColorClass = {
-    [SnookerPointType.YELLOW]: 'bg-yellow-500',
-    [SnookerPointType.GREEN]: 'bg-green-500',
-    [SnookerPointType.RED]: 'bg-red-500',
-    [SnookerPointType.FOUL]: 'bg-white',
-    [SnookerPointType.BROWN]: 'bg-yellow-900',
-    [SnookerPointType.BLUE]: 'bg-blue-500',
-    [SnookerPointType.PINK]: 'bg-pink-500',
-    [SnookerPointType.BLACK]: 'bg-black',
+    [SnookerPointType.YELLOW]: 'bg-[radial-gradient(62.67%_50%_at_50%_50%,theme(colors.yellow.500)_0%,#996600_100%)]',
+    [SnookerPointType.GREEN]: 'bg-[radial-gradient(62.67%_50%_at_50%_50%,theme(colors.green.500)_0%,#004400_100%)]',
+    [SnookerPointType.RED]: 'bg-[radial-gradient(62.67%_50%_at_50%_50%,theme(colors.red.500)_0%,#990000_100%)]',
+    [SnookerPointType.FOUL]: 'bg-[radial-gradient(62.67%_50%_at_50%_50%,theme(colors.gray.200)_0%,#cccccc_100%)]',
+    [SnookerPointType.BROWN]: 'bg-[radial-gradient(62.67%_50%_at_50%_50%,theme(colors.yellow.900)_0%,#4d2b00_100%)]',
+    [SnookerPointType.BLUE]: 'bg-[radial-gradient(62.67%_50%_at_50%_50%,theme(colors.blue.500)_0%,#001a66_100%)]',
+    [SnookerPointType.PINK]: 'bg-[radial-gradient(62.67%_50%_at_50%_50%,theme(colors.pink.500)_0%,#660033_100%)]',
+    [SnookerPointType.BLACK]: 'bg-[radial-gradient(62.67%_50%_at_50%_50%,theme(colors.black)_0%,#111111_100%)]',
     [SnookerPointType.MISSED_POT]: 'hidden',
     [SnookerPointType.PLAY_SAFE]: 'hidden',
   };
@@ -47,14 +47,14 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
 
   return (
     <div
-      className={clsx('w-full flex flex-wrap justify-center items-center gap-1', props.class)}
+      className={clsx('w-full flex flex-wrap justify-center items-center', props.class)}
     >
       {flattenedPoints.map((item, index) => {
         if (item.isSeparator) {
           return (
             <div
               key={`separator-${index}`}
-              className={clsx('text-white items-center mx-1', props.className)}
+              className={clsx('text-white items-center w-2', props.className)}
             >
               |
             </div>
@@ -67,12 +67,16 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
             <div
               key={`point-${index}`}
               className={clsx(
-                'rounded-full text-white flex justify-center items-center font-bold h-4 w-4',
+                'rounded-full flex justify-center items-center font-bold h-4 w-4',
                 pointTypeToColorClass[pointType],
                 {
                   'rotate-90': props.rotateBalls,
                 },
-                props.className
+                props.className,
+                {
+                  'text-black': pointType === SnookerPointType.FOUL,
+                  'text-white': pointType !== SnookerPointType.FOUL,
+                }
               )}
             >
               <span>{pointType === SnookerPointType.FOUL ? 'F' : ballsToPointsEnum[pointType]}</span>

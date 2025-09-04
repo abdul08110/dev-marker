@@ -57,7 +57,7 @@ type FormData = z.infer<ReturnType<typeof createFormSchema>>;
 export function Tournament() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { loading, schedule, teamsLoading, teams } = useTournamentSchedule();
+  const { loading, schedule, tournament, tournamentLoading, scheduledMatches, scheduledMatchesLoading } = useTournamentSchedule();
   const { getTournamentSubItem } = useGetTournamentSubItem();
 
   const [selectedPhase, setSelectedPhase] = useState<TournamentPhase | null>(null);

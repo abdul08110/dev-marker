@@ -1,5 +1,5 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
-import { PortraitData } from '@/components/sections/stream/PortraitData';
+import { PortraitView } from '@/components/sections/stream/PortraitView';
 import { StreamContainer } from '@/components/sections/stream/StreamContainer';
 import useDeviceOrientation from '@/hooks/useDeviceOrientation';
 import useStreaming from '@/hooks/useStreaming';
@@ -51,7 +51,7 @@ export function ClientStream() {
           state={viewershipData}
         />
         {isPortrait && streamingData && streamingData?.sets && streamingData?.sets.length > 0 && (
-          <PortraitData timeLeft={timeLeft} state={viewershipData} />
+          <PortraitView timeLeft={timeLeft} state={viewershipData} />
         )}
       </div>
     </div>
