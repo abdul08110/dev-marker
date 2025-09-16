@@ -34,6 +34,7 @@ interface StreamContainerProps {
   stopWatchTime: number;
   updateTimer: (timeInMillseconds: number) => void;
   isTv: boolean;
+  startFromSeconds?: number;
 }
 
 export function StreamContainer(props: StreamContainerProps) {
@@ -62,6 +63,7 @@ export function StreamContainer(props: StreamContainerProps) {
     isMatchLive: props.state && props.state.matchStatus === 'LIVE' ? true : false,
     matchStartTime: props.state && props.state.actualStartTimeDate ? props.state.actualStartTimeDate : null,
     onLoadingStateChange: setIsVideoLoading,
+    startFromSeconds: props.startFromSeconds,
   });
 
   const [seekIndicator, setSeekIndicator] = useState<'left' | 'right' | null>(null);

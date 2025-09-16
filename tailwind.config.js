@@ -21,7 +21,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["Open Sans", 'sans-serif'],
+        sans: ["Oxanium", "sans-serif"],
       },
       screens: {
         '480p': { raw: '(min-height: 480px) and (max-height: 719px)' },

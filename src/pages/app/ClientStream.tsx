@@ -9,17 +9,22 @@ import { useEffect, useState } from 'react';
 
 export function ClientStream() {
   const [matchId, setMatchId] = useState<string | null>(null);
+  const [startFromSeconds, setStartFromSeconds] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const isPortrait = useDeviceOrientation();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const matchIdFromUrl = params.get('matchId');
+    const startFromSecondsFromUrl = params.get('startMatchFromInSeconds');
 
     if (matchIdFromUrl) {
       setMatchId(matchIdFromUrl);
     }
 
+    if (startFromSecondsFromUrl) {
+      setStartFromSeconds(parseInt(startFromSecondsFromUrl));
+    }
     setLoading(false);
   }, []);
 
@@ -49,6 +54,7 @@ export function ClientStream() {
           isPortrait={isPortrait}
           isTv={false}
           state={viewershipData}
+          startFromSeconds={startFromSeconds}
         />
         {isPortrait && streamingData && streamingData?.sets && streamingData?.sets.length > 0 && (
           <PortraitView timeLeft={timeLeft} state={viewershipData} />

@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { StreamingState } from '@/hooks/useStreaming';
-import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
+import { calculateStatsForTeam, getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { generatePlayerName } from '@/utils/functions';
 import clsx from 'clsx';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
@@ -17,6 +17,10 @@ export function PortraitView(props: PortraitStreamDataProps) {
   const activeTurn = getActiveTurn(activeSet);
   const isTeamOneActive = props.state ? props.state.sideOnePlayerOne.id === props.state.activePlayerId : false;
   const isTeamTwoActive = props.state ? props.state.sideTwoPlayerOne.id === props.state.activePlayerId : false;
+
+
+  const teamOneStats = calculateStatsForTeam([props.state?.sideOnePlayerOne.id || '', props.state?.sideOnePlayerTwo?.id || ''], props.state?.sets || []);
+  const teamTwoStats = calculateStatsForTeam([props.state?.sideTwoPlayerOne.id || '', props.state?.sideTwoPlayerTwo?.id || ''], props.state?.sets || []);
 
   if (!props.state) {
     return <></>;
@@ -180,7 +184,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
           <div className="grid-cols-1 flex items-center">
             <div className=" bg-[#2B2B2B] border border-[#777777] p-1 rounded-md w-20 flex items-center justify-center">
               <span className="text-white font-bold text-lg text-center">
-                {activeSet ? props.state.teamOneScore : 0}
+                {teamOneStats.highestBreak}
               </span>
             </div>
             <hr className="w-full border-[#777777]" />
@@ -190,7 +194,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
             <hr className="w-full border-[#777777]" />
             <div className=" bg-[#2B2B2B] border border-[#777777] p-1 rounded-md w-20 flex items-center justify-center">
               <span className="text-white font-bold text-lg text-center">
-                {activeSet ? props.state.teamOneScore : 0}
+                {teamTwoStats.highestBreak}
               </span>
             </div>
           </div>

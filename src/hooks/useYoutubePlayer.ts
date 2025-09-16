@@ -6,6 +6,7 @@ interface UseYouTubePlayerProps {
   isMatchLive: boolean;
   matchStartTime: string | null;
   onLoadingStateChange?: (isLoading: boolean) => void;
+  startFromSeconds?: number;
 }
 
 interface YouTubePlayer {
@@ -24,6 +25,7 @@ export function useYouTubePlayer({
   isMatchLive,
   matchStartTime,
   onLoadingStateChange,
+  startFromSeconds,
 }: UseYouTubePlayerProps) {
   const youTubePlayerRef = useRef<YouTubePlayer | null>(null);
   const intervalRef = useRef<number | null>(null);
@@ -31,13 +33,14 @@ export function useYouTubePlayer({
   const [isSoundOn, setIsSoundOn] = useState<boolean>(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
   const switchTimeStampRef = useRef<number>(0);
+  const initialSeekAppliedRef = useRef<boolean>(false);
 
   const handleYouTubeReady = (event: any) => {
     youTubePlayerRef.current = event.target;
     setVideoDuration(event.target.getDuration() * 1000);
     event.target.mute();
     event.target.playVideo();
-    
+  
     setIsVideoPlaying(true);
     onLoadingStateChange?.(false);
   };
@@ -59,8 +62,16 @@ export function useYouTubePlayer({
       if (switchTimeStampRef.current > 0 && youTubePlayerRef.current) {
         const seekToTime = switchTimeStampRef.current / 1000;
         youTubePlayerRef.current.seekTo(seekToTime, true);
+        console.log('Applying initial seek to:', switchTimeStampRef.current, 'seconds');
         onTimerUpdate(switchTimeStampRef.current);
         switchTimeStampRef.current = 0;
+      }
+
+      if (startFromSeconds && startFromSeconds > 0 && !initialSeekAppliedRef.current && youTubePlayerRef.current) {
+        youTubePlayerRef.current.seekTo(startFromSeconds, true);
+        console.log('Applying initial seek to:', startFromSeconds, 'seconds');
+        onTimerUpdate(startFromSeconds * 1000);
+        initialSeekAppliedRef.current = true;
       }
 
       // Set up the timer interval
