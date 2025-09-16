@@ -1,4 +1,3 @@
-import { PortraitData } from '@/components/sections/stream/PortraitData';
 import { PortraitView } from '@/components/sections/stream/PortraitView';
 import useStreaming from '@/hooks/useStreaming';
 import { useEffect, useState } from 'react';
