@@ -200,4 +200,7 @@ export interface TournamentSubItem {
   teamWinningIndex?: number;
   matchId?: string;
   gameFormat: TournamentFormat;
+  dateScheduled: string;
+  teamOneHandicap?: number;
+  teamTwoHandicap?: number;
 }

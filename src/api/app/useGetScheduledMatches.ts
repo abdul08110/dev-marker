@@ -8,37 +8,37 @@ import {
   TournamentItem,
   TournamentPhase,
   TournamentSubItem,
+  TournamentTeam,
 } from '@/stores/types';
 
 interface GetScheduledMatchesResponse {
-  data: (TournamentItem & {
-    tournamentPhase: TournamentPhase;
-    tournamentSubItems: (TournamentSubItem & {
-      teamOnePlayerOne: Player | null;
-      teamOnePlayerTwo: Player | null;
-      teamTwoPlayerOne: Player | null;
-      teamTwoPlayerTwo: Player | null;
-      gameFormat: TournamentFormat;
-    })[];
+  data: (TournamentSubItem & {
+    phase: TournamentPhase;
+    tournamentItem: TournamentItem;
+    tournamentTeamOne: TournamentTeam;
+    tournamentTeamTwo: TournamentTeam;
+    teamOnePlayerOne: Player;
+    teamOnePlayerTwo: Player;
+    teamTwoPlayerOne: Player;
+    teamTwoPlayerTwo: Player;
+    gameFormat: TournamentFormat;
   })[];
 }
 
 const useGetScheduledMatches = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [scheduledMatches, setScheduledMatches] = useState<
-    | (TournamentItem & {
-        tournamentPhase: TournamentPhase;
-        tournamentSubItems: (TournamentSubItem & {
-          teamOnePlayerOne: Player | null;
-          teamOnePlayerTwo: Player | null;
-          teamTwoPlayerOne: Player | null;
-          teamTwoPlayerTwo: Player | null;
-          gameFormat: TournamentFormat;
-        })[];
-      })[]
-    | null
-  >(null);
+  const [scheduledMatches, setScheduledMatches] = useState<(TournamentSubItem & {
+    phase: TournamentPhase;
+    tournamentItem: TournamentItem;
+    tournamentTeamOne: TournamentTeam;
+    tournamentTeamTwo: TournamentTeam;
+    teamOnePlayerOne: Player;
+    teamOnePlayerTwo: Player;
+    teamTwoPlayerOne: Player;
+    teamTwoPlayerTwo: Player;
+    gameFormat: TournamentFormat;
+  })[] | null>(null);
 
   const getScheduledMatches = async ({ id }: { id: string }): Promise<GetScheduledMatchesResponse | null> => {
     setLoading(true);

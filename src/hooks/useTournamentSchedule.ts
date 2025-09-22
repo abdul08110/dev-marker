@@ -1,10 +1,33 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { RootState } from '@/stores';
 import { useSelector } from 'react-redux';
 import useGetTournamentSchedule from '@/api/app/useGetTournamentSchedule';
 import useGetTournament from '@/api/app/useGetTournamentById';
 import useGetScheduledMatches from '@/api/app/useGetScheduledMatches';
+import { TournamentSubItem, TournamentPhase, TournamentItem, TournamentTeam, Player, TournamentFormat } from '@/stores/types';
+
+type ScheduledMatch = TournamentSubItem & {
+  phase: TournamentPhase;
+  tournamentItem: TournamentItem;
+  tournamentTeamOne: TournamentTeam;
+  tournamentTeamTwo: TournamentTeam;
+  teamOnePlayerOne: Player;
+  teamOnePlayerTwo: Player;
+  teamTwoPlayerOne: Player;
+  teamTwoPlayerTwo: Player;
+  gameFormat: TournamentFormat;
+};
+
+export type MatchData = ScheduledMatch;
+
+type GroupedMatches = {
+  [tournamentItemId: string]: {
+    tournamentItem: TournamentItem;
+    tournamentPhase: TournamentPhase;
+    matches: MatchData[];
+  };
+};
 
 const useTournamentSchedule = () => {
   // HOOKS
@@ -17,6 +40,25 @@ const useTournamentSchedule = () => {
   const { getTournament, tournament, loading: tournamentLoading } = useGetTournament();
   const { getTournamentSchedule, schedule, loading } = useGetTournamentSchedule();
   const { getScheduledMatches, scheduledMatches, loading: scheduledMatchesLoading } = useGetScheduledMatches();
+
+  // Group scheduled matches by tournament item
+  const groupedMatches = useMemo((): GroupedMatches | null => {
+    if (!scheduledMatches) return null;
+    
+    return scheduledMatches.reduce((acc, match) => {
+      const tournamentItemId = match.tournamentItem.id;
+      if (!acc[tournamentItemId]) {
+        acc[tournamentItemId] = {
+          tournamentItem: match.tournamentItem,
+          tournamentPhase: match.phase,
+          matches: []
+        };
+      }
+      acc[tournamentItemId].matches.push(match);
+      return acc;
+    }, {} as GroupedMatches);
+  }, [scheduledMatches]);
+
   // SIDE EFFECTS
   useEffect(() => {
     if (clubs.activeClub === null) {
@@ -49,6 +91,7 @@ const useTournamentSchedule = () => {
     tournamentLoading,
     scheduledMatches,
     scheduledMatchesLoading,
+    groupedMatches,
   };
 };
 

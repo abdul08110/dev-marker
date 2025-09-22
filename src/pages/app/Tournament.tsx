@@ -1,5 +1,5 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
-import useTournamentSchedule from '@/hooks/useTournamentSchedule';
+import useTournamentSchedule, { MatchData } from '@/hooks/useTournamentSchedule';
 import { TournamentHeader } from '@/components/tournament/tournametHeader';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,12 +12,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAppDispatch } from '@/stores';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { TournamentFormat, TournamentPhase, TournamentTeam } from '@/stores/types';
+import { TournamentFormat, TournamentPhase, TournamentTeam, TournamentItem } from '@/stores/types';
 import { TournamentConfirmationModal } from '@/components/tournament/tournamentConfirmationModal';
 import useGetTournamentSubItem from '@/api/app/useCreateTournamentSubItem';
 import { setStateTournament } from '@/stores/thunks/sportThunks';
 import { ScoreUpdateLoadingModal } from '@/components/modals/scoreUpdateLoading';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { TournamentItemCard } from '@/components/tournament/TournamentItemCard';
+import { TournamentSubItemCard } from '@/components/tournament/TournamentSubItemCard';
+import { ArrowLeft } from 'lucide-react';
 
 // Create a dynamic form schema based on tournament type and number of players
 const createFormSchema = (numberOfPlayers: number, isSinglesEvent: boolean) => {
@@ -57,7 +60,7 @@ type FormData = z.infer<ReturnType<typeof createFormSchema>>;
 export function Tournament() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { loading, schedule, tournamentLoading, scheduledMatchesLoading } =
+  const { loading, schedule, tournament, tournamentLoading, scheduledMatchesLoading, groupedMatches } =
     useTournamentSchedule();
   const { getTournamentSubItem } = useGetTournamentSubItem();
 
@@ -67,9 +70,17 @@ export function Tournament() {
   const [selectedTeamTwo] = useState<TournamentTeam | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [bannerLoading, setBannerLoading] = useState(false);
+  
+  // Teams tournament state
+  const [selectedTournamentItem, setSelectedTournamentItem] = useState<{
+    tournamentItem: TournamentItem;
+    tournamentPhase: TournamentPhase;
+    matches: MatchData[];
+  } | null>(null);
+  const [showSubItems, setShowSubItems] = useState(false);
 
   // Determine tournament type - singles or teams
-  const tournamentType = schedule && schedule.length > 0 ? schedule[0].tournament.eventFormat : null;
+  const tournamentType = tournament?.eventFormat;
   const isSinglesEvent = tournamentType === 'SINGLES';
 
   // Get active phases
@@ -200,6 +211,76 @@ export function Tournament() {
     setShowConfirmation(true);
   };
 
+  // Teams tournament handlers
+  const handleTournamentItemClick = (tournamentItemId: string) => {
+    if (groupedMatches && groupedMatches[tournamentItemId]) {
+      setSelectedTournamentItem(groupedMatches[tournamentItemId]);
+      setShowSubItems(true);
+    }
+  };
+
+  const handleBackToTournamentItems = () => {
+    setShowSubItems(false);
+    setSelectedTournamentItem(null);
+  };
+
+  const handleStartMatch = async (subItem: MatchData) => {
+    if (!selectedTournamentItem) return;
+
+    setBannerLoading(true);
+    
+    try {
+      await dispatch(
+        setStateTournament({
+          data: {
+            teamOnePlayers: [
+              ...(subItem.teamOnePlayerOne ? [{
+                id: subItem.teamOnePlayerOne.id,
+                name: subItem.teamOnePlayerOne.name,
+                phoneNumber: subItem.teamOnePlayerOne.phoneNumber,
+                profilePhoto: subItem.teamOnePlayerOne.profilePhoto,
+              }] : []),
+              ...(subItem.teamOnePlayerTwo ? [{
+                id: subItem.teamOnePlayerTwo.id,
+                name: subItem.teamOnePlayerTwo.name,
+                phoneNumber: subItem.teamOnePlayerTwo.phoneNumber,
+                profilePhoto: subItem.teamOnePlayerTwo.profilePhoto,
+              }] : []),
+            ],
+            teamTwoPlayers: [
+              ...(subItem.teamTwoPlayerOne ? [{
+                id: subItem.teamTwoPlayerOne.id,
+                name: subItem.teamTwoPlayerOne.name,
+                phoneNumber: subItem.teamTwoPlayerOne.phoneNumber,
+                profilePhoto: subItem.teamTwoPlayerOne.profilePhoto,
+              }] : []),
+              ...(subItem.teamTwoPlayerTwo ? [{
+                id: subItem.teamTwoPlayerTwo.id,
+                name: subItem.teamTwoPlayerTwo.name,
+                phoneNumber: subItem.teamTwoPlayerTwo.phoneNumber,
+                profilePhoto: subItem.teamTwoPlayerTwo.profilePhoto,
+              }] : []),
+            ],
+            teamOneHandicap: subItem.teamOneHandicap || 0,
+            teamTwoHandicap: subItem.teamTwoHandicap || 0,
+            format: subItem.gameFormat,
+            tournamentSubItemId: subItem.id,
+            tournamentId: tournament?.id || '',
+            tournamentTeamOneId: subItem.tournamentTeamOne.id,
+            tournamentTeamTwoId: subItem.tournamentTeamTwo.id,
+            visibility: tournament?.tournamentVisibility || 'PUBLIC',
+          },
+        }),
+      );
+
+      navigate(`/app/${subItem.gameFormat.sport === 'SNOOKER' ? 'snooker' : 'billiards'}`);
+    } catch (error) {
+      console.error('Error starting match:', error);
+    } finally {
+      setBannerLoading(false);
+    }
+  };
+
   // Handle confirmation to start game
   const handleConfirmStart = async () => {
     const values = form.getValues();
@@ -214,7 +295,7 @@ export function Tournament() {
           teamOneId: selectedTeamOne.id,
           teamTwoId: selectedTeamTwo.id,
         },
-        schedule![0].tournament.id,
+        tournament?.id || '',
       );
 
       await dispatch(
@@ -226,10 +307,10 @@ export function Tournament() {
             teamTwoHandicap: values.teamTwoHandicap,
             format: selectedFormat!,
             tournamentSubItemId: data!.id,
-            tournamentId: schedule![0].tournament.id,
+            tournamentId: tournament?.id || '',
             tournamentTeamOneId: selectedTeamOne.id,
             tournamentTeamTwoId: selectedTeamTwo.id,
-            visibility: schedule![0].tournament.tournamentVisibility || 'PUBLIC',
+            visibility: tournament?.tournamentVisibility || 'PUBLIC',
           },
         }),
       );
@@ -243,10 +324,10 @@ export function Tournament() {
             teamTwoHandicap: values.teamTwoHandicap,
             format: selectedFormat!,
             tournamentSubItemId: null,
-            tournamentId: schedule![0].tournament.id,
+            tournamentId: tournament?.id || '',
             tournamentTeamOneId: null,
             tournamentTeamTwoId: null,
-            visibility: schedule![0].tournament.tournamentVisibility || 'PUBLIC',
+            visibility: tournament?.tournamentVisibility || 'PUBLIC',
           },
         }),
       );
@@ -257,17 +338,106 @@ export function Tournament() {
     setBannerLoading(false);
   };
 
-  if (loading || tournamentLoading || scheduledMatchesLoading || !schedule || schedule.length === 0) {
+  if (loading || tournamentLoading || scheduledMatchesLoading) {
     return <SnookerMarkingLoading />;
   }
 
+  // For teams tournaments, check if we have grouped matches
+  if (!isSinglesEvent && (!groupedMatches || Object.keys(groupedMatches).length === 0)) {
+    return <SnookerMarkingLoading />;
+  }
+
+  // For singles tournaments, check if we have schedule
+  if (isSinglesEvent && (!schedule || schedule.length === 0)) {
+    return <SnookerMarkingLoading />;
+  }
+
+  console.log(groupedMatches);
+
   return (
     <div className="h-screen w-screen flex flex-col">
-      <TournamentHeader logo={schedule![0].tournament.logo} name={schedule![0].tournament.name} />
+      <TournamentHeader logo={tournament?.logo || ''} name={tournament?.name || ''} />
 
       <div className="container mx-auto p-4">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        {!isSinglesEvent ? (
+          // Teams Tournament UI
+          <div className="max-w-4xl mx-auto space-y-6">
+            {!showSubItems ? (
+              // Show tournament items
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold text-white mb-2">Tournament Matches</h2>
+                  <p className="text-slate-400">Select a match to view individual games</p>
+                </div>
+                <div className="grid gap-4">
+                  {groupedMatches && Object.entries(groupedMatches).map(([tournamentItemId, itemData]) => (
+                    <TournamentItemCard
+                      key={tournamentItemId}
+                      noOfGamesScheduled={itemData.matches.length}
+                      teamOne={itemData.matches[0].tournamentTeamOne}
+                      teamTwo={itemData.matches[0].tournamentTeamTwo}
+                      phaseName={itemData.tournamentPhase.name}
+                      onShowGamesAndLineup={() => handleTournamentItemClick(tournamentItemId)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              // Show sub items for selected tournament item
+              <div className="space-y-6">
+                <div className="text-center space-y-4">
+                  <Button 
+                    variant="ghost" 
+                    onClick={handleBackToTournamentItems}
+                    className="text-slate-300 hover:text-white"
+                  >
+                    <ArrowLeft className="size-4 mr-2" />
+                    Back to Matches
+                  </Button>
+                  <div>
+                    <h2 className="text-3xl font-bold text-white mb-2">
+                      {selectedTournamentItem?.matches[0].tournamentTeamOne.name} vs {selectedTournamentItem?.matches[0].tournamentTeamTwo.name}
+                    </h2>
+                    <p className="text-slate-400">Select a game to start the match</p>
+                  </div>
+                </div>
+                
+                <div className="grid gap-4">
+                    {selectedTournamentItem?.matches.map((match) => {
+                      // Get player names for both teams
+                      const teamOnePlayers = [
+                        ...(match.teamOnePlayerOne ? [match.teamOnePlayerOne.name] : []),
+                        ...(match.teamOnePlayerTwo ? [match.teamOnePlayerTwo.name] : [])
+                      ];
+                      
+                      const teamTwoPlayers = [
+                        ...(match.teamTwoPlayerOne ? [match.teamTwoPlayerOne.name] : []),
+                        ...(match.teamTwoPlayerTwo ? [match.teamTwoPlayerTwo.name] : [])
+                      ];
+                      
+                      return (
+                        <TournamentSubItemCard
+                          key={match.id}
+                          subItem={match}
+                          format={match.gameFormat}
+                          dateScheduled={match.dateScheduled}
+                          teamOnePlayers={teamOnePlayers}
+                          teamTwoPlayers={teamTwoPlayers}
+                          teamOne={match.tournamentTeamOne}
+                          teamTwo={match.tournamentTeamTwo}
+                          onStartMatch={() => handleStartMatch(match)}
+                        />
+                      );
+                    })}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          // Singles Tournament UI (existing form)
+          <div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             {/* Tournament Phase Selection */}
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
@@ -627,20 +797,22 @@ export function Tournament() {
                 )
               );
             })()}
-          </form>
-        </Form>
+              </form>
+            </Form>
 
-        <TournamentConfirmationModal
-          isOpen={showConfirmation}
-          onClose={() => setShowConfirmation(false)}
-          onConfirm={handleConfirmStart}
-          teamOne={selectedTeamOne}
-          teamTwo={selectedTeamTwo}
-          format={selectedFormat}
-          teamOnePlayers={form.getValues('teamOnePlayers') || []}
-          teamTwoPlayers={form.getValues('teamTwoPlayers') || []}
-          isSinglesEvent={isSinglesEvent}
-        />
+            <TournamentConfirmationModal
+              isOpen={showConfirmation}
+              onClose={() => setShowConfirmation(false)}
+              onConfirm={handleConfirmStart}
+              teamOne={selectedTeamOne}
+              teamTwo={selectedTeamTwo}
+              format={selectedFormat}
+              teamOnePlayers={form.getValues('teamOnePlayers') || []}
+              teamTwoPlayers={form.getValues('teamTwoPlayers') || []}
+              isSinglesEvent={isSinglesEvent}
+            />
+          </div>
+        )}
         <ScoreUpdateLoadingModal isModalOpen={bannerLoading} />
       </div>
     </div>
