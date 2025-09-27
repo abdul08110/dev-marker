@@ -162,6 +162,7 @@ export interface TournamentFormat {
   matchNo?: number;
   switchType?: 'FRAME' | 'VISIT';
   snookerHandicapType?: 'DIFFERENCE' | 'UPFRONT';
+  categoryName?: string;
 }
 
 export interface TournamentPhase {

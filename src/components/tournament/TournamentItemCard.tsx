@@ -9,6 +9,7 @@ interface TournamentItemCardProps {
   teamOne: TournamentTeam;
   teamTwo: TournamentTeam;
   phaseName: string;
+  dateScheduled: string;
   onShowGamesAndLineup: () => void;
 }
 
@@ -17,6 +18,7 @@ export function TournamentItemCard({
   teamOne,
   teamTwo,
   phaseName,
+  dateScheduled,
   onShowGamesAndLineup,
 }: TournamentItemCardProps) {
   return (
@@ -29,7 +31,8 @@ export function TournamentItemCard({
                 {noOfGamesScheduled} Games
               </span>
             </div>
-            <div className="text-right">
+            <div className="text-right flex gap-4">
+              <span className="text-xs text-slate-300">{new Date(dateScheduled).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
               <span className="text-xs text-slate-300">{phaseName}</span>
             </div>
           </CardTitle>

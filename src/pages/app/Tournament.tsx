@@ -373,6 +373,7 @@ export function Tournament() {
                   {groupedMatches && Object.entries(groupedMatches).map(([tournamentItemId, itemData]) => (
                     <TournamentItemCard
                       key={tournamentItemId}
+                      dateScheduled={itemData.matches[0].dateScheduled}
                       noOfGamesScheduled={itemData.matches.length}
                       teamOne={itemData.matches[0].tournamentTeamOne}
                       teamTwo={itemData.matches[0].tournamentTeamTwo}

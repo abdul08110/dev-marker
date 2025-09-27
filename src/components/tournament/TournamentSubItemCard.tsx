@@ -16,7 +16,6 @@ interface TournamentSubItemCardProps {
 
 export function TournamentSubItemCard({
   format,
-  dateScheduled,
   teamOnePlayers,
   teamTwoPlayers,
   teamOne,
@@ -33,16 +32,16 @@ export function TournamentSubItemCard({
               <span className="text-base font-semibold text-white">
                 {format.name}
               </span>
-              <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">
+              <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded uppercase">
                 {format.sport.toLowerCase()}
               </span>
             </div>
             <div className="text-right">
               <div className="text-xs text-slate-300">
-                {new Date(dateScheduled).toLocaleDateString()}
+                GAME NO #{format.matchNo}
               </div>
-              <div className="text-xs text-slate-400">
-                {new Date(dateScheduled).toLocaleTimeString()}
+              <div className="text-xs text-slate-400 uppercase">
+                {format.categoryName ? format.categoryName : format.name}
               </div>
             </div>
           </CardTitle>
