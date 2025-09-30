@@ -137,6 +137,22 @@ export function LiveScoring() {
               activeTurn={activeTurn}
               activeSet={activeSet}
             />
+          ),
+          '68bef0791d2f4e355bb2e810': (
+            <IGTemplate
+              isTv={false}
+              state={streamingData}
+              activeTurn={activeTurn}
+              activeSet={activeSet}
+            />
+          ),
+          '680893386bd1fa17a8462687': (
+            <IGTemplate
+              isTv={false}
+              state={streamingData}
+              activeTurn={activeTurn}
+              activeSet={activeSet}
+            />
           )
         }[streamingData.tournamentId] || (
           <GeneralTemplate state={streamingData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />

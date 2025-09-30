@@ -324,6 +324,22 @@ export function StreamContainer(props: StreamContainerProps) {
                         activeTurn={activeTurn}
                         activeSet={activeSet}
                       />
+                    ),
+                    '68bef0791d2f4e355bb2e810': (
+                      <IGTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
+                    ),
+                    '680893386bd1fa17a8462687': (
+                      <IGTemplate
+                        isTv={props.isTv}
+                        state={props.state}
+                        activeTurn={activeTurn}
+                        activeSet={activeSet}
+                      />
                     )
                   }[props.state.tournamentId] || (
                     <GeneralTemplate

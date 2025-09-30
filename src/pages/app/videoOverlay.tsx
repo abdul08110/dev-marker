@@ -180,7 +180,23 @@ export function VideoOverlay() {
                 activeTurn={activeTurn}
                 activeSet={activeSet}
               />
-            )
+            ),
+            '68bef0791d2f4e355bb2e810': (
+              <IGTemplate
+                isTv={false}
+                state={viewershipData}
+                activeTurn={activeTurn}
+                activeSet={activeSet}
+              />
+            ),
+            '680893386bd1fa17a8462687': (
+              <IGTemplate
+                isTv={false}
+                state={viewershipData}
+                activeTurn={activeTurn}
+                activeSet={activeSet}
+              />
+            ) 
           }[viewershipData.tournamentId] || (
             <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
           )
