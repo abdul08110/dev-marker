@@ -133,6 +133,51 @@ export function StreamContainer(props: StreamContainerProps) {
     [selectedStreamId, props.stopWatchTime, handleSwitchCamera],
   );
 
+  // Function to cycle through available streams
+  const cycleToNextStream = useCallback(() => {
+    if (!props.state?.streams || props.state.streams.length <= 1) {
+      return;
+    }
+
+    const currentStreamId = selectedStreamId || stream?.brodcastId;
+    const currentIndex = props.state.streams.findIndex(s => s.brodcastId === currentStreamId);
+    const nextIndex = (currentIndex + 1) % props.state.streams.length;
+    const nextStream = props.state.streams[nextIndex];
+    
+    handleCameraAngleSwitch(nextStream);
+  }, [props.state?.streams, selectedStreamId, stream?.brodcastId, handleCameraAngleSwitch]);
+
+  // Keyboard and Android TV remote event handler
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    // Android TV remote keys and common keyboard shortcuts
+    const streamSwitchKeys = [
+      'ArrowUp',     // Android TV remote up arrow
+      'ArrowDown',   // Android TV remote down arrow
+      'ArrowLeft',   // Android TV remote left arrow
+      'ArrowRight',  // Android TV remote right arrow
+      'KeyS',        // 'S' key for stream switch
+      'KeyC',        // 'C' key for camera switch
+      'Space',       // Space bar
+      'Enter',       // Enter key
+      'MediaTrackNext', // Android TV remote next track
+      'MediaTrackPrevious', // Android TV remote previous track
+    ];
+
+    if (streamSwitchKeys.includes(event.code)) {
+      event.preventDefault();
+      cycleToNextStream();
+    }
+  }, [cycleToNextStream]);
+
+  // Add keyboard event listeners
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
   return (
     <div
       className={clsx('w-full flex justify-center items-center', {
