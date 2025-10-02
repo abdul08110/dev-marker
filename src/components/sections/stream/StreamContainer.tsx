@@ -35,6 +35,7 @@ interface StreamContainerProps {
   updateTimer: (timeInMillseconds: number) => void;
   isTv: boolean;
   startFromSeconds?: number;
+  sponsorshipVideoUrl?: string;
 }
 
 export function StreamContainer(props: StreamContainerProps) {
@@ -435,7 +436,7 @@ export function StreamContainer(props: StreamContainerProps) {
           autoPlay
           loop
           muted
-          src="https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/ECA%20Raman%20Nair%202024%20Gina%20Artize.mp4"
+          src={props.sponsorshipVideoUrl ?? "https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/ECA%20Raman%20Nair%202024%20Gina%20Artize.mp4"}
           className="w-full h-auto"
         />
       )}

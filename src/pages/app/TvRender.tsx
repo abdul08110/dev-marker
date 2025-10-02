@@ -14,6 +14,7 @@ export function TvRender() {
     onVideoEnd,
     currentTime,
     updateTime,
+    sponsorshipVideoUrl,
   } = useStreaming(searchParamsVenueId || undefined);
 
   if (streamingLoading) {
@@ -23,6 +24,7 @@ export function TvRender() {
   return (
     <div className="h-screen w-screen overflow-hidden">
       <StreamContainer
+        sponsorshipVideoUrl={sponsorshipVideoUrl ?? undefined}
         updateTimer={updateTime}
         stopWatchTime={currentTime}
         onVideoEnd={onVideoEnd}

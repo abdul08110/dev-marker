@@ -8,6 +8,7 @@ import useTimer from './useTimer';
 import { addMillisecondsToUTC } from '@/utils/functions';
 import { calculatePointsBySide, calculateTotalTeamScore } from '@/stores/selectors/commonSport';
 import useGetMatchStreams from '@/api/app/useGetStreamInfoMarker';
+import useGetSponsorshipVideo from '@/api/app/useGetSponsorshipVideo';
 
 export interface StreamState {
   streamType: StreamType;
@@ -80,6 +81,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const getLiveMatchHook = useGetMatchLiveData();
   const getMatchStreamsHook = useGetMatchStreams();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
+  const getSponsorshipVideoHook = useGetSponsorshipVideo();
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
   const timeLeft = useTimer({
     endTime: streamingData && streamingData.expectedEndTimeDate ? new Date(streamingData.expectedEndTimeDate) : null,
@@ -87,6 +89,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       streamingData && streamingData.matchStatus === 'COMPLETED' ? new Date(streamingData.actualStartTimeDate) : null,
     onTimerComplete: () => {},
   });
+  const [sponsorshipVideoUrl, setSponsorshipVideoUrl] = useState<string | null>(null);
 
   const scoreCheckIntervalRef = useRef<number | null>(null);
   const streamingDataRef = useRef<StreamingState | null>(null);
@@ -151,6 +154,11 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     try {
       const res = await getLiveMatchHook.getLiveMatchData({ matchId });
       const streamRes = await getMatchStreamsHook.getLiveStreamData({ matchId });
+      const sponsorshipVideoRes = await getSponsorshipVideoHook.getSponsorshipVideo({ matchId });
+
+      if (sponsorshipVideoRes) {
+        setSponsorshipVideoUrl(sponsorshipVideoRes.videoUrl);
+      }
 
       if (res && streamRes) {
         setStreamingData(null);
@@ -400,6 +408,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     onVideoEnd,
     currentTime,
     updateTime,
+    sponsorshipVideoUrl
   };
 };
 
