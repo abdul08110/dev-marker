@@ -18,6 +18,7 @@ import { BowringArena } from './pages/app/bowringArena';
 import { VideoOverlay } from './pages/app/videoOverlay';
 import { PortraitOverlay } from './pages/app/portraitOverlay';
 import { LiveScoring } from './pages/app/liveScoring';
+import { Commentary } from './pages/app/Commentary';
 
 const App: React.FC = () => {
   const token = getToken();
@@ -43,6 +44,7 @@ const App: React.FC = () => {
         <Route path="/app/video-overlay" element={<VideoOverlay />} />
         <Route path="/app/portrait-overlay" element={<PortraitOverlay />} />
         <Route path="/app/live-scoring" element={<LiveScoring />} />
+        <Route path="/app/commentary" element={<Commentary />} />
       </Routes>
     </Router>
   );
