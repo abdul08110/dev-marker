@@ -20,6 +20,7 @@ import { PortraitOverlay } from './pages/app/portraitOverlay';
 import { LiveScoring } from './pages/app/liveScoring';
 import { Commentary } from './pages/app/Commentary';
 import { BowringArena3412 } from './pages/app/bowringArena3412';
+import { HbccTvArena } from './pages/app/hbccTvArena';
 
 const App: React.FC = () => {
   const token = getToken();
@@ -47,6 +48,7 @@ const App: React.FC = () => {
         <Route path="/app/portrait-overlay" element={<PortraitOverlay />} />
         <Route path="/app/live-scoring" element={<LiveScoring />} />
         <Route path="/app/commentary" element={<Commentary />} />
+        <Route path="/app/hbcc-tv-arena" element={<HbccTvArena />} />
       </Routes>
     </Router>
   );
