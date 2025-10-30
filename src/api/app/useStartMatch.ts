@@ -25,6 +25,10 @@ interface MatchStartDataProps {
     tournamentTeamTwoScore?: number,
     teamOneHandicap?: number,
     teamTwoHandicap?: number,
+    format?: string,
+    tournamentSubItemId?: string,
+    switchType?: 'FRAME' | 'VISIT' | null,
+    isRankingEvent?: boolean,
 }
 
 interface MatchStartResponse {

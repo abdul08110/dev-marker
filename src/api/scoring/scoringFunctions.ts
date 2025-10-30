@@ -21,6 +21,43 @@ interface MatchUpdateDataProps {
   currentSetTeamTwoScore: number;
   isTeamOneHandicapApplied?: boolean;
   isTeamTwoHandicapApplied?: boolean;
+  currentVisitScore: number;
+}
+
+interface PlayerStats {
+  highestBreak: number;
+  noOfFiftyPlusBreaks: number;
+  noOfHundredPlusBreaks: number;
+  potSuccessRatio: number;
+}
+
+interface MarkerEndGameProps {
+  matchId: string;
+  teamWinningIndex: number;
+  sideOnePlayerOneStats: PlayerStats | null;
+  sideTwoPlayerOneStats: PlayerStats | null;
+  sideOnePlayerTwoStats: PlayerStats | null;
+  sideTwoPlayerTwoStats: PlayerStats | null;
+  sets: Set[];
+  teamOneScore: number;
+  teamTwoScore: number;
+  currentSetTeamOneScore: number;
+  currentSetTeamTwoScore: number;
+}
+
+interface MatchResetTimerRequestProps {
+  matchId: string;
+  expectedEndTimeDate: Date;
+}
+
+interface MarkerFrameEndSendNotificationProps {
+  matchId: string;
+  achievements: {
+    achievementType: 'THIRTY_PLUS' | 'FIFTY_PLUS' | 'HUNDRED_PLUS';
+    playerId: string;
+    score: number;
+  }[];
+  frameStartTimeDate: string;
 }
 
 export const reversePlayersRequest = async (props: MatchPlayerReverseProps): Promise<boolean | null> => {
@@ -46,12 +83,38 @@ export const matchUpdateDataRequest = async (props: MatchUpdateDataProps): Promi
   }
 };
 
-export const matchEndGameRequest = async (props: MatchPlayerReverseProps): Promise<boolean | null> => {
+export const matchEndGameRequest = async (props: MarkerEndGameProps): Promise<boolean | null> => {
   try {
     await handleApiResponse(
-      axiosInstance.get<ApiResponse<MatchReversePlayersResponse>>(`match/marker/end-game/${props.id}/`),
+      axiosInstance.post<ApiResponse<MatchReversePlayersResponse>>(`match/marker/end-game`, props),
     );
 
+    return true;
+  } catch (err) {
+    return null;
+  }
+};
+
+export const matchResetTimerRequest = async (props: MatchResetTimerRequestProps): Promise<boolean | null> => {
+  try {
+    await handleApiResponse(
+      axiosInstance.post<ApiResponse<MatchReversePlayersResponse>>(`match/marker/reset-timer`, props),
+      false,
+    );
+
+    return true;
+  } catch (err) {
+    return null;
+  }
+};
+
+export const markerFrameEndSendNotificationRequest = async (
+  props: MarkerFrameEndSendNotificationProps,
+): Promise<boolean | null> => {
+  try {
+    await handleApiResponse(
+      axiosInstance.post<ApiResponse<MatchReversePlayersResponse>>(`match/marker/frame-end-achievements`, props),
+    );
     return true;
   } catch (err) {
     return null;

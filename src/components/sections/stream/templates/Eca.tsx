@@ -1,3 +1,4 @@
+import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { Player, Turn } from '@/stores/types';
 
 interface EcaTemplateProps {
@@ -23,7 +24,8 @@ export function EcaTemplate(props: EcaTemplateProps) {
       <div className="w-full h-auto bg-transparent flex justify-center">
         <div className="flex px-1 w-full gap-1 h-full justify-center">
           <div className="flex items-end lg:p-2">
-            <img
+            <ImageWithFallback
+              fallback="/images/user-dummy-pic.png"
               className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
               src={props.teamOneLogo ? props.teamOneLogo : '/images/user-dummy-pic.png'}
             />
@@ -96,7 +98,8 @@ export function EcaTemplate(props: EcaTemplateProps) {
 
           <div className="flex justify-end lg:p-2">
             <div className="flex items-end">
-              <img
+              <ImageWithFallback
+                fallback='/images/user-dummy-pic.png'
                 className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                 src={props.teamTwoLogo ? props.teamTwoLogo : '/images/user-dummy-pic.png'}
               />

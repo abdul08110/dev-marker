@@ -6,8 +6,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import useTimer from './useTimer';
 import { toast } from '@/components/ui/use-toast';
-import { Player, Set } from '@/stores/types';
-import { getTimeLeftInMinutes } from '@/utils/functions';
+import { Player, Set, TournamentItem, TournamentSubItem } from '@/stores/types';
 import useBodyRotation from './useBodyRotation';
 
 export interface ScoreBoardState {
@@ -26,15 +25,24 @@ export interface ScoreBoardState {
   teamOneLogo: string | null;
   teamTwoLogo: string | null;
   tournamentId: string | null;
-  tournamentTeamOneScore: number | null;
-  tournamentTeamTwoScore: number | null;
+  tournamentTeamOneId: string | null;
+  tournamentTeamTwoId: string | null;
   teamOneHandicap: number | null;
   teamTwoHandicap: number | null;
-  isTeamOneHandicapApplied?: boolean,
-  isTeamTwoHandicapApplied?: boolean,
+  isTeamOneHandicapApplied?: boolean;
+  isTeamTwoHandicapApplied?: boolean;
   maxScorePerSet: number | null;
   tournamentTeamOneName: string | null;
   tournamentTeamTwoName: string | null;
+  tournamentName: string | null;
+  actualStartTimeDate: string;
+  clubLogo: string | null;
+  format: string | null;
+  venueNo: number | null;
+  clubName: string | null;
+  tournamentSubItem?: TournamentSubItem & {
+    tournamentItem: TournamentItem;
+  };
 }
 
 const useScoreboard = () => {
@@ -42,14 +50,19 @@ const useScoreboard = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchParamsMatchId = searchParams.get('matchId');
-  const { timeLeft, startTimer, setTimeLeft } = useTimer(30, () => {
-    // Logic to handle when timer completes
-  });
+
   const getLiveMatchHook = useGetMatchLiveData();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [scoreBoardData, setScoreboardData] = React.useState<ScoreBoardState | null>(null);
   const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('landscape');
+  const [showTimeOverAlert, setShowTimeOverAlert] = React.useState<boolean>(false);
   const { rotateBody } = useBodyRotation();
+
+  const timeLeft = useTimer({
+    endTime:  scoreBoardData && scoreBoardData.expectedEndTimeDate ? new Date(scoreBoardData.expectedEndTimeDate) : null,
+    startTime: null,
+    onTimerComplete: () => {  setShowTimeOverAlert(true); },
+  });
 
   useEffect(() => {
     fetchMatchData(searchParamsMatchId);
@@ -69,6 +82,7 @@ const useScoreboard = () => {
       `${clubs.activeClub.venueId}/send-data`,
       `${clubs.activeClub.venueId}/match-start`,
       `${clubs.activeClub.venueId}/match-end`,
+      `${clubs.activeClub.venueId}/timer-updated`,
     ];
 
     const connectToMqtt = () => {
@@ -138,19 +152,23 @@ const useScoreboard = () => {
             teamOneLogo: res.tournamentTeamOne ? res.tournamentTeamOne.logo : null,
             teamTwoLogo: res.tournamentTeamTwo ? res.tournamentTeamTwo.logo : null,
             tournamentId: res.tournament ? res.tournament.id : null,
-            tournamentTeamOneScore: res.tournamentTeamOneScore ? res.tournamentTeamOneScore : null,
-            tournamentTeamTwoScore: res.tournamentTeamTwoScore ? res.tournamentTeamTwoScore : null,
             teamOneHandicap: res.teamOneHandicap ? res.teamOneHandicap : null,
             teamTwoHandicap: res.teamTwoHandicap ? res.teamTwoHandicap : null,
             isTeamOneHandicapApplied: res.isTeamOneHandicapApplied,
             isTeamTwoHandicapApplied: res.isTeamTwoHandicapApplied,
             maxScorePerSet: res.maxScorePerSet,
             tournamentTeamOneName: res.tournamentTeamOne ? res.tournamentTeamOne.name : null,
-            tournamentTeamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null
+            tournamentTeamTwoName: res.tournamentTeamTwo ? res.tournamentTeamTwo.name : null,
+            actualStartTimeDate: res.actualStartTimeDate,
+            clubLogo: res.club && res.club.imageUrl ? res.club.imageUrl : null,
+            format: res.format,
+            venueNo: res.venue ? res.venue.no : null,
+            tournamentSubItem: res.tournamentSubItem,
+            clubName: res.club?.name ? res.club.name : null,
+            tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
+            tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
+            tournamentName: res.tournament ? res.tournament.name : null,
           });
-
-          setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
-          startTimer();
         } else {
           toast({
             title: 'Error',
@@ -191,17 +209,31 @@ const useScoreboard = () => {
             teamTwoScore: parsedMessage.teamTwoScore,
             sets: updatedSets,
             isTeamOneHandicapApplied: parsedMessage.isTeamOneHandicapApplied,
-            isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied
+            isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied,
           };
         });
         break;
       case 'match-start':
         const matchId = parsedMessage.matchId;
+        setShowTimeOverAlert(false);
         await fetchMatchData(matchId);
         break;
       case 'match-end':
         setScoreboardData(null);
         navigate('/app/scoreboard');
+        setShowTimeOverAlert(false);
+        break;
+      case 'timer-updated':
+        const newExpectedEndDateTime = parsedMessage.expectedEndTimeDate;
+        setScoreboardData((prevData) => {
+          if (prevData === null) return null;
+
+          return {
+            ...prevData,
+            expectedEndTimeDate: newExpectedEndDateTime,
+          };
+        });
+        setShowTimeOverAlert(false);
         break;
     }
   };
@@ -213,6 +245,7 @@ const useScoreboard = () => {
     orientation,
     setOrientation,
     rotateBody,
+    showTimeOverAlert,
   };
 };
 

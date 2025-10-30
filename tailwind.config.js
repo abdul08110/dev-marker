@@ -21,7 +21,16 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["Open Sans", 'sans-serif'],
+        sans: ["Oxanium", "sans-serif"],
+      },
+      screens: {
+        '480p': { raw: '(min-height: 480px) and (max-height: 719px)' },
+        '720p': { raw: '(min-height: 720px) and (max-height: 1079px)' },
+        '1080p': { raw: '(min-height: 1080px) and (max-height: 1439px)' },
+        '2k': { raw: '(min-height: 1440px) and (max-height: 2159px)' },
+        '4k': { raw: '(min-height: 2160px)' },
+        '360p': { raw: '(min-height: 300px) and (max-height: 640px)' },
+        '180p': { raw: '(min-height: 180px) and (max-height: 320px)' },
       },
       colors: {
         border: "hsl(var(--border))",
@@ -76,10 +85,15 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "slide-up": {
+          from: { transform: "translateY(100%)" },
+          to: { transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "slide-up": "slide-up 0.3s ease-out",
       },
     },
   },

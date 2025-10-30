@@ -7,7 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import useSearchPlayers from '@/api/app/useSearchPlayer';
 import useAddPlayers from '@/api/app/useAddPlayers';
+import useGetPlayerById from '@/api/app/useGetPlayerById';
 import { Player } from '@/stores/types';
+import { ScanQrCode } from 'lucide-react';
+import { ScanPlayerQrModal } from '@/components/modals/ScanPlayerQrModal';
+import { toast } from '@/components/ui/use-toast';
 
 const baseSchema = z.object({
   phoneNumber: z
@@ -35,6 +39,9 @@ export function SearchPlayerForm(props: PlayerSearchProps) {
   const [searchAttempted, setSearchAttempted] = useState<boolean>(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const addPlayerProps = useAddPlayers();
+  const { getPlayerById, loading: loadingPlayerDetails } = useGetPlayerById();
+  const [isQrModalOpen, setIsQrModalOpen] = useState<boolean>(false);
+  const [isFetchingPlayer, setIsFetchingPlayer] = useState<boolean>(false);
 
   const schema = searchAttempted ? mandatoryNameSchema : optionalNameSchema;
 
@@ -72,6 +79,30 @@ export function SearchPlayerForm(props: PlayerSearchProps) {
       if (response) {
         await props.onPlayerConfirm(response.result);
       }
+    }
+  };
+
+  const handlePlayerFound = async (playerId: string) => {
+    try {
+      setIsFetchingPlayer(true);
+      const playerData = await getPlayerById(playerId);
+      if (playerData && playerData.result) {
+        setSelectedPlayer(playerData.result);
+        form.setValue('name', playerData.result.name || '');
+        form.setValue('phoneNumber', playerData.result.phoneNumber || '');
+        setSearchAttempted(true);
+      } else {
+        throw new Error('Failed to fetch player details');
+      }
+    } catch (error) {
+      console.error('Error fetching player details:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch player details. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsFetchingPlayer(false);
     }
   };
 
@@ -121,6 +152,25 @@ export function SearchPlayerForm(props: PlayerSearchProps) {
           </Button>
         )}
       </form>
+      
+      <div className="mt-4">
+        <Button 
+          type="button" 
+          onClick={() => setIsQrModalOpen(true)} 
+          className="w-full flex items-center justify-center gap-2"
+          disabled={isFetchingPlayer}
+        >
+          <ScanQrCode className="h-4 w-4" />
+          Scan QR Code
+        </Button>
+      </div>
+
+      <ScanPlayerQrModal
+        isOpen={isQrModalOpen}
+        onCloseModal={() => setIsQrModalOpen(false)}
+        onPlayerFound={handlePlayerFound}
+        isLoading={loadingPlayerDetails || isFetchingPlayer}
+      />
     </Form>
   );
 }

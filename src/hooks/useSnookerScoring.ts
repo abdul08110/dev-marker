@@ -22,6 +22,7 @@ import {
   handleConcedeFrame,
   handleCorrectionState,
   handleEndFrame,
+  handleEndGameThrunk,
   handleFoulScore,
   handleMatchStart,
   handlePlayerSelectState,
@@ -41,10 +42,12 @@ import { SnookerFoulData } from '@/components/forms/app/snookerFoul';
 import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
 import useInterval from './useInterval';
-import { matchEndGameRequest } from '@/api/scoring/scoringFunctions';
+import { matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
-import { getTimeLeftInMinutes } from '@/utils/functions';
+import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
+import { SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
+import { setExpectedEndTimeDate } from '@/stores/slices/sportSlice';
 
 const useSnookerScoring = () => {
   // REDUX STATE
@@ -75,7 +78,7 @@ const useSnookerScoring = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isOnline = useOnlineStatus();
-  useInterval(handleUpdateToServer, 3000);
+  useInterval(handleUpdateToServer, 1000);
   const [searchParams] = useSearchParams();
   const matchId = searchParams.get('matchId');
   useBackButtonHandler(handleBackButtonClick);
@@ -101,10 +104,19 @@ const useSnookerScoring = () => {
   const [showCorrectionDrawer, setShowCorrectionDrawer] = React.useState(false);
   const [showConcedeFrameDrawer, setShowConcedeFrameDrawer] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [showTimerModal, setShowTimeModal] = React.useState(false);
 
   // TIMER HOOKS
-  const { timeLeft, startTimer, setTimeLeft } = useTimer(snookerScoring.timeInMinutes, () => {
-    // Logic to handle when timer completes
+  // const { timeLeft, startTimer, setTimeLeft } = useTimer(snookerScoring.timeInMinutes, () => {
+  //   setShowTimeModal(true);
+  // });
+
+  const timeLeft = useTimer({
+    endTime: snookerScoring.expectedEndTimeDate ? new Date(snookerScoring.expectedEndTimeDate) : null,
+    startTime: null,
+    onTimerComplete: () => {
+      setShowTimeModal(true);
+    },
   });
 
   useEffect(() => {
@@ -117,8 +129,6 @@ const useSnookerScoring = () => {
           if (res !== null) {
             setOpenPlayerSelectCard(false);
             await dispatch(matchSyncDataFromBackend({ data: res }));
-            setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
-            startTimer();
           } else {
             toast({
               title: 'Error',
@@ -165,8 +175,25 @@ const useSnookerScoring = () => {
     }
   };
 
+  const snookerSportTypeToFormat = (
+    data: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED',
+    isCumulativeScoring: boolean,
+  ) => {
+    switch (data) {
+      case 'SNOOKER_10_RED':
+        return `10 REDS${isCumulativeScoring ? ' CUMULATIVE' : ''}`;
+      case 'SNOOKER_15_RED':
+        return `15 REDS${isCumulativeScoring ? ' CUMULATIVE' : ''}`;
+      case 'SNOOKER_6_RED':
+        return `6 REDS${isCumulativeScoring ? ' CUMULATIVE' : ''}`;
+      default:
+        return `15 REDS${isCumulativeScoring ? ' CUMULATIVE' : ''}`;
+    }
+  };
+
   const handleMatchCreation = async (playerOrder: string[]) => {
     let isTeamReveresed = false;
+    const currentImplementationSnookerScoring = snookerScoring;
     const activeTeam = getActiveTeam(snookerScoring.team1, snookerScoring.team2);
 
     if (activeTeam === 1) {
@@ -174,45 +201,62 @@ const useSnookerScoring = () => {
       isTeamReveresed = true;
     }
 
-    const teamOneHandicap = isTeamReveresed ? snookerScoring.teamTwoHandicap : snookerScoring.teamOneHandicap
-    const teamTwoHandicap = isTeamReveresed ? snookerScoring.teamOneHandicap : snookerScoring.teamTwoHandicap
+    const teamOneHandicap = isTeamReveresed ? currentImplementationSnookerScoring.teamTwoHandicap : currentImplementationSnookerScoring.teamOneHandicap;
+    const teamTwoHandicap = isTeamReveresed ? currentImplementationSnookerScoring.teamOneHandicap : currentImplementationSnookerScoring.teamTwoHandicap;
 
     const currentDate = new Date();
+    const expectedEndTimeDate =
+      snookerScoring.timeInMinutes !== 0
+        ? new Date(currentDate.getTime() + snookerScoring.timeInMinutes * 60000)
+        : undefined;
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
-      expectedEndTimeDate:
-        snookerScoring.timeInMinutes !== 0
-          ? new Date(currentDate.getTime() + snookerScoring.timeInMinutes * 60000)
-          : undefined,
-      sideOnePlayerOneId: isTeamReveresed ? snookerScoring.team2.players[0].id! : snookerScoring.team1.players[0].id!,
-      sideTwoPlayerOneId: isTeamReveresed ? snookerScoring.team1.players[0].id! : snookerScoring.team2.players[0].id!,
+      expectedEndTimeDate: expectedEndTimeDate,
+      sideOnePlayerOneId: isTeamReveresed ? currentImplementationSnookerScoring.team2.players[0].id! : currentImplementationSnookerScoring.team1.players[0].id!,
+      sideTwoPlayerOneId: isTeamReveresed ? currentImplementationSnookerScoring.team1.players[0].id! : currentImplementationSnookerScoring.team2.players[0].id!,
       sideOnePlayerTwoId:
-        snookerScoring.team1.players.length > 1
+        currentImplementationSnookerScoring.team1.players.length > 1
           ? isTeamReveresed
-            ? snookerScoring.team2.players[1].id!
-            : snookerScoring.team1.players[1].id!
+            ? currentImplementationSnookerScoring.team2.players[1].id!
+            : currentImplementationSnookerScoring.team1.players[1].id!
           : undefined,
       sideTwoPlayerTwoId:
-        snookerScoring.team2.players.length > 1
+        currentImplementationSnookerScoring.team2.players.length > 1
           ? isTeamReveresed
-            ? snookerScoring.team1.players[1].id!
-            : snookerScoring.team2.players[1].id!
+            ? currentImplementationSnookerScoring.team1.players[1].id!
+            : currentImplementationSnookerScoring.team2.players[1].id!
           : undefined,
       sport: 'SNOOKER',
       sportType: snookerScoring.format,
       streamingType: snookerScoring.streaming,
       venueId: clubs.activeClub!.venueId,
-      handicap: isTeamReveresed ? -snookerScoring.handicap : snookerScoring.handicap,
-      maxScorePerSet: snookerScoring.maxScorePerSet,
-      noOfSets: snookerScoring.noOfSets,
-      cumulativeScoring: snookerScoring.isCumulativeScoring,
-      tournamentTeamOneId: snookerScoring.tournamentTeamOneId ? snookerScoring.tournamentTeamOneId : undefined,
-      tournamentTeamTwoId: snookerScoring.tournamentTeamTwoId ? snookerScoring.tournamentTeamTwoId : undefined,
-      tournamentId: snookerScoring.tournamentId ? snookerScoring.tournamentId : undefined,
-      tournamentTeamOneScore: snookerScoring.tournamentTeamOneScore ? snookerScoring.tournamentTeamOneScore : undefined,
-      tournamentTeamTwoScore: snookerScoring.tournamentTeamTwoScore ? snookerScoring.tournamentTeamTwoScore : undefined,
+      handicap: isTeamReveresed ? -currentImplementationSnookerScoring.handicap : currentImplementationSnookerScoring.handicap,
+      maxScorePerSet: currentImplementationSnookerScoring.maxScorePerSet,
+      noOfSets: currentImplementationSnookerScoring.noOfSets,
+      cumulativeScoring: currentImplementationSnookerScoring.isCumulativeScoring,
+      tournamentTeamOneId:
+        currentImplementationSnookerScoring.tournamentTeamOneId !== null && currentImplementationSnookerScoring.tournamentTeamTwoId !== null
+          ? isTeamReveresed
+            ? currentImplementationSnookerScoring.tournamentTeamTwoId
+            : currentImplementationSnookerScoring.tournamentTeamOneId
+          : undefined,
+      tournamentTeamTwoId:
+        currentImplementationSnookerScoring.tournamentTeamOneId !== null && currentImplementationSnookerScoring.tournamentTeamTwoId !== null
+          ? isTeamReveresed
+            ? currentImplementationSnookerScoring.tournamentTeamOneId
+            : currentImplementationSnookerScoring.tournamentTeamTwoId
+          : undefined,
+      tournamentId: currentImplementationSnookerScoring.tournamentId ? currentImplementationSnookerScoring.tournamentId : undefined,
+      tournamentTeamOneScore: currentImplementationSnookerScoring.tournamentTeamOneScore ? currentImplementationSnookerScoring.tournamentTeamOneScore : undefined,
+      tournamentTeamTwoScore: currentImplementationSnookerScoring.tournamentTeamTwoScore ? currentImplementationSnookerScoring.tournamentTeamTwoScore : undefined,
       teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
+      format: currentImplementationSnookerScoring.formatName
+        ? currentImplementationSnookerScoring.formatName
+        : snookerSportTypeToFormat(currentImplementationSnookerScoring.format, currentImplementationSnookerScoring.isCumulativeScoring),
+      tournamentSubItemId: currentImplementationSnookerScoring.tournamentSubItemId ? currentImplementationSnookerScoring.tournamentSubItemId : undefined,
+      switchType: snookerScoring.switchType ? snookerScoring.switchType : null,
+      isRankingEvent: currentImplementationSnookerScoring.isRankingEvent,
     });
 
     if (matchId) {
@@ -220,9 +264,9 @@ const useSnookerScoring = () => {
         handleMatchStart({
           matchId,
           scoreOrder: playerOrder,
+          expectedEndTimeDate,
         }),
       );
-      await startTimer();
     } else {
       toast({
         title: 'Error',
@@ -363,6 +407,14 @@ const useSnookerScoring = () => {
     }
   };
 
+  const onBackInPlayerSelectModal = async () => {
+    if (snookerScoring.team1.players[0].id !== null) {
+      setSelectedTeamIndex(0);
+      setSelectedPlayerIndex(0);
+      setOpenPlayerSelectCard(true);
+    }
+  };
+
   const handlePlayerConfirm = async (player: Player) => {
     await dispatch(
       await handlePlayerSelectState({
@@ -383,7 +435,7 @@ const useSnookerScoring = () => {
     setOpenFoulDrawer(false);
   };
 
-  const handleSettingsUpdate = async (values: any) => {
+  const handleSettingsUpdate = async (values: SnookerPracticeSettingsData) => {
     await dispatch(handleSettingsStateUpdate(values));
     setOpenSettingsDrawer(false);
   };
@@ -394,6 +446,7 @@ const useSnookerScoring = () => {
 
   const handleEndFrameButton = async () => {
     setShowLoadingModal(true);
+    setShowMenuDrawer(false);
 
     const activeSet = getActiveSet(snookerScoring.scoreHistory);
     if (activeSet && activeSet.status === 'ONGOING') {
@@ -405,17 +458,22 @@ const useSnookerScoring = () => {
 
   const handleEndGame = async () => {
     setShowLoadingModal(true);
-    const activeSet = getActiveSet(snookerScoring.scoreHistory);
-    if (activeSet && activeSet.status === 'ONGOING') {
-      await dispatch(handleEndFrame({ updateUndoStack: true }));
-    }
+    setShowMenuDrawer(false);
+    
+    try {
+      await dispatch(handleEndGameThrunk({}));
 
-    const res = await matchEndGameRequest({ id: snookerScoring.matchId! });
-    if (res === true) {
       await handleGoToHome();
+    } catch (error) {
+      console.error('Error ending game:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to end game. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setShowLoadingModal(false);
     }
-
-    setShowLoadingModal(false);
   };
 
   const handleConcedeFrameSelection = async (values: SnookerConcedeFrameData) => {
@@ -444,6 +502,26 @@ const useSnookerScoring = () => {
     await dispatch(handleCorrectionState({ values }));
 
     setShowLoadingModal(false);
+  };
+
+  const handleTimerButtonAction = async (state: 'CONFIRM' | 'CANCEL') => {
+    if (state === 'CONFIRM') {
+      setShowLoadingModal(true);
+
+      const newEndTimeDate = addMillisecondsToUTC(snookerScoring.expectedEndTimeDate!, 30 * 60 * 1000);
+
+      await matchResetTimerRequest({
+        matchId: snookerScoring.matchId!,
+        expectedEndTimeDate: new Date(newEndTimeDate),
+      });
+
+      dispatch(setExpectedEndTimeDate({ expectedEndTimeDate: newEndTimeDate }));
+
+      setShowLoadingModal(false);
+    } else {
+      await handleEndGame();
+    }
+    setShowTimeModal(false);
   };
 
   return {
@@ -502,7 +580,10 @@ const useSnookerScoring = () => {
     setShowConcedeFrameDrawer,
     loading,
     handleEndFrameButton,
-    teamActiveSetPoints
+    teamActiveSetPoints,
+    onBackInPlayerSelectModal,
+    showTimerModal,
+    handleTimerButtonAction,
   };
 };
 

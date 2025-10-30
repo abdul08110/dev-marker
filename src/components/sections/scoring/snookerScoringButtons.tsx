@@ -115,7 +115,7 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
 
         <button
           disabled={props.disabledState[SnookerScoringButtonEnum.FOUL]}
-          className={clsx('col-span-1 bg-markerButton relative', commonClasses)}
+          className={clsx('col-span-1 bg-white relative', commonClasses)}
           onClick={() => props.onButtonClick(SnookerScoringButtonEnum.FOUL)}
         >
           Foul

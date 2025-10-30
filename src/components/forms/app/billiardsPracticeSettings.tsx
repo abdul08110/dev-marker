@@ -8,6 +8,7 @@ import DurationPicker from '@/components/ui/durationPicker';
 import HandicapSelector from '@/components/ui/handicapSelector';
 import StreamingSelector from '@/components/ui/streamingSelector';
 import { SpinButton } from '@/components/ui/spinButton';
+import { Switch } from '@/components/ui/switch';
 
 export interface BilliardsPracticeSettingsData {
   format: 'BILLIARDS_TIME_BASED' | 'BILLIARDS_RACE_TO';
@@ -16,6 +17,7 @@ export interface BilliardsPracticeSettingsData {
   maxPointsPerFrame: number;
   streaming: 'PUBLIC' | 'PRIVATE';
   handicap: number;
+  isRankingEvent: boolean;
 }
 
 const formSchema = z.object({
@@ -25,6 +27,7 @@ const formSchema = z.object({
   maxPointsPerFrame: z.number(),
   streaming: z.enum(['PUBLIC', 'PRIVATE']),
   handicap: z.number().min(-147).max(147),
+  isRankingEvent: z.boolean(),
 });
 
 interface BilliardsSettingFormSchema {
@@ -39,7 +42,7 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
       durationInMinutes: '30:00',
       noOfFrames: 1,
       maxPointsPerFrame: 1,
-      streaming: 'PUBLIC',
+      streaming: 'PRIVATE',
       handicap: 0,
     },
   });
@@ -153,6 +156,21 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
               </div>
               <FormControl>
                 <StreamingSelector value={field.value} onChange={field.onChange} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="isRankingEvent"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-white text-sm">Ranking</FormLabel>
+              </div>
+              <FormControl>
+                <Switch className='w-14 h-6' checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
             </FormItem>
           )}

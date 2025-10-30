@@ -16,6 +16,9 @@ interface SelectPlayerPopoverProps {
   teamIndex: number;
   playerIndex: number;
   noOfPlayersPerTeam: number;
+  showCancel: boolean;
+  onBack: () => void;
+  showBack: boolean;
 }
 
 export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
@@ -97,9 +100,17 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
             onPlayerConfirm={handlePlayerConfirmation}
             clubId={props.clubId}
           />
-          <DrawerClose asChild>
-            <Button variant="secondary">Cancel</Button>
-          </DrawerClose>
+
+          {props.showCancel && (
+            <DrawerClose asChild>
+              <Button variant="secondary">Cancel</Button>
+            </DrawerClose>
+          )}
+          {props.showBack && (
+            <Button type={'button'} onClick={props.onBack} variant={'secondary'}>
+              Back
+            </Button>
+          )}
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

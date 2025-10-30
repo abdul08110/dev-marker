@@ -2,7 +2,9 @@ import { RootState, useAppDispatch } from '@/stores';
 import {
   handleBackendUpdateOfData,
   handleBilliardsPointTrigger,
+  handleBreakOff,
   handleEndFrame,
+  handleEndGameThrunk,
   handleMatchStart,
   handlePlayerSelectState,
   handleReversePlayersState,
@@ -21,14 +23,15 @@ import useStartMatch from '@/api/app/useStartMatch';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import React, { useEffect } from 'react';
 import useTimer from './useTimer';
-import { getTimeLeftInMinutes } from '@/utils/functions';
+import { addMillisecondsToUTC } from '@/utils/functions';
 import { toast } from '@/components/ui/use-toast';
 import { getActiveSet, getActiveTeam, getActiveTurn } from '@/stores/selectors/commonSport';
 import { BilliardPointType, Player } from '@/stores/types';
-import { matchEndGameRequest } from '@/api/scoring/scoringFunctions';
+import { matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@/stores/selectors/billiardsSelector';
 import { BilliardsPracticeSettingsData } from '@/components/forms/app/billiardsPracticeSettings';
 import { BilliardsScoringButtonEnum } from '@/components/sections/scoring/billiardsScoringButton';
+import { setExpectedEndTimeDate } from '@/stores/slices/sportSlice';
 
 const useBilliardsScoring = () => {
   // REDUX STATE
@@ -74,10 +77,18 @@ const useBilliardsScoring = () => {
   const [showBallColorModal, setShowBallColorModal] = React.useState(false);
   const [showMenuDrawer, setShowMenuDrawer] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [showTimerModal, setShowTimeModal] = React.useState(false);
 
   // TIMER HOOKS
-  const { timeLeft, startTimer, setTimeLeft } = useTimer(billiardsScoring.timeInMinutes, () => {
-    // Logic to handle when timer completes
+  // const { timeLeft, startTimer, setTimeLeft } = useTimer(billiardsScoring.timeInMinutes, () => {
+  //   setShowTimeModal(true);
+  // });
+  const timeLeft = useTimer({
+    endTime: billiardsScoring.expectedEndTimeDate ? new Date(billiardsScoring.expectedEndTimeDate) : null,
+    startTime: null,
+    onTimerComplete: () => {
+      setShowTimeModal(true);
+    },
   });
 
   useEffect(() => {
@@ -90,8 +101,6 @@ const useBilliardsScoring = () => {
           if (res !== null) {
             setOpenPlayerSelectCard(false);
             await dispatch(matchSyncDataFromBackend({ data: res }));
-            setTimeLeft(res.expectedEndTimeDate ? Math.round(getTimeLeftInMinutes(res.expectedEndTimeDate) * 60) : 0);
-            startTimer();
           } else {
             toast({
               title: 'Error',
@@ -177,6 +186,16 @@ const useBilliardsScoring = () => {
             return;
           }
           setShowBallColorModal(true);
+        } else {
+          const activeTeamInfo = getActiveTeam(billiardsScoring.team1, billiardsScoring.team2);
+          await dispatch(
+            handleBreakOff({
+              scoreOrder: [
+                activeTeamInfo === 0 ? billiardsScoring.team1.players[0].id : billiardsScoring.team2.players[0].id,
+                activeTeamInfo === 0 ? billiardsScoring.team2.players[0].id : billiardsScoring.team1.players[0].id,
+              ],
+            }),
+          );
         }
         setShowLoadingModal(false);
         break;
@@ -192,6 +211,12 @@ const useBilliardsScoring = () => {
   };
 
   const handlePlayerConfirm = async (player: Player) => {
+    let showSettingsScreen: boolean = false;
+
+    if (selectedPlayerIndex === 0 && selectedTeamIndex === 1 && billiardsScoring.team2.players[0].id === null) {
+      showSettingsScreen = true;
+    }
+
     await dispatch(
       await handlePlayerSelectState({
         player,
@@ -203,6 +228,18 @@ const useBilliardsScoring = () => {
       setSelectedTeamIndex(1);
     } else {
       setOpenPlayerSelectCard(false);
+    }
+
+    if (showSettingsScreen) {
+      setOpenSettingsDrawer(true);
+    }
+  };
+
+  const onBackInPlayerSelectModal = async () => {
+    if (billiardsScoring.team1.players[0].id !== null) {
+      setSelectedTeamIndex(0);
+      setSelectedPlayerIndex(0);
+      setOpenPlayerSelectCard(true);
     }
   };
 
@@ -228,18 +265,56 @@ const useBilliardsScoring = () => {
 
   const handleEndGame = async () => {
     setShowLoadingModal(true);
-    const activeSet = getActiveSet(billiardsScoring.scoreHistory);
-    if (activeSet && activeSet.status === 'ONGOING') {
-      await dispatch(handleEndFrame({ updateUndoStack: true }));
-    }
+    try {
+      await dispatch(handleEndGameThrunk({}));
 
-    const res = await matchEndGameRequest({ id: billiardsScoring.matchId! });
-    if (res === true) {
       await handleGoToHome();
+    } catch (error) {
+      console.error('Error ending game:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to end game. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setShowLoadingModal(false);
+    }
+  };
+
+  const handleTimerButtonAction = async (state: 'CONFIRM' | 'CANCEL') => {
+    if (state === 'CONFIRM') {
+      setShowLoadingModal(true);
+
+      const newEndTimeDate = addMillisecondsToUTC(billiardsScoring.expectedEndTimeDate!, 30 * 60 * 1000);
+
+      await matchResetTimerRequest({
+        matchId: billiardsScoring.matchId!,
+        expectedEndTimeDate: new Date(newEndTimeDate),
+      });
+
+      dispatch(setExpectedEndTimeDate({ expectedEndTimeDate: newEndTimeDate }));
+      setShowLoadingModal(false);
+    } else {
+      await handleEndGame();
     }
 
-    setShowLoadingModal(false);
+    setShowTimeModal(false);
   };
+
+  // const billiardsSportTypeToFormat = (
+  //   data: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED',
+  //   raceToValue: number | null,
+  //   noOfSets: number | null,
+  // ) => {
+  //   switch (data) {
+  //     case 'BILLIARDS_RACE_TO':
+  //       return `${raceToValue ? raceToValue : '100'} UP`;
+  //     case 'BILLIARDS_TIME_BASED':
+  //       return `BEST OF ${noOfSets ? noOfSets : '1'}`;
+  //     default:
+  //       return `${raceToValue ? raceToValue : '100'} UP`;
+  //   }
+  // };
 
   const handleBilliardsSelectColorBall = async (type: 'white' | 'yellow') => {
     setShowBallColorModal(false);
@@ -266,12 +341,13 @@ const useBilliardsScoring = () => {
       : billiardsScoring.tournamentTeamTwoId;
 
     const currentDate = new Date();
+    const expectedEndTimeDate =
+      billiardsScoring.timeInMinutes !== 0
+        ? new Date(currentDate.getTime() + billiardsScoring.timeInMinutes * 60000)
+        : undefined;
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
-      expectedEndTimeDate:
-        billiardsScoring.timeInMinutes !== 0
-          ? new Date(currentDate.getTime() + billiardsScoring.timeInMinutes * 60000)
-          : undefined,
+      expectedEndTimeDate: expectedEndTimeDate,
       sideOnePlayerOneId: isTeamReveresed
         ? billiardsScoring.team2.players[0].id!
         : billiardsScoring.team1.players[0].id!,
@@ -297,6 +373,10 @@ const useBilliardsScoring = () => {
         : undefined,
       teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
+      format: billiardsScoring.formatName ? billiardsScoring.formatName : `${billiardsScoring.timeInMinutes} Mins`,
+      tournamentSubItemId: billiardsScoring.tournamentSubItemId ? billiardsScoring.tournamentSubItemId : undefined,
+      switchType: billiardsScoring.switchType ? billiardsScoring.switchType : null,
+      isRankingEvent: billiardsScoring.isRankingEvent,
     });
 
     if (matchId) {
@@ -304,9 +384,9 @@ const useBilliardsScoring = () => {
         handleMatchStart({
           matchId,
           scoreOrder: isTeamReveresed ? [playerTwo, playerOne] : [playerOne, playerTwo],
+          expectedEndTimeDate,
         }),
       );
-      await startTimer();
     } else {
       toast({
         title: 'Error',
@@ -353,6 +433,9 @@ const useBilliardsScoring = () => {
     team2score,
     handleBilliardsSelectColorBall,
     handleEndFrameButton,
+    onBackInPlayerSelectModal,
+    showTimerModal,
+    handleTimerButtonAction,
   };
 };
 

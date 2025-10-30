@@ -6,7 +6,8 @@ import { Player } from '@/stores/types';
 
 
 interface GetTournamentPlayersProps {
-    id: string;
+    tournamentId: string;
+    teamId?: string;
     search?: string;
 }
 
@@ -19,13 +20,20 @@ const useGetTournamentPlayers = () => {
     const [error, setError] = useState<string | null>(null);
     const [players, setPlayers] = useState<Player[]>([]);
 
-    const getPlayers = async ({ id, search }: GetTournamentPlayersProps): Promise<GetTournamentPlayersResponse | null> => {
+    const getPlayers = async ({ tournamentId, teamId, search }: GetTournamentPlayersProps): Promise<GetTournamentPlayersResponse | null> => {
         setLoading(true);
         setError(null);
 
         try {
-            let url = `tournament/marker/get-tournament-players/${id}`;
-            if (search) url = url + `?q=${search}`;
+            let url = `tournament/marker/get-tournament-players?tournamentId=${tournamentId}`;
+            
+            if (teamId) {
+                url += `&teamId=${teamId}`;
+            }
+            
+            if (search) {
+                url += `&q=${search}`;
+            }
 
             const data = await handleApiResponse(
                 axiosInstance.get<ApiResponse<GetTournamentPlayersResponse>>(url)

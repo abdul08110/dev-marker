@@ -24,15 +24,17 @@ const useGetPlayers = () => {
         setError(null);
 
         try {
-            let url = `user/marker/club-players/${id}`;
-            if (search) url = url + `?q=${search}`;
-
-            const data = await handleApiResponse(
-                axiosInstance.get<ApiResponse<GetPlayersResponse>>(url)
-            );
-            setPlayers(data.results);
-
-            return data;
+            if (id) {
+                let url = `user/marker/club-players/${id}`;
+                if (search) url = url + `?q=${search}`;
+    
+                const data = await handleApiResponse(
+                    axiosInstance.get<ApiResponse<GetPlayersResponse>>(url)
+                );
+                setPlayers(data.results);
+    
+                return data;
+            } else return null;
         } catch (err: any) {
             setError(err.message);
             return null;

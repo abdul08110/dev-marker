@@ -54,6 +54,12 @@ const initialState: GeneralScoringState = {
   teamTwoHandicap: null,
   isTeamOneHandicapApplied: false,
   isTeamTwoHandicapApplied: false,
+  expectedEndTimeDate: null,
+  tournamentSubItemId: null,
+  formatName: null,
+  switchType: null,
+  isRankingEvent: false,
+  snookerHandicapType: 'DIFFERENCE',
 };
 
 const sportSlice = createSlice({
@@ -108,6 +114,18 @@ const sportSlice = createSlice({
         maxScorePerSet: null,
         isTeamOneHandicapApplied: false,
         isTeamTwoHandicapApplied: false,
+        teamOneHandicap: null,
+        teamTwoHandicap: null,
+        expectedEndTimeDate: null,
+        tournamentSubItemId: null,
+        tournamentTeamOneId: null,
+        tournamentTeamTwoId: null,
+        tournamentId: null,
+        tournamentTeamOneScore: null,
+        tournamentTeamTwoScore: null,
+        formatName: null,
+        switchType: 'VISIT',
+        isRankingEvent: false,
       });
     },
     resetStateBilliards(state) {
@@ -143,7 +161,7 @@ const sportSlice = createSlice({
           score: 0,
         },
         handicap: 0,
-        streaming: 'PUBLIC',
+        streaming: 'PRIVATE',
         timeInMinutes: 30,
         scoreHistory: [],
         startTimeDate: null,
@@ -151,10 +169,25 @@ const sportSlice = createSlice({
         maxScorePerSet: null,
         isTeamOneHandicapApplied: false,
         isTeamTwoHandicapApplied: false,
+        expectedEndTimeDate: null,
+        tournamentSubItemId: null,
+        tournamentTeamOneId: null,
+        tournamentTeamTwoId: null,
+        teamOneHandicap: null,
+        teamTwoHandicap: null,
+        tournamentId: null,
+        tournamentTeamOneScore: null,
+        tournamentTeamTwoScore: null,
+        formatName: null,
+        switchType: null,
+        isRankingEvent: false,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
       state.matchId = action.payload.matchId;
+    },
+    setFormatName(state, action: PayloadAction<{ formatName: string }>) {
+      state.formatName = action.payload.formatName;
     },
     setActivePlayer(state, action: PayloadAction<{ playerId: string }>) {
       const id = action.payload.playerId;
@@ -173,9 +206,26 @@ const sportSlice = createSlice({
       const scoreOrder = action.payload.scoreOrder;
       const shouldCalculateHandicap = action.payload.calculateHandicap;
 
+      let teamOneStartScore = 0;
+      let teamTwoStartScore = 0;
+
+      if (shouldCalculateHandicap) {
+        if (state.snookerHandicapType === 'DIFFERENCE') {
+          let relativeHandicap = state.handicap;
+          if (state.teamOneHandicap || state.teamTwoHandicap) {
+            relativeHandicap = (state.teamOneHandicap || 0) - (state.teamTwoHandicap || 0);
+          }
+          teamOneStartScore = relativeHandicap > 0 ? relativeHandicap : 0;
+          teamTwoStartScore = relativeHandicap < 0 ? Math.abs(relativeHandicap) : 0;
+        } else {
+          teamOneStartScore = 0;
+          teamTwoStartScore = 0;
+        }
+      }
+
       state.scoreHistory.push({
-        teamOneScore: state.handicap > 0 && shouldCalculateHandicap ? state.handicap : 0,
-        teamTwoScore: state.handicap < 0 && shouldCalculateHandicap ? Math.abs(state.handicap) : 0,
+        teamOneScore: teamOneStartScore,
+        teamTwoScore: teamTwoStartScore,
         turns: [],
         status: 'ONGOING',
         snookerCorrections: [],
@@ -217,6 +267,9 @@ const sportSlice = createSlice({
     },
     completeSet(state, action: PayloadAction<{ setIndex: number }>) {
       state.scoreHistory[action.payload.setIndex].status = 'COMPLETED';
+    },
+    setExpectedEndTimeDate(state, action: PayloadAction<{ expectedEndTimeDate: string | null }>) {
+      state.expectedEndTimeDate = action.payload.expectedEndTimeDate;
     },
     changeSetStatus(state, action: PayloadAction<{ setIndex: number; status: 'COMPLETED' | 'ONGOING' | 'CONCEDED' }>) {
       state.scoreHistory[action.payload.setIndex].status = action.payload.status;
@@ -275,6 +328,9 @@ const sportSlice = createSlice({
     },
     updateNoOfSets(state, action: PayloadAction<{ no: number }>) {
       state.noOfSets = action.payload.no;
+    },
+    updateIsRankingEvent(state, action: PayloadAction<{ isRankingEvent: boolean }>) {
+      state.isRankingEvent = action.payload.isRankingEvent;
     },
     updateMaxScorePerSet(state, action: PayloadAction<{ maxScorePerSet: number }>) {
       state.maxScorePerSet = action.payload.maxScorePerSet;
@@ -357,5 +413,8 @@ export const {
   updateNoOfSets,
   updateMaxScorePerSet,
   updateTeamHandicapApplied,
+  setExpectedEndTimeDate,
+  updateIsRankingEvent,
+  setFormatName,
 } = sportSlice.actions;
 export default sportSlice.reducer;
