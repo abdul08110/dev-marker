@@ -214,7 +214,7 @@ export function VideoOverlay() {
               />
             )
           }[viewershipData.tournamentId] || (
-            <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+            <IGTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
           )
         ) : (
           <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
