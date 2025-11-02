@@ -72,9 +72,9 @@ const useTournamentSchedule = () => {
     }
 
     const fetchDataOnMount = async () => {
-      await getTournament({ id: tournamentId! });
+      const tournamentData = await getTournament({ id: tournamentId! });
 
-      if (tournament?.eventFormat! === 'SINGLES') {
+      if (tournamentData?.data?.eventFormat === 'SINGLES') {
         await getTournamentSchedule({ id: tournamentId! });
       } else {
         await getScheduledMatches({ id: tournamentId! });

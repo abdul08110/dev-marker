@@ -347,11 +347,6 @@ export function Tournament() {
     return <SnookerMarkingLoading />;
   }
 
-  // For singles tournaments, check if we have schedule
-  if (isSinglesEvent && (!schedule || schedule.length === 0)) {
-    return <SnookerMarkingLoading />;
-  }
-
   console.log(groupedMatches);
 
   return (
@@ -533,7 +528,7 @@ export function Tournament() {
                                   <FormLabel className="text-white">Player One</FormLabel>
                                   <FormControl>
                                     <TournamentPlayerSelector
-                                      tournamentId={schedule![0].tournament.id}
+                                      tournamentId={tournament?.id || ''}
                                       onPlayerSelect={(player) => {
                                         field.onChange({
                                           id: player.id!,
@@ -573,7 +568,7 @@ export function Tournament() {
                                     </FormLabel>
                                     <FormControl>
                                       <TournamentPlayerSelector
-                                        tournamentId={schedule![0].tournament.id}
+                                        tournamentId={tournament?.id || ''}
                                         teamId={selectedTeamOne?.id}
                                         onPlayerSelect={(player) => {
                                           field.onChange({
@@ -647,7 +642,7 @@ export function Tournament() {
                                   <FormLabel className="text-white">Player Two</FormLabel>
                                   <FormControl>
                                     <TournamentPlayerSelector
-                                      tournamentId={schedule![0].tournament.id}
+                                      tournamentId={tournament?.id || ''}
                                       onPlayerSelect={(player) => {
                                         field.onChange({
                                           id: player.id!,
@@ -687,7 +682,7 @@ export function Tournament() {
                                     </FormLabel>
                                     <FormControl>
                                       <TournamentPlayerSelector
-                                        tournamentId={schedule![0].tournament.id}
+                                        tournamentId={tournament?.id || ''}
                                         teamId={selectedTeamTwo?.id}
                                         onPlayerSelect={(player) => {
                                           field.onChange({
