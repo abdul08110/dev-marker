@@ -16,6 +16,19 @@ export function IGTemplate(props: IGTemplateProps) {
       ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId
       : false;
 
+  const teamOneLogo =
+    props.state.eventFormat === 'TEAMS'
+      ? isTeamReveresed
+        ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamTwo.logo
+        : props.state.tournamentSubItem?.tournamentItem.tournamentTeamOne.logo
+      : props.state!.sideOnePlayerOne.profilePhoto;
+  const teamTwoLogo =
+    props.state.eventFormat === 'TEAMS'
+      ? isTeamReveresed
+        ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOne.logo
+        : props.state.tournamentSubItem?.tournamentItem.tournamentTeamTwo.logo
+      : props.state!.sideTwoPlayerOne.profilePhoto;
+
   return (
     <div className="absolute bottom-0 mx-[min(1vh,1vw)] flex flex-col items-center w-[calc(100%-min(2vh,2vw))]">
       <div className="w-full h-auto flex items-center bg-[#D5D5D5] rounded-lg">
@@ -24,12 +37,16 @@ export function IGTemplate(props: IGTemplateProps) {
             <ImageWithFallback
               fallback="/images/user-dummy-pic.jpg"
               className="w-full h-full object-cover aspect-square"
-              src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.jpg'}
+              cutPosition="top-left"
+              cutSize={30}
+              src={teamOneLogo ? teamOneLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>
         <div className="flex-grow flex flex-col h-full">
-          <div className="w-full h-1/3 flex justify-between items-center bg-[#D5D5D5]">
+          <div
+            className={`w-full flex justify-between items-center bg-[#D5D5D5] h-1/3`}
+          >
             <div className="w-auto flex min-w-[20%]">
               {props.state!.activePlayerId === props.state!.sideOnePlayerOne.id ||
               props.state!.activePlayerId === props.state!.sideOnePlayerTwo?.id ? (
@@ -65,7 +82,9 @@ export function IGTemplate(props: IGTemplateProps) {
               )}
             </div>
           </div>
-          <div className="w-full h-1/3 bg-black rounded-md grid grid-cols-3 items-center px-[min(2vh,2vw)]">
+          <div
+            className={`w-full bg-black rounded-md grid grid-cols-3 items-center px-[min(2vh,2vw)] h-1/3`}
+          >
             <div className="col-span-1">
               <h5 className="text-[min(3vh,3vw)] text-white font-bold text-left uppercase whitespace-nowrap">
                 {generatePlayerName(props.state!.sideOnePlayerOne.name, props.state!.sideOnePlayerTwo?.name)}
@@ -85,18 +104,28 @@ export function IGTemplate(props: IGTemplateProps) {
                 <div className="bg-black px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">
                   <span>
                     {isTeamReveresed
-                      ? props.state.tournamentSubItem?.tournamentItem.teamTwoScore
-                      : props.state.tournamentSubItem?.tournamentItem.teamOneScore}
+                      ? props.state.eventFormat === 'TEAMS'
+                        ? props.state.tournamentSubItem?.tournamentItem.teamTwoScore
+                        : props.state.teamTwoScore
+                      : props.state.eventFormat === 'TEAMS'
+                        ? props.state.tournamentSubItem?.tournamentItem.teamOneScore
+                        : props.state.teamOneScore}
                   </span>
                 </div>
                 <div className="bg-primary px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">
-                  {props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length}
+                  {props.state.tournamentSubItem
+                    ? props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
+                    : props.state.noOfFrames}
                 </div>
                 <div className="bg-black px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">
                   <span>
                     {isTeamReveresed
-                      ? props.state.tournamentSubItem?.tournamentItem.teamOneScore
-                      : props.state.tournamentSubItem?.tournamentItem.teamTwoScore}
+                      ? props.state.eventFormat === 'TEAMS'
+                        ? props.state.tournamentSubItem?.tournamentItem.teamOneScore
+                        : props.state.teamOneScore
+                      : props.state.eventFormat === 'TEAMS'
+                        ? props.state.tournamentSubItem?.tournamentItem.teamTwoScore
+                        : props.state.teamTwoScore}
                   </span>
                 </div>
                 <div className="bg-primary px-[min(4vh,4vw)] py-[min(0.4vh,0.4vw)]">
@@ -116,6 +145,7 @@ export function IGTemplate(props: IGTemplateProps) {
               </h5>
             </div>
           </div>
+
           <div className="w-full h-1/3 flex items-center justify-between bg-[#D5D5D5]">
             <div className="min-w-[45%] px-[min(2vh,2vw)]">
               <h5 className="text-[min(2.2vh,2.2vw)] text-black font-bold text-left uppercase whitespace-nowrap">
@@ -130,7 +160,7 @@ export function IGTemplate(props: IGTemplateProps) {
             <div className="min-w-[10%] flex justify-center">
               <div className="px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">
                 <h5 className="text-[min(2.2vh,2.2vw)] text-black font-bold uppercase whitespace-nowrap">
-                  {props.state?.tournamentSubItem?.tournamentItem.tournamentPhase.name}
+                  { props.state.eventFormat === 'TEAMS' ? props.state?.tournamentSubItem?.tournamentItem.tournamentPhase.name : props.state.phase || ''}
                 </h5>
               </div>
             </div>
@@ -149,9 +179,11 @@ export function IGTemplate(props: IGTemplateProps) {
         <div className="h-full flex items-center">
           <div className="h-full w-[min(13vh,13vw)] p-1 rounded-lg overflow-hidden">
             <ImageWithFallback
+              cutPosition="top-left"
+              cutSize={30}
               fallback="/images/user-dummy-pic.jpg"
               className="w-full h-full object-cover aspect-square"
-              src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.jpg'}
+              src={teamTwoLogo ? teamTwoLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>

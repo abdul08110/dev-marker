@@ -70,7 +70,9 @@ export interface StreamingState {
             };
         };
     };
+    phase: string | null;
     streams: StreamState[];
+    eventFormat: 'SINGLES' | 'TEAMS';
 }
 
 interface UseCommentaryProps {
@@ -347,6 +349,8 @@ const useCommentary = ({
                     tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
                     tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
                     streams: streamRes.streams,
+                    phase: res.phase ? res.phase : null,
+                    eventFormat: res.tournament ? res.tournament.eventFormat : 'TEAMS',
                 };
 
                 setStreamingData(initialData);

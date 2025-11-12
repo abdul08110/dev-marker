@@ -377,6 +377,7 @@ const useBilliardsScoring = () => {
       tournamentSubItemId: billiardsScoring.tournamentSubItemId ? billiardsScoring.tournamentSubItemId : undefined,
       switchType: billiardsScoring.switchType ? billiardsScoring.switchType : null,
       isRankingEvent: billiardsScoring.isRankingEvent,
+      phase: billiardsScoring.phase,
     });
 
     if (matchId) {

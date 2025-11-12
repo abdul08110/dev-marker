@@ -48,6 +48,7 @@ export interface StreamingState {
   tournamentTeamOneId: string | null;
   tournamentTeamTwoId: string | null;
   format: string | null;
+  phase: string | null;
   expectedEndTimeDate: string | null;
   tournamentSubItem?: TournamentSubItem & {
     tournamentItem: TournamentItem & {
@@ -61,6 +62,7 @@ export interface StreamingState {
     };
   };
   streams: StreamState[];
+  eventFormat: 'SINGLES' | 'TEAMS';
 }
 
 const useLiveScoring = (matchId: string) => {
@@ -179,7 +181,9 @@ const useLiveScoring = (matchId: string) => {
           tournamentSubItem: res.tournamentSubItem,
           tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
           tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
-          streams: []
+          streams: [],
+          eventFormat: res.tournament ? res.tournament.eventFormat : 'TEAMS',
+          phase: res.phase ? res.phase : null,
         };
 
         setStreamingData(initialData);

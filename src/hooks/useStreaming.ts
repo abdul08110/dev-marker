@@ -59,6 +59,7 @@ export interface StreamingState {
   tournamentTeamOneId: string | null;
   tournamentTeamTwoId: string | null;
   format: string | null;
+  eventFormat: 'SINGLES' | 'TEAMS';
   expectedEndTimeDate: string | null;
   tournamentSubItem?: TournamentSubItem & {
     tournamentItem: TournamentItem & {
@@ -71,6 +72,7 @@ export interface StreamingState {
       };
     };
   };
+  phase: string | null;
   streams: StreamState[];
 }
 
@@ -163,6 +165,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       if (res && streamRes) {
         setStreamingData(null);
 
+        console.log(res.tournament);
+
         const initialData = {
           matchId: matchId,
           sport: res.sport,
@@ -205,6 +209,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
           tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
           streams: streamRes.streams,
+          eventFormat: res.tournament ? res.tournament.eventFormat : 'TEAMS',
+          phase: res.phase ? res.phase : null,
         };
 
         setStreamingData(initialData);

@@ -88,6 +88,7 @@ export const setStateTournament = createAsyncThunk<
       tournamentTeamOneId: string | null;
       tournamentTeamTwoId: string | null;
       visibility: 'PUBLIC' | 'PRIVATE';
+      phase: string | null;
     };
   },
   { dispatch: AppDispatch }
@@ -149,6 +150,7 @@ export const setStateTournament = createAsyncThunk<
     switchType: data.format.switchType ? data.format.switchType : null,
     isRankingEvent: false,
     snookerHandicapType: data.format.snookerHandicapType ? data.format.snookerHandicapType : 'DIFFERENCE',
+    phase: data.phase,
   };
   await dispatch(
     setState({
@@ -216,6 +218,7 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       switchType: data.switchType,
       isRankingEvent: false,
       snookerHandicapType: 'DIFFERENCE' as 'DIFFERENCE' | 'UPFRONT',
+      phase: data.phase,
     };
 
     if (data.sideTwoPlayerTwo !== null) {

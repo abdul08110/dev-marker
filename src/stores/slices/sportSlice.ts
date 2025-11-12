@@ -60,6 +60,7 @@ const initialState: GeneralScoringState = {
   switchType: null,
   isRankingEvent: false,
   snookerHandicapType: 'DIFFERENCE',
+  phase: null,
 };
 
 const sportSlice = createSlice({

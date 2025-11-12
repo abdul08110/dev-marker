@@ -136,6 +136,7 @@ export interface GeneralScoringState {
   switchType: 'FRAME' | 'VISIT' | null;
   isRankingEvent: boolean;
   snookerHandicapType: 'DIFFERENCE' | 'UPFRONT';
+  phase: string | null;
 }
 
 export interface ClubData {

@@ -158,7 +158,7 @@ export function VideoOverlay() {
               />
             ),
             '6818b4cef773a447a1e34373': (
-              <Singles
+              <IGTemplate
                 isTv={false}
                 state={viewershipData}
                 activeTurn={activeTurn}

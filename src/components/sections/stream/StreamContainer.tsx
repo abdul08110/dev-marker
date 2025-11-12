@@ -141,39 +141,42 @@ export function StreamContainer(props: StreamContainerProps) {
     }
 
     const currentStreamId = selectedStreamId || stream?.brodcastId;
-    const currentIndex = props.state.streams.findIndex(s => s.brodcastId === currentStreamId);
+    const currentIndex = props.state.streams.findIndex((s) => s.brodcastId === currentStreamId);
     const nextIndex = (currentIndex + 1) % props.state.streams.length;
     const nextStream = props.state.streams[nextIndex];
-    
+
     handleCameraAngleSwitch(nextStream);
   }, [props.state?.streams, selectedStreamId, stream?.brodcastId, handleCameraAngleSwitch]);
 
   // Keyboard and Android TV remote event handler
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    // Android TV remote keys and common keyboard shortcuts
-    const streamSwitchKeys = [
-      'ArrowUp',     // Android TV remote up arrow
-      'ArrowDown',   // Android TV remote down arrow
-      'ArrowLeft',   // Android TV remote left arrow
-      'ArrowRight',  // Android TV remote right arrow
-      'KeyS',        // 'S' key for stream switch
-      'KeyC',        // 'C' key for camera switch
-      'Space',       // Space bar
-      'Enter',       // Enter key
-      'MediaTrackNext', // Android TV remote next track
-      'MediaTrackPrevious', // Android TV remote previous track
-    ];
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      // Android TV remote keys and common keyboard shortcuts
+      const streamSwitchKeys = [
+        'ArrowUp', // Android TV remote up arrow
+        'ArrowDown', // Android TV remote down arrow
+        'ArrowLeft', // Android TV remote left arrow
+        'ArrowRight', // Android TV remote right arrow
+        'KeyS', // 'S' key for stream switch
+        'KeyC', // 'C' key for camera switch
+        'Space', // Space bar
+        'Enter', // Enter key
+        'MediaTrackNext', // Android TV remote next track
+        'MediaTrackPrevious', // Android TV remote previous track
+      ];
 
-    if (streamSwitchKeys.includes(event.code)) {
-      event.preventDefault();
-      cycleToNextStream();
-    }
-  }, [cycleToNextStream]);
+      if (streamSwitchKeys.includes(event.code)) {
+        event.preventDefault();
+        cycleToNextStream();
+      }
+    },
+    [cycleToNextStream],
+  );
 
   // Add keyboard event listeners
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
@@ -198,7 +201,7 @@ export function StreamContainer(props: StreamContainerProps) {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                position: 'relative'
+                position: 'relative',
               }}
             >
               {isVideoLoading && (
@@ -300,12 +303,7 @@ export function StreamContainer(props: StreamContainerProps) {
                       />
                     ),
                     '67ee7037eb254339e7ee8857': (
-                      <NewEca
-                        state={props.state}
-                        isTv={props.isTv}
-                        activeTurn={activeTurn}
-                        activeSet={activeSet}
-                      />
+                      <NewEca state={props.state} isTv={props.isTv} activeTurn={activeTurn} activeSet={activeSet} />
                     ),
                     '681a27430799a4ccbfb175fa': (
                       <CatholicAprilTemplate
@@ -348,68 +346,28 @@ export function StreamContainer(props: StreamContainerProps) {
                       />
                     ),
                     '6818b4cef773a447a1e34373': (
-                      <Singles
-                        isTv={props.isTv}
-                        state={props.state}
-                        activeTurn={activeTurn}
-                        activeSet={activeSet}
-                      />
+                      <IGTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} isTv={props.isTv} />
                     ),
                     '6874b2bc4c0c210729491427': (
-                      <Singles
-                        isTv={props.isTv}
-                        state={props.state}
-                        activeTurn={activeTurn}
-                        activeSet={activeSet}
-                      />
+                      <Singles isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
                     ),
                     '68ac0599c8a52eb65477c05f': (
-                      <IGTemplate
-                        isTv={props.isTv}
-                        state={props.state}
-                        activeTurn={activeTurn}
-                        activeSet={activeSet}
-                      />
+                      <IGTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
                     ),
                     '68bef0791d2f4e355bb2e810': (
-                      <IGTemplate
-                        isTv={props.isTv}
-                        state={props.state}
-                        activeTurn={activeTurn}
-                        activeSet={activeSet}
-                      />
+                      <IGTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
                     ),
                     '680893386bd1fa17a8462687': (
-                      <IGTemplate
-                        isTv={props.isTv}
-                        state={props.state}
-                        activeTurn={activeTurn}
-                        activeSet={activeSet}
-                      />
+                      <IGTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
                     ),
                     '68e0f18ea2835272fa7ce4d7': (
-                      <IGTemplate
-                        isTv={props.isTv}
-                        state={props.state}
-                        activeTurn={activeTurn}
-                        activeSet={activeSet}
-                      />
+                      <IGTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
                     ),
                     '68e73ba3152c8e26d7bc78a9': (
-                      <IGTemplate
-                        isTv={props.isTv}
-                        state={props.state}
-                        activeTurn={activeTurn}
-                        activeSet={activeSet}
-                      />
-                    )
+                      <IGTemplate isTv={props.isTv} state={props.state} activeTurn={activeTurn} activeSet={activeSet} />
+                    ),
                   }[props.state.tournamentId] || (
-                    <IGTemplate
-                      state={props.state}
-                      activeSet={activeSet}
-                      activeTurn={activeTurn}
-                      isTv={props.isTv}
-                    />
+                    <IGTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} isTv={props.isTv} />
                   )
                 ) : (
                   <GeneralTemplate
@@ -452,7 +410,10 @@ export function StreamContainer(props: StreamContainerProps) {
           autoPlay
           loop
           muted
-          src={props.sponsorshipVideoUrl ?? "https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/ECA%20Raman%20Nair%202024%20Gina%20Artize.mp4"}
+          src={
+            props.sponsorshipVideoUrl ??
+            'https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/ECA%20Raman%20Nair%202024%20Gina%20Artize.mp4'
+          }
           className="w-full h-auto"
         />
       )}

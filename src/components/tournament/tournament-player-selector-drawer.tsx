@@ -7,10 +7,13 @@ import { QrCode } from 'lucide-react';
 import useGetTournamentPlayers from '@/api/app/useGetTournamentPlayers';
 import useGetPlayerById from '@/api/app/useGetPlayerById';
 import useAddPlayerToTournament from '@/api/app/useAddPlayerToTournament';
+import useTournamentTeamAddPlayers from '@/api/app/addTournamentTeamPlayer';
+import useSearchPlayers from '@/api/app/useSearchPlayer';
 import { Player } from '@/stores/types';
 import useDebounce from '@/hooks/useDebounce';
 import { CustomQrModal } from '@/components/modals/customQrModal';
 import { PlayerConfirmationModal } from '@/components/modals/playerConfirmationModal';
+import { AddPlayerModal } from '@/components/modals/addPlayerModal';
 import { toast } from '@/components/ui/use-toast';
 
 interface TournamentPlayerSelectorDrawerProps {
@@ -38,11 +41,14 @@ export function TournamentPlayerSelectorDrawer({
   const [isQrModalOpen, setIsQrModalOpen] = React.useState<boolean>(false);
   const [scannedPlayer, setScannedPlayer] = React.useState<Player | null>(null);
   const [showConfirmationModal, setShowConfirmationModal] = React.useState<boolean>(false);
+  const [isAddPlayerModalOpen, setIsAddPlayerModalOpen] = React.useState<boolean>(false);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const { getPlayers, players, loading, error } = useGetTournamentPlayers();
   const { getPlayerById, loading: loadingPlayerDetails } = useGetPlayerById();
   const { addPlayerToTournament, loading: addingPlayer } = useAddPlayerToTournament();
+  const { addTournamentTeamPlayer, loading: addingNewPlayer } = useTournamentTeamAddPlayers();
+  const { getPlayers: searchPlayerByPhone } = useSearchPlayers();
 
   React.useEffect(() => {
     if (open && tournamentId) {
@@ -133,6 +139,40 @@ export function TournamentPlayerSelectorDrawer({
     setScannedPlayer(null);
   };
 
+  const handleAddNewPlayer = async (data: { name: string; phoneNumber: string }) => {
+    try {
+      // If teamId is provided, use it, otherwise it's optional
+      const result = await addTournamentTeamPlayer({
+        phone: data.phoneNumber,
+        name: data.name,
+        tournamentId,
+        teamId: teamId || '',
+      });
+
+      if (result) {
+        // Search for the newly added player to get the full Player object
+        const playerData = await searchPlayerByPhone({ phoneNumber: data.phoneNumber });
+
+        if (playerData && playerData.result) {
+          onPlayerSelect(playerData.result);
+          setIsAddPlayerModalOpen(false);
+          onOpenChange(false);
+        } else {
+          throw new Error('Failed to fetch player details after adding');
+        }
+      } else {
+        throw new Error('Failed to add player to tournament');
+      }
+    } catch (error) {
+      console.error('Error adding player:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to add player. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   return (
     <>
       <Drawer open={open} onOpenChange={onOpenChange}>
@@ -194,9 +234,14 @@ export function TournamentPlayerSelectorDrawer({
           </div>
 
           <DrawerFooter className="pt-2">
-            <DrawerClose asChild>
-              <Button variant="secondary">Cancel</Button>
-            </DrawerClose>
+            <div className="grid grid-cols-2 gap-4 w-full">
+              <Button type="button" onClick={() => setIsAddPlayerModalOpen(true)} disabled={addingNewPlayer}>
+                Add Player
+              </Button>
+              <DrawerClose asChild>
+                <Button variant="secondary">Cancel</Button>
+              </DrawerClose>
+            </div>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
@@ -214,6 +259,13 @@ export function TournamentPlayerSelectorDrawer({
         onConfirm={handleConfirmPlayer}
         player={scannedPlayer}
         loading={addingPlayer}
+      />
+
+      <AddPlayerModal
+        isOpen={isAddPlayerModalOpen}
+        onClose={() => setIsAddPlayerModalOpen(false)}
+        onSubmit={handleAddNewPlayer}
+        loading={addingNewPlayer}
       />
     </>
   );

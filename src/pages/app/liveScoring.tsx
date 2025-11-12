@@ -115,7 +115,7 @@ export function LiveScoring() {
             />
           ),
           '6818b4cef773a447a1e34373': (
-            <Singles
+            <IGTemplate
               isTv={false}
               state={streamingData}
               activeTurn={activeTurn}

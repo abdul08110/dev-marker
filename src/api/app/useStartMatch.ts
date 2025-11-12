@@ -29,6 +29,7 @@ interface MatchStartDataProps {
     tournamentSubItemId?: string,
     switchType?: 'FRAME' | 'VISIT' | null,
     isRankingEvent?: boolean,
+    phase: string | null
 }
 
 interface MatchStartResponse {

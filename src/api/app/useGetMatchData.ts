@@ -43,6 +43,7 @@ export interface MatchStartResponse {
     id: string;
     name: string;
     logo?: string;
+    eventFormat: 'SINGLES' | 'TEAMS';
   };
   tournamentTeamOne?: {
     name: string;
@@ -104,6 +105,7 @@ export interface MatchStartResponse {
   tournamentId?: string;
   isTeamOneHandicapApplied?: boolean;
   isTeamTwoHandicapApplied?: boolean;
+  phase: string | null;
   format: string;
   switchType: 'FRAME' | 'VISIT' | null;
   tournamentSubItemId?: string;

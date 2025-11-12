@@ -269,6 +269,7 @@ export function Tournament() {
             tournamentTeamOneId: subItem.tournamentTeamOne.id,
             tournamentTeamTwoId: subItem.tournamentTeamTwo.id,
             visibility: tournament?.tournamentVisibility || 'PUBLIC',
+            phase: selectedPhase?.name || null,
           },
         }),
       );
@@ -311,6 +312,7 @@ export function Tournament() {
             tournamentTeamOneId: selectedTeamOne.id,
             tournamentTeamTwoId: selectedTeamTwo.id,
             visibility: tournament?.tournamentVisibility || 'PUBLIC',
+            phase: selectedPhase?.name || null,
           },
         }),
       );
@@ -328,6 +330,7 @@ export function Tournament() {
             tournamentTeamOneId: null,
             tournamentTeamTwoId: null,
             visibility: tournament?.tournamentVisibility || 'PUBLIC',
+            phase: selectedPhase?.name || null,
           },
         }),
       );

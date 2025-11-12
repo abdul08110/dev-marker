@@ -257,6 +257,7 @@ const useSnookerScoring = () => {
       tournamentSubItemId: currentImplementationSnookerScoring.tournamentSubItemId ? currentImplementationSnookerScoring.tournamentSubItemId : undefined,
       switchType: snookerScoring.switchType ? snookerScoring.switchType : null,
       isRankingEvent: currentImplementationSnookerScoring.isRankingEvent,
+      phase: currentImplementationSnookerScoring.phase
     });
 
     if (matchId) {
