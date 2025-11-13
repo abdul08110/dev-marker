@@ -15,6 +15,7 @@ import { TeamForm } from './pages/app/TeamForm';
 import { ScoreBoardRender } from './pages/app/ScoreBoardRender';
 import { TvRender } from './pages/app/TvRender';
 import { BowringArena } from './pages/app/bowringArena';
+import { KsbaArena } from './pages/app/ksbaArena';
 import { VideoOverlay } from './pages/app/videoOverlay';
 import { PortraitOverlay } from './pages/app/portraitOverlay';
 import { LiveScoring } from './pages/app/liveScoring';
@@ -43,6 +44,7 @@ const App: React.FC = () => {
         <Route path="/app/scoreboard-render" element={<ScoreBoardRender />} />
         <Route path="/app/tv-render" element={<TvRender />} />
         <Route path="/app/bowring-render" element={<BowringArena />} />
+        <Route path="/app/ksba-render" element={<KsbaArena />} />
         <Route path="/app/bowring-3412" element={<BowringArena3412   />} />
         <Route path="/app/video-overlay" element={<VideoOverlay />} />
         <Route path="/app/portrait-overlay" element={<PortraitOverlay />} />
