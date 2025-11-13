@@ -11,8 +11,19 @@ import { PlayerTeamManager } from '@/components/sections/scoring/playerTeamManag
 import { ScoringHeader } from '@/components/sections/scoring/scoringHeader';
 import { SnookerFramesSummary } from '@/components/sections/scoring/snookerFrameSummary';
 import TimeManager from '@/components/sections/scoring/timeManager';
+import { Button } from '@/components/ui/button';
 import useBilliardsScoring from '@/hooks/useBilliardsScoring';
 import { getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex } from '@/stores/selectors/commonSport';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import * as React from 'react';
 
 export function BilliardsScoring() {
   const {
@@ -51,6 +62,9 @@ export function BilliardsScoring() {
     showTimerModal,
     handleTimerButtonAction,
   } = useBilliardsScoring();
+
+  const [showEndFrameAlert, setShowEndFrameAlert] = React.useState(false);
+  const [showEndGameAlert, setShowEndGameAlert] = React.useState(false);
 
   // PARENT UI
 
@@ -148,7 +162,39 @@ export function BilliardsScoring() {
               onCancel={() => handleTimerButtonAction('CANCEL')}
               onContinue={() => handleTimerButtonAction('CONFIRM')}
             />
+            <div className="flex gap-4 mt-4 mb-4 px-4">
+              <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
+                End Frame
+              </Button>
+              <Button onClick={() => setShowEndGameAlert(true)} variant="destructive" className="flex-1">
+                End Match
+              </Button>
+            </div>
           </div>
+
+          <AlertDialog open={showEndFrameAlert} onOpenChange={setShowEndFrameAlert}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">Do you want to end this Frame?</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleEndFrameButton}>Confirm</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog open={showEndGameAlert} onOpenChange={setShowEndGameAlert}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">Do you want to end this Match?</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleEndGame}>Confirm</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </section>
       )}
     </section>
