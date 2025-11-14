@@ -1,6 +1,6 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
 import { TimeUpModal } from '@/components/modals/timeUpModal';
-import { LandscapeScoreboard } from '@/components/sections/scoreboard/landScapeScoreBoard';
+import { LegacyScoreboard } from '@/components/sections/scoreboard/legacyScoreBoard';
 import { ScoreboardRender } from '@/components/sections/scoreboard/scoreBoardRender';
 import useScoreboardRender from '@/hooks/useScoreboardRender';
 
@@ -17,7 +17,7 @@ export function ScoreBoardRender() {
             orientation === 'portrait' ? (
               <ScoreboardRender timeLeft={timeLeft} state={scoreBoardData} orientation={orientation} />
             ) : (
-              <LandscapeScoreboard timeLeft={timeLeft} state={scoreBoardData} />
+              <LegacyScoreboard timeLeft={timeLeft} state={scoreBoardData} />
             )
           ) : (
             <section className="h-screen w-screen flex justify-center items-center">
