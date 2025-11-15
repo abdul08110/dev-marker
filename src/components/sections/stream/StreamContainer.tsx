@@ -47,6 +47,11 @@ export function StreamContainer(props: StreamContainerProps) {
 
   const [isVideoLoading, setIsVideoLoading] = useState(false);
   const [selectedStreamId, setSelectedStreamId] = useState<string | null>(null);
+  
+  // Check if we should show sponsorship video (no active frame after first frame)
+  const hasCompletedFrames = props.state ? props.state.sets.some(set => set.status === 'COMPLETED') : false;
+  const noActiveFrame = !activeSet;
+  const shouldShowSponsorshipVideo = hasCompletedFrames && noActiveFrame;
 
   const {
     videoDuration,
@@ -189,7 +194,18 @@ export function StreamContainer(props: StreamContainerProps) {
         'h-screen max-h-screen': !props.isPortrait,
       })}
     >
-      {props.state && stream ? (
+      {shouldShowSponsorshipVideo ? (
+        <video
+          autoPlay
+          loop
+          muted
+          src={
+            props.sponsorshipVideoUrl ??
+            'https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/ECA%20Raman%20Nair%202024%20Gina%20Artize.mp4'
+          }
+          className="w-full h-auto"
+        />
+      ) : props.state && stream ? (
         <div className="relative flex justify-center items-center w-full h-full">
           {stream.streamType === StreamType.CLOUD_PROVIDER && stream.streamProvider === 'YOUTUBE' ? (
             <div
@@ -242,6 +258,7 @@ export function StreamContainer(props: StreamContainerProps) {
 
               {stream.overlayType === 'DESTINATION' && !props.isPortrait && (
                 <TopOverlay
+                  showOtherLogos={props.state.tournamentId !== null && props.state.tournamentId !== undefined && props.state.tournamentId === '686a26d5b2e48cf0cc86a61b'}
                   clubLogo={props.state.clubLogo!}
                   tournamentLogo={props.state.tournamentLogo}
                   venueNo={props.state.venueNo!}

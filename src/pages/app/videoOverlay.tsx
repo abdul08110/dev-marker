@@ -70,6 +70,7 @@ export function VideoOverlay() {
         clubLogo={viewershipData!.clubLogo!}
         tournamentLogo={viewershipData.tournamentLogo}
         venueNo={viewershipData.venueNo!}
+        showOtherLogos={viewershipData.tournamentId !== null && viewershipData.tournamentId === '686a26d5b2e48cf0cc86a61b'}
       />
       {viewershipData &&
         (viewershipData.tournamentId ? (
