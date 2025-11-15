@@ -51,7 +51,8 @@ export function StreamContainer(props: StreamContainerProps) {
   // Check if we should show sponsorship video (no active frame after first frame)
   const hasCompletedFrames = props.state ? props.state.sets.some(set => set.status === 'COMPLETED') : false;
   const noActiveFrame = !activeSet;
-  const shouldShowSponsorshipVideo = hasCompletedFrames && noActiveFrame;
+  const isMatchLive = props.state && props.state.matchStatus === 'LIVE' ? true : false;
+  const shouldShowSponsorshipVideo = hasCompletedFrames && noActiveFrame && isMatchLive;
 
   const {
     videoDuration,
