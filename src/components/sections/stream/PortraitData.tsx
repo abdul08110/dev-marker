@@ -29,10 +29,12 @@ export function PortraitData(props: PortraitStreamDataProps) {
           {props.state.clubName} | Table {props.state.venueNo}
         </span>
       </div>
-      <Card className={clsx("gap-1 border-white p-2 grid rounded-md", {
-        "grid-cols-3": props.state.tournamentId === null,
-        "grid-cols-2": props.state.tournamentId !== null
-      })}>
+      <Card
+        className={clsx('gap-1 border-white p-2 grid rounded-md', {
+          'grid-cols-3': props.state.tournamentId === null,
+          'grid-cols-2': props.state.tournamentId !== null,
+        })}
+      >
         <div className="grid-cols-1 uppercase text-white font-bold text-sm text-left flex items-center justify-start gap-2">
           {props.state.sport === 'BILLIARDS' && (
             <img className="h-4 lg:h-5 xl:h-6 w-auto" src={'/images/yellow-ball.png'} />
@@ -49,7 +51,16 @@ export function PortraitData(props: PortraitStreamDataProps) {
             {props.state.sport === 'SNOOKER' ? (
               <>
                 <span>{activeSet ? props.state.teamOneScore : 0}</span>
-                <span> ({props.state.sets.length}) </span>
+                <span>
+                  {' '}
+                  (
+                  {props.state.tournamentId !== null
+                    ? props.state.sets.length
+                    : props.state.eventFormat === 'TEAMS'
+                      ? props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
+                      : props.state.noOfFrames}
+                  ){' '}
+                </span>
                 <span> {activeSet ? props.state.teamTwoScore : 0}</span>
               </>
             ) : (
