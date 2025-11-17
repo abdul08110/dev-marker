@@ -18,9 +18,14 @@ export function PortraitView(props: PortraitStreamDataProps) {
   const isTeamOneActive = props.state ? props.state.sideOnePlayerOne.id === props.state.activePlayerId : false;
   const isTeamTwoActive = props.state ? props.state.sideTwoPlayerOne.id === props.state.activePlayerId : false;
 
-
-  const teamOneStats = calculateStatsForTeam([props.state?.sideOnePlayerOne.id || '', props.state?.sideOnePlayerTwo?.id || ''], props.state?.sets || []);
-  const teamTwoStats = calculateStatsForTeam([props.state?.sideTwoPlayerOne.id || '', props.state?.sideTwoPlayerTwo?.id || ''], props.state?.sets || []);
+  const teamOneStats = calculateStatsForTeam(
+    [props.state?.sideOnePlayerOne.id || '', props.state?.sideOnePlayerTwo?.id || ''],
+    props.state?.sets || [],
+  );
+  const teamTwoStats = calculateStatsForTeam(
+    [props.state?.sideTwoPlayerOne.id || '', props.state?.sideTwoPlayerTwo?.id || ''],
+    props.state?.sets || [],
+  );
 
   if (!props.state) {
     return <></>;
@@ -28,14 +33,19 @@ export function PortraitView(props: PortraitStreamDataProps) {
 
   return (
     <div className="flex-grow overflow-y-scroll flex flex-col px-2 gap-2 mt-2 mb-2">
-       <div className="grid grid-cols-1 w-full mx-auto rounded-md overflow-hidden">
-         
-          <div className="bg-[#2B2B2B] p-2 flex items-center justify-center">
-            <span className="text-white font-bold text-2xl">{activeSet ? props.state.teamOneScore : 0} ({props.state.sets.length}) {activeSet ? props.state.teamTwoScore : 0}</span>
-          </div>
-          
+      <div className="grid grid-cols-1 w-full mx-auto rounded-md overflow-hidden">
+        <div className="bg-[#2B2B2B] p-2 flex items-center justify-center">
+          <span className="text-white font-bold text-2xl">
+            {activeSet ? props.state.teamOneScore : 0} ({' '}
+            {props.state.tournamentId !== null
+              ? props.state.sets.length
+              : props.state.eventFormat === 'TEAMS'
+                ? props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
+                : props.state.noOfFrames}
+            ) {activeSet ? props.state.teamTwoScore : 0}
+          </span>
         </div>
-
+      </div>
 
       <Card className={clsx('p-2 rounded-md bg-[#141414] border-0 flex flex-col gap-3')}>
         <div className="grid grid-cols-2 gap-2">
@@ -148,7 +158,6 @@ export function PortraitView(props: PortraitStreamDataProps) {
           </div>
         </div>
 
-       
         {props.state.sport === 'SNOOKER' && props.state && (
           <div className="grid grid-cols-2 w-full gap-2">
             <div className="grid-cols-1 bg-[#2B2B2B] p-2 rounded-md">
@@ -183,9 +192,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
         <div className="grid grid-cols-3 w-full gap-2 items-center">
           <div className="grid-cols-1 flex items-center">
             <div className=" bg-[#2B2B2B] border border-[#777777] p-1 rounded-md w-20 flex items-center justify-center">
-              <span className="text-white font-bold text-lg text-center">
-                {teamOneStats.highestBreak}
-              </span>
+              <span className="text-white font-bold text-lg text-center">{teamOneStats.highestBreak}</span>
             </div>
             <hr className="w-full border-[#777777]" />
           </div>
@@ -193,9 +200,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
           <div className="grid-cols-1 flex items-center">
             <hr className="w-full border-[#777777]" />
             <div className=" bg-[#2B2B2B] border border-[#777777] p-1 rounded-md w-20 flex items-center justify-center">
-              <span className="text-white font-bold text-lg text-center">
-                {teamTwoStats.highestBreak}
-              </span>
+              <span className="text-white font-bold text-lg text-center">{teamTwoStats.highestBreak}</span>
             </div>
           </div>
         </div>
