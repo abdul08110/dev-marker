@@ -47,12 +47,6 @@ export function StreamContainer(props: StreamContainerProps) {
 
   const [isVideoLoading, setIsVideoLoading] = useState(false);
   const [selectedStreamId, setSelectedStreamId] = useState<string | null>(null);
-  
-  // Check if we should show sponsorship video (no active frame after first frame)
-  const hasCompletedFrames = props.state ? props.state.sets.some(set => set.status === 'COMPLETED') : false;
-  const noActiveFrame = !activeSet;
-  const isMatchLive = props.state && props.state.matchStatus === 'LIVE' ? true : false;
-  const shouldShowSponsorshipVideo = hasCompletedFrames && noActiveFrame && isMatchLive;
 
   const {
     videoDuration,
@@ -195,18 +189,7 @@ export function StreamContainer(props: StreamContainerProps) {
         'h-screen max-h-screen': !props.isPortrait,
       })}
     >
-      {shouldShowSponsorshipVideo ? (
-        <video
-          autoPlay
-          loop
-          muted
-          src={
-            props.sponsorshipVideoUrl ??
-            'https://clubliv.blr1.cdn.digitaloceanspaces.com/SponsorVideos/ECA%20Raman%20Nair%202024%20Gina%20Artize.mp4'
-          }
-          className="w-full h-auto"
-        />
-      ) : props.state && stream ? (
+      {props.state && stream ? (
         <div className="relative flex justify-center items-center w-full h-full">
           {stream.streamType === StreamType.CLOUD_PROVIDER && stream.streamProvider === 'YOUTUBE' ? (
             <div

@@ -37,12 +37,12 @@ export function PortraitView(props: PortraitStreamDataProps) {
         <div className="bg-[#2B2B2B] p-2 flex items-center justify-center">
           <span className="text-white font-bold text-2xl">
             {activeSet ? props.state.teamOneScore : 0} ({' '}
-            {props.state.tournamentId !== null
+            {props.state.tournamentId === null
               ? props.state.sets.length
               : props.state.eventFormat === 'TEAMS'
                 ? props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
                 : props.state.noOfFrames}
-            ) {activeSet ? props.state.teamTwoScore : 0}
+            {' '}) {activeSet ? props.state.teamTwoScore : 0}
           </span>
         </div>
       </div>
