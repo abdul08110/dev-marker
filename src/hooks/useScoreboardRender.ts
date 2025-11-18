@@ -42,6 +42,8 @@ export interface ScoreBoardState {
   tournamentSubItem?: TournamentSubItem & {
     tournamentItem: TournamentItem;
   };
+  eventFormat: 'SINGLES' | 'TEAMS';
+  noOfFrames: number | null;
 }
 
 const useScoreboardRender = () => {
@@ -171,6 +173,8 @@ const useScoreboardRender = () => {
             tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
             tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
             tournamentName: res.tournament ? res.tournament.name : null,
+            eventFormat: res.tournament ? res.tournament.eventFormat : 'SINGLES',
+            noOfFrames: res.noOfSets ? res.noOfSets : null,
           });
         } else {
           toast({
