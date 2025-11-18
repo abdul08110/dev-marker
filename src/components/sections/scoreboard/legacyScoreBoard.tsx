@@ -38,7 +38,11 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
         >
           <div className="h-[30%] w-full relative">
             <PlayerImage
-              profilePhoto={state.tournamentId && state.tournamentSubItem !== null ? state.teamOneLogo : state.sideOnePlayerOne.profilePhoto}
+              profilePhoto={
+                state.tournamentId && state.tournamentSubItem !== null
+                  ? state.teamOneLogo
+                  : state.sideOnePlayerOne.profilePhoto
+              }
               profilePhoto2={state.tournamentId ? undefined : state.sideOnePlayerTwo?.profilePhoto}
             />
           </div>
@@ -118,11 +122,11 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               teamOneScore={state.teamOneScore}
               teamTwoScore={state.teamTwoScore}
               noOfFrames={
-                state.tournamentId
-                  ? state.tournamentSubItem
-                    ? state.tournamentSubItem?.gameFormat.noOfSets
-                    : 5
-                  : state.sets.length
+                state.tournamentId === null
+                  ? state.sets.length
+                  : state.eventFormat === 'TEAMS'
+                    ? state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
+                    : state.noOfFrames || 0
               }
             />
             <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-white"></div>
@@ -140,7 +144,11 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
         >
           <div className="h-[30%] w-full relative">
             <PlayerImage
-              profilePhoto={state.tournamentId && state.tournamentSubItem !== null ? state.teamTwoLogo : state.sideTwoPlayerOne.profilePhoto}
+              profilePhoto={
+                state.tournamentId && state.tournamentSubItem !== null
+                  ? state.teamTwoLogo
+                  : state.sideTwoPlayerOne.profilePhoto
+              }
               profilePhoto2={state.tournamentId ? undefined : state.sideTwoPlayerTwo?.profilePhoto}
             />
           </div>
