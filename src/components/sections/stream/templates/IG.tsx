@@ -11,6 +11,8 @@ interface IGTemplateProps {
 }
 
 export function IGTemplate(props: IGTemplateProps) {
+  console.log(props.state);
+  
   const isTeamReveresed =
     props.state && props.state.tournamentId && props.state.tournamentSubItem
       ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId

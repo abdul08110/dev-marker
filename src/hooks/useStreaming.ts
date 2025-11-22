@@ -389,8 +389,8 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         sets: consideredSets,
         isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== teamScoresForCurrentSet.side1,
         isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== teamScoresForCurrentSet.side2,
-        teamOneScore: currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side1 : totalTeamScores.side1,
-        teamTwoScore: currentStreamingData.sport === 'BILLIARDS' ? handicapAdjustedScores.side2 : totalTeamScores.side2,
+        teamOneScore: totalTeamScores.side1,
+        teamTwoScore: totalTeamScores.side2,
       });
     }
   };
