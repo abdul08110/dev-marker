@@ -242,7 +242,12 @@ export function StreamContainer(props: StreamContainerProps) {
 
               {stream.overlayType === 'DESTINATION' && !props.isPortrait && (
                 <TopOverlay
-                  showOtherLogos={props.state.tournamentId !== null && props.state.tournamentId !== undefined && props.state.tournamentId === '686a26d5b2e48cf0cc86a61b'}
+                  showOtherLogos={
+                    props.state.tournamentId !== null &&
+                    props.state.tournamentId !== undefined &&
+                    (props.state.tournamentId === '686a26d5b2e48cf0cc86a61b' ||
+                      props.state.tournamentId === '69142512da7d00af591b5657')
+                  }
                   clubLogo={props.state.clubLogo!}
                   tournamentLogo={props.state.tournamentLogo}
                   venueNo={props.state.venueNo!}

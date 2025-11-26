@@ -52,7 +52,12 @@ export function LiveScoring() {
         clubLogo={streamingData!.clubLogo!}
         tournamentLogo={streamingData.tournamentLogo}
         venueNo={streamingData.venueNo!}
-        showOtherLogos={streamingData.tournamentId !== null && streamingData.tournamentId === '686a26d5b2e48cf0cc86a61b'}
+        showOtherLogos={
+          streamingData.tournamentId !== null &&
+          streamingData.tournamentId !== undefined &&
+          (streamingData.tournamentId === '686a26d5b2e48cf0cc86a61b' ||
+            streamingData.tournamentId === '69142512da7d00af591b5657')
+        }
       />
       {streamingData.tournamentId ? (
         {
@@ -84,93 +89,38 @@ export function LiveScoring() {
             <CatholicTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '681a3e790799a4ccbfb17615': (
-            <CenturyTemplate
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
+            <CenturyTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '68298983ffe9aacb1655b1f4': (
-            <CenturyTemplate
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
+            <CenturyTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '681631fef773a447a1e34254': (
-            <NewEcaTemplate
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
+            <NewEcaTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '68496e3c945ee0fb4985fca4': (
-            <CatholicJune
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
+            <CatholicJune isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '6818b4cef773a447a1e34373': (
-            <IGTemplate
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
+            <IGTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '6874b2bc4c0c210729491427': (
-            <Singles
-            isTv={false}
-            state={streamingData}
-            activeTurn={activeTurn}
-            activeSet={activeSet}
-            />
+            <Singles isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '68ac0599c8a52eb65477c05f': (
-            <IGTemplate
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
+            <IGTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '68bef0791d2f4e355bb2e810': (
-            <IGTemplate
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
+            <IGTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '680893386bd1fa17a8462687': (
-            <IGTemplate
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
+            <IGTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '68e0f18ea2835272fa7ce4d7': (
-            <IGTemplate
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
+            <IGTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
           ),
           '68e73ba3152c8e26d7bc78a9': (
-            <IGTemplate
-              isTv={false}
-              state={streamingData}
-              activeTurn={activeTurn}
-              activeSet={activeSet}
-            />
-          )
+            <IGTemplate isTv={false} state={streamingData} activeTurn={activeTurn} activeSet={activeSet} />
+          ),
         }[streamingData.tournamentId] || (
           <IGTemplate state={streamingData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
         )
