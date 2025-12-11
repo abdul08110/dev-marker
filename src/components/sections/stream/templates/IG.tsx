@@ -11,7 +11,7 @@ interface IGTemplateProps {
 }
 
 export function IGTemplate(props: IGTemplateProps) {
-  console.log(props.state);
+  console.log(`IGTemplate props.state`, props.state);
   
   const isTeamReveresed =
     props.state && props.state.tournamentId && props.state.tournamentSubItem
@@ -21,14 +21,14 @@ export function IGTemplate(props: IGTemplateProps) {
   const teamOneLogo =
     props.state.eventFormat === 'TEAMS'
       ? isTeamReveresed
-        ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamTwo.logo
-        : props.state.tournamentSubItem?.tournamentItem.tournamentTeamOne.logo
+        ? props.state.teamTwoLogo
+        : props.state.teamOneLogo
       : props.state!.sideOnePlayerOne.profilePhoto;
   const teamTwoLogo =
     props.state.eventFormat === 'TEAMS'
       ? isTeamReveresed
-        ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOne.logo
-        : props.state.tournamentSubItem?.tournamentItem.tournamentTeamTwo.logo
+        ? props.state.teamOneLogo
+        : props.state.teamTwoName
       : props.state!.sideTwoPlayerOne.profilePhoto;
 
   return (
