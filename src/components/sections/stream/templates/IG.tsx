@@ -17,18 +17,18 @@ export function IGTemplate(props: IGTemplateProps) {
     props.state && props.state.tournamentId && props.state.tournamentSubItem
       ? props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== props.state.tournamentTeamOneId
       : false;
+  
+  console.log(`torunament team one id`, props.state.tournamentSubItem?.tournamentItem.tournamentTeamOneId);
+  console.log(`torunament team two id`, props.state.tournamentTeamOneId);
 
   const teamOneLogo =
     props.state.eventFormat === 'TEAMS'
-      ? isTeamReveresed
-        ? props.state.teamTwoLogo
-        : props.state.teamOneLogo
+      ? props.state.teamOneLogo
       : props.state!.sideOnePlayerOne.profilePhoto;
+
   const teamTwoLogo =
     props.state.eventFormat === 'TEAMS'
-      ? isTeamReveresed
-        ? props.state.teamOneLogo
-        : props.state.teamTwoName
+      ? props.state.teamTwoLogo
       : props.state!.sideTwoPlayerOne.profilePhoto;
 
   return (

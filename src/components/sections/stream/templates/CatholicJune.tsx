@@ -107,7 +107,12 @@ export function CatholicJune(props: CatholicJuneProps) {
           <div className="w-full h-1/3 flex items-center justify-between bg-[#212121]">
             <div className="min-w-[45%] px-[min(2vh,2vw)]">
               <h5 className="text-[min(2.2vh,2.2vw)] text-yellow-400 font-bold text-left uppercase whitespace-nowrap">
-                {props.state?.teamOneName} <span className="bg-primary text-white px-[min(1vh,1vw)] ml-2">{isTeamReveresed ? props.state.tournamentSubItem?.tournamentItem.teamTwoScore : props.state.tournamentSubItem?.tournamentItem.teamOneScore}</span>
+                {props.state?.teamOneName}{' '}
+                <span className="bg-primary text-white px-[min(1vh,1vw)] ml-2">
+                  {isTeamReveresed
+                    ? props.state.tournamentSubItem?.tournamentItem.teamTwoScore
+                    : props.state.tournamentSubItem?.tournamentItem.teamOneScore}
+                </span>
               </h5>
             </div>
             <div className="min-w-[10%] flex justify-center">
@@ -119,7 +124,12 @@ export function CatholicJune(props: CatholicJuneProps) {
             </div>
             <div className="min-w-[45%] px-[min(2vh,2vw)]">
               <h5 className="text-[min(2.2vh,2.2vw)] text-yellow-400 font-bold text-right uppercase whitespace-nowrap">
-                <span className="bg-primary text-white px-[min(1vh,1vw)] mr-2">{isTeamReveresed ? props.state.tournamentSubItem?.tournamentItem.teamOneScore : props.state.tournamentSubItem?.tournamentItem.teamTwoScore}</span> {props.state?.teamTwoName}
+                <span className="bg-primary text-white px-[min(1vh,1vw)] mr-2">
+                  {isTeamReveresed
+                    ? props.state.tournamentSubItem?.tournamentItem.teamOneScore
+                    : props.state.tournamentSubItem?.tournamentItem.teamTwoScore}
+                </span>{' '}
+                {props.state?.teamTwoName}
               </h5>
             </div>
           </div>
