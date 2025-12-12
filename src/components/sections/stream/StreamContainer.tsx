@@ -248,6 +248,7 @@ export function StreamContainer(props: StreamContainerProps) {
                     (props.state.tournamentId === '686a26d5b2e48cf0cc86a61b' ||
                       props.state.tournamentId === '69142512da7d00af591b5657')
                   }
+                  showIGLogo={props.state.tournamentId === '6938036004eb9abe7e2c3d04'}
                   clubLogo={props.state.clubLogo!}
                   tournamentLogo={props.state.tournamentLogo}
                   venueNo={props.state.venueNo!}

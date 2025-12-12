@@ -52,6 +52,7 @@ export function LiveScoring() {
         clubLogo={streamingData!.clubLogo!}
         tournamentLogo={streamingData.tournamentLogo}
         venueNo={streamingData.venueNo!}
+        showIGLogo={streamingData.tournamentId === '6938036004eb9abe7e2c3d04'}
         showOtherLogos={
           streamingData.tournamentId !== null &&
           streamingData.tournamentId !== undefined &&
