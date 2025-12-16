@@ -28,6 +28,7 @@ export function Tv() {
     onVideoEnd,
     currentTime,
     updateTime,
+    sponsorshipVideoUrl,
   } = useStreaming(venueId || undefined);
 
   if (loading || streamingLoading) {
@@ -45,6 +46,7 @@ export function Tv() {
         isPortrait={false}
         showBottomScrubber={false}
         isTv={true}
+        sponsorshipVideoUrl={sponsorshipVideoUrl ?? undefined}
       />
     </div>
   );

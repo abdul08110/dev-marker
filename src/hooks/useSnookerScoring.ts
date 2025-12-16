@@ -401,7 +401,7 @@ const useSnookerScoring = () => {
   };
 
   const handlePlayerSelect = async (playerIndex: number, teamIndex: number) => {
-    if (!snookerScoring.matchId) {
+    if (!snookerScoring.matchId && !snookerScoring.tournamentId) {
       setSelectedTeamIndex(teamIndex);
       setSelectedPlayerIndex(playerIndex);
       setOpenPlayerSelectCard(true);

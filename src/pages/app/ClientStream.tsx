@@ -36,6 +36,7 @@ export function ClientStream() {
     updateTime,
     currentTime,
     streamingData,
+    sponsorshipVideoUrl,
   } = useStreaming(undefined, matchId ? matchId : undefined);
 
   if (loading || streamingLoading) {
@@ -55,6 +56,7 @@ export function ClientStream() {
           isTv={false}
           state={viewershipData}
           startFromSeconds={startFromSeconds}
+          sponsorshipVideoUrl={sponsorshipVideoUrl ?? undefined}
         />
         {isPortrait && streamingData && streamingData?.sets && streamingData?.sets.length > 0 && (
           <PortraitView timeLeft={timeLeft} state={viewershipData} />

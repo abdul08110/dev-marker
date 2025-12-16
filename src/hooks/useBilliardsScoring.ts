@@ -203,7 +203,7 @@ const useBilliardsScoring = () => {
   };
 
   const handlePlayerSelect = async (playerIndex: number, teamIndex: number) => {
-    if (!billiardsScoring.matchId) {
+    if (!billiardsScoring.matchId && !billiardsScoring.tournamentId) {
       setSelectedTeamIndex(teamIndex);
       setSelectedPlayerIndex(playerIndex);
       setOpenPlayerSelectCard(true);
