@@ -124,9 +124,7 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               noOfFrames={
                 state.tournamentId === null
                   ? state.sets.length
-                  : state.eventFormat === 'TEAMS'
-                    ? state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
-                    : state.noOfFrames || 0
+                  : state.noOfFrames || 0
               }
             />
             <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-white"></div>
