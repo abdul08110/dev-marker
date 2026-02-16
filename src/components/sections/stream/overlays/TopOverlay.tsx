@@ -17,15 +17,7 @@ export function TopOverlay(props: TopOverlayProps) {
         {props.showOtherLogos && (
           <>
             <img
-              src="/images/logos/ksa.jpeg"
-              className="lg:h-14 xl:h-32 xl:w-32 lg:w-14 h-8 w-8 rounded-full overflow-hidden"
-            />
-            <img
-              src="/images/logos/liber.jpeg"
-              className="lg:h-14 xl:h-32 xl:w-32 lg:w-14 h-8 w-8 rounded-full overflow-hidden"
-            />
-            <img
-              src="/images/logos/progen.jpeg"
+              src="/images/logos/snooker-alley.jpeg"
               className="lg:h-14 xl:h-32 xl:w-32 lg:w-14 h-8 w-8 rounded-full overflow-hidden"
             />
           </>
@@ -44,7 +36,7 @@ export function TopOverlay(props: TopOverlayProps) {
           <></>
         )}
 
-        {props.showOtherLogos && (
+        {/* {props.showOtherLogos && (
           <>
             <img
               src="/images/logos/rg.jpeg"
@@ -55,7 +47,7 @@ export function TopOverlay(props: TopOverlayProps) {
               className="lg:h-14 xl:h-32 xl:w-32 lg:w-14 h-8 w-8 rounded-full overflow-hidden"
             />
           </>
-        )}
+        )} */}
 
         {props.showIGLogo && (
           <img

@@ -57,7 +57,9 @@ export function LiveScoring() {
           streamingData.tournamentId !== null &&
           streamingData.tournamentId !== undefined &&
           (streamingData.tournamentId === '686a26d5b2e48cf0cc86a61b' ||
-            streamingData.tournamentId === '69142512da7d00af591b5657')
+            streamingData.tournamentId === '69142512da7d00af591b5657'
+           || streamingData.tournamentId === '698d368d51dc1ec36260dc30'
+          )
         }
       />
       {streamingData.tournamentId ? (

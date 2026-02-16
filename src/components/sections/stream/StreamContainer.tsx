@@ -246,7 +246,8 @@ export function StreamContainer(props: StreamContainerProps) {
                     props.state.tournamentId !== null &&
                     props.state.tournamentId !== undefined &&
                     (props.state.tournamentId === '686a26d5b2e48cf0cc86a61b' ||
-                      props.state.tournamentId === '69142512da7d00af591b5657')
+                      props.state.tournamentId === '69142512da7d00af591b5657' ||
+                      props.state.tournamentId === '698d368d51dc1ec36260dc30')
                   }
                   showIGLogo={props.state.tournamentId === '6938036004eb9abe7e2c3d04'}
                   clubLogo={props.state.clubLogo!}
