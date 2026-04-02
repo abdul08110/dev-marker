@@ -374,6 +374,15 @@ const useSnookerScoring = () => {
   };
 
   const handlePlayerOrderSelect = async (values: { breakPlayerId: string; followThroughPlayerId: string }) => {
+    if (!values.breakPlayerId || !values.followThroughPlayerId) {
+      toast({
+        title: 'Error',
+        description: 'Please select both breaking and follow through players',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setShowPlayerOrderModal(false);
     setShowLoadingModal(true);
 

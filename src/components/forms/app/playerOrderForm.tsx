@@ -7,8 +7,8 @@ import { z } from 'zod';
 import { PlayerDetails } from '@/stores/types';
 
 const formSchema = z.object({
-  breakPlayerId: z.string(),
-  followThroughPlayerId: z.string(),
+  breakPlayerId: z.string().min(1, 'Please select a breaking player'),
+  followThroughPlayerId: z.string().min(1, 'Please select a follow through player'),
 });
 
 interface PlayerOrderFormProps {
