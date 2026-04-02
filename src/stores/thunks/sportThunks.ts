@@ -140,8 +140,8 @@ export const setStateTournament = createAsyncThunk<
     tournamentId: data.tournamentId,
     tournamentTeamOneScore: 0,
     tournamentTeamTwoScore: 0,
-    teamOneHandicap: data.teamOneHandicap ? data.teamOneHandicap : null,
-    teamTwoHandicap: data.teamTwoHandicap ? data.teamTwoHandicap : null,
+    teamOneHandicap: data.teamOneHandicap != null ? data.teamOneHandicap : null,
+    teamTwoHandicap: data.teamTwoHandicap != null ? data.teamTwoHandicap : null,
     isTeamOneHandicapApplied: false,
     isTeamTwoHandicapApplied: false,
     expectedEndTimeDate: null,
@@ -208,8 +208,8 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       tournamentId: data.tournamentId ? data.tournamentId : null,
       tournamentTeamOneScore: data.tournamentTeamOneScore ? data.tournamentTeamOneScore : null,
       tournamentTeamTwoScore: data.tournamentTeamTwoScore ? data.tournamentTeamTwoScore : null,
-      teamOneHandicap: data.teamOneHandicap ? data.teamOneHandicap : null,
-      teamTwoHandicap: data.teamTwoHandicap ? data.teamTwoHandicap : null,
+      teamOneHandicap: data.teamOneHandicap != null ? data.teamOneHandicap : null,
+      teamTwoHandicap: data.teamTwoHandicap != null ? data.teamTwoHandicap : null,
       isTeamOneHandicapApplied: data.isTeamOneHandicapApplied ? data.isTeamOneHandicapApplied : false,
       isTeamTwoHandicapApplied: data.isTeamTwoHandicapApplied ? data.isTeamTwoHandicapApplied : false,
       expectedEndTimeDate: data.expectedEndTimeDate ? data.expectedEndTimeDate : null,
@@ -490,7 +490,7 @@ export const handleBilliardsPointTrigger = createAsyncThunk<
     teamIndex = activeTeam;
   }
 
-  if (state.sport.teamOneHandicap && state.sport.teamTwoHandicap) {
+  if (state.sport.teamOneHandicap != null && state.sport.teamTwoHandicap != null) {
     let handicapAdjustedScore = 0;
     if (teamIndex === 0 && !state.sport.isTeamOneHandicapApplied) {
       handicapAdjustedScore = score + state.sport.teamOneHandicap;

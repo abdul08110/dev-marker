@@ -252,9 +252,9 @@ export const calculatePointsBySide = (
   teamTwoHandicap?: number | null
 ) => {
 
-  let teamHandicaps = teamOneHandicap || teamTwoHandicap ? (teamOneHandicap ? teamOneHandicap : 0)  - (teamTwoHandicap ? teamTwoHandicap : 0 ) : null;
+  let teamHandicaps = (teamOneHandicap != null || teamTwoHandicap != null) ? (teamOneHandicap ?? 0) - (teamTwoHandicap ?? 0) : null;
 
-  const handicapToTake  = teamHandicaps ? teamHandicaps : handicap;
+  const handicapToTake  = teamHandicaps != null ? teamHandicaps : handicap;
 
   let isHandicapTeamOneOrTeamTwo: 'teamA' | 'teamB' = 'teamA';
 

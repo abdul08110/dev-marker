@@ -371,8 +371,8 @@ const useBilliardsScoring = () => {
       tournamentTeamTwoScore: billiardsScoring.tournamentTeamTwoScore
         ? billiardsScoring.tournamentTeamTwoScore
         : undefined,
-      teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
-      teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
+      teamOneHandicap: teamOneHandicap != null ? teamOneHandicap : undefined,
+      teamTwoHandicap: teamTwoHandicap != null ? teamTwoHandicap : undefined,
       format: billiardsScoring.formatName ? billiardsScoring.formatName : `${billiardsScoring.timeInMinutes} Mins`,
       tournamentSubItemId: billiardsScoring.tournamentSubItemId ? billiardsScoring.tournamentSubItemId : undefined,
       switchType: billiardsScoring.switchType ? billiardsScoring.switchType : null,

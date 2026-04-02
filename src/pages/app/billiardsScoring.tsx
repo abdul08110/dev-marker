@@ -116,8 +116,8 @@ export function BilliardsScoring() {
               showBilliardsButtons={true}
             />
             <SnookerFramesSummary
-              team1Handicap={billiardsScoring.teamOneHandicap ? billiardsScoring.teamOneHandicap : undefined}
-              team2Handicap={billiardsScoring.teamTwoHandicap ? billiardsScoring.teamTwoHandicap : undefined}
+              team1Handicap={billiardsScoring.teamOneHandicap != null ? billiardsScoring.teamOneHandicap : undefined}
+              team2Handicap={billiardsScoring.teamTwoHandicap != null ? billiardsScoring.teamTwoHandicap : undefined}
               team1Score={billiardsScoring.tournamentId ? undefined : billiardsScoring.team1Score}
               team2Score={billiardsScoring.tournamentId ? undefined : billiardsScoring.team2Score}
             />

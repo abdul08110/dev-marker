@@ -213,8 +213,8 @@ const sportSlice = createSlice({
       if (shouldCalculateHandicap) {
         if (state.snookerHandicapType === 'DIFFERENCE') {
           let relativeHandicap = state.handicap;
-          if (state.teamOneHandicap || state.teamTwoHandicap) {
-            relativeHandicap = (state.teamOneHandicap || 0) - (state.teamTwoHandicap || 0);
+          if (state.teamOneHandicap != null || state.teamTwoHandicap != null) {
+            relativeHandicap = (state.teamOneHandicap ?? 0) - (state.teamTwoHandicap ?? 0);
           }
           teamOneStartScore = relativeHandicap > 0 ? relativeHandicap : 0;
           teamTwoStartScore = relativeHandicap < 0 ? Math.abs(relativeHandicap) : 0;

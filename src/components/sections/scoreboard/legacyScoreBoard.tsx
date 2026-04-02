@@ -54,6 +54,7 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'YELLOW' : null}
               isActive={isTeamOneActive}
               handicap={state.teamOneHandicap}
+              isHandicapApplied={state.isTeamOneHandicapApplied}
               isTournament={!!state.tournamentId}
               activePlayerId={state.activePlayerId}
               playerOneId={state.sideOnePlayerOne.id}
@@ -160,6 +161,7 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               handicap={state.teamTwoHandicap}
               isTournament={!!state.tournamentId}
               activePlayerId={state.activePlayerId}
+               isHandicapApplied={state.isTeamOneHandicapApplied}
               playerOneId={state.sideTwoPlayerOne.id}
               playerTwoId={state.sideTwoPlayerTwo?.id}
               isDoubles={!!state.sideTwoPlayerTwo}
@@ -360,6 +362,7 @@ function Player({
   playerOneId,
   playerTwoId,
   isDoubles,
+  isHandicapApplied
 }: {
   playerOneName: string;
   playerTwoName?: string;
@@ -371,6 +374,7 @@ function Player({
   playerOneId?: string | null;
   playerTwoId?: string | null;
   isDoubles?: boolean;
+  isHandicapApplied?: boolean;
 }) {
   const isPlayerOneActive = activePlayerId && playerOneId && activePlayerId === playerOneId;
   const isPlayerTwoActive = activePlayerId && playerTwoId && activePlayerId === playerTwoId;
@@ -410,7 +414,7 @@ function Player({
           // Singles display
           <span className={clsx({ 'text-yellow-500': isPlayerOneActive })}>{getDisplayName(playerOneName)}</span>
         )}
-        {handicap && <span className="text-[min(5vh,5vw)] mt-2">({convertHandicapToString(handicap)})</span>}
+        {handicap && <span className={`text-[min(5vh,5vw)] mt-2 ${isHandicapApplied === true ? "line-through decoration-white" : ""}`}>({convertHandicapToString(handicap)})</span>}
       </div>
       {ballToShow === 'WHITE' && (
         <img

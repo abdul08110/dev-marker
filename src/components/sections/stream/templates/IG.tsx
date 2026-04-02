@@ -91,7 +91,7 @@ export function IGTemplate(props: IGTemplateProps) {
               <h5 className="text-[min(3vh,3vw)] text-white font-bold text-left uppercase whitespace-nowrap">
                 {generatePlayerName(props.state!.sideOnePlayerOne.name, props.state!.sideOnePlayerTwo?.name)}
                 {props.state?.teamOneHandicap !== undefined && (
-                  <span className="ml-2 text-yellow-400">
+                  <span className={`ml-2 text-yellow-400 decoration-white ${props.state.sport === "BILLIARDS" && props.state.isTeamOneHandicapApplied ? 'line-through' : ''}`}>
                     {props.state.teamOneHandicap && props.state.teamOneHandicap > 0 ? '+' : ''}
                     {props.state.teamOneHandicap}
                   </span>
@@ -138,7 +138,7 @@ export function IGTemplate(props: IGTemplateProps) {
             <div className="col-span-1">
               <h5 className="text-[min(3vh,3vw)] text-white font-bold text-right uppercase whitespace-nowrap">
                 {props.state?.teamTwoHandicap !== undefined && (
-                  <span className="mr-2 text-yellow-400">
+                  <span className={`mr-2 text-yellow-400 decoration-white ${props.state.sport === "BILLIARDS" && props.state.isTeamTwoHandicapApplied ? 'line-through' : ''}`}>
                     {props.state.teamTwoHandicap && props.state.teamTwoHandicap > 0 ? '+' : ''}
                     {props.state.teamTwoHandicap}
                   </span>

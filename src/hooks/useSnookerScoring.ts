@@ -249,8 +249,8 @@ const useSnookerScoring = () => {
       tournamentId: currentImplementationSnookerScoring.tournamentId ? currentImplementationSnookerScoring.tournamentId : undefined,
       tournamentTeamOneScore: currentImplementationSnookerScoring.tournamentTeamOneScore ? currentImplementationSnookerScoring.tournamentTeamOneScore : undefined,
       tournamentTeamTwoScore: currentImplementationSnookerScoring.tournamentTeamTwoScore ? currentImplementationSnookerScoring.tournamentTeamTwoScore : undefined,
-      teamOneHandicap: teamOneHandicap ? teamOneHandicap : undefined,
-      teamTwoHandicap: teamTwoHandicap ? teamTwoHandicap : undefined,
+      teamOneHandicap: teamOneHandicap != null ? teamOneHandicap : undefined,
+      teamTwoHandicap: teamTwoHandicap != null ? teamTwoHandicap : undefined,
       format: currentImplementationSnookerScoring.formatName
         ? currentImplementationSnookerScoring.formatName
         : snookerSportTypeToFormat(currentImplementationSnookerScoring.format, currentImplementationSnookerScoring.isCumulativeScoring),
