@@ -127,7 +127,7 @@ export function IGTemplate(props: IGTemplateProps) {
                 </div>
                 <div className="bg-primary px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">
                   {props.state.tournamentId && props.state.eventFormat === 'TEAMS' && props.state.showFormatsAsGameNumber
-                    ? `${props.state.tournamentSubItem?.matchNo ?? 1}/${props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length ?? 1}`
+                    ? `${props.state.tournamentSubItem?.gameFormat.matchNo ?? 1}/${props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length ?? 1}`
                     : props.state.tournamentSubItem
                       ? props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
                       : props.state.noOfFrames}
