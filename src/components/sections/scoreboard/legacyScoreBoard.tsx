@@ -126,7 +126,7 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
                 }
                 noOfFrames={
                   state.showFormatsAsGameNumber && state.eventFormat === 'TEAMS' && state.tournamentSubItem
-                    ? `${state.tournamentSubItem.matchNo}/${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}`
+                    ? `${state.tournamentSubItem.gameFormat.matchNo}/${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}`
                     : state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
                 }
               />
@@ -359,7 +359,7 @@ function TournamentScore({
   return (
     <div className="flex flex-col items-center justify-center gap-2 h-full">
       <span className="text-white font-bold text-[min(3.5vh,3.5vw)]">TEAM SCORE</span>
-      <span className="text-white font-bold text-[min(7vh,7vw)]">
+      <span className="text-white font-bold text-[min(4vh,4vw)]">
         {teamOneScore} {noOfFrames ? `(${noOfFrames})` : ''} {teamTwoScore}
       </span>
     </div>
