@@ -44,6 +44,9 @@ export interface MatchStartResponse {
     name: string;
     logo?: string;
     eventFormat: 'SINGLES' | 'TEAMS';
+    showFormatsAsGameNumber: boolean | null;
+    showCummulativeScoreInCombination: boolean | null;
+    showLatestHandicapInCombination: boolean | null;
   };
   tournamentTeamOne?: {
     name: string;

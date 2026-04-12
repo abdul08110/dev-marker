@@ -44,6 +44,9 @@ export interface ScoreBoardState {
   };
   eventFormat: 'SINGLES' | 'TEAMS';
   noOfFrames: number | null;
+  showFormatsAsGameNumber: boolean | null;
+  showCummulativeScoreInCombination: boolean | null;
+  showLatestHandicapInCombination: boolean | null;
 }
 
 const useScoreboardRender = () => {
@@ -175,6 +178,9 @@ const useScoreboardRender = () => {
             tournamentName: res.tournament ? res.tournament.name : null,
             eventFormat: res.tournament ? res.tournament.eventFormat : 'SINGLES',
             noOfFrames: res.noOfSets ? res.noOfSets : null,
+            showFormatsAsGameNumber: res.tournament ? res.tournament.showFormatsAsGameNumber : null,
+            showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
+            showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null
           });
         } else {
           toast({

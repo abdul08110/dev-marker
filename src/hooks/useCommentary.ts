@@ -59,6 +59,9 @@ export interface StreamingState {
     tournamentTeamTwoId: string | null;
     format: string | null;
     expectedEndTimeDate: string | null;
+    showFormatsAsGameNumber: boolean | null;
+    showCummulativeScoreInCombination: boolean | null;
+    showLatestHandicapInCombination: boolean | null;
     tournamentSubItem?: TournamentSubItem & {
         tournamentItem: TournamentItem & {
             tournamentPhase: TournamentPhase & {
@@ -351,6 +354,9 @@ const useCommentary = ({
                     streams: streamRes.streams,
                     phase: res.phase ? res.phase : null,
                     eventFormat: res.tournament ? res.tournament.eventFormat : 'TEAMS',
+                    showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
+                    showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null,
+                                showFormatsAsGameNumber: res.tournament ? res.tournament.showFormatsAsGameNumber : null,
                 };
 
                 setStreamingData(initialData);

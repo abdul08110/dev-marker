@@ -61,6 +61,9 @@ export interface StreamingState {
   format: string | null;
   eventFormat: 'SINGLES' | 'TEAMS';
   expectedEndTimeDate: string | null;
+  showFormatsAsGameNumber: boolean | null;
+  showCummulativeScoreInCombination: boolean | null;
+  showLatestHandicapInCombination: boolean | null;
   tournamentSubItem?: TournamentSubItem & {
     tournamentItem: TournamentItem & {
       tournamentPhase: TournamentPhase & {
@@ -211,6 +214,9 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           streams: streamRes.streams,
           eventFormat: res.tournament ? res.tournament.eventFormat : 'TEAMS',
           phase: res.phase ? res.phase : null,
+          showFormatsAsGameNumber: res.tournament ? res.tournament.showFormatsAsGameNumber : null,
+          showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
+          showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null
         };
 
         setStreamingData(initialData);

@@ -53,7 +53,13 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               playerTwoName={state.sideOnePlayerTwo ? state.sideOnePlayerTwo.name : undefined}
               ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'YELLOW' : null}
               isActive={isTeamOneActive}
-              handicap={state.teamOneHandicap}
+              handicap={
+                state.showLatestHandicapInCombination && state.tournamentSubItem
+                  ? isTeamReveresed
+                    ? state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap ?? state.teamOneHandicap
+                    : state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap ?? state.teamOneHandicap
+                  : state.teamOneHandicap
+              }
               isHandicapApplied={state.isTeamOneHandicapApplied}
               isTournament={!!state.tournamentId}
               activePlayerId={state.activePlayerId}
@@ -101,16 +107,28 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
             ) : (
               <TournamentScore
                 teamOneScore={
-                  isTeamReveresed
-                    ? state.tournamentSubItem?.tournamentItem.teamTwoScore || 0
-                    : state.tournamentSubItem?.tournamentItem.teamOneScore || 0
+                  state.showCummulativeScoreInCombination && state.tournamentSubItem
+                    ? isTeamReveresed
+                      ? state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0
+                      : state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0
+                    : isTeamReveresed
+                      ? state.tournamentSubItem?.tournamentItem.teamTwoScore || 0
+                      : state.tournamentSubItem?.tournamentItem.teamOneScore || 0
                 }
                 teamTwoScore={
-                  isTeamReveresed
-                    ? state.tournamentSubItem?.tournamentItem.teamOneScore || 0
-                    : state.tournamentSubItem?.tournamentItem.teamTwoScore || 0
+                  state.showCummulativeScoreInCombination && state.tournamentSubItem
+                    ? isTeamReveresed
+                      ? state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0
+                      : state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0
+                    : isTeamReveresed
+                      ? state.tournamentSubItem?.tournamentItem.teamOneScore || 0
+                      : state.tournamentSubItem?.tournamentItem.teamTwoScore || 0
                 }
-                noOfFrames={state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length}
+                noOfFrames={
+                  state.showFormatsAsGameNumber && state.eventFormat === 'TEAMS' && state.tournamentSubItem
+                    ? `${state.tournamentSubItem.matchNo}/${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}`
+                    : state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
+                }
               />
             )}
           </div>
@@ -158,10 +176,16 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               playerTwoName={state.sideTwoPlayerTwo ? state.sideTwoPlayerTwo.name : undefined}
               ballToShow={state.sport === 'BILLIARDS' && state.tournamentId === null ? 'WHITE' : null}
               isActive={isTeamTwoActive}
-              handicap={state.teamTwoHandicap}
+              handicap={
+                state.showLatestHandicapInCombination && state.tournamentSubItem
+                  ? isTeamReveresed
+                    ? state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap ?? state.teamTwoHandicap
+                    : state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap ?? state.teamTwoHandicap
+                  : state.teamTwoHandicap
+              }
               isTournament={!!state.tournamentId}
               activePlayerId={state.activePlayerId}
-               isHandicapApplied={state.isTeamOneHandicapApplied}
+              isHandicapApplied={state.isTeamTwoHandicapApplied}
               playerOneId={state.sideTwoPlayerOne.id}
               playerTwoId={state.sideTwoPlayerTwo?.id}
               isDoubles={!!state.sideTwoPlayerTwo}
@@ -330,7 +354,7 @@ function TournamentScore({
 }: {
   teamOneScore: number;
   teamTwoScore: number;
-  noOfFrames?: number;
+  noOfFrames?: number | string;
 }) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 h-full">
