@@ -96,9 +96,9 @@ export const addMinutesToDate = (minutes: number) => {
 
 export const generatePlayerName = (playerOneName: string, playerTwoName?: string) => {
   if (playerTwoName) {
-    return `${playerOneName.split(' ')[0]} & ${playerTwoName.split(' ')[0]}`;
+    return `${playerOneName.trim().split(' ')[0]} & ${playerTwoName.trim().split(' ')[0]}`;
   } else {
-    return `${playerOneName.split(' ')[0]} ${playerOneName.split(' ').length > 1 ? playerOneName.split(' ').at(-1) : ''}`;
+    return `${playerOneName.trim().split(' ')[0]} ${playerOneName.trim().split(' ').length > 1 ? playerOneName.trim().split(' ').at(-1) : ''}`;
   }
 };
 
