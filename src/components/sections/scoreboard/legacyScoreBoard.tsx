@@ -25,6 +25,22 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
 
   const teamTwoScore = activeSet ? activeSet.teamTwoScore : 0;
 
+  const teamOneDisplayScore =
+    state.tournamentId && state.showCummulativeScoreInCombination && state.tournamentSubItem
+      ? teamOneScore +
+        (isTeamReveresed
+          ? state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0
+          : state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0)
+      : teamOneScore;
+
+  const teamTwoDisplayScore =
+    state.tournamentId && state.showCummulativeScoreInCombination && state.tournamentSubItem
+      ? teamTwoScore +
+        (isTeamReveresed
+          ? state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0
+          : state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0)
+      : teamTwoScore;
+
   return (
     <section className="h-screen w-screen flex flex-col">
       <div className="bg-primary text-center text-white font-bold text-[min(4vh,4vw)] border border-white h-[5vh] flex items-center justify-center">
@@ -71,7 +87,7 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
 
           <div className={clsx('w-full h-[35%]')}>
             <TeamScore
-              score={teamOneScore}
+              score={teamOneDisplayScore}
               isActive={isTeamOneActive}
               breakScore={activeTurn?.score}
               isTournament={!!state.tournamentId}
@@ -194,7 +210,7 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
 
           <div className={clsx('w-full h-[35%]')}>
             <TeamScore
-              score={teamTwoScore}
+              score={teamTwoDisplayScore}
               isActive={isTeamTwoActive}
               breakScore={activeTurn?.score}
               isTournament={!!state.tournamentId}
