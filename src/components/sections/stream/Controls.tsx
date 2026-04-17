@@ -25,6 +25,10 @@ interface VideoControlsProps {
   streams?: StreamState[];
   onCameraSwitch?: (stream: StreamState) => void;
   selectedStreamId?: string | null;
+  onZoomIn?: () => void;
+  onZoomOut?: () => void;
+  onResetZoom?: () => void;
+  zoomLevel?: number;
 }
 
 export function VideoControls(props: VideoControlsProps) {
@@ -103,7 +107,33 @@ export function VideoControls(props: VideoControlsProps) {
           </div>
         )}
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
+          {/* Zoom controls */}
+          <div className="flex items-center gap-1">
+            <div
+              onClick={props.onZoomOut}
+              className={clsx('p-1 cursor-pointer text-white text-sm font-bold', {
+                'opacity-30 pointer-events-none': !props.zoomLevel || props.zoomLevel <= 1,
+              })}
+            >
+              −
+            </div>
+            <div
+              onClick={props.zoomLevel && props.zoomLevel > 1 ? props.onResetZoom : props.onZoomIn}
+              className="px-1 cursor-pointer text-white text-xs font-medium"
+            >
+              {props.zoomLevel ? `${props.zoomLevel.toFixed(1)}x` : '1.0x'}
+            </div>
+            <div
+              onClick={props.onZoomIn}
+              className={clsx('p-1 cursor-pointer text-white text-sm font-bold', {
+                'opacity-30 pointer-events-none': props.zoomLevel && props.zoomLevel >= 3,
+              })}
+            >
+              +
+            </div>
+          </div>
+
           <div onClick={props.onMuteUnmuteClick} className="p-2 cursor-pointer">
             {props.isSoundOn ? (
               <VolumeLogo className="h-4 w-4 text-white" />

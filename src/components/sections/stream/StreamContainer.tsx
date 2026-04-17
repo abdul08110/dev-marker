@@ -9,7 +9,7 @@ import { TopOverlay } from './overlays/TopOverlay';
 import { EcaTemplate } from './templates/Eca';
 import { GeneralTemplate } from './templates/General';
 import { SourceWithFinalScores } from './templates/SourceFinalScores';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import clsx from 'clsx';
 import { BBSLTemplate } from './templates/BBSL';
 import { SeekIndicator } from './SeekIndicator';
@@ -70,6 +70,114 @@ export function StreamContainer(props: StreamContainerProps) {
   const [seekIndicator, setSeekIndicator] = useState<'left' | 'right' | null>(null);
   const [showControls, setShowControls] = useState(false);
   const [stream, setStream] = useState<StreamState | null>(null);
+
+  // Zoom state
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const initialPinchDistance = useRef<number | null>(null);
+  const initialZoom = useRef(1);
+  const lastPanPosition = useRef<{ x: number; y: number } | null>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+
+  const MIN_ZOOM = 1;
+  const MAX_ZOOM = 3;
+
+  const handleZoomIn = useCallback(() => {
+    setZoomLevel((prev) => {
+      const newZoom = Math.min(prev + 0.5, MAX_ZOOM);
+      if (newZoom === 1) setPanOffset({ x: 0, y: 0 });
+      return newZoom;
+    });
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoomLevel((prev) => {
+      const newZoom = Math.max(prev - 0.5, MIN_ZOOM);
+      if (newZoom === 1) setPanOffset({ x: 0, y: 0 });
+      return newZoom;
+    });
+  }, []);
+
+  const handleResetZoom = useCallback(() => {
+    setZoomLevel(1);
+    setPanOffset({ x: 0, y: 0 });
+  }, []);
+
+  // Clamp pan so video doesn't go out of bounds
+  const clampPan = useCallback(
+    (x: number, y: number, zoom: number) => {
+      if (zoom <= 1) return { x: 0, y: 0 };
+      const maxPanX = ((zoom - 1) / (2 * zoom)) * 100;
+      const maxPanY = ((zoom - 1) / (2 * zoom)) * 100;
+      return {
+        x: Math.max(-maxPanX, Math.min(maxPanX, x)),
+        y: Math.max(-maxPanY, Math.min(maxPanY, y)),
+      };
+    },
+    [],
+  );
+
+  // Pinch-to-zoom touch handlers
+  const handleTouchStartZoom = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        initialPinchDistance.current = Math.sqrt(dx * dx + dy * dy);
+        initialZoom.current = zoomLevel;
+      } else if (e.touches.length === 1 && zoomLevel > 1) {
+        lastPanPosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+    },
+    [zoomLevel],
+  );
+
+  const handleTouchMoveZoom = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches.length === 2 && initialPinchDistance.current !== null) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const scale = distance / initialPinchDistance.current;
+        const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, initialZoom.current * scale));
+        setZoomLevel(newZoom);
+        if (newZoom === 1) setPanOffset({ x: 0, y: 0 });
+      } else if (e.touches.length === 1 && zoomLevel > 1 && lastPanPosition.current) {
+        const deltaX = e.touches[0].clientX - lastPanPosition.current.x;
+        const deltaY = e.touches[0].clientY - lastPanPosition.current.y;
+        lastPanPosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        setPanOffset((prev) => clampPan(prev.x + (deltaX / (videoContainerRef.current?.clientWidth || 1)) * 100, prev.y + (deltaY / (videoContainerRef.current?.clientHeight || 1)) * 100, zoomLevel));
+      }
+    },
+    [zoomLevel, clampPan],
+  );
+
+  const handleTouchEndZoom = useCallback(() => {
+    initialPinchDistance.current = null;
+    lastPanPosition.current = null;
+  }, []);
+
+  // Scroll wheel zoom (Ctrl/Cmd + scroll)
+  useEffect(() => {
+    const container = videoContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.2 : 0.2;
+        setZoomLevel((prev) => {
+          const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prev + delta));
+          if (newZoom === MIN_ZOOM) setPanOffset({ x: 0, y: 0 });
+          return newZoom;
+        });
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, []);
 
   useEffect(() => {
     if (props.state?.streams) {
@@ -193,6 +301,7 @@ export function StreamContainer(props: StreamContainerProps) {
         <div className="relative flex justify-center items-center w-full h-full">
           {stream.streamType === StreamType.CLOUD_PROVIDER && stream.streamProvider === 'YOUTUBE' ? (
             <div
+              ref={videoContainerRef}
               className="relative w-full h-full max-w-full max-h-full overflow-hidden"
               style={{
                 width: '100%',
@@ -203,6 +312,9 @@ export function StreamContainer(props: StreamContainerProps) {
                 alignItems: 'center',
                 position: 'relative',
               }}
+              onTouchStart={handleTouchStartZoom}
+              onTouchMove={handleTouchMoveZoom}
+              onTouchEnd={handleTouchEndZoom}
             >
               {isVideoLoading && (
                 <div className="absolute inset-0 z-40 bg-black">
@@ -210,25 +322,34 @@ export function StreamContainer(props: StreamContainerProps) {
                 </div>
               )}
 
-              <YouTube
-                videoId={selectedStreamId || stream.brodcastId!}
-                id={selectedStreamId || stream.brodcastId!}
-                onReady={handleYouTubeReady}
-                onEnd={props.onVideoEnd}
-                onStateChange={handleYouTubeStateChange}
-                className="object-contain w-full h-full"
-                opts={{
-                  height: '100%',
+              <div
+                style={{
+                  transform: `scale(${zoomLevel}) translate(${panOffset.x}%, ${panOffset.y}%)`,
+                  transition: initialPinchDistance.current ? 'none' : 'transform 0.2s ease',
                   width: '100%',
-                  playerVars: {
-                    autoplay: 1,
-                    controls: 0,
-                    rel: 0,
-                    fs: 0,
-                    modestbranding: 1,
-                  },
+                  height: '100%',
                 }}
-              />
+              >
+                <YouTube
+                  videoId={selectedStreamId || stream.brodcastId!}
+                  id={selectedStreamId || stream.brodcastId!}
+                  onReady={handleYouTubeReady}
+                  onEnd={props.onVideoEnd}
+                  onStateChange={handleYouTubeStateChange}
+                  className="object-contain w-full h-full"
+                  opts={{
+                    height: '100%',
+                    width: '100%',
+                    playerVars: {
+                      autoplay: 1,
+                      controls: 0,
+                      rel: 0,
+                      fs: 0,
+                      modestbranding: 1,
+                    },
+                  }}
+                />
+              </div>
               {/* Overlay Content */}
 
               <div
@@ -388,6 +509,31 @@ export function StreamContainer(props: StreamContainerProps) {
               {stream.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && (
                 <SourceWithFinalScores state={props.state} />
               )}
+              {/* Zoom Controls */}
+              {zoomLevel > 1 && (
+                <div className="absolute top-4 right-4 z-50 flex flex-col gap-2">
+                  <button
+                    onClick={handleZoomIn}
+                    disabled={zoomLevel >= MAX_ZOOM}
+                    className="bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold disabled:opacity-30"
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={handleZoomOut}
+                    className="bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold"
+                  >
+                    −
+                  </button>
+                  <button
+                    onClick={handleResetZoom}
+                    className="bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
+                  >
+                    1x
+                  </button>
+                </div>
+              )}
+
               {showControls && (
                 <VideoControls
                   onInactive={() => {
@@ -406,6 +552,10 @@ export function StreamContainer(props: StreamContainerProps) {
                   streams={props.state.streams}
                   onCameraSwitch={handleCameraAngleSwitch}
                   selectedStreamId={selectedStreamId || stream?.brodcastId}
+                  onZoomIn={handleZoomIn}
+                  onZoomOut={handleZoomOut}
+                  onResetZoom={handleResetZoom}
+                  zoomLevel={zoomLevel}
                 />
               )}
             </div>
