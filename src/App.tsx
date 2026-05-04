@@ -14,6 +14,7 @@ import { Tournament } from './pages/app/Tournament';
 import { TeamForm } from './pages/app/TeamForm';
 import { ScoreBoardRender } from './pages/app/ScoreBoardRender';
 import { TvRender } from './pages/app/TvRender';
+import { TvHlsRender } from './pages/app/TvHlsRender';
 import { BowringArena } from './pages/app/bowringArena';
 import { KsbaArena } from './pages/app/ksbaArena';
 import { VideoOverlay } from './pages/app/videoOverlay';
@@ -43,6 +44,7 @@ const App: React.FC = () => {
         <Route path="/app/team-form" element={<TeamForm />} />
         <Route path="/app/scoreboard-render" element={<ScoreBoardRender />} />
         <Route path="/app/tv-render" element={<TvRender />} />
+        <Route path="/app/tv-hls-render" element={<TvHlsRender />} />
         <Route path="/app/bowring-render" element={<BowringArena />} />
         <Route path="/app/ksba-render" element={<KsbaArena />} />
         <Route path="/app/bowring-3412" element={<BowringArena3412   />} />
