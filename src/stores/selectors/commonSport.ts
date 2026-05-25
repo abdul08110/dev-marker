@@ -137,6 +137,7 @@ export const calculateAllBreaksAboveThirtyForASet = async (set: Set) => {
     achievementType: 'THIRTY_PLUS' | 'FIFTY_PLUS' | 'HUNDRED_PLUS';
     playerId: string;
     score: number;
+    turnStartTimeDate: string;
   }> = [];
 
   set.turns.forEach((turn) => {
@@ -167,6 +168,7 @@ export const calculateAllBreaksAboveThirtyForASet = async (set: Set) => {
       achievementType,
       playerId: turn.turnPlayerId,
       score: breakScore,
+      turnStartTimeDate: turn.timeScored,
     });
   });
 

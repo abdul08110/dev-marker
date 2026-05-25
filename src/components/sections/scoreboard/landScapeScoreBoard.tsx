@@ -63,6 +63,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
                 playerOneId={state.sideOnePlayerOne.id}
                 playerTwoId={state.sideOnePlayerTwo?.id}
                 isDoubles={!!state.sideOnePlayerTwo}
+
               />
             </div>
           </div>
@@ -145,6 +146,7 @@ export function LandscapeScoreboard({ state, timeLeft }: LandscapeScoreBoardProp
                 playerOneId={state.sideTwoPlayerOne.id}
                 playerTwoId={state.sideTwoPlayerTwo?.id}
                 isDoubles={!!state.sideTwoPlayerTwo}
+
               />
             </div>
           </div>

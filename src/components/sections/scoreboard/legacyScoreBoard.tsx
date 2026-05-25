@@ -82,6 +82,7 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               playerOneId={state.sideOnePlayerOne.id}
               playerTwoId={state.sideOnePlayerTwo?.id}
               isDoubles={!!state.sideOnePlayerTwo}
+
             />
           </div>
 
@@ -205,6 +206,7 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               playerOneId={state.sideTwoPlayerOne.id}
               playerTwoId={state.sideTwoPlayerTwo?.id}
               isDoubles={!!state.sideTwoPlayerTwo}
+
             />
           </div>
 

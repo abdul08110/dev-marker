@@ -56,6 +56,7 @@ interface MarkerFrameEndSendNotificationProps {
     achievementType: 'THIRTY_PLUS' | 'FIFTY_PLUS' | 'HUNDRED_PLUS';
     playerId: string;
     score: number;
+    turnStartTimeDate: string;
   }[];
   frameStartTimeDate: string;
 }
