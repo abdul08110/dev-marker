@@ -256,6 +256,7 @@ const useScoreboard = () => {
     setOrientation,
     rotateBody,
     showTimeOverAlert,
+    activeClub: clubs.activeClub,
   };
 };
 

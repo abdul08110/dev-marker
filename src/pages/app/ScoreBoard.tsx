@@ -7,9 +7,9 @@ import useScoreboard from '@/hooks/useScoreboard';
 import { useState } from 'react';
 
 export function ScoreBoard() {
-  const { loading, scoreBoardData, timeLeft, orientation, setOrientation, showTimeOverAlert } = useScoreboard();
+  const { loading, scoreBoardData, timeLeft, orientation, setOrientation, showTimeOverAlert, activeClub } = useScoreboard();
   const [showScoreBoardOrientationModal, setShowScoreBoardOrientationModal] = useState(true);
-
+  console.log(scoreBoardData);
   return (
     <section>
       {loading ? (
@@ -24,8 +24,16 @@ export function ScoreBoard() {
             )
           ) : (
             <section className="h-screen w-screen flex justify-center items-center">
-              <div className="text-white">
-                <h3 className="text-center">Waiting for Match to Start</h3>
+              <div className="text-white flex flex-col items-center gap-4">
+                {activeClub?.clubLogo && (
+                  <img src={activeClub.clubLogo} alt="Club Logo" className="h-24 w-24 object-contain" />
+                )}
+                <h3 className="text-center text-2xl font-bold">
+                  Welcome to {activeClub?.clubName}
+                </h3>
+                {activeClub?.venueNo && (
+                  <h4 className="text-center text-xl">TABLE-{activeClub.venueNo}</h4>
+                )}
               </div>
             </section>
           )}

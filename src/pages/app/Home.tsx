@@ -43,6 +43,9 @@ export function Home() {
         const formattedData = result.map((value) => ({
           clubId: value.club.id,
           venueId: value.venue.id,
+          clubName: value.club.name,
+          clubLogo: value.club.imageUrl,
+          venueNo: value.venue.no,
         }));
 
         dispatch(setClubs(formattedData));

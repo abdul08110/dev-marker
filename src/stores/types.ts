@@ -142,6 +142,9 @@ export interface GeneralScoringState {
 export interface ClubData {
   clubId: string;
   venueId: string;
+  clubName?: string | null;
+  clubLogo?: string | null;
+  venueNo?: number | null;
 }
 
 export interface ClubState {
