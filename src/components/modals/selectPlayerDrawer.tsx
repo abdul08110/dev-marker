@@ -64,12 +64,6 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
                 <span className="text-white/50">Selected Player {index + 1}: </span>
                 <span className="font-semibold">{player.name}</span>
               </span>
-              <button
-                onClick={() => props.onRemovePlayer(index)}
-                className="text-white/40 hover:text-white ml-auto p-1"
-              >
-                <X size={14} />
-              </button>
             </div>
           ))}
         </DrawerHeader>
