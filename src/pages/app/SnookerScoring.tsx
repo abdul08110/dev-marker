@@ -86,6 +86,7 @@ export function SnookerScoring() {
     handleEndFrameButton,
     teamActiveSetPoints,
     onBackInPlayerSelectModal,
+    handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
   } = useSnookerScoring();
@@ -168,6 +169,8 @@ export function SnookerScoring() {
                 showCancel={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id !== null}
                 showBack={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id === null}
                 onBack={() => onBackInPlayerSelectModal()}
+                teamPlayers={[...snookerScoring.team1.players, ...snookerScoring.team2.players]}
+                onRemovePlayer={handleRemoveTeamPlayer}
               />
               <PlayerOrderSelectModal
                 isModalOpen={showPlayerOrderModal}

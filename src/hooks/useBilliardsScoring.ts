@@ -31,7 +31,7 @@ import { matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@/stores/selectors/billiardsSelector';
 import { BilliardsPracticeSettingsData } from '@/components/forms/app/billiardsPracticeSettings';
 import { BilliardsScoringButtonEnum } from '@/components/sections/scoring/billiardsScoringButton';
-import { setExpectedEndTimeDate } from '@/stores/slices/sportSlice';
+import { setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
 
 const useBilliardsScoring = () => {
   // REDUX STATE
@@ -243,6 +243,19 @@ const useBilliardsScoring = () => {
     }
   };
 
+  const handleRemoveTeamPlayer = (globalIndex: number) => {
+    const team1Count = billiardsScoring.team1.players.length;
+    const teamIndex = globalIndex < team1Count ? 0 : 1;
+    const playerIndex = globalIndex < team1Count ? globalIndex : globalIndex - team1Count;
+    dispatch(setTeamPlayer({
+      teamIndex,
+      playerIndex,
+      player: { id: null, name: `Player ${playerIndex + 1}`, profilePhoto: null },
+    }));
+    setSelectedTeamIndex(teamIndex);
+    setSelectedPlayerIndex(playerIndex);
+  };
+
   const handleSettingsUpdate = async (values: BilliardsPracticeSettingsData) => {
     await dispatch(handleSettingsStateUpdateBilliards(values));
     setOpenSettingsDrawer(false);
@@ -435,6 +448,7 @@ const useBilliardsScoring = () => {
     handleBilliardsSelectColorBall,
     handleEndFrameButton,
     onBackInPlayerSelectModal,
+    handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
   };

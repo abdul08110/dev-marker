@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
 
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
-import { Player } from '@/stores/types';
+import { Player, PlayerDetails } from '@/stores/types';
 import { PlayersList } from '../sections/scoring/playersList';
 import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import { PlayerSearchModal } from './playerSearchModal';
@@ -19,6 +20,8 @@ interface SelectPlayerPopoverProps {
   showCancel: boolean;
   onBack: () => void;
   showBack: boolean;
+  teamPlayers: PlayerDetails[];
+  onRemovePlayer: (playerIndex: number) => void;
 }
 
 export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
@@ -26,21 +29,24 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
   const [showAddModal, setShowAddModal] = React.useState<boolean>(false);
   const [stateModalOpen, setStateModalOpen] = React.useState<boolean>(false);
 
-  const showAddModalAfterChangingMemeberType = async (type: 'MEMBER' | 'GUEST') => {
-    await setAddState(type);
-    await setShowAddModal(true);
+  const showAddModalAfterChangingMemeberType = (type: 'MEMBER' | 'GUEST') => {
+    setAddState(type);
+    setShowAddModal(true);
   };
 
-  const handlePlayerConfirmation = async (player: Player) => {
-    await setShowAddModal(false);
-    await setStateModalOpen(false);
-
-    await props.onSubmit(player);
+  const handlePlayerConfirmation = (player: Player) => {
+    setShowAddModal(false);
+    setStateModalOpen(false);
+    props.onSubmit(player);
   };
+
+  const confirmedPlayers = props.teamPlayers
+    .map((p, i) => ({ player: p, index: i }))
+    .filter(({ player }) => player.id !== null);
 
   return (
     <Drawer open={props.open} onOpenChange={props.setOpen}>
-      <DrawerContent className="border-0 h-full">
+      <DrawerContent className="border-0 h-dvh">
         <DrawerHeader className="text-left text-white">
           <DrawerTitle className="text-2xl">
             Select{' '}
@@ -58,6 +64,25 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
         </div>
 
         <DrawerFooter className="pt-2">
+          {confirmedPlayers.map(({ player, index }) => (
+            <div key={index} className="flex items-center gap-3 bg-primary rounded-lg px-4 py-3">
+              <img
+                src={player.profilePhoto ?? '/images/user-dummy-pic.png'}
+                className="h-10 w-10 rounded-full object-cover shrink-0"
+              />
+              <div className="flex flex-col flex-1 min-w-0">
+                <small className="text-white/60">Player {index + 1}</small>
+                <span className="text-white font-semibold truncate">{player.name}</span>
+              </div>
+              <button
+                onClick={() => props.onRemovePlayer(index)}
+                className="text-white/60 hover:text-white p-1 shrink-0"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          ))}
+
           <Dialog
             open={stateModalOpen}
             onOpenChange={(value) => {

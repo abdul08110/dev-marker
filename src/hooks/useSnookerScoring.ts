@@ -47,7 +47,7 @@ import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
-import { setExpectedEndTimeDate } from '@/stores/slices/sportSlice';
+import { setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
 
 const useSnookerScoring = () => {
   // REDUX STATE
@@ -425,6 +425,19 @@ const useSnookerScoring = () => {
     }
   };
 
+  const handleRemoveTeamPlayer = (globalIndex: number) => {
+    const team1Count = snookerScoring.team1.players.length;
+    const teamIndex = globalIndex < team1Count ? 0 : 1;
+    const playerIndex = globalIndex < team1Count ? globalIndex : globalIndex - team1Count;
+    dispatch(setTeamPlayer({
+      teamIndex,
+      playerIndex,
+      player: { id: null, name: `Player ${playerIndex + 1}`, profilePhoto: null },
+    }));
+    setSelectedTeamIndex(teamIndex);
+    setSelectedPlayerIndex(playerIndex);
+  };
+
   const handlePlayerConfirm = async (player: Player) => {
     await dispatch(
       await handlePlayerSelectState({
@@ -592,6 +605,7 @@ const useSnookerScoring = () => {
     handleEndFrameButton,
     teamActiveSetPoints,
     onBackInPlayerSelectModal,
+    handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
   };

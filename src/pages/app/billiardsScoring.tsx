@@ -59,6 +59,7 @@ export function BilliardsScoring() {
     handleBilliardsSelectColorBall,
     handleEndFrameButton,
     onBackInPlayerSelectModal,
+    handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
   } = useBilliardsScoring();
@@ -146,6 +147,8 @@ export function BilliardsScoring() {
               }
               showBack={billiardsScoring.team1.players[0].id !== null && billiardsScoring.team2.players[0].id === null}
               onBack={() => onBackInPlayerSelectModal()}
+              teamPlayers={[...billiardsScoring.team1.players, ...billiardsScoring.team2.players]}
+              onRemovePlayer={handleRemoveTeamPlayer}
             />
 
             <BilliardsPracticeSettingsDrawer
