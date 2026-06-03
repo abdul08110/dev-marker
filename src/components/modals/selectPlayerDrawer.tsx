@@ -54,6 +54,24 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
               ? `Player ${props.teamIndex + 1}`
               : `Team ${props.teamIndex + 1} Player ${props.playerIndex + 1}`}
           </DrawerTitle>
+          {confirmedPlayers.map(({ player, index }) => (
+            <div key={index} className="flex items-center gap-2 mt-1">
+              <img
+                src={player.profilePhoto ?? '/images/user-dummy-pic.png'}
+                className="h-7 w-7 rounded-full object-cover shrink-0"
+              />
+              <span className="text-sm text-white/80">
+                <span className="text-white/50">Selected Player {index + 1}: </span>
+                <span className="font-semibold">{player.name}</span>
+              </span>
+              <button
+                onClick={() => props.onRemovePlayer(index)}
+                className="text-white/40 hover:text-white ml-auto p-1"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ))}
         </DrawerHeader>
         <div className="px-4 h-[70%]">
           <PlayersList
@@ -64,25 +82,6 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
         </div>
 
         <DrawerFooter className="pt-2">
-          {confirmedPlayers.map(({ player, index }) => (
-            <div key={index} className="flex items-center gap-3 bg-primary rounded-lg px-4 py-3">
-              <img
-                src={player.profilePhoto ?? '/images/user-dummy-pic.png'}
-                className="h-10 w-10 rounded-full object-cover shrink-0"
-              />
-              <div className="flex flex-col flex-1 min-w-0">
-                <small className="text-white/60">Player {index + 1}</small>
-                <span className="text-white font-semibold truncate">{player.name}</span>
-              </div>
-              <button
-                onClick={() => props.onRemovePlayer(index)}
-                className="text-white/60 hover:text-white p-1 shrink-0"
-              >
-                <X size={18} />
-              </button>
-            </div>
-          ))}
-
           <Dialog
             open={stateModalOpen}
             onOpenChange={(value) => {
