@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
+import { ChevronDown } from 'lucide-react';
 
 interface PortraitStreamDataProps {
   state: StreamingState | null;
@@ -41,9 +42,198 @@ export function PortraitView(props: PortraitStreamDataProps) {
               ? props.state.sets.length
               : props.state.eventFormat === 'TEAMS'
                 ? props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
-                : props.state.noOfFrames}
-            {' '}) {activeSet ? props.state.teamTwoScore : 0}
+                : props.state.noOfFrames}{' '}
+            ) {activeSet ? props.state.teamTwoScore : 0}
           </span>
+        </div>
+      </div>
+      <div className="bg-[#1C1C1C]">
+        <div className="grid grid-cols-2 divide-x divide-white/[.12] border-b border-white/[.12]">
+          <div className="">
+            <div className=" p-4 space-y-4">
+              <div className="flex items-center gap-3">
+                <div
+                  className="bg-[#FFD400] p-[3px]"
+                  style={{
+                    width: '88px',
+                    height: '88px',
+                    clipPath: 'polygon(38px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 38px)',
+                    borderRadius: '0 18px 18px 18px',
+                    flexShrink: 0,
+                  }}
+                >
+                  <div
+                    className="overflow-hidden"
+                    style={{
+                      width: '82px',
+                      height: '82px',
+                      clipPath: 'polygon(36px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 36px)',
+                      borderRadius: '0 16px 16px 16px',
+                    }}
+                  >
+                    <ImageWithFallback
+                      className="object-cover"
+                      style={{
+                        width: '82px',
+                        height: '58px',
+                        display: 'block',
+                      }}
+                      fallback="/images/user-dummy-pic.png"
+                      src={
+                        props.state.teamOneLogo
+                          ? props.state.teamOneLogo
+                          : props.state.sideOnePlayerOne.profilePhoto
+                            ? props.state.sideOnePlayerOne.profilePhoto
+                            : '/images/user-dummy-pic.png'
+                      }
+                    />
+                    <p
+                      className="font-bold text-base uppercase text-[#1B1B1B] text-center pt-1 tracking-wide bg-[#FFD400]"
+                      style={{ width: '82px' }}
+                    >
+                      H+35
+                    </p>
+                  </div>
+                </div>
+
+                <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
+                  92
+                </p>
+              </div>
+              <p className="font-medium text-[17px] leading-[130%] uppercase text-white">Shaun Carter</p>
+            </div>
+            <div className="px-4 py-3 flex gap-3 items-center">
+              <ImageWithFallback
+                className="aspect-square rounded overflow-hidden border-white size-8 object-cover shrink-0"
+                fallback="/images/user-dummy-pic.png"
+                src={
+                  props.state.teamTwoLogo
+                    ? props.state.teamTwoLogo
+                    : props.state.sideTwoPlayerOne.profilePhoto
+                      ? props.state.sideTwoPlayerOne.profilePhoto
+                      : '/images/user-dummy-pic.png'
+                }
+              ></ImageWithFallback>
+              <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">Precision Strikers</p>
+            </div>
+          </div>
+          <div className="">
+            <div className=" p-4 space-y-4">
+              <div className="flex items-center gap-3">
+                <div
+                  className="bg-[#FFD400] p-[3px]"
+                  style={{
+                    width: '88px',
+                    height: '88px',
+                    clipPath: 'polygon(38px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 38px)',
+                    borderRadius: '0 18px 18px 18px',
+                    flexShrink: 0,
+                  }}
+                >
+                  <div
+                    className="overflow-hidden"
+                    style={{
+                      width: '82px',
+                      height: '82px',
+                      clipPath: 'polygon(36px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 36px)',
+                      borderRadius: '0 16px 16px 16px',
+                    }}
+                  >
+                    <ImageWithFallback
+                      className="object-cover"
+                      style={{
+                        width: '82px',
+                        height: '58px',
+                        display: 'block',
+                      }}
+                      fallback="/images/user-dummy-pic.png"
+                      src={
+                        props.state.teamOneLogo
+                          ? props.state.teamOneLogo
+                          : props.state.sideOnePlayerOne.profilePhoto
+                            ? props.state.sideOnePlayerOne.profilePhoto
+                            : '/images/user-dummy-pic.png'
+                      }
+                    />
+                    <p
+                      className="font-bold text-base uppercase text-[#1B1B1B] text-center pt-1 tracking-wide bg-[#FFD400]"
+                      style={{ width: '82px' }}
+                    >
+                      H+35
+                    </p>
+                  </div>
+                </div>
+
+                <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
+                  92
+                </p>
+              </div>
+              <p className="font-medium text-[17px] leading-[130%] uppercase text-white">Shaun Carter</p>
+            </div>
+            <div className="px-4 py-3 flex gap-3 items-center">
+              <ImageWithFallback
+                className="aspect-square rounded overflow-hidden border-white size-8 object-cover shrink-0"
+                fallback="/images/user-dummy-pic.png"
+                src={
+                  props.state.teamOneLogo
+                    ? props.state.teamOneLogo
+                    : props.state.sideOnePlayerOne.profilePhoto
+                      ? props.state.sideOnePlayerOne.profilePhoto
+                      : '/images/user-dummy-pic.png'
+                }
+              ></ImageWithFallback>
+              <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">Precision Strikers</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 space-y-6">
+          <div className="flex items-center gap-4">
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">3</p>
+            <div className="bg-white/[.12] h-px w-full" />
+            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Frames Won</p>
+            <div className="bg-white/[.12] h-px w-full" />
+
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">1</p>
+          </div>
+          <div className="border border-white/[.12] px-3 py-4 rounded bg-[#202020] flex justify-between items-center">
+            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Previous Frame Scores</p>
+            <div>
+              <ChevronDown size={16} className="text-white" />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">23.4s</p>
+            <div className="bg-white/[.12] h-px w-full" />
+            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Average Shot Time</p>
+            <div className="bg-white/[.12] h-px w-full" />
+
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">22.3s</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">68%</p>
+            <div className="bg-white/[.12] h-px w-full" />
+            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Pot Success Ratio</p>
+            <div className="bg-white/[.12] h-px w-full" />
+
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">59%</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">42%</p>
+            <div className="bg-white/[.12] h-px w-full" />
+            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Safety Success Ratio</p>
+            <div className="bg-white/[.12] h-px w-full" />
+
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">36%</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">72</p>
+            <div className="bg-white/[.12] h-px w-full" />
+            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Highest Break</p>
+            <div className="bg-white/[.12] h-px w-full" />
+
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">46</p>
+          </div>
         </div>
       </div>
 
