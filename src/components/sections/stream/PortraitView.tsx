@@ -30,20 +30,16 @@ export function PortraitView(props: PortraitStreamDataProps) {
 
   return (
     <div className="flex-grow overflow-y-scroll flex flex-col px-2 gap-2 mt-2 mb-2">
-      <div className="grid grid-cols-1 w-full mx-auto rounded-md overflow-hidden">
-        <div className="bg-[#1C1C1C] p-2 flex items-center justify-center">
-          <span className="text-white font-bold text-2xl">
-            {activeSet ? props.state.teamOneScore : 0} ({' '}
-            {props.state.tournamentId === null
-              ? props.state.sets.length
-              : props.state.eventFormat === 'TEAMS'
-                ? props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length
-                : props.state.noOfFrames}{' '}
-            ) {activeSet ? props.state.teamTwoScore : 0}
-          </span>
-        </div>
-      </div>
-      <div className="bg-[#1C1C1C] rounded-md">
+      <div className="bg-[#1C1C1C] rounded-md overflow-hidden">
+        {/* Tournament banner */}
+        {props.state.tournamentName && (
+          <div className="relative">
+            <img src="/images/bg-pattern.jpg" width={'100%'} height={64} className="h-16 object-cover" />
+            <div className="absolute inset-0 flex justify-center items-center">
+              <p className="font-medium text-xl leading-[130%] uppercase text-white">{props.state.tournamentName}</p>
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-2 divide-x divide-white/[.12] border-b border-white/[.12]">
           <div className="">
             <div className="p-4 space-y-4">
@@ -129,7 +125,15 @@ export function PortraitView(props: PortraitStreamDataProps) {
           </div>
           <div className="">
             <div className="p-4 space-y-4">
-              <div className="flex items-center gap-3">
+              <div className="flex justify-end items-center gap-3">
+                <div className="flex flex-col gap-1">
+                  <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
+                    {activeSet ? activeSet.teamTwoScore : 0}
+                  </p>
+                  {isTeamTwoActive && (
+                    <span className="text-white/70 text-xs font-bold">BREAK {activeTurn?.score ?? 0}</span>
+                  )}
+                </div>
                 <div
                   className="bg-[#FFD400] p-[3px]"
                   style={{
@@ -171,24 +175,22 @@ export function PortraitView(props: PortraitStreamDataProps) {
                     </p>
                   </div>
                 </div>
-
-                <div className="flex flex-col gap-1">
-                  <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
-                    {activeSet ? activeSet.teamTwoScore : 0}
-                  </p>
-                  {isTeamTwoActive && (
-                    <span className="text-white/70 text-xs font-bold">BREAK {activeTurn?.score ?? 0}</span>
-                  )}
-                </div>
               </div>
-              <p className="font-medium text-[17px] leading-[130%] uppercase text-white line-clamp-1">
+              <p className="font-medium text-[17px] leading-[130%] uppercase text-white line-clamp-1 text-right">
                 {generatePlayerName(
                   props.state.sideTwoPlayerOne.name,
                   props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
                 )}
               </p>
             </div>
-            <div className="px-4 py-3 flex gap-3 items-center">
+            <div className="px-4 py-3 flex justify-end gap-3 items-center">
+              <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
+                {props.state.teamOneName ||
+                  generatePlayerName(
+                    props.state.sideOnePlayerOne.name,
+                    props.state.sideOnePlayerTwo ? props.state.sideOnePlayerTwo.name : undefined,
+                  )}
+              </p>
               <ImageWithFallback
                 className="aspect-square rounded overflow-hidden border-white size-8 object-cover shrink-0"
                 fallback="/images/user-dummy-pic.png"
@@ -200,13 +202,6 @@ export function PortraitView(props: PortraitStreamDataProps) {
                       : '/images/user-dummy-pic.png'
                 }
               />
-              <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
-                {props.state.teamOneName ||
-                  generatePlayerName(
-                    props.state.sideOnePlayerOne.name,
-                    props.state.sideOnePlayerTwo ? props.state.sideOnePlayerTwo.name : undefined,
-                  )}
-              </p>
             </div>
           </div>
         </div>
