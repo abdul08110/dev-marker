@@ -62,7 +62,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                     style={{
                       clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
                     }}
-                    className="object-cover rounded-xl"
+                    className="object-cover rounded-xl w-full h-full"
                     fallback="/images/user-dummy-pic.png"
                     src={
                       props.state.teamOneLogo
@@ -143,7 +143,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                     style={{
                       clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
                     }}
-                    className="object-cover rounded-xl"
+                    className="object-cover rounded-xl w-full h-full"
                     fallback="/images/user-dummy-pic.png"
                     src={
                       props.state.teamTwoLogo
