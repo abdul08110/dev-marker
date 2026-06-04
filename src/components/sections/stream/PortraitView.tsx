@@ -85,10 +85,10 @@ export function PortraitView(props: PortraitStreamDataProps) {
 
                 <div className="flex flex-col gap-1">
                   <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
-                    {activeSet ? activeSet.teamOneScore : 0}
+                    {activeSet && activeSet?.teamOneScore}
                   </p>
                   {isTeamOneActive && (
-                    <span className="text-white/70 text-xs font-bold">BREAK {activeTurn?.score ?? 0}</span>
+                    <span className="text-white/70 text-xs font-bold">BREAK {activeTurn && activeTurn?.score}</span>
                   )}
                 </div>
               </div>
@@ -125,10 +125,10 @@ export function PortraitView(props: PortraitStreamDataProps) {
               <div className="flex justify-end items-center gap-3">
                 <div className="flex flex-col gap-1">
                   <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
-                    {activeSet ? activeSet.teamTwoScore : 0}
+                    {activeSet && activeSet?.teamTwoScore}
                   </p>
                   {isTeamTwoActive && (
-                    <span className="text-white/70 text-xs font-bold">BREAK {activeTurn?.score ?? 0}</span>
+                    <span className="text-white/70 text-xs font-bold">BREAK {activeTurn && activeTurn?.score}</span>
                   )}
                 </div>
 
