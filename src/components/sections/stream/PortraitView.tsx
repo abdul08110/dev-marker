@@ -4,6 +4,9 @@ import { calculateStatsForTeam, getActiveSet, getActiveTurn } from '@/stores/sel
 import { generatePlayerName } from '@/utils/functions';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import clsx from 'clsx';
+import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
+import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 
 interface PortraitStreamDataProps {
   state: StreamingState | null;
@@ -45,7 +48,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
           </div>
         )}
         <div className="grid grid-cols-2 divide-x divide-white/[.12] border-b border-white/[.12]">
-          <div className="">
+          <div className={clsx({ 'bg-[#9B36BA]': isTeamOneActive, 'bg-[#1F1F1F]': !isTeamOneActive })}>
             <div className="p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <div
@@ -117,7 +120,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
               </p>
             </div>
           </div>
-          <div className="">
+          <div className={clsx({ 'bg-[#9B36BA]': isTeamTwoActive, 'bg-[#1F1F1F]': !isTeamTwoActive })}>
             <div className="p-4 space-y-4">
               <div className="flex justify-end items-center gap-3">
                 <div className="flex flex-col gap-1">
@@ -190,6 +193,36 @@ export function PortraitView(props: PortraitStreamDataProps) {
             </div>
           </div>
         </div>
+        {props.state.sport === 'SNOOKER' && (
+          <div className="grid grid-cols-2 w-full gap-2 p-4 pb-0">
+            <div className="bg-[#2B2B2B] p-2 rounded-md">
+              <SnookerPointTypeDisplay
+                class={'gap-[0.3rem]'}
+                className={'text-[0.8rem] font-mono h-5 w-5 flex justify-center'}
+                activeTurnPointTypes={getSnookerPointTypesByTurns(
+                  activeSet?.turns?.filter((value) =>
+                    [props.state!.sideOnePlayerOne, props.state!.sideOnePlayerTwo].some(
+                      (player) => player && value.turnPlayerId === player.id,
+                    ),
+                  ) || [],
+                )}
+              />
+            </div>
+            <div className="bg-[#2B2B2B] p-2 rounded-md">
+              <SnookerPointTypeDisplay
+                class={'gap-[0.3rem]'}
+                className={'text-[0.8rem] font-mono h-5 w-5 flex justify-center'}
+                activeTurnPointTypes={getSnookerPointTypesByTurns(
+                  activeSet?.turns?.filter((value) =>
+                    [props.state!.sideTwoPlayerOne, props.state!.sideTwoPlayerTwo].some(
+                      (player) => player && value.turnPlayerId === player.id,
+                    ),
+                  ) || [],
+                )}
+              />
+            </div>
+          </div>
+        )}
         <div className="p-4 space-y-6">
           <div className="flex items-center gap-4 select-none">
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{props.state.teamOneScore}</p>

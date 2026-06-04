@@ -26,7 +26,6 @@ export function PortraitOverlay() {
     const body = document.body;
 
     body.style.setProperty('background-color', 'transparent', 'important');
-    body.style.setProperty('pointer-events', 'none', 'important');
     body.style.setProperty('place-items', 'start', 'important');
 
     return () => {
@@ -50,4 +49,4 @@ export function PortraitOverlay() {
   }
 
   return <PortraitView timeLeft={timeLeft} state={viewershipData} />;
-  }
+}
