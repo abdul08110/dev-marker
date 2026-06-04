@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
 import { calculateStatsForTeam, getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { generatePlayerName } from '@/utils/functions';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface PortraitStreamDataProps {
   state: StreamingState | null;
@@ -23,6 +24,9 @@ export function PortraitView(props: PortraitStreamDataProps) {
     [props.state?.sideTwoPlayerOne.id || '', props.state?.sideTwoPlayerTwo?.id || ''],
     props.state?.sets || [],
   );
+
+  const [showPreviousFrames, setShowPreviousFrames] = useState(false);
+  const completedSets = (props.state?.sets ?? []).filter((s) => s.status === 'COMPLETED');
 
   if (!props.state) {
     return <></>;
@@ -187,34 +191,58 @@ export function PortraitView(props: PortraitStreamDataProps) {
           </div>
         </div>
         <div className="p-4 space-y-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 select-none">
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{props.state.teamOneScore}</p>
             <div className="bg-white/[.12] h-px w-full" />
             <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Frames Won</p>
             <div className="bg-white/[.12] h-px w-full" />
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{props.state.teamTwoScore}</p>
           </div>
-          <div className="border border-white/[.12] px-3 py-4 rounded bg-[#202020] flex justify-between items-center">
-            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Previous Frame Scores</p>
-            <div>
-              <ChevronDown size={16} className="text-white" />
+          <div>
+            <div
+              onClick={() => setShowPreviousFrames((v) => !v)}
+              className="w-full border border-white/[.12] px-3 py-4 rounded bg-[#202020] "
+            >
+              <div className="flex justify-between items-center">
+                <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0 select-none">
+                  Previous Frame Scores
+                </p>
+                {showPreviousFrames ? (
+                  <ChevronUp size={16} className="text-white" />
+                ) : (
+                  <ChevronDown size={16} className="text-white" />
+                )}
+              </div>
+              {showPreviousFrames && completedSets.length > 0 && (
+                <div className="mt-4 space-y-4 select-none">
+                  {completedSets.map((set, i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{set.teamOneScore}</p>
+                      <div className="bg-white/[.12] h-px w-full" />
+                      <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Frame {i + 1}</p>
+                      <div className="bg-white/[.12] h-px w-full" />
+                      <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{set.teamTwoScore}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 select-none">
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamOneStats.potSuccessRatio}%</p>
             <div className="bg-white/[.12] h-px w-full" />
             <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Pot Success Ratio</p>
             <div className="bg-white/[.12] h-px w-full" />
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamTwoStats.potSuccessRatio}%</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 select-none">
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamOneStats.safetySuccessRatio}%</p>
             <div className="bg-white/[.12] h-px w-full" />
             <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Safety Success Ratio</p>
             <div className="bg-white/[.12] h-px w-full" />
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamTwoStats.safetySuccessRatio}%</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 select-none">
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamOneStats.highestBreak}</p>
             <div className="bg-white/[.12] h-px w-full" />
             <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Highest Break</p>
