@@ -45,45 +45,35 @@ export function PortraitView(props: PortraitStreamDataProps) {
             <div className="p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <div
-                  className="bg-[#FFD400] p-[3px]"
+                  className="bg-[#FFD400] p-px size-[88px] relative rounded-xl overflow-hidden"
                   style={{
-                    width: '88px',
-                    height: '88px',
-                    clipPath: 'polygon(38px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 38px)',
-                    borderRadius: '0 18px 18px 18px',
+                    clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
                     flexShrink: 0,
                   }}
                 >
-                  <div
-                    className="overflow-hidden"
+                  <ImageWithFallback
                     style={{
-                      width: '82px',
-                      height: '82px',
-                      clipPath: 'polygon(36px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 36px)',
-                      borderRadius: '0 16px 16px 16px',
+                      clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
                     }}
-                  >
-                    <ImageWithFallback
-                      className="object-cover"
-                      style={{ width: '82px', height: '58px', display: 'block' }}
-                      fallback="/images/user-dummy-pic.png"
-                      src={
-                        props.state.teamOneLogo
-                          ? props.state.teamOneLogo
-                          : props.state.sideOnePlayerOne.profilePhoto
-                            ? props.state.sideOnePlayerOne.profilePhoto
-                            : '/images/user-dummy-pic.png'
-                      }
-                    />
-                    <p
-                      className="font-bold text-base uppercase text-[#1B1B1B] text-center pt-1 tracking-wide bg-[#FFD400]"
-                      style={{ width: '82px' }}
-                    >
-                      {props.state.teamOneHandicap
-                        ? `H${props.state.teamOneHandicap > 0 ? '+' : ''}${props.state.teamOneHandicap}`
-                        : ''}
-                    </p>
-                  </div>
+                    className="object-cover rounded-xl"
+                    fallback="/images/user-dummy-pic.png"
+                    src={
+                      props.state.teamOneLogo
+                        ? props.state.teamOneLogo
+                        : props.state.sideOnePlayerOne.profilePhoto
+                          ? props.state.sideOnePlayerOne.profilePhoto
+                          : '/images/user-dummy-pic.png'
+                    }
+                  />
+                  {props.state.teamOneHandicap && (
+                    <div className="absolute w-full bg-[#FFD400] bottom-0">
+                      <p className="font-semibold text-base leading-[130%] uppercase text-center text-black py-1">
+                        {props.state.teamOneHandicap
+                          ? `H${props.state.teamOneHandicap > 0 ? '+' : ''}${props.state.teamOneHandicap}`
+                          : ''}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -134,46 +124,37 @@ export function PortraitView(props: PortraitStreamDataProps) {
                     <span className="text-white/70 text-xs font-bold">BREAK {activeTurn?.score ?? 0}</span>
                   )}
                 </div>
+
                 <div
-                  className="bg-[#FFD400] p-[3px]"
+                  className="bg-[#FFD400] p-px size-[88px] relative rounded-xl overflow-hidden"
                   style={{
-                    width: '88px',
-                    height: '88px',
-                    clipPath: 'polygon(38px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 38px)',
-                    borderRadius: '0 18px 18px 18px',
+                    clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
                     flexShrink: 0,
                   }}
                 >
-                  <div
-                    className="overflow-hidden"
+                  <ImageWithFallback
                     style={{
-                      width: '82px',
-                      height: '82px',
-                      clipPath: 'polygon(36px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 36px)',
-                      borderRadius: '0 16px 16px 16px',
+                      clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
                     }}
-                  >
-                    <ImageWithFallback
-                      className="object-cover"
-                      style={{ width: '82px', height: '58px', display: 'block' }}
-                      fallback="/images/user-dummy-pic.png"
-                      src={
-                        props.state.teamTwoLogo
-                          ? props.state.teamTwoLogo
-                          : props.state.sideTwoPlayerOne.profilePhoto
-                            ? props.state.sideTwoPlayerOne.profilePhoto
-                            : '/images/user-dummy-pic.png'
-                      }
-                    />
-                    <p
-                      className="font-bold text-base uppercase text-[#1B1B1B] text-center pt-1 tracking-wide bg-[#FFD400]"
-                      style={{ width: '82px' }}
-                    >
-                      {props.state.teamTwoHandicap
-                        ? `H${props.state.teamTwoHandicap > 0 ? '+' : ''}${props.state.teamTwoHandicap}`
-                        : ''}
-                    </p>
-                  </div>
+                    className="object-cover rounded-xl"
+                    fallback="/images/user-dummy-pic.png"
+                    src={
+                      props.state.teamTwoLogo
+                        ? props.state.teamTwoLogo
+                        : props.state.sideTwoPlayerOne.profilePhoto
+                          ? props.state.sideTwoPlayerOne.profilePhoto
+                          : '/images/user-dummy-pic.png'
+                    }
+                  />
+                  {props.state.teamTwoHandicap && (
+                    <div className="absolute w-full bg-[#FFD400] bottom-0">
+                      <p className="font-semibold text-base leading-[130%] uppercase text-center text-black py-1">
+                        {props.state.teamTwoHandicap
+                          ? `H${props.state.teamTwoHandicap > 0 ? '+' : ''}${props.state.teamTwoHandicap}`
+                          : ''}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
               <p className="font-medium text-[17px] leading-[130%] uppercase text-white line-clamp-1 text-right">
