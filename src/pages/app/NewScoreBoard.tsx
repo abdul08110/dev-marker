@@ -404,14 +404,8 @@ function PlayerCard({
 
         {/* Balls (snooker only) */}
         {sport === 'SNOOKER' && (
-          <div className="border-t-2 px-8 py-5 [border-image-source:linear-gradient(90deg,rgba(223,227,115,0)_5%,rgba(223,227,115,0.7)_45%,rgba(223,227,115,0.7)_60%,rgba(223,227,115,0)_82.24%)] [border-image-slice:1] flex flex-wrap justify-center items-center gap-2 min-h-[80px]">
-            {balls.flatMap((turnBalls, turnIdx) =>
-              turnBalls
-                .filter((type) => BALL_IMAGE_MAP[type])
-                .map((type, ballIdx) => (
-                  <img key={`${turnIdx}-${ballIdx}`} src={BALL_IMAGE_MAP[type]} className="size-8 object-contain" />
-                )),
-            )}
+          <div className="border-t-2 px-8 py-5 [border-image-source:linear-gradient(90deg,rgba(223,227,115,0)_5%,rgba(223,227,115,0.7)_45%,rgba(223,227,115,0.7)_60%,rgba(223,227,115,0)_82.24%)] [border-image-slice:1] flex flex-col items-center gap-2">
+            <BallGrid balls={balls} />
           </div>
         )}
       </div>
@@ -435,6 +429,36 @@ function HandicapPill({ handicap, isApplied }: { handicap: number; isApplied?: b
         h
       </span>
     </div>
+  );
+}
+
+const BALLS_PER_ROW = 15;
+
+function BallGrid({ balls }: { balls: SnookerPointType[][] }) {
+  const potted = balls
+    .flatMap((turnBalls) => turnBalls)
+    .filter((type): type is SnookerPointType => type in BALL_IMAGE_MAP);
+
+  // Always keep at least one full row of placeholders beyond the potted balls
+  const rowsNeeded = Math.max(2, Math.ceil(potted.length / BALLS_PER_ROW) + 1);
+  const totalSlots = rowsNeeded * BALLS_PER_ROW;
+
+  const slots = Array.from({ length: totalSlots }, (_, i) =>
+    i < potted.length ? BALL_IMAGE_MAP[potted[i]]! : '/images/balls/placeholder-ball.svg',
+  );
+
+  const rows = Array.from({ length: rowsNeeded }, (_, r) => slots.slice(r * BALLS_PER_ROW, (r + 1) * BALLS_PER_ROW));
+
+  return (
+    <>
+      {rows.map((row, r) => (
+        <div key={r} className="flex gap-1">
+          {row.map((src, i) => (
+            <img key={i} src={src} className="size-8 object-contain" />
+          ))}
+        </div>
+      ))}
+    </>
   );
 }
 
