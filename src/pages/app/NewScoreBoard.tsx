@@ -148,6 +148,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           playerOneName={state.sideOnePlayerOne.name}
           playerTwoName={state.sideOnePlayerTwo?.name}
           isDoubles={isDoubles}
+          isPlayerOneActive={state.activePlayerId === state.sideOnePlayerOne.id}
           handicap={teamOneHandicap}
           isHandicapApplied={state.isTeamOneHandicapApplied}
           score={teamOneFrameScore}
@@ -244,6 +245,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           playerOneName={state.sideTwoPlayerOne.name}
           playerTwoName={state.sideTwoPlayerTwo?.name}
           isDoubles={isDoubles}
+          isPlayerOneActive={state.activePlayerId === state.sideTwoPlayerOne.id}
           handicap={teamTwoHandicap}
           isHandicapApplied={state.isTeamTwoHandicapApplied}
           score={teamTwoFrameScore}
@@ -281,6 +283,7 @@ interface PlayerCardProps {
   playerOneName: string;
   playerTwoName?: string;
   isDoubles: boolean;
+  isPlayerOneActive: boolean;
   handicap?: number | null;
   isHandicapApplied?: boolean;
   score: number;
@@ -297,6 +300,7 @@ function PlayerCard({
   playerOneName,
   playerTwoName,
   isDoubles,
+  isPlayerOneActive,
   handicap,
   isHandicapApplied,
   score,
@@ -305,6 +309,10 @@ function PlayerCard({
   balls,
   breakSide,
 }: PlayerCardProps) {
+  // Active player's photo goes to the front
+  const frontPhoto = isPlayerOneActive ? profilePhoto : (profilePhoto2 ?? profilePhoto);
+  const backPhoto = isPlayerOneActive ? (profilePhoto2 ?? profilePhoto) : profilePhoto;
+
   return (
     <div className="w-full h-full border rounded-[60px] overflow-hidden p-2">
       <div
@@ -327,10 +335,10 @@ function PlayerCard({
                   style={{ clipPath: 'polygon(20px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20px)' }}
                   className="object-cover rounded-xl w-full h-full"
                   fallback="/images/user-dummy-pic.png"
-                  src={profilePhoto ?? '/images/user-dummy-pic.png'}
+                  src={backPhoto ?? '/images/user-dummy-pic.png'}
                 />
               </div>
-              {/* Front image */}
+              {/* Front image — active player */}
               <div
                 className="absolute bottom-0 right-0 bg-[#FFD400] p-[2px] size-[110px] rounded-xl overflow-hidden"
                 style={{ clipPath: 'polygon(20px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20px)', zIndex: 2 }}
@@ -339,7 +347,7 @@ function PlayerCard({
                   style={{ clipPath: 'polygon(20px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20px)' }}
                   className="object-cover rounded-xl w-full h-full"
                   fallback="/images/user-dummy-pic.png"
-                  src={profilePhoto2 ?? '/images/user-dummy-pic.png'}
+                  src={frontPhoto ?? '/images/user-dummy-pic.png'}
                 />
               </div>
             </div>
@@ -361,7 +369,7 @@ function PlayerCard({
           <div className="flex flex-col justify-center gap-3 min-w-0 flex-1">
             <div className="flex items-center justify-between gap-4 w-full">
               <p className="font-medium text-[40px] leading-[130%] uppercase text-score-text text-box-trim truncate">
-                {playerOneName}
+                {isDoubles && !isPlayerOneActive ? playerOneName : playerTwoName}
               </p>
               {handicap != null && <HandicapPill handicap={handicap} isApplied={isHandicapApplied} />}
             </div>
@@ -371,7 +379,7 @@ function PlayerCard({
                 <div className="w-full h-[2px] bg-[linear-gradient(90deg,rgba(223,227,115,0)_5%,rgba(223,227,115,0.7)_45%,rgba(223,227,115,0.7)_60%,rgba(223,227,115,0)_82.24%)]" />
                 <div className="flex items-center justify-between gap-4 w-full">
                   <p className="font-medium text-[40px] leading-[130%] uppercase text-score-text text-box-trim truncate">
-                    {playerTwoName}
+                    {isPlayerOneActive ? playerOneName : playerTwoName}
                   </p>
                 </div>
               </>
