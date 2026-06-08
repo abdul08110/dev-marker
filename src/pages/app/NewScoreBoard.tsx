@@ -306,33 +306,46 @@ function PlayerCard({
         {/* Player info */}
         <div className="border-b p-8 border-white/10 flex gap-4">
           {/* Profile image */}
-          <div
-            className="bg-[#FFD400] p-[2px] size-[120px] relative rounded-xl overflow-hidden shrink-0"
-            style={{ clipPath: 'polygon(24px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 24px)' }}
-          >
-            {isDoubles && profilePhoto2 !== undefined ? (
-              <>
+          {isDoubles && profilePhoto2 !== undefined ? (
+            <div className="relative shrink-0 size-[150px]">
+              {/* Back image */}
+              <div
+                className="absolute top-0 left-0 bg-[#FFD400] p-[2px] size-[110px] rounded-xl overflow-hidden"
+                style={{ clipPath: 'polygon(20px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20px)', zIndex: 1 }}
+              >
                 <ImageWithFallback
-                  style={{ clipPath: 'polygon(24px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 24px)' }}
-                  className="object-cover rounded-xl w-full h-[55%]"
+                  style={{ clipPath: 'polygon(20px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20px)' }}
+                  className="object-cover rounded-xl w-full h-full"
                   fallback="/images/user-dummy-pic.png"
                   src={profilePhoto ?? '/images/user-dummy-pic.png'}
                 />
+              </div>
+              {/* Front image */}
+              <div
+                className="absolute bottom-0 right-0 bg-[#FFD400] p-[2px] size-[110px] rounded-xl overflow-hidden"
+                style={{ clipPath: 'polygon(20px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20px)', zIndex: 2 }}
+              >
                 <ImageWithFallback
-                  className="object-cover w-full h-[45%]"
+                  style={{ clipPath: 'polygon(20px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20px)' }}
+                  className="object-cover rounded-xl w-full h-full"
                   fallback="/images/user-dummy-pic.png"
                   src={profilePhoto2 ?? '/images/user-dummy-pic.png'}
                 />
-              </>
-            ) : (
+              </div>
+            </div>
+          ) : (
+            <div
+              className="bg-[#FFD400] p-[2px] size-[120px] relative rounded-xl overflow-hidden shrink-0"
+              style={{ clipPath: 'polygon(24px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 24px)' }}
+            >
               <ImageWithFallback
                 style={{ clipPath: 'polygon(24px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 24px)' }}
                 className="object-cover rounded-xl w-full h-full"
                 fallback="/images/user-dummy-pic.png"
                 src={profilePhoto ?? '/images/user-dummy-pic.png'}
               />
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Player name(s) + handicap */}
           <div className="flex flex-col justify-center gap-3 min-w-0 flex-1">
