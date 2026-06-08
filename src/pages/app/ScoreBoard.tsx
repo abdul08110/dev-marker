@@ -1,15 +1,16 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
 import { ScoreBoardOrientationModal } from '@/components/modals/scoreBoardOrientationModal';
 import { TimeUpModal } from '@/components/modals/timeUpModal';
-import { LegacyScoreboard } from '@/components/sections/scoreboard/legacyScoreBoard';
 import { ScoreboardRender } from '@/components/sections/scoreboard/scoreBoardRender';
 import useScoreboard from '@/hooks/useScoreboard';
 import { useState } from 'react';
+import NewScoreBoard from './NewScoreBoard';
 
 export function ScoreBoard() {
-  const { loading, scoreBoardData, timeLeft, orientation, setOrientation, showTimeOverAlert, activeClub } = useScoreboard();
+  const { loading, scoreBoardData, timeLeft, orientation, setOrientation, showTimeOverAlert, activeClub } =
+    useScoreboard();
   const [showScoreBoardOrientationModal, setShowScoreBoardOrientationModal] = useState(true);
-  console.log(scoreBoardData);
+
   return (
     <section>
       {loading ? (
@@ -20,7 +21,8 @@ export function ScoreBoard() {
             orientation === 'portrait' ? (
               <ScoreboardRender timeLeft={timeLeft} state={scoreBoardData} orientation={orientation} />
             ) : (
-              <LegacyScoreboard timeLeft={timeLeft} state={scoreBoardData} />
+              // <LegacyScoreboard timeLeft={timeLeft} state={scoreBoardData} />
+              <NewScoreBoard timeLeft={timeLeft} state={scoreBoardData} />
             )
           ) : (
             <section className="h-screen w-screen flex justify-center items-center">
@@ -28,12 +30,8 @@ export function ScoreBoard() {
                 {activeClub?.clubLogo && (
                   <img src={activeClub.clubLogo} alt="Club Logo" className="h-24 w-24 object-contain" />
                 )}
-                <h3 className="text-center text-2xl font-bold">
-                  Welcome to {activeClub?.clubName}
-                </h3>
-                {activeClub?.venueNo && (
-                  <h4 className="text-center text-xl">TABLE-{activeClub.venueNo}</h4>
-                )}
+                <h3 className="text-center text-2xl font-bold">Welcome to {activeClub?.clubName}</h3>
+                {activeClub?.venueNo && <h4 className="text-center text-xl">TABLE-{activeClub.venueNo}</h4>}
               </div>
             </section>
           )}

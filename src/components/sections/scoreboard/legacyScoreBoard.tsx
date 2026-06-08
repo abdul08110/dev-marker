@@ -72,8 +72,8 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               handicap={
                 state.showLatestHandicapInCombination && state.tournamentSubItem
                   ? isTeamReveresed
-                    ? state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap ?? state.teamOneHandicap
-                    : state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap ?? state.teamOneHandicap
+                    ? (state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap ?? state.teamOneHandicap)
+                    : (state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap ?? state.teamOneHandicap)
                   : state.teamOneHandicap
               }
               isHandicapApplied={state.isTeamOneHandicapApplied}
@@ -82,7 +82,6 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               playerOneId={state.sideOnePlayerOne.id}
               playerTwoId={state.sideOnePlayerTwo?.id}
               isDoubles={!!state.sideOnePlayerTwo}
-
             />
           </div>
 
@@ -126,8 +125,8 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
                 teamOneScore={
                   state.showCummulativeScoreInCombination && state.tournamentSubItem
                     ? isTeamReveresed
-                      ? state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0
-                      : state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0
+                      ? (state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0)
+                      : (state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0)
                     : isTeamReveresed
                       ? state.tournamentSubItem?.tournamentItem.teamTwoScore || 0
                       : state.tournamentSubItem?.tournamentItem.teamOneScore || 0
@@ -135,8 +134,8 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
                 teamTwoScore={
                   state.showCummulativeScoreInCombination && state.tournamentSubItem
                     ? isTeamReveresed
-                      ? state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0
-                      : state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0
+                      ? (state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0)
+                      : (state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0)
                     : isTeamReveresed
                       ? state.tournamentSubItem?.tournamentItem.teamOneScore || 0
                       : state.tournamentSubItem?.tournamentItem.teamTwoScore || 0
@@ -157,11 +156,7 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
             <GameScore
               teamOneScore={state.teamOneScore}
               teamTwoScore={state.teamTwoScore}
-              noOfFrames={
-                state.tournamentId === null
-                  ? state.sets.length
-                  : state.noOfFrames || 0
-              }
+              noOfFrames={state.tournamentId === null ? state.sets.length : state.noOfFrames || 0}
             />
             <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-white"></div>
           </div>
@@ -196,8 +191,8 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               handicap={
                 state.showLatestHandicapInCombination && state.tournamentSubItem
                   ? isTeamReveresed
-                    ? state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap ?? state.teamTwoHandicap
-                    : state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap ?? state.teamTwoHandicap
+                    ? (state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap ?? state.teamTwoHandicap)
+                    : (state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap ?? state.teamTwoHandicap)
                   : state.teamTwoHandicap
               }
               isTournament={!!state.tournamentId}
@@ -206,7 +201,6 @@ export function LegacyScoreboard({ state, timeLeft }: LegacyScoreBoardProps) {
               playerOneId={state.sideTwoPlayerOne.id}
               playerTwoId={state.sideTwoPlayerTwo?.id}
               isDoubles={!!state.sideTwoPlayerTwo}
-
             />
           </div>
 
@@ -404,7 +398,7 @@ function Player({
   playerOneId,
   playerTwoId,
   isDoubles,
-  isHandicapApplied
+  isHandicapApplied,
 }: {
   playerOneName: string;
   playerTwoName?: string;
@@ -456,7 +450,13 @@ function Player({
           // Singles display
           <span className={clsx({ 'text-yellow-500': isPlayerOneActive })}>{getDisplayName(playerOneName)}</span>
         )}
-        {handicap && <span className={`text-[min(5vh,5vw)] mt-2 ${isHandicapApplied === true ? "line-through decoration-white" : ""}`}>({convertHandicapToString(handicap)})</span>}
+        {handicap && (
+          <span
+            className={`text-[min(5vh,5vw)] mt-2 ${isHandicapApplied === true ? 'line-through decoration-white' : ''}`}
+          >
+            ({convertHandicapToString(handicap)})
+          </span>
+        )}
       </div>
       {ballToShow === 'WHITE' && (
         <img
