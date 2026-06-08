@@ -1,11 +1,21 @@
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ScoreBoardState } from '@/hooks/useScoreboard';
-import { SnookerPointTypeDisplay } from '@/components/sections/scoring/snookerPointTypesDisplay';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import { convertHandicapToString, formatTime } from '@/utils/functions';
 import { SnookerPointType } from '@/stores/types';
 import clsx from 'clsx';
+
+const BALL_IMAGE_MAP: Partial<Record<SnookerPointType, string>> = {
+  [SnookerPointType.RED]: '/images/balls/red-ball.svg',
+  [SnookerPointType.YELLOW]: '/images/balls/yellow-ball.svg',
+  [SnookerPointType.GREEN]: '/images/balls/green-ball.svg',
+  [SnookerPointType.BROWN]: '/images/balls/brown-ball.svg',
+  [SnookerPointType.BLUE]: '/images/balls/blue-ball.svg',
+  [SnookerPointType.PINK]: '/images/balls/pink-ball.svg',
+  [SnookerPointType.BLACK]: '/images/balls/black-ball.svg',
+  [SnookerPointType.FOUL]: '/images/balls/placeholder-ball.svg',
+};
 import TimerDial from './TimerDial';
 
 interface NewScoreBoardProps {
@@ -276,7 +286,7 @@ interface PlayerCardProps {
   score: number;
   breakScore?: number;
   sport: string;
-  balls: SnookerPointType[][][];
+  balls: SnookerPointType[][];
   breakSide: 'left' | 'right';
 }
 
@@ -394,12 +404,14 @@ function PlayerCard({
 
         {/* Balls (snooker only) */}
         {sport === 'SNOOKER' && (
-          <div className="border-t-2 px-8 py-5 [border-image-source:linear-gradient(90deg,rgba(223,227,115,0)_5%,rgba(223,227,115,0.7)_45%,rgba(223,227,115,0.7)_60%,rgba(223,227,115,0)_82.24%)] [border-image-slice:1] flex justify-center items-center min-h-[80px]">
-            <SnookerPointTypeDisplay
-              class={'gap-1'}
-              className={'h-8 w-8 text-sm flex justify-center'}
-              activeTurnPointTypes={balls}
-            />
+          <div className="border-t-2 px-8 py-5 [border-image-source:linear-gradient(90deg,rgba(223,227,115,0)_5%,rgba(223,227,115,0.7)_45%,rgba(223,227,115,0.7)_60%,rgba(223,227,115,0)_82.24%)] [border-image-slice:1] flex flex-wrap justify-center items-center gap-2 min-h-[80px]">
+            {balls.flatMap((turnBalls, turnIdx) =>
+              turnBalls
+                .filter((type) => BALL_IMAGE_MAP[type])
+                .map((type, ballIdx) => (
+                  <img key={`${turnIdx}-${ballIdx}`} src={BALL_IMAGE_MAP[type]} className="size-8 object-contain" />
+                )),
+            )}
           </div>
         )}
       </div>
