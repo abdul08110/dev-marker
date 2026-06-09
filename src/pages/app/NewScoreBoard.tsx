@@ -202,7 +202,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                   Frames Won
                 </p>
                 <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
-                  <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-20 flex justify-center items-center">
+                  <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-20 flex justify-center items-center bg-[#595959]/[0.20]">
                     {state.teamOneScore}
                   </p>
                   {teamScoreCenter && (
@@ -210,7 +210,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                       {teamScoreCenter}
                     </p>
                   )}
-                  <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-20 flex justify-center items-center">
+                  <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-20 flex justify-center items-center bg-[#595959]/[0.20]">
                     {state.teamTwoScore}
                   </p>
                 </div>
@@ -226,13 +226,13 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 game score
               </p>
               <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
-                <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-20 flex justify-center items-center">
+                <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-20 flex justify-center items-center bg-[#595959]/[0.20]">
                   {teamOneFrameScore}
                 </p>
                 <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-20 [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1]">
                   {teamScoreCenter}
                 </p>
-                <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-20 flex justify-center items-center">
+                <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-20 flex justify-center items-center bg-[#595959]/[0.20]">
                   {teamTwoFrameScore}
                 </p>
               </div>
@@ -323,7 +323,7 @@ function PlayerCard({
 
   return (
     <div className="relative w-full h-full">
-      {isLime ? <YellowBorderSVG /> : <PinkBorderSVG />}
+      {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col p-5">
         {/* Player info */}
         <div className="border-b p-8 border-white/10 flex gap-4">
@@ -424,9 +424,9 @@ function PlayerCard({
         {/* Balls (snooker only) */}
         {sport === 'SNOOKER' && (
           <div
-            className="border-t-2 [border-image-slice:1] px-8 py-5 flex flex-col items-center gap-2"
+            className="border-t-2 [border-image-slice:1] px-8 pt-5 pb-8 flex flex-col items-center gap-2"
             style={{
-              borderImageSource: isLime
+              borderImageSource: isActive
                 ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
                 : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
             }}
