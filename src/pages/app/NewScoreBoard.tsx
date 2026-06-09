@@ -320,14 +320,13 @@ function PlayerCard({
   const isLime = variant === 'lime';
 
   return (
-    <div className="w-full h-full border rounded-[60px] overflow-hidden p-2">
-      <div
-        className={clsx('border-[6px] rounded-[60px] backdrop-blur-sm h-full flex flex-col', {
-          'shadow-[0px_3px_21px_0px_#DCF756]': isActive && isLime,
-          'shadow-[0px_3px_21px_0px_#E38BF9]': isActive && !isLime,
-          'shadow-[0px_3px_21px_0px_rgba(255,255,255,0.1)]': !isActive,
-        })}
-      >
+    <div
+      className={clsx(
+        'w-full h-full overflow-hidden p-2 bg-cover bg-center bg-no-repeat ',
+        isLime ? 'bg-[url(/images/yellow-card-border.svg)]' : 'bg-[url(/images/pink-card-border.svg)]',
+      )}
+    >
+      <div className={clsx(' h-full flex flex-col')}>
         {/* Player info */}
         <div className="border-b p-8 border-white/10 flex gap-4">
           {/* Profile image */}
@@ -405,7 +404,7 @@ function PlayerCard({
         <div className="p-8 relative flex justify-center items-center flex-1">
           <p className="font-semibold leading-[130%] uppercase text-score-text text-[12.5rem]">{score}</p>
           {breakScore != null && (
-            <div className={clsx('absolute text-white top-1/2 -translate-y-1/2 right-0')}>
+            <div className={clsx('absolute text-white top-1/2 -translate-y-1/2 right-4')}>
               <p
                 className={clsx('font-semibold text-[26px] leading-[130%] uppercase text-sandy-yellow px-4 text-right')}
               >
