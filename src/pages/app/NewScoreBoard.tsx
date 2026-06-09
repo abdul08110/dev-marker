@@ -158,7 +158,6 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           sport={state.sport}
           balls={teamOneBalls}
           breakSide="right"
-          variant="lime"
         />
 
         {/* Center Panel */}
@@ -257,7 +256,6 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           sport={state.sport}
           balls={teamTwoBalls}
           breakSide="left"
-          variant="purple"
         />
       </div>
 
@@ -296,7 +294,6 @@ interface PlayerCardProps {
   sport: string;
   balls: SnookerPointType[][];
   breakSide: 'left' | 'right';
-  variant: 'lime' | 'purple';
 }
 
 function PlayerCard({
@@ -313,14 +310,10 @@ function PlayerCard({
   breakScore,
   sport,
   balls,
-  breakSide,
-  variant,
 }: PlayerCardProps) {
   // Active player's photo goes to the front
   const frontPhoto = isPlayerOneActive ? profilePhoto : (profilePhoto2 ?? profilePhoto);
   const backPhoto = isPlayerOneActive ? (profilePhoto2 ?? profilePhoto) : profilePhoto;
-
-  const isLime = variant === 'lime';
 
   return (
     <div className="relative w-full h-full backdrop-blur-sm">
@@ -384,7 +377,7 @@ function PlayerCard({
                 <div
                   className="w-full h-[2px]"
                   style={{
-                    background: isLime
+                    background: isActive
                       ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
                       : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
                   }}
