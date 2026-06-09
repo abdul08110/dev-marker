@@ -141,7 +141,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       </div>
 
       {/* Cards + Center */}
-      <div className="grid grid-cols-[1fr_auto_1fr] gap-12 items-stretch">
+      <div className="grid grid-cols-[1fr_auto_1fr] gap-[72px] items-stretch">
         {/* Card 1 - Team One */}
         <PlayerCard
           isActive={isTeamOneActive}
@@ -162,6 +162,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         />
 
         {/* Center Panel */}
+
         <div
           className="rounded-[60px] p-[5px] h-full"
           style={{
@@ -171,13 +172,13 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               linear-gradient(347.86deg,rgba(210,154,245,0) 13.85%,#F4D3F2 105.37%)
             `,
             boxShadow: `
-              0px 0px 16px 0px #FFEDFF,
-              10px 10px 28px 0px #0F0B23CC,
-              -11px 0px 24px 0px #0E0B24CC
+              0px 0px 12px 0px #FFEDFF,
+              10px 10px 18px 0px #0F0B23CC,
+              -11px 0px 14px 0px #0E0B24CC
             `,
           }}
         >
-          <div className="rounded-[55px] py-11 bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col justify-between">
+          <div className="rounded-[55px] py-11 bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col justify-between shrink-0">
             {/* Team / Tournament Score */}
             {state.tournamentId && state.tournamentSubItem ? (
               <div className="space-y-6">
@@ -185,7 +186,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                   Team Score
                 </p>
                 <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
-                  <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-20 flex justify-center items-center">
+                  <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-20 flex justify-center items-center ">
                     {tournamentTeamOneScore}
                   </p>
                   <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-20 [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1]">
@@ -322,7 +323,7 @@ function PlayerCard({
   const isLime = variant === 'lime';
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full backdrop-blur-sm">
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col p-5">
         {/* Player info */}
