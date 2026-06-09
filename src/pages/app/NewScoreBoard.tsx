@@ -1,4 +1,6 @@
 import ImageWithFallback from '@/components/ui/image-with-fallback';
+import PinkBorderSVG from '@/components/PinkBorderSVG';
+import YellowBorderSVG from '@/components/YellowBorderSVG';
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
@@ -320,13 +322,9 @@ function PlayerCard({
   const isLime = variant === 'lime';
 
   return (
-    <div
-      className={clsx(
-        'w-full h-full overflow-hidden p-2 bg-cover bg-center bg-no-repeat ',
-        isLime ? 'bg-[url(/images/yellow-card-border.svg)]' : 'bg-[url(/images/pink-card-border.svg)]',
-      )}
-    >
-      <div className={clsx(' h-full flex flex-col')}>
+    <div className="relative w-full h-full">
+      {isLime ? <YellowBorderSVG /> : <PinkBorderSVG />}
+      <div className="relative z-10 h-full flex flex-col p-5">
         {/* Player info */}
         <div className="border-b p-8 border-white/10 flex gap-4">
           {/* Profile image */}
@@ -404,7 +402,7 @@ function PlayerCard({
         <div className="p-8 relative flex justify-center items-center flex-1">
           <p className="font-semibold leading-[130%] uppercase text-score-text text-[12.5rem]">{score}</p>
           {breakScore != null && (
-            <div className={clsx('absolute text-white top-1/2 -translate-y-1/2 right-4')}>
+            <div className={clsx('absolute text-white top-1/2 -translate-y-1/2 right-2')}>
               <p
                 className={clsx('font-semibold text-[26px] leading-[130%] uppercase text-sandy-yellow px-4 text-right')}
               >
