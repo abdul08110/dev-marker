@@ -156,6 +156,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           sport={state.sport}
           balls={teamOneBalls}
           breakSide="right"
+          variant="lime"
         />
 
         {/* Center Panel */}
@@ -253,6 +254,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           sport={state.sport}
           balls={teamTwoBalls}
           breakSide="left"
+          variant="purple"
         />
       </div>
 
@@ -291,6 +293,7 @@ interface PlayerCardProps {
   sport: string;
   balls: SnookerPointType[][];
   breakSide: 'left' | 'right';
+  variant: 'lime' | 'purple';
 }
 
 function PlayerCard({
@@ -308,16 +311,20 @@ function PlayerCard({
   sport,
   balls,
   breakSide,
+  variant,
 }: PlayerCardProps) {
   // Active player's photo goes to the front
   const frontPhoto = isPlayerOneActive ? profilePhoto : (profilePhoto2 ?? profilePhoto);
   const backPhoto = isPlayerOneActive ? (profilePhoto2 ?? profilePhoto) : profilePhoto;
 
+  const isLime = variant === 'lime';
+
   return (
     <div className="w-full h-full border rounded-[60px] overflow-hidden p-2">
       <div
         className={clsx('border-[6px] rounded-[60px] backdrop-blur-sm h-full flex flex-col', {
-          'shadow-[0px_3px_21px_0px_#DCF756]': isActive,
+          'shadow-[0px_3px_21px_0px_#DCF756]': isActive && isLime,
+          'shadow-[0px_3px_21px_0px_#E38BF9]': isActive && !isLime,
           'shadow-[0px_3px_21px_0px_rgba(255,255,255,0.1)]': !isActive,
         })}
       >
@@ -369,17 +376,24 @@ function PlayerCard({
           <div className="flex flex-col justify-center gap-3 min-w-0 flex-1">
             <div className="flex items-center justify-between gap-4 w-full">
               <p className="font-medium text-[40px] leading-[130%] uppercase text-score-text text-box-trim truncate">
-                {isDoubles && !isPlayerOneActive ? playerOneName : playerTwoName}
+                {isDoubles ? (isPlayerOneActive ? playerOneName : playerTwoName) : playerOneName}
               </p>
               {handicap != null && <HandicapPill handicap={handicap} isApplied={isHandicapApplied} />}
             </div>
 
             {isDoubles && playerTwoName && (
               <>
-                <div className="w-full h-[2px] bg-[linear-gradient(90deg,rgba(223,227,115,0)_5%,rgba(223,227,115,0.7)_45%,rgba(223,227,115,0.7)_60%,rgba(223,227,115,0)_82.24%)]" />
+                <div
+                  className="w-full h-[2px]"
+                  style={{
+                    background: isLime
+                      ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
+                      : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
+                  }}
+                />
                 <div className="flex items-center justify-between gap-4 w-full">
                   <p className="font-medium text-[40px] leading-[130%] uppercase text-score-text text-box-trim truncate">
-                    {isPlayerOneActive ? playerOneName : playerTwoName}
+                    {isPlayerOneActive ? playerTwoName : playerOneName}
                   </p>
                 </div>
               </>
@@ -412,7 +426,14 @@ function PlayerCard({
 
         {/* Balls (snooker only) */}
         {sport === 'SNOOKER' && (
-          <div className="border-t-2 px-8 py-5 [border-image-source:linear-gradient(90deg,rgba(223,227,115,0)_5%,rgba(223,227,115,0.7)_45%,rgba(223,227,115,0.7)_60%,rgba(223,227,115,0)_82.24%)] [border-image-slice:1] flex flex-col items-center gap-2">
+          <div
+            className="border-t-2 [border-image-slice:1] px-8 py-5 flex flex-col items-center gap-2"
+            style={{
+              borderImageSource: isLime
+                ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
+                : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
+            }}
+          >
             <BallGrid balls={balls} />
           </div>
         )}
@@ -440,32 +461,34 @@ function HandicapPill({ handicap, isApplied }: { handicap: number; isApplied?: b
   );
 }
 
-const BALLS_PER_ROW = 15;
+const BALLS_PER_ROW = 11;
+const TOTAL_SLOTS = BALLS_PER_ROW * 2; // fixed 22 slots, always 2 rows
 
 function BallGrid({ balls }: { balls: SnookerPointType[][] }) {
   const potted = balls
     .flatMap((turnBalls) => turnBalls)
     .filter((type): type is SnookerPointType => type in BALL_IMAGE_MAP);
 
-  // Always keep at least one full row of placeholders beyond the potted balls
-  const rowsNeeded = Math.max(2, Math.ceil(potted.length / BALLS_PER_ROW) + 1);
-  const totalSlots = rowsNeeded * BALLS_PER_ROW;
+  // Reset every 22 balls — the 22nd ball still fills the last slot, reset happens on the 23rd
+  const offset = potted.length === 0 ? 0 : Math.floor((potted.length - 1) / TOTAL_SLOTS) * TOTAL_SLOTS;
+  const currentPage = potted.slice(offset);
 
-  const slots = Array.from({ length: totalSlots }, (_, i) =>
-    i < potted.length ? BALL_IMAGE_MAP[potted[i]]! : '/images/balls/placeholder-ball.svg',
+  const slots = Array.from({ length: TOTAL_SLOTS }, (_, i) =>
+    i < currentPage.length ? BALL_IMAGE_MAP[currentPage[i]]! : '/images/balls/placeholder-ball.svg',
   );
-
-  const rows = Array.from({ length: rowsNeeded }, (_, r) => slots.slice(r * BALLS_PER_ROW, (r + 1) * BALLS_PER_ROW));
 
   return (
     <>
-      {rows.map((row, r) => (
-        <div key={r} className="flex gap-1">
-          {row.map((src, i) => (
-            <img key={i} src={src} className="size-8 object-contain" />
-          ))}
-        </div>
-      ))}
+      <div className="flex gap-1">
+        {slots.slice(0, BALLS_PER_ROW).map((src, i) => (
+          <img key={i} src={src} className="size-8 object-contain" />
+        ))}
+      </div>
+      <div className="flex gap-1">
+        {slots.slice(BALLS_PER_ROW).map((src, i) => (
+          <img key={i} src={src} className="size-8 object-contain" />
+        ))}
+      </div>
     </>
   );
 }
