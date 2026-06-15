@@ -11,7 +11,7 @@ interface GeneralTemplateProps {
 }
 
 const CLIP_PATH = 'polygon(min(2.2vh,2.2vw) 0%, 100% 0%, 100% 100%, 0% 100%, 0% min(2.2vh,2.2vw))';
-const CLIP_PATH_SM = 'polygon(min(1.85vh,1.85vw) 0%, 100% 0%, 100% 100%, 0% 100%, 0% min(1.85vh,1.85vw))';
+const CLIP_PATH_SM = 'polygon(min(1vh,1vw) 0%, 100% 0%, 100% 100%, 0% 100%, 0% min(1vh,1vw))';
 
 const YELLOW_CARD_STYLE = {
   background:
@@ -50,9 +50,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const leftCardContent = isDoubles ? (
     /* Double layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
-      <div className="relative shrink-0 size-[min(13.9vh,13.9vw)]">
+      <div className="relative shrink-0 size-[min(6.7vh,6.7vw)]">
         <div
-          className="absolute top-0 left-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(9.3vh,9.3vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
+          className="absolute top-0 left-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(5vh,5vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
           style={{ clipPath: CLIP_PATH_SM, zIndex: 1 }}
         >
           <ImageWithFallback
@@ -63,7 +63,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           />
         </div>
         <div
-          className="absolute bottom-0 right-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(9.3vh,9.3vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
+          className="absolute bottom-0 right-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(5vh,5vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
           style={{ clipPath: CLIP_PATH_SM, zIndex: 2 }}
         >
           <ImageWithFallback
@@ -87,7 +87,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   ) : hasTeamName ? (
     /* Team Tournament layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
-      <div className="overflow-hidden size-[min(10vh,10vw)] rounded-full shrink-0">
+      <div className="overflow-hidden size-[min(6.7vh,6.7vw)] rounded-full shrink-0">
         <ImageWithFallback
           fallback="/images/user-dummy-pic.png"
           className="size-full object-cover"
@@ -113,7 +113,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Single player layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div
-        className="bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(9.3vh,9.3vw)] relative rounded-[min(1.1vh,1.1vw)] overflow-hidden shrink-0"
+        className="bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(6.7vh,6.7vw)] relative rounded-[min(1.1vh,1.1vw)] overflow-hidden shrink-0"
         style={{ clipPath: CLIP_PATH }}
       >
         <ImageWithFallback
@@ -139,9 +139,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const rightCardContent = isDoubles ? (
     /* Double layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
-      <div className="relative shrink-0 size-[min(13.9vh,13.9vw)]">
+      <div className="relative shrink-0 size-[min(6.7vh,6.7vw)]">
         <div
-          className="absolute top-0 left-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(9.3vh,9.3vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
+          className="absolute top-0 left-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(5vh,5vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
           style={{ clipPath: CLIP_PATH_SM, zIndex: 1 }}
         >
           <ImageWithFallback
@@ -152,7 +152,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           />
         </div>
         <div
-          className="absolute bottom-0 right-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(9.3vh,9.3vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
+          className="absolute bottom-0 right-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(5vh,5vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
           style={{ clipPath: CLIP_PATH_SM, zIndex: 2 }}
         >
           <ImageWithFallback
@@ -176,7 +176,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   ) : hasTeamName ? (
     /* Team Tournament layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
-      <div className="overflow-hidden size-[min(10vh,10vw)] rounded-full shrink-0">
+      <div className="overflow-hidden size-[min(6.7vh,6.7vw)] rounded-full shrink-0">
         <ImageWithFallback
           fallback="/images/user-dummy-pic.png"
           className="size-full object-cover"
@@ -202,7 +202,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Single player layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div
-        className="bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(9.3vh,9.3vw)] relative rounded-[min(1.1vh,1.1vw)] overflow-hidden shrink-0"
+        className="bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(6.7vh,6.7vw)] relative rounded-[min(1.1vh,1.1vw)] overflow-hidden shrink-0"
         style={{ clipPath: CLIP_PATH }}
       >
         <ImageWithFallback
@@ -226,7 +226,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
   return (
     <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[min(3vh,3vw)] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8]">
-      <div className="w-full h-auto flex justify-between items-stretch px-[min(1.5vh,1.5vw)] py-[min(1.1vh,1.1vw)] gap-[min(1.5vh,1.5vw)] relative">
+      <div className="w-full h-auto flex justify-between items-stretch px-[min(1.9vh,1.9vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Top Banner — tournament name */}
         {state.tournamentName ? (
           <div className="absolute pointer-events-none w-full left-0 right-0 -top-1/4 flex justify-center items-center bg-transparent">
