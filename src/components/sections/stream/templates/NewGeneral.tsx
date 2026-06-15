@@ -211,7 +211,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     `,
           }}
         >
-          <div className="absolute -bottom-[min(3vh,3vw)] w-full flex justify-center items-center z-10">
+          <div className="absolute -bottom-[min(2.5vh,2.5vw)] w-full flex justify-center items-center z-10">
             <div className="relative w-[min(22.2vh,22.2vw)] h-[min(4.4vh,4.4vw)]">
               {/* SVG provides the shape + gradients */}
               <svg
