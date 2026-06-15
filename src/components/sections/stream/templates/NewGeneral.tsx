@@ -14,8 +14,111 @@ interface GeneralTemplateProps {
 
 const NewGeneral = (props: GeneralTemplateProps) => {
   return (
-    <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center border border-white w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[32px] bg-black">
-      <div className="w-full h-auto flex justify-between items-center px-4 py-3 gap-4">
+    <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[32px] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8]">
+      <div className="w-full h-auto flex justify-between items-center px-4 py-3 gap-4 relative">
+        <div className="absolute pointer-events-none w-full left-0 right-0 -top-1/4 flex justify-center items-center bg-transparent">
+          <div className="relative flex justify-center items-center">
+            <img src="/tournament-name-box.svg" alt="background pattern" />
+            <p className="font-semibold text-white text-2xl tracking-wider uppercase font-sans text-center align-baseline absolute pt-3 truncate line-clamp-1">
+              Chandra bhatiya tournament 2026 | 15 red Singles
+            </p>
+          </div>
+        </div>
+        <div className="absolute left-12 -top-11">
+          <div className="relative w-60">
+            {/* SVG background — shape, gradients, inner shadow */}
+            <svg
+              viewBox="0 0 210 52"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ position: 'absolute', inset: 0 }}
+            >
+              <g filter="url(#filter0_i)">
+                <path
+                  d="M10.9493 13.9524C12.5076 7.13086 18.5754 2.29297 25.5726 2.29297H184.179C191.177 2.29297 197.244 7.13087 198.803 13.9524L206.876 49.293H2.87598L10.9493 13.9524Z"
+                  fill="url(#paint0_linear)"
+                  fillOpacity="0.6"
+                />
+                <path
+                  d="M184.18 1.14648C191.712 1.14663 198.243 6.35448 199.92 13.6973L207.994 49.0381L208.313 50.4395H1.43848L1.75781 49.0381L9.83203 13.6973C11.5094 6.35448 18.0403 1.14664 25.5723 1.14648H184.18Z"
+                  stroke="url(#paint1_linear)"
+                  strokeWidth="2.29299"
+                />
+                <path
+                  d="M184.18 1.14648C191.712 1.14663 198.243 6.35448 199.92 13.6973L207.994 49.0381L208.313 50.4395H1.43848L1.75781 49.0381L9.83203 13.6973C11.5094 6.35448 18.0403 1.14664 25.5723 1.14648H184.18Z"
+                  stroke="url(#paint2_linear)"
+                  strokeWidth="2.29299"
+                />
+              </g>
+              <defs>
+                <filter
+                  id="filter0_i"
+                  x="0"
+                  y="0"
+                  width="209.752"
+                  height="51.5859"
+                  filterUnits="userSpaceOnUse"
+                  colorInterpolationFilters="sRGB"
+                >
+                  <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                  <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+                  <feColorMatrix
+                    in="SourceAlpha"
+                    type="matrix"
+                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                    result="hardAlpha"
+                  />
+                  <feOffset />
+                  <feGaussianBlur stdDeviation="11.465" />
+                  <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+                  <feColorMatrix
+                    type="matrix"
+                    values="0 0 0 0 0.690196 0 0 0 0 0.937255 0 0 0 0 0.384314 0 0 0 0.6 0"
+                  />
+                  <feBlend mode="normal" in2="shape" result="effect1_innerShadow" />
+                </filter>
+                <linearGradient
+                  id="paint0_linear"
+                  x1="37.3175"
+                  y1="49.293"
+                  x2="165.984"
+                  y2="-159.989"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#ACEC54" stopOpacity="0.13" />
+                  <stop offset="1" stopColor="#6FFF00" />
+                </linearGradient>
+                <linearGradient
+                  id="paint1_linear"
+                  x1="-32.2964"
+                  y1="-8.20218"
+                  x2="30.9889"
+                  y2="184.38"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop offset="0.0897938" stopColor="#D7FFA9" />
+                  <stop offset="1" stopColor="#80EF00" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient
+                  id="paint2_linear"
+                  x1="89.6346"
+                  y1="-62.9595"
+                  x2="112.535"
+                  y2="222.965"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop offset="0.108869" stopColor="#8FFF00" />
+                  <stop offset="0.368867" stopColor="#8FFF00" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <div className="flex justify-center items-center gap-2 pt-2.5">
+              <p className="font-semibold text-2xl leading-[130%] uppercase text-sandy-yellow">Break</p>
+              <p className="font-semibold text-[40px] leading-[130%] uppercase text-sandy-yellow">134</p>
+            </div>
+          </div>
+        </div>
         <div
           className="relative px-6 py-4 rounded-[20px] shadow-[0px_3px_20.8px_0px_#DCF756] shrink-0 backdrop-blur-[24px]"
           style={{
@@ -40,7 +143,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               {/* Player */}
               <div className="flex justify-between items-center gap-36">
                 {/* Plyer name */}
-                <p className="uppercase font-bold text-32 text-score-text">Swaminathan ps </p>
+                <p className="uppercase font-bold text-32 text-score-text">Swaminathan ps s </p>
 
                 {/* Player Handicap */}
                 <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)]">
@@ -80,7 +183,99 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             </div>
           </div>
         </div>
-        <div className="bg-red-50 w-full">ff</div>
+
+        <div
+          className="w-full py-3.5 flex rounded-[20px] z-20 relative"
+          style={{
+            background: `
+      linear-gradient(#11030F, #11030F) padding-box, 
+      linear-gradient(233.61deg, #FFECFF -11.62%, rgba(255, 255, 255, 0) 50.44%) border-box,
+      linear-gradient(347.86deg, rgba(210, 154, 245, 0) 13.85%, #F4D3F2 105.37%) border-box
+    `,
+
+            border: '2px solid transparent',
+            boxShadow: `
+      0px 0px 16px 0px rgba(255, 237, 255, 0.50),
+      10px 10px 28px 0px rgba(15, 11, 35, 0.80),
+      -11px 0px 24px 0px rgba(14, 11, 36, 0.80)
+    `,
+          }}
+        >
+          <div className="absolute -bottom-8 w-full flex justify-center items-center z-10">
+            <div className="relative w-60 h-12 ">
+              {/* SVG provides the shape + gradients */}
+              <svg width="232" height="47" viewBox="0 0 232 47" fill="none" style={{ position: 'absolute', inset: 0 }}>
+                <path
+                  d="M23.8115 46.5H208.188C214.792 46.5 220.562 42.038 222.223 35.6465L231.353 0.5H0.647461L9.77734 35.6465C11.438 42.038 17.2078 46.5 23.8115 46.5Z"
+                  fill="url(#paint0_radial_475_3806)"
+                  stroke="url(#paint1_linear_475_3806)"
+                />
+                <defs>
+                  <radialGradient
+                    id="paint0_radial_475_3806"
+                    cx="0"
+                    cy="0"
+                    r="1"
+                    gradientTransform="matrix(95.7763 -0.499992 -0.256563 -337.536 116 23.5)"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop stopColor="#181332" />
+                    <stop offset="0.451923" stopColor="#181332" />
+                  </radialGradient>
+                  <linearGradient
+                    id="paint1_linear_475_3806"
+                    x1="116"
+                    y1="260.5"
+                    x2="116"
+                    y2="-82.5"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop offset="0.612803" stopColor="#E39CF5" />
+                    <stop offset="0.685132" stopColor="#E0BFE7" />
+                    <stop offset="0.759138" stopColor="#CD86E1" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              <div className="absolute inset-0 flex justify-center items-center">
+                <span
+                  className="
+                 font-semibold text-2xl leading-[130%] uppercase text-score-text px-3.5
+                 "
+                >
+                  League away
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex w-full relative z-20">
+            <div
+              className="px-3 py-6 bg-[#AB51C6] border border-l-0 shadow-[0px_4px_16px_0px_#FFFFFF40] w-full flex justify-center items-center z-10"
+              style={{ borderImageSource: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)', borderImageSlice: 1 }}
+            >
+              <span className="font-semibold text-[40px] leading-[130%] uppercase text-score-text">283</span>
+            </div>
+
+            <p className="text-score-text font-semibold text-[40px] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y h-full text-center flex justify-center items-center px-3.5 [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] py-6 w-full">
+              22
+            </p>
+            <div
+              className="px-3 py-6 bg-[#AB51C6] border shadow-[0px_4px_16px_0px_#FFFFFF40] w-full flex justify-center items-center"
+              style={{ borderImageSource: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)', borderImageSlice: 1 }}
+            >
+              <span className="font-semibold text-[40px] leading-[130%] uppercase text-score-text">12/13</span>
+            </div>
+            <p className="text-score-text font-semibold text-[40px] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y h-full text-center flex justify-center items-center px-3.5 [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] py-6 w-full">
+              22
+            </p>
+            <div
+              className="px-3 py-6 bg-[#AB51C6] w-full border border-r-0 shadow-[0px_4px_16px_0px_#FFFFFF40] flex justify-center items-center"
+              style={{ borderImageSource: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)', borderImageSlice: 1 }}
+            >
+              <span className="font-semibold text-[40px] leading-[130%] uppercase text-score-text">842</span>
+            </div>
+          </div>
+        </div>
 
         <div
           className="relative px-6 py-4 rounded-[20px] shadow-[0px_3px_10.8px_0px_#E38BF9] shrink-0 backdrop-blur-[24px]"
