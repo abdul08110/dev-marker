@@ -65,6 +65,10 @@ export function VideoOverlay() {
   const activeSet = getActiveSet(viewershipData ? viewershipData.sets : []);
   const activeTurn = getActiveTurn(activeSet);
 
+  // streamingData updates in real-time via MQTT send-data; viewershipData only updates via video playback timer
+  const liveActiveSet = getActiveSet(streamingData.sets);
+  const liveActiveTurn = getActiveTurn(liveActiveSet);
+
   return (
     <div className="h-screen w-screen bg-black pointer-events-none">
       <TopOverlay
@@ -167,7 +171,7 @@ export function VideoOverlay() {
           )
         ) : (
           // <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
-          <NewGeneral state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+          <NewGeneral state={streamingData} activeSet={liveActiveSet} activeTurn={liveActiveTurn} isTv={false} />
         ))}
       {viewershipData && viewershipData.streams[0].overlayType === 'SOURCE_WITH_FINAL_SCORES' && (
         <SourceWithFinalScores state={viewershipData} />
