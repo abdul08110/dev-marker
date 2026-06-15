@@ -19,6 +19,9 @@ module.exports = {
       fontFamily: {
         sans: ['Oxanium', 'sans-serif'],
       },
+      fontSize: {
+        32: '32px',
+      },
       screens: {
         '480p': { raw: '(min-height: 480px) and (max-height: 719px)' },
         '720p': { raw: '(min-height: 720px) and (max-height: 1079px)' },
@@ -42,6 +45,7 @@ module.exports = {
         'score-text': '#FFFFFF',
         'bg-light': '#FFFFFF',
         'sandy-yellow': '#F5F85F',
+        violet: '#E38BF9',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',

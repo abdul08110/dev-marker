@@ -15,6 +15,7 @@ import { IGTemplate } from '@/components/sections/stream/templates/IG';
 import useStreaming from '@/hooks/useStreaming';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { useEffect, useState } from 'react';
+import NewGeneral from '@/components/sections/stream/templates/NewGeneral';
 
 export function VideoOverlay() {
   const [matchId, setMatchId] = useState<string | null>(null);
@@ -165,7 +166,8 @@ export function VideoOverlay() {
             <IGTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
           )
         ) : (
-          <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+          // <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+          <NewGeneral state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
         ))}
       {viewershipData && viewershipData.streams[0].overlayType === 'SOURCE_WITH_FINAL_SCORES' && (
         <SourceWithFinalScores state={viewershipData} />
