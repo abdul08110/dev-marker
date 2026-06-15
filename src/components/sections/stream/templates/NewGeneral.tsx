@@ -422,7 +422,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           </div>
 
           {/* Score cells */}
-          <div className="flex items-stretch relative z-20 rounded-[min(1.9vh,1.9vw)] overflow-hidden py-[min(2vh,2vw)]">
+          <div className="flex items-stretch relative z-20 rounded-[min(1.9vh,1.9vw)] overflow-hidden py-[min(1vh,1vw)]">
             {/* Team 1 total score */}
             <div
               className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border border-l-0 shadow-[0px_4px_16px_0px_#FFFFFF40] w-[min(11vh,12vw)] flex justify-center items-center z-10"
