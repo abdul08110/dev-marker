@@ -372,7 +372,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           }}
         >
           {/* Format tag below center panel */}
-          <div className="absolute -bottom-[min(2.4vh,2.4vw)] w-full flex justify-center items-center z-10">
+          <div className="absolute -bottom-[min(3.4vh,3.4vw)] w-full flex justify-center items-center z-10">
             <div className="relative w-[min(22.2vh,22.2vw)] h-[min(4.4vh,4.4vw)]">
               <svg
                 width="100%"
