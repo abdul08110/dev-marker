@@ -16,14 +16,17 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   return (
     <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[32px] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8]">
       <div className="w-full h-auto flex justify-between items-center px-4 py-3 gap-4 relative">
+        {/* Top Banner */}
         <div className="absolute pointer-events-none w-full left-0 right-0 -top-1/4 flex justify-center items-center bg-transparent">
           <div className="relative flex justify-center items-center">
             <img src="/tournament-name-box.svg" alt="background pattern" />
-            <p className="font-semibold text-white text-2xl tracking-wider uppercase font-sans text-center align-baseline absolute pt-3 truncate line-clamp-1">
+            <p className="font-semibold text-white text-2xl tracking-wider uppercase font-sans text-center align-baseline absolute inset-x-0 pt-3 truncate">
               Chandra bhatiya tournament 2026 | 15 red Singles
             </p>
           </div>
         </div>
+
+        {/* Break Banner */}
         <div className="absolute left-12 -top-11">
           <div className="relative w-60">
             {/* SVG background — shape, gradients, inner shadow */}
@@ -119,8 +122,10 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             </div>
           </div>
         </div>
+
+        {/* left */}
         <div
-          className="relative px-6 py-4 rounded-[20px] shadow-[0px_3px_20.8px_0px_#DCF756] shrink-0 backdrop-blur-[24px]"
+          className="relative px-6 py-4 rounded-[20px] shadow-[0px_3px_20.8px_0px_#DCF756] shrink-0 backdrop-blur-[24px] grow"
           style={{
             background:
               'linear-gradient(#111, #111) padding-box, linear-gradient(144.83deg, rgba(213, 255, 154, 0.02) -0.26%, #C1F052 34.38%, #AAEA4B 58.47%, #B7F47B 92.16%) border-box',
@@ -139,14 +144,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 }
               />
             </div>
-            <div className="flex flex-col gap-y-2.5">
+            <div className="flex flex-col gap-y-2.5 min-w-0">
               {/* Player */}
-              <div className="flex justify-between items-center gap-36">
-                {/* Plyer name */}
-                <p className="uppercase font-bold text-32 text-score-text">Swaminathan ps s </p>
+              <div className="flex justify-between items-center gap-4 min-w-0">
+                {/* Player name */}
+                <p className="uppercase font-bold text-32 text-score-text truncate min-w-0 flex-1">Swaminathan ps s </p>
 
                 {/* Player Handicap */}
-                <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)]">
+                <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)] shrink-0">
                   <span className="font-medium text-2xl leading-[130%] uppercase text-score-text text-box-trim inline-block px-4 py-1.5">
                     h
                   </span>
@@ -164,12 +169,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               />
 
               {/* Team */}
-              <div className="flex justify-between items-center gap-36">
+              <div className="flex justify-between items-center gap-4 min-w-0">
                 {/* Team Name */}
-                <p className="uppercase font-medium text-2xl text-score-text">bull’s eye </p>
+                <p className="uppercase font-medium text-2xl text-score-text truncate min-w-0 flex-1">bull’s eye </p>
                 {/* Team Handicap */}
 
-                <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)]">
+                <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)] shrink-0">
                   <span className="font-medium text-2xl leading-[130%] uppercase text-score-text text-box-trim inline-block px-4 py-1.5">
                     h
                   </span>
@@ -184,8 +189,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           </div>
         </div>
 
+        {/* middle */}
         <div
-          className="w-full py-3.5 flex rounded-[20px] z-20 relative"
+          className="shrink-0 py-3.5 flex rounded-[20px] z-20 relative grow-0 bg-red-200"
           style={{
             background: `
       linear-gradient(#11030F, #11030F) padding-box, 
@@ -248,28 +254,28 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               </div>
             </div>
           </div>
-          <div className="flex w-full relative z-20">
+          <div className="flex relative z-20">
             <div
-              className="px-3 py-6 bg-[#AB51C6] border border-l-0 shadow-[0px_4px_16px_0px_#FFFFFF40] w-full flex justify-center items-center z-10"
+              className="px-3 py-6 bg-[#AB51C6] border border-l-0 shadow-[0px_4px_16px_0px_#FFFFFF40] w-[min(12vw,11vh)] flex justify-center items-center z-10"
               style={{ borderImageSource: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)', borderImageSlice: 1 }}
             >
               <span className="font-semibold text-[40px] leading-[130%] uppercase text-score-text">283</span>
             </div>
 
-            <p className="text-score-text font-semibold text-[40px] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y h-full text-center flex justify-center items-center px-3.5 [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] py-6 w-full">
+            <p className="text-score-text font-semibold text-[40px] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y h-full text-center flex justify-center items-center px-3.5 [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] py-6 w-[min(9vw,8vh)]">
               22
             </p>
             <div
-              className="px-3 py-6 bg-[#AB51C6] border shadow-[0px_4px_16px_0px_#FFFFFF40] w-full flex justify-center items-center"
+              className="px-3 py-6 bg-[#AB51C6] border shadow-[0px_4px_16px_0px_#FFFFFF40] w-[min(12vw,11vh)] flex justify-center items-center"
               style={{ borderImageSource: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)', borderImageSlice: 1 }}
             >
               <span className="font-semibold text-[40px] leading-[130%] uppercase text-score-text">12/13</span>
             </div>
-            <p className="text-score-text font-semibold text-[40px] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y h-full text-center flex justify-center items-center px-3.5 [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] py-6 w-full">
+            <p className="text-score-text font-semibold text-[40px] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y h-full text-center flex justify-center items-center px-3.5 [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] py-6 w-[min(9vw,8vh)]">
               22
             </p>
             <div
-              className="px-3 py-6 bg-[#AB51C6] w-full border border-r-0 shadow-[0px_4px_16px_0px_#FFFFFF40] flex justify-center items-center"
+              className="px-3 py-6 bg-[#AB51C6] w-[min(12vw,11vh)] border border-r-0 shadow-[0px_4px_16px_0px_#FFFFFF40] flex justify-center items-center"
               style={{ borderImageSource: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)', borderImageSlice: 1 }}
             >
               <span className="font-semibold text-[40px] leading-[130%] uppercase text-score-text">842</span>
@@ -277,8 +283,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           </div>
         </div>
 
+        {/* Right */}
         <div
-          className="relative px-6 py-4 rounded-[20px] shadow-[0px_3px_10.8px_0px_#E38BF9] shrink-0 backdrop-blur-[24px]"
+          className="relative px-6 py-4 rounded-[20px] shadow-[0px_3px_10.8px_0px_#E38BF9] shrink-0 backdrop-blur-[24px] grow"
           style={{
             background:
               'linear-gradient(#111, #111) padding-box, linear-gradient(144.83deg, rgba(210, 154, 245, 0.02) -0.26%, #B079E3 34.38%, #E38BF9 58.47%, #E38BF9 92.16%) border-box',
@@ -297,17 +304,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 }
               />
             </div>
-            <div className="flex flex-col gap-y-2.5">
+            <div className="flex flex-col gap-y-2.5 min-w-0">
               {/* Player */}
-              <div className="flex flex-row-reverse justify-between items-center gap-36">
-                {/* Plyer name */}
-                <p className="uppercase font-bold text-32 text-score-text">Swaminathan ps </p>
+              <div className="flex flex-row-reverse justify-between items-center gap-4 min-w-0">
+                {/* Player name */}
+                <p className="uppercase font-bold text-32 text-score-text truncate min-w-0 flex-1">Swaminathan ps </p>
 
                 {/* Player Handicap */}
-                <div
-                  className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)]
-                "
-                >
+                <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)] shrink-0">
                   <span className="font-medium text-2xl leading-[130%] uppercase text-score-text text-box-trim inline-block px-4 py-1.5">
                     h
                   </span>
@@ -325,19 +329,16 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               />
 
               {/* Team */}
-              <div className="flex flex-row-reverse justify-between items-center gap-36">
+              <div className="flex flex-row-reverse justify-between items-center gap-4 min-w-0">
                 {/* Team Name */}
-                <p className="uppercase font-medium text-2xl text-score-text">bull’s eye </p>
+                <p className="uppercase font-medium text-2xl text-score-text truncate min-w-0 flex-1">bull’s eye </p>
                 {/* Team Handicap */}
 
-                <div
-                  className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)]
-                "
-                >
+                <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)] shrink-0">
                   <span className="font-medium text-2xl leading-[130%] uppercase text-score-text text-box-trim inline-block px-4 py-1.5">
                     h
                   </span>
-                  <div className=" bg-violet px-4 py-1.5 shadow-[inset_0px_0px_3.03px_0px_#C600F7]">
+                  <div className="bg-violet px-4 py-1.5 shadow-[inset_0px_0px_3.03px_0px_#C600F7]">
                     <span className="font-medium text-2xl leading-[130%] uppercase text-box-trim text-[#11030F]">
                       +22
                     </span>
