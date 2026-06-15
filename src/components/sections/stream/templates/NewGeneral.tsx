@@ -15,13 +15,13 @@ const CLIP_PATH_SM = 'polygon(min(1vh,1vw) 0%, 100% 0%, 100% 100%, 0% 100%, 0% m
 
 const YELLOW_CARD_STYLE = {
   background:
-    'linear-gradient(#111, #111) padding-box, linear-gradient(144.83deg, rgba(213, 255, 154, 0.02) -0.26%, #C1F052 34.38%, #AAEA4B 58.47%, #B7F47B 92.16%) border-box',
+    'linear-gradient(90deg, #010305 0%, #19162B 36.51%, #18142E 103.21%) padding-box, linear-gradient(144.83deg, rgba(213, 255, 154, 0.02) -0.26%, #C1F052 34.38%, #AAEA4B 58.47%, #B7F47B 92.16%) border-box',
   border: '1px solid transparent',
 };
 
 const PINK_CARD_STYLE = {
   background:
-    'linear-gradient(#111, #111) padding-box, linear-gradient(144.83deg, rgba(210, 154, 245, 0.02) -0.26%, #B079E3 34.38%, #E38BF9 58.47%, #E38BF9 92.16%) border-box',
+    'linear-gradient(180deg, #371E56 0%, #0D0624 100%) padding-box, linear-gradient(144.83deg, rgba(210, 154, 245, 0.02) -0.26%, #B079E3 34.38%, #E38BF9 58.47%, #E38BF9 92.16%) border-box',
   border: '1px solid transparent',
 };
 
@@ -225,7 +225,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   return (
-    <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[min(3vh,3vw)] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8]">
+    <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[min(3vh,3vw)] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8] mb-3">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.9vh,1.9vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Top Banner — tournament name */}
         {state.tournamentName ? (
@@ -243,7 +243,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
         {(isSideOneActive || isSideTwoActive) && (
           <div
             className={[
-              'absolute -top-[min(4vh,4vw)]',
+              'absolute -top-[min(3.9vh,3.9vw)]',
               isSideOneActive ? 'left-[min(4.4vh,4.4vw)]' : 'right-[min(4.4vh,4.4vw)]',
             ].join(' ')}
           >
@@ -426,7 +426,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             {/* Team 1 total score */}
             <div
               className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border border-l-0 shadow-[0px_4px_16px_0px_#FFFFFF40] w-[min(11vh,12vw)] flex justify-center items-center z-10"
-              style={{ borderImageSource: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)', borderImageSlice: 1 }}
+              style={{
+                borderImageSource:
+                  'linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%)',
+                borderImageSlice: 1,
+              }}
             >
               <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
                 {state.teamOneScore}
@@ -434,7 +438,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             </div>
 
             {/* Team 1 current set score */}
-            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
+            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] drop-shadow-[0px_0px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
               {activeSet?.teamOneScore ?? 0}
             </p>
 
@@ -453,7 +457,8 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             </div>
 
             {/* Team 2 current set score */}
-            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
+
+            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] drop-shadow-[0px_0px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)] bg-[#595959]/[.20]">
               {activeSet?.teamTwoScore ?? 0}
             </p>
 
