@@ -243,7 +243,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
         {(isSideOneActive || isSideTwoActive) && (
           <div
             className={[
-              'absolute -top-[min(4.1vh,4.1vw)]',
+              'absolute -top-[min(4vh,4vw)]',
               isSideOneActive ? 'left-[min(4.4vh,4.4vw)]' : 'right-[min(4.4vh,4.4vw)]',
             ].join(' ')}
           >
@@ -372,7 +372,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           }}
         >
           {/* Format tag below center panel */}
-          <div className="absolute -bottom-[min(2.5vh,2.5vw)] w-full flex justify-center items-center z-10">
+          <div className="absolute -bottom-[min(2.4vh,2.4vw)] w-full flex justify-center items-center z-10">
             <div className="relative w-[min(22.2vh,22.2vw)] h-[min(4.4vh,4.4vw)]">
               <svg
                 width="100%"
@@ -441,7 +441,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             {/* Current break / turn score */}
             <div
               className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border shadow-[0px_4px_16px_0px_#FFFFFF40] w-[min(11vh,12vw)] flex justify-center items-center"
-              style={{ borderImageSource: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)', borderImageSlice: 1 }}
+              style={{
+                borderImageSource:
+                  'linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%)',
+                borderImageSlice: 1,
+              }}
             >
               <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
                 {breakScore}
@@ -456,7 +460,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             {/* Team 2 total score */}
             <div
               className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] w-[min(11vh,12vw)] border border-r-0 shadow-[0px_4px_16px_0px_#FFFFFF40] flex justify-center items-center"
-              style={{ borderImageSource: 'linear-gradient(180deg, #FFFFFF 0%, #999999 100%)', borderImageSlice: 1 }}
+              style={{
+                borderImageSource:
+                  'linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%)',
+                borderImageSlice: 1,
+              }}
             >
               <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
                 {state.teamTwoScore}
@@ -517,10 +525,10 @@ function VioletHandicapPill({ handicap }: { handicap: number | null }) {
 
 // Gradient divider line — left (yellow-toned)
 const YellowDivider = () => (
-  <div className="border-2 [border-image-source:linear-gradient(90deg,rgba(251,255,127,0)_5%,rgba(251,255,127,0.6)_51.16%,rgba(225,229,116,0)95%)] [border-image-slice:1]" />
+  <div className="border [border-image-source:linear-gradient(90deg,rgba(251,255,127,0)_5%,rgba(251,255,127,0.6)_51.16%,rgba(225,229,116,0)95%)] [border-image-slice:1]" />
 );
 
 // Gradient divider line — right (violet-toned)
 const VioletDivider = () => (
-  <div className="border-2 [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_5%,rgba(227,139,249,0.6)_51.16%,rgba(227,139,249,0)_95%)] [border-image-slice:1]" />
+  <div className="border [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_5%,rgba(227,139,249,0.6)_51.16%,rgba(227,139,249,0)_95%)] [border-image-slice:1]" />
 );
