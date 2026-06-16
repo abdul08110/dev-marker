@@ -411,6 +411,7 @@ export const {
   handleResetSet,
   handleBackendUpdatedState,
   resetStateSnooker,
+  resetStateBilliards,
   updateNoOfSets,
   updateMaxScorePerSet,
   updateTeamHandicapApplied,

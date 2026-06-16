@@ -19,6 +19,8 @@ export interface SnookerPracticeSettingsData {
   isRankingEvent: boolean;
 }
 
+export type NoOfPlayersDefault = '2' | '4';
+
 const formSchema = z.object({
   format: z.enum(['SNOOKER_15_RED', 'SNOOKER_10_RED', 'SNOOKER_6_RED']),
   durationInMinutes: z.string().regex(/^\d{1,2}:\d{2}$/, 'Duration must be in mm:ss format'),
@@ -30,6 +32,7 @@ const formSchema = z.object({
 
 interface SnookerSettingsFormSchema {
   onSubmit: (values: z.infer<typeof formSchema>) => void;
+  defaultNoOfPlayers?: NoOfPlayersDefault;
 }
 
 export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
@@ -38,7 +41,7 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
     defaultValues: {
       format: 'SNOOKER_15_RED',
       durationInMinutes: '30:00',
-      noOfPlayers: '2',
+      noOfPlayers: props.defaultNoOfPlayers ?? '2',
       streaming: 'PRIVATE',
       handicap: 0,
       isRankingEvent: false,

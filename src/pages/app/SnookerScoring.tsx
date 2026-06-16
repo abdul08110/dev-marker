@@ -89,6 +89,7 @@ export function SnookerScoring() {
     handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
+    defaultNoOfPlayers,
   } = useSnookerScoring();
 
   const [showEndFrameAlert, setShowEndFrameAlert] = React.useState(false);
@@ -151,6 +152,7 @@ export function SnookerScoring() {
                 onSubmit={handleSettingsUpdate}
                 open={openSettingsDrawer}
                 setOpen={setOpenSettingsDrawer}
+                defaultNoOfPlayers={defaultNoOfPlayers}
               />
               <SelectPlayerDrawer
                 onSubmit={handlePlayerConfirm}

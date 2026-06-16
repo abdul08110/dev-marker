@@ -46,7 +46,7 @@ import { matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
-import { SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
+import { NoOfPlayersDefault, SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
 import { setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
 
 const useSnookerScoring = () => {
@@ -81,6 +81,9 @@ const useSnookerScoring = () => {
   useInterval(handleUpdateToServer, 1000);
   const [searchParams] = useSearchParams();
   const matchId = searchParams.get('matchId');
+  const playerCountParam = searchParams.get('playerCount');
+  const defaultNoOfPlayers: NoOfPlayersDefault =
+    playerCountParam === '4' ? '4' : '2';
   useBackButtonHandler(handleBackButtonClick);
 
   // API
@@ -608,6 +611,7 @@ const useSnookerScoring = () => {
     handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
+    defaultNoOfPlayers,
   };
 };
 

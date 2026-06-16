@@ -2,14 +2,16 @@ import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoadin
 import { ScoreBoardOrientationModal } from '@/components/modals/scoreBoardOrientationModal';
 import { TimeUpModal } from '@/components/modals/timeUpModal';
 import { ScoreboardRender } from '@/components/sections/scoreboard/scoreBoardRender';
+import { ScoreboardQrDisplay } from '@/components/sections/scoreboard/ScoreboardQrDisplay';
 import useScoreboard from '@/hooks/useScoreboard';
 import { useState } from 'react';
 import NewScoreBoard from './NewScoreBoard';
 
 export function ScoreBoard() {
-  const { loading, scoreBoardData, timeLeft, orientation, setOrientation, showTimeOverAlert, activeClub } =
+  const { loading, scoreBoardData, timeLeft, orientation, setOrientation, showTimeOverAlert, activeClub, qrFlowState } =
     useScoreboard();
   const [showScoreBoardOrientationModal, setShowScoreBoardOrientationModal] = useState(true);
+  console.log(qrFlowState);
 
   return (
     <section>
@@ -24,6 +26,8 @@ export function ScoreBoard() {
               // <LegacyScoreboard timeLeft={timeLeft} state={scoreBoardData} />
               <NewScoreBoard timeLeft={timeLeft} state={scoreBoardData} />
             )
+          ) : qrFlowState.isActive ? (
+            <ScoreboardQrDisplay qrFlowState={qrFlowState} activeClub={activeClub} />
           ) : (
             <section className="h-screen w-screen flex justify-center items-center">
               <div className="text-white flex flex-col items-center gap-4">
@@ -39,7 +43,7 @@ export function ScoreBoard() {
       )}
 
       <ScoreBoardOrientationModal
-        isModalOpen={showScoreBoardOrientationModal}
+        isModalOpen={showScoreBoardOrientationModal && !!scoreBoardData}
         closeModal={() => setShowScoreBoardOrientationModal(false)}
         confirmModal={() => {
           setOrientation('portrait');

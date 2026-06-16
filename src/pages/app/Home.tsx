@@ -7,17 +7,23 @@ import { HomeLoading } from '@/components/loading/homeLoading';
 import { LiveMatchGoToScoreBoardOrMarkerModal } from '@/components/modals/liveMatchGoToScoreBoardOrMarkerModal';
 import TvLogo from '@/icons/tv';
 import { setActiveClub, setClubs } from '@/stores/slices/clubSlice';
-import { resetStateSnooker } from '@/stores/slices/sportSlice';
+import { resetStateSnooker, resetStateBilliards } from '@/stores/slices/sportSlice';
 import { clearUndoStack } from '@/stores/slices/undoSlice';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Smartphone } from 'lucide-react';
 import { ScanQrModal } from '@/components/modals/scanQrModal';
+import { RootState } from '@/stores';
+
+type PracticeStep = 'sport' | 'count' | 'method';
+type SportChoice = 'snooker' | 'billiards';
+type CountChoice = 2 | 4;
 
 export function Home() {
   const dispatch = useDispatch();
+  const activeClub = useSelector((state: RootState) => state.club.activeClub);
   const { getMarkerClubs, data } = useMarkerClubs('MARKER');
   const { getTournaments, tournaments } = useGetActiveTournaments();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
@@ -30,8 +36,48 @@ export function Home() {
   const [isQrModalOpen, setIsQrModalOpen] = useState<boolean>(false);
   const [venueId, setVenueId] = useState<string>('');
 
+  // Practice match multi-step state
+  const [practiceDialogOpen, setPracticeDialogOpen] = useState(false);
+  const [practiceStep, setPracticeStep] = useState<PracticeStep>('sport');
+  const [sportChoice, setSportChoice] = useState<SportChoice>('snooker');
+  const [countChoice, setCountChoice] = useState<CountChoice>(2);
+
   const { logout } = useLogout();
   const navigate = useNavigate();
+
+  const openPracticeDialog = () => {
+    setPracticeStep('sport');
+    setPracticeDialogOpen(true);
+  };
+
+  const handleSportChoice = (sport: SportChoice) => {
+    setSportChoice(sport);
+    if (sport === 'snooker') {
+      dispatch(resetStateSnooker());
+      setPracticeStep('count');
+    } else {
+      dispatch(resetStateBilliards());
+      setCountChoice(2);
+      setPracticeStep('method');
+    }
+    dispatch(clearUndoStack());
+  };
+
+  const handleCountChoice = (count: CountChoice) => {
+    setCountChoice(count);
+    setPracticeStep('method');
+  };
+
+  const handleManual = () => {
+    setPracticeDialogOpen(false);
+    const route = sportChoice === 'billiards' ? '/app/billiards' : '/app/snooker';
+    navigate(`${route}?playerCount=${countChoice}`);
+  };
+
+  const handleFromScoreboard = () => {
+    setPracticeDialogOpen(false);
+    navigate(`/app/qr?sport=${sportChoice}&playerCount=${countChoice}`);
+  };
 
   useEffect(() => {
     dispatch(resetStateSnooker());
@@ -116,31 +162,90 @@ export function Home() {
           </div>
 
           <div className="container py-10 flex flex-col gap-6 justify-start">
-            <Dialog>
-              <DialogTrigger className="p-0 bg-transparent border-0">
-                <div className="bg-[url('/images/practice-match.png')] p-5 flex justify-center items-end aspect-[4/3] h-56 bg-cover rounded-lg w-full">
-                  <h3 className="text-white text-xl">PRACTICE</h3>
-                </div>
-              </DialogTrigger>
+            {/* Practice match — multi-step dialog */}
+            <div onClick={openPracticeDialog} className="cursor-pointer">
+              <div className="bg-[url('/images/practice-match.png')] p-5 flex justify-center items-end aspect-[4/3] h-56 bg-cover rounded-lg w-full">
+                <h3 className="text-white text-xl">PRACTICE</h3>
+              </div>
+            </div>
+
+            <Dialog open={practiceDialogOpen} onOpenChange={setPracticeDialogOpen}>
               <DialogContent className="absolute transform -translate-y-1/2 top-1/2 left-0 w-full">
                 <DialogTitle></DialogTitle>
-
                 <div className="container">
                   <div className="p-2 flex justify-center">
-                    <div className="w-full bg-[#1F1F1F] p-4 grid grid-cols-2 gap-4 items-center justify-center rounded-lg h-56 shadow-xl">
-                      <div
-                        onClick={() => navigate('/app/snooker')}
-                        className="bg-[url('/images/snooker.png')] p-5 flex justify-center items-end aspect-[4/3] h-44 bg-cover rounded-lg w-full"
-                      >
-                        <h3 className="text-white text-xl">SNOOKER</h3>
+                    {practiceStep === 'sport' && (
+                      <div className="w-full bg-[#1F1F1F] p-4 grid grid-cols-2 gap-4 items-center justify-center rounded-lg h-56 shadow-xl">
+                        <div
+                          onClick={() => handleSportChoice('snooker')}
+                          className="bg-[url('/images/snooker.png')] p-5 flex justify-center items-end aspect-[4/3] h-44 bg-cover rounded-lg w-full cursor-pointer"
+                        >
+                          <h3 className="text-white text-xl">SNOOKER</h3>
+                        </div>
+                        <div
+                          onClick={() => handleSportChoice('billiards')}
+                          className="bg-[url('/images/billiards.png')] p-5 flex justify-center items-end aspect-[4/3] h-44 bg-cover rounded-lg w-full cursor-pointer"
+                        >
+                          <h3 className="text-white text-xl">BILLIARDS</h3>
+                        </div>
                       </div>
-                      <div
-                        onClick={() => navigate('/app/billiards')}
-                        className="bg-[url('/images/billiards.png')] p-5 flex justify-center items-end aspect-[4/3] h-44 bg-cover rounded-lg w-full"
-                      >
-                        <h3 className="text-white text-xl">BILLIARDS</h3>
+                    )}
+
+                    {practiceStep === 'count' && (
+                      <div className="w-full bg-[#1F1F1F] p-6 flex flex-col gap-4 rounded-lg shadow-xl">
+                        <h3 className="text-white text-lg font-semibold text-center">Number of Players</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <button
+                            onClick={() => handleCountChoice(2)}
+                            className="flex flex-col items-center justify-center gap-2 bg-white/10 hover:bg-white/20 rounded-xl py-8 transition-colors"
+                          >
+                            <span className="text-white text-4xl font-bold">2</span>
+                            <span className="text-gray-300 text-sm">Singles</span>
+                          </button>
+                          <button
+                            onClick={() => handleCountChoice(4)}
+                            className="flex flex-col items-center justify-center gap-2 bg-white/10 hover:bg-white/20 rounded-xl py-8 transition-colors"
+                          >
+                            <span className="text-white text-4xl font-bold">4</span>
+                            <span className="text-gray-300 text-sm">Doubles</span>
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => setPracticeStep('sport')}
+                          className="text-gray-400 text-sm text-center mt-1 hover:text-white transition-colors"
+                        >
+                          ← Back
+                        </button>
                       </div>
-                    </div>
+                    )}
+
+                    {practiceStep === 'method' && (
+                      <div className="w-full bg-[#1F1F1F] p-6 flex flex-col gap-4 rounded-lg shadow-xl">
+                        <h3 className="text-white text-lg font-semibold text-center">Add Players</h3>
+                        <div className="flex flex-col gap-3">
+                          <button
+                            onClick={handleManual}
+                            className="w-full bg-white/10 hover:bg-white/20 rounded-xl py-5 flex flex-col items-center gap-1 transition-colors"
+                          >
+                            <span className="text-white font-semibold">Manually</span>
+                            <span className="text-gray-400 text-xs">Enter player names yourself</span>
+                          </button>
+                          <button
+                            onClick={handleFromScoreboard}
+                            className="w-full bg-white/10 hover:bg-white/20 rounded-xl py-5 flex flex-col items-center gap-1 transition-colors"
+                          >
+                            <span className="text-white font-semibold">From Scoreboard</span>
+                            <span className="text-gray-400 text-xs">Players scan QR on the display</span>
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => setPracticeStep(sportChoice === 'billiards' ? 'sport' : 'count')}
+                          className="text-gray-400 text-sm text-center mt-1 hover:text-white transition-colors"
+                        >
+                          ← Back
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </DialogContent>

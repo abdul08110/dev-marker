@@ -678,7 +678,7 @@ export const handleSettingsStateUpdate = createAsyncThunk<
   { state: RootState; dispatch: AppDispatch }
 >(
   'sport/handleSettingsUpdate',
-  async ({ format, durationInMinutes, noOfPlayers, streaming, handicap, isRankingEvent }, { dispatch }) => {
+  async ({ format, durationInMinutes, noOfPlayers, streaming, handicap, isRankingEvent }, { dispatch, getState }) => {
     await dispatch(
       updateTimeInMinutes({ timeInMinutes: isRankingEvent ? 0 : timeStringToDecimalMinutes(durationInMinutes) }),
     );
@@ -692,8 +692,14 @@ export const handleSettingsStateUpdate = createAsyncThunk<
     }
 
     if (noOfPlayers === '4') {
-      await dispatch(addPlayer({ teamIndex: 0 }));
-      await dispatch(addPlayer({ teamIndex: 1 }));
+      // Only add empty slots if the second player hasn't already been set (e.g. from MQTT scoreboard flow)
+      const state = getState();
+      if (!state.sport.team1.players[1]?.id) {
+        await dispatch(addPlayer({ teamIndex: 0 }));
+      }
+      if (!state.sport.team2.players[1]?.id) {
+        await dispatch(addPlayer({ teamIndex: 1 }));
+      }
     }
   },
 );
