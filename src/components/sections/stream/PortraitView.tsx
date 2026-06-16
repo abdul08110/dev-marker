@@ -7,6 +7,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import clsx from 'clsx';
 import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
+import { cn } from '@/lib/utils';
 
 interface PortraitStreamDataProps {
   state: StreamingState | null;
@@ -87,9 +88,9 @@ export function PortraitView(props: PortraitStreamDataProps) {
                   <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
                     {activeSet && activeSet?.teamOneScore}
                   </p>
-                  {isTeamOneActive && (
-                    <span className="text-white/70 text-xs font-bold">BREAK {activeTurn && activeTurn?.score}</span>
-                  )}
+                  <span className={cn('text-white/70 text-xs font-bold', isTeamOneActive ? '' : 'invisible')}>
+                    BREAK {activeTurn && activeTurn?.score}
+                  </span>
                 </div>
               </div>
               <p className="font-medium text-[17px] leading-[130%] uppercase text-white line-clamp-1">
@@ -127,9 +128,10 @@ export function PortraitView(props: PortraitStreamDataProps) {
                   <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
                     {activeSet && activeSet?.teamTwoScore}
                   </p>
-                  {isTeamTwoActive && (
-                    <span className="text-white/70 text-xs font-bold">BREAK {activeTurn && activeTurn?.score}</span>
-                  )}
+
+                  <span className={cn('text-white/70 text-xs font-bold', isTeamTwoActive ? '' : 'invisible')}>
+                    BREAK {activeTurn && activeTurn?.score}
+                  </span>
                 </div>
 
                 <div
@@ -231,50 +233,39 @@ export function PortraitView(props: PortraitStreamDataProps) {
             <div className="bg-white/[.12] h-px w-full" />
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{props.state.teamTwoScore}</p>
           </div>
-          <div>
-            <div
-              onClick={() => setShowPreviousFrames((v) => !v)}
-              className="w-full border border-white/[.12] px-3 py-4 rounded bg-[#202020] "
-            >
-              <div className="flex justify-between items-center">
-                <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0 select-none">
-                  Previous Frame Scores
-                </p>
-                {showPreviousFrames ? (
-                  <ChevronUp size={16} className="text-white" />
-                ) : (
-                  <ChevronDown size={16} className="text-white" />
+          {completedSets.length > 0 ? (
+            <div>
+              <div
+                onClick={() => setShowPreviousFrames((v) => !v)}
+                className="w-full border border-white/[.12] px-3 py-4 rounded bg-[#202020] "
+              >
+                <div className="flex justify-between items-center">
+                  <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0 select-none">
+                    Previous Frame Scores
+                  </p>
+                  {showPreviousFrames ? (
+                    <ChevronUp size={16} className="text-white" />
+                  ) : (
+                    <ChevronDown size={16} className="text-white" />
+                  )}
+                </div>
+                {showPreviousFrames && completedSets.length > 0 && (
+                  <div className="mt-4 space-y-4 select-none">
+                    {completedSets.map((set, i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{set.teamOneScore}</p>
+                        <div className="bg-white/[.12] h-px w-full" />
+                        <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Frame {i + 1}</p>
+                        <div className="bg-white/[.12] h-px w-full" />
+                        <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{set.teamTwoScore}</p>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
-              {showPreviousFrames && completedSets.length > 0 && (
-                <div className="mt-4 space-y-4 select-none">
-                  {completedSets.map((set, i) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{set.teamOneScore}</p>
-                      <div className="bg-white/[.12] h-px w-full" />
-                      <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Frame {i + 1}</p>
-                      <div className="bg-white/[.12] h-px w-full" />
-                      <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{set.teamTwoScore}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
-          </div>
-          <div className="flex items-center gap-4 select-none">
-            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamOneStats.potSuccessRatio}%</p>
-            <div className="bg-white/[.12] h-px w-full" />
-            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Pot Success Ratio</p>
-            <div className="bg-white/[.12] h-px w-full" />
-            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamTwoStats.potSuccessRatio}%</p>
-          </div>
-          <div className="flex items-center gap-4 select-none">
-            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamOneStats.safetySuccessRatio}%</p>
-            <div className="bg-white/[.12] h-px w-full" />
-            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Safety Success Ratio</p>
-            <div className="bg-white/[.12] h-px w-full" />
-            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamTwoStats.safetySuccessRatio}%</p>
-          </div>
+          ) : null}
+
           <div className="flex items-center gap-4 select-none">
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamOneStats.highestBreak}</p>
             <div className="bg-white/[.12] h-px w-full" />

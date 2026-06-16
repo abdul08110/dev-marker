@@ -228,16 +228,15 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[min(3vh,3vw)] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8] mb-3">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.9vh,1.9vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Top Banner — tournament name */}
-        {state.tournamentName ? (
-          <div className="absolute pointer-events-none w-full left-0 right-0 -top-1/4 flex justify-center items-center bg-transparent">
-            <div className="relative flex justify-center items-center w-[min(76.5vh,76.5vw)]">
-              <img src="/tournament-name-box.svg" alt="background pattern" className="w-full h-auto" />
-              <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center align-baseline absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate">
-                {state.tournamentName ?? ''}
-              </p>
-            </div>
+
+        <div className="absolute pointer-events-none w-full left-0 right-0 -top-1/4 flex justify-center items-center bg-transparent">
+          <div className="relative flex justify-center items-center w-[min(76.5vh,76.5vw)]">
+            <img src="/tournament-name-box.svg" alt="background pattern" className="w-full h-auto" />
+            <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center align-baseline absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate">
+              {(state.clubName || state.tournamentName) ?? ''}
+            </p>
           </div>
-        ) : null}
+        </div>
 
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
