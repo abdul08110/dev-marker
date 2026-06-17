@@ -27,17 +27,9 @@ export const ProfileCard = ({ imageUrl, size = 100, color = '#ffd500' }: PropsTy
       </svg>
 
       {/* Card Wrapper now matches the full container dimensions */}
-      <div
-        className="card-wrap"
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '100%',
-        }}
-      >
+      <div className="relative w-full h-full">
         {/* Outer Border */}
         <div
-          className="card-border"
           style={{
             position: 'absolute',
             inset: 0,
@@ -49,12 +41,10 @@ export const ProfileCard = ({ imageUrl, size = 100, color = '#ffd500' }: PropsTy
 
         {/* Inner Image Card */}
         <div
-          className="card"
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url(${imageUrl})`,
-            backgroundNoRepeat: 'no-repeat',
+            backgroundImage: `url(${imageUrl})`,
             backgroundPosition: 'center center',
             backgroundSize: 'cover',
             clipPath: `url(#${cardClipId})`,

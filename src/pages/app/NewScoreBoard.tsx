@@ -19,6 +19,7 @@ const BALL_IMAGE_MAP: Partial<Record<SnookerPointType, string>> = {
   [SnookerPointType.FOUL]: '/images/balls/placeholder-ball.svg',
 };
 import TimerDial from './TimerDial';
+import { ProfileCard } from '@/components/ProfileCard';
 
 interface NewScoreBoardProps {
   state: ScoreBoardState;
@@ -350,17 +351,18 @@ function PlayerCard({
               </div>
             </div>
           ) : (
-            <div
-              className="bg-[#FFD400] p-[2px] size-[120px] relative rounded-xl overflow-hidden shrink-0"
-              style={{ clipPath: 'polygon(24px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 24px)' }}
-            >
-              <ImageWithFallback
-                style={{ clipPath: 'polygon(24px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 24px)' }}
-                className="object-cover rounded-xl w-full h-full"
-                fallback="/images/user-dummy-pic.png"
-                src={profilePhoto ?? '/images/user-dummy-pic.png'}
-              />
-            </div>
+            // <div
+            //   className="bg-[#FFD400] p-[2px] size-[120px] relative rounded-xl overflow-hidden shrink-0"
+            //   style={{ clipPath: 'polygon(24px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 24px)' }}
+            // >
+            //   <ImageWithFallback
+            //     style={{ clipPath: 'polygon(24px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 24px)' }}
+            //     className="object-cover rounded-xl w-full h-full"
+            //     fallback="/images/user-dummy-pic.png"
+            //     src={profilePhoto ?? '/images/user-dummy-pic.png'}
+            //   />
+            // </div>
+            <ProfileCard imageUrl={profilePhoto ?? '/images/empty-user.svg'} size={120} />
           )}
 
           {/* Player name(s) + handicap */}

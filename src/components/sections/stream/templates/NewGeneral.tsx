@@ -1,7 +1,8 @@
-import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
 import { convertHandicapToString, generatePlayerName } from '@/utils/functions';
+import { ProfileCard } from '@/components/ProfileCard';
+import { useFluidPx } from '@/hooks/useFluidPx';
 
 interface GeneralTemplateProps {
   state: StreamingState;
@@ -9,9 +10,6 @@ interface GeneralTemplateProps {
   activeSet: Set | undefined;
   isTv: boolean;
 }
-
-const CLIP_PATH = 'polygon(min(2.2vh,2.2vw) 0%, 100% 0%, 100% 100%, 0% 100%, 0% min(2.2vh,2.2vw))';
-const CLIP_PATH_SM = 'polygon(min(1vh,1vw) 0%, 100% 0%, 100% 100%, 0% 100%, 0% min(1vh,1vw))';
 
 const YELLOW_CARD_STYLE = {
   background:
@@ -41,6 +39,10 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
   const breakScore = activeTurn?.score ?? 0;
 
+  // Fluid px for ProfileCard — mirrors min(Xvh, Xvw) via the shared hook
+  const profileSize = useFluidPx(0.067); // ≈ 72px at 1080p, matches size-[min(6.7vh,6.7vw)]
+  const profileSizeSm = useFluidPx(0.05); // ≈ 54px at 1080p, matches size-[min(5vh,5vw)]
+
   const leftCardStyle = isSideOneActive ? YELLOW_CARD_STYLE : PINK_CARD_STYLE;
   const rightCardStyle = isSideTwoActive ? YELLOW_CARD_STYLE : PINK_CARD_STYLE;
   const leftShadow = isSideOneActive ? 'shadow-[0px_3px_20.8px_0px_#DCF756]' : 'shadow-[0px_3px_10.8px_0px_#E38BF9]';
@@ -51,26 +53,16 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Double layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="relative shrink-0 size-[min(6.7vh,6.7vw)]">
-        <div
-          className="absolute top-0 left-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(5vh,5vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
-          style={{ clipPath: CLIP_PATH_SM, zIndex: 1 }}
-        >
-          <ImageWithFallback
-            style={{ clipPath: CLIP_PATH_SM }}
-            className="object-cover rounded-[min(1.1vh,1.1vw)] w-full h-full"
-            fallback="/images/user-dummy-pic.png"
-            src={state.sideOnePlayerOne.profilePhoto ?? '/images/user-dummy-pic.png'}
+        <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
+          <ProfileCard
+            imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'}
+            size={profileSizeSm}
           />
         </div>
-        <div
-          className="absolute bottom-0 right-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(5vh,5vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
-          style={{ clipPath: CLIP_PATH_SM, zIndex: 2 }}
-        >
-          <ImageWithFallback
-            style={{ clipPath: CLIP_PATH_SM }}
-            className="object-cover rounded-[min(1.1vh,1.1vw)] w-full h-full"
-            fallback="/images/user-dummy-pic.png"
-            src={state.sideOnePlayerTwo?.profilePhoto ?? '/images/user-dummy-pic.png'}
+        <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
+          <ProfileCard
+            imageUrl={state.sideOnePlayerTwo?.profilePhoto ?? '/images/empty-user.svg'}
+            size={profileSizeSm}
           />
         </div>
       </div>
@@ -87,12 +79,8 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   ) : hasTeamName ? (
     /* Team Tournament layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
-      <div className="overflow-hidden size-[min(6.7vh,6.7vw)] rounded-full shrink-0">
-        <ImageWithFallback
-          fallback="/images/user-dummy-pic.png"
-          className="size-full object-cover"
-          src={state.sideOnePlayerOne.profilePhoto ?? '/images/user-dummy-pic.png'}
-        />
+      <div className="shrink-0">
+        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
       </div>
       <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -112,16 +100,8 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   ) : (
     /* Single player layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
-      <div
-        className="bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(6.7vh,6.7vw)] relative rounded-[min(1.1vh,1.1vw)] overflow-hidden shrink-0"
-        style={{ clipPath: CLIP_PATH }}
-      >
-        <ImageWithFallback
-          style={{ clipPath: CLIP_PATH }}
-          className="object-cover rounded-[min(1.1vh,1.1vw)] w-full h-full"
-          fallback="/images/user-dummy-pic.png"
-          src={state.sideOnePlayerOne.profilePhoto ?? '/images/user-dummy-pic.png'}
-        />
+      <div className="shrink-0">
+        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
       </div>
       <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -140,26 +120,16 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Double layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="relative shrink-0 size-[min(6.7vh,6.7vw)]">
-        <div
-          className="absolute top-0 left-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(5vh,5vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
-          style={{ clipPath: CLIP_PATH_SM, zIndex: 1 }}
-        >
-          <ImageWithFallback
-            style={{ clipPath: CLIP_PATH_SM }}
-            className="object-cover rounded-[min(1.1vh,1.1vw)] w-full h-full"
-            fallback="/images/user-dummy-pic.png"
-            src={state.sideTwoPlayerOne.profilePhoto ?? '/images/user-dummy-pic.png'}
+        <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
+          <ProfileCard
+            imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'}
+            size={profileSizeSm}
           />
         </div>
-        <div
-          className="absolute bottom-0 right-0 bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(5vh,5vw)] rounded-[min(1.1vh,1.1vw)] overflow-hidden"
-          style={{ clipPath: CLIP_PATH_SM, zIndex: 2 }}
-        >
-          <ImageWithFallback
-            style={{ clipPath: CLIP_PATH_SM }}
-            className="object-cover rounded-[min(1.1vh,1.1vw)] w-full h-full"
-            fallback="/images/user-dummy-pic.png"
-            src={state.sideTwoPlayerTwo?.profilePhoto ?? '/images/user-dummy-pic.png'}
+        <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
+          <ProfileCard
+            imageUrl={state.sideTwoPlayerTwo?.profilePhoto ?? '/images/empty-user.svg'}
+            size={profileSizeSm}
           />
         </div>
       </div>
@@ -176,12 +146,8 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   ) : hasTeamName ? (
     /* Team Tournament layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
-      <div className="overflow-hidden size-[min(6.7vh,6.7vw)] rounded-full shrink-0">
-        <ImageWithFallback
-          fallback="/images/user-dummy-pic.png"
-          className="size-full object-cover"
-          src={state.sideTwoPlayerOne.profilePhoto ?? '/images/user-dummy-pic.png'}
-        />
+      <div className="shrink-0">
+        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
       </div>
       <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -201,16 +167,8 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   ) : (
     /* Single player layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
-      <div
-        className="bg-[#FFD400] p-[min(0.19vh,0.19vw)] size-[min(6.7vh,6.7vw)] relative rounded-[min(1.1vh,1.1vw)] overflow-hidden shrink-0"
-        style={{ clipPath: CLIP_PATH }}
-      >
-        <ImageWithFallback
-          style={{ clipPath: CLIP_PATH }}
-          className="object-cover rounded-[min(1.1vh,1.1vw)] w-full h-full"
-          fallback="/images/user-dummy-pic.png"
-          src={state.sideTwoPlayerOne.profilePhoto ?? '/images/user-dummy-pic.png'}
-        />
+      <div className="shrink-0">
+        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
       </div>
       <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -231,7 +189,15 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         <div className="absolute pointer-events-none w-full left-0 right-0 -top-1/4 flex justify-center items-center bg-transparent">
           <div className="relative flex justify-center items-center w-[min(76.5vh,76.5vw)]">
-            <img src="/tournament-name-box.svg" alt="background pattern" className="w-full h-auto" />
+            <div className="absolute left-[5%] right-[5%] top-0 h-2 pointer-events-none" />
+            <img
+              src="/tournament-name-box.svg"
+              alt="background pattern"
+              className="w-full h-auto"
+              style={{
+                filter: 'drop-shadow(0px 0px 5px #BA91C8)',
+              }}
+            />
             <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center align-baseline absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate">
               {(state.clubName || state.tournamentName) ?? ''}
             </p>
@@ -247,6 +213,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             ].join(' ')}
           >
             <div className="relative w-[min(22.2vh,22.2vw)]">
+              <div
+                className="absolute inset-0"
+                style={{
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  clipPath: 'polygon(1% 95%, 5% 25%, 12% 0%, 88% 0%, 95% 25%, 99% 95%)',
+                }}
+              />
               <svg
                 viewBox="0 0 210 52"
                 fill="none"
@@ -371,8 +345,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           }}
         >
           {/* Format tag below center panel */}
-          <div className="absolute -bottom-[min(3.4vh,3.4vw)] w-full flex justify-center items-center z-10">
-            <div className="relative w-[min(22.2vh,22.2vw)] h-[min(4.4vh,4.4vw)]">
+          <div className="absolute -bottom-[min(3.5vh,3.5vw)] w-full flex justify-center items-center ">
+            <div
+              className="relative w-[min(22.2vh,22.2vw)] h-[min(4.4vh,4.4vw)]"
+              style={{
+                filter: 'drop-shadow(0px 0px 4px #BA91C8)',
+              }}
+            >
               <svg
                 width="100%"
                 height="100%"
@@ -443,7 +422,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
             {/* Current break / turn score */}
             <div
-              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border shadow-[0px_4px_16px_0px_#FFFFFF40] w-[min(11vh,12vw)] flex justify-center items-center"
+              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border shadow-[0px_4px_16px_0px_#FFFFFF40] w-[min(11vh,12vw)] flex justify-center items-center "
               style={{
                 borderImageSource:
                   'linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%)',

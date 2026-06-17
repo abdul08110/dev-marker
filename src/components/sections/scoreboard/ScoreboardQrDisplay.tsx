@@ -4,6 +4,7 @@ import { ClubData } from '@/stores/types';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ProfileCard } from '@/components/ProfileCard';
 import { CSSProperties, useEffect, useState } from 'react';
+import { useFluidPx } from '@/hooks/useFluidPx';
 
 interface Props {
   qrFlowState: QrFlowState;
@@ -15,18 +16,6 @@ const glassStyle: CSSProperties = {
   WebkitBackdropFilter: 'blur(0.5px)',
   boxShadow: 'inset 0 0 0.5px 0.5px rgba(255,255,255,0.2)',
 };
-
-// ProfileCard uses inline px sizing so we derive fluid px values from the viewport.
-// Pattern mirrors min(Xvh, Xvw) in CSS — using the smaller viewport dimension.
-function useFluidPx(factor: number) {
-  const [px, setPx] = useState(() => Math.round(Math.min(window.innerHeight, window.innerWidth) * factor));
-  useEffect(() => {
-    const update = () => setPx(Math.round(Math.min(window.innerHeight, window.innerWidth) * factor));
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, [factor]);
-  return px;
-}
 
 // Singles corner-bracket QR  (h-12 / offset-6 brackets, size 300)
 function SinglesQr({ value }: { value: string }) {
