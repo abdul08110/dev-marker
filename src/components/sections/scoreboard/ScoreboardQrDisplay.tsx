@@ -200,7 +200,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
           </div>
         </div>
         <p className="text-score-text font-semibold text-[min(3vh,3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end py-[min(1vh,1vw)]">
-          Scan to Play
+          {qrFlowState.sport ?? 'Scan to play'}
         </p>
       </div>
     </main>

@@ -6,6 +6,7 @@ import { ApiResponse } from '@/types';
 interface InitiateScoreboardEntryProps {
   venueId: string;
   playerCount: 2 | 4;
+  sport: 'snooker' | 'billiards';
 }
 
 const useInitiateScoreboardEntry = () => {

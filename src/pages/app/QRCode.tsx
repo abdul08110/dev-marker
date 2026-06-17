@@ -52,7 +52,7 @@ const WaitingForPlayers = () => {
       return;
     }
 
-    initiateScoreboardEntry({ venueId: activeClub.venueId, playerCount }).then((ok) => {
+    initiateScoreboardEntry({ venueId: activeClub.venueId, playerCount, sport }).then((ok) => {
       if (ok) setInitiated(true);
     });
   }, []);
@@ -61,15 +61,23 @@ const WaitingForPlayers = () => {
     if (!activeClub || !initiated) return;
 
     const brokerUrl = import.meta.env.VITE_MQTT_URL;
-    const topic = `${activeClub.venueId}/marker/add-player`;
+    const addPlayerTopic = `${activeClub.venueId}/marker/add-player`;
+    const matchEndTopic = `${activeClub.venueId}/match-end`;
 
     const client = mqtt.connect(brokerUrl, { keepalive: 60, reconnectPeriod: 2000 });
 
     client.on('connect', () => {
-      client.subscribe(topic);
+      client.subscribe(addPlayerTopic);
+      client.subscribe(matchEndTopic);
     });
 
-    client.on('message', (_topic, message) => {
+    client.on('message', (topic, message) => {
+      if (topic === matchEndTopic) {
+        cancelScoreboardEntry({ venueId: activeClub.venueId }).finally(() => {
+          navigate('/app/home');
+        });
+        return;
+      }
       try {
         const data: MqttPlayer = JSON.parse(message.toString());
         setPlayers((prev) => {
