@@ -31,7 +31,7 @@ function useFluidPx(factor: number) {
 // Singles corner-bracket QR  (h-12 / offset-6 brackets, size 300)
 function SinglesQr({ value }: { value: string }) {
   return (
-    <div className="flex justify-center items-center relative">
+    <div className="w-[min(35vh,35vw)] flex justify-center items-center relative grow">
       <div className="h-[min(4.5vh,4.5vw)] bg-white w-px absolute left-0 top-0" />
       <div className="h-[min(4.5vh,4.5vw)] bg-white w-px absolute left-[min(2.25vh,2.25vw)] -top-[min(2.25vh,2.25vw)] rotate-90" />
       <div className="h-[min(4.5vh,4.5vw)] bg-white w-px absolute left-0 bottom-0" />
@@ -153,7 +153,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
 
       {/* Body */}
       {isSingles ? (
-        <div className="flex-1 w-full flex justify-around items-center gap-[min(7.5vh,7.5vw)] py-[min(5vh,5vw)] px-[100px]">
+        <div className="flex-1 w-full flex justify-around items-center gap-[min(7.5vh,7.5vw)] py-[min(5vh,5vw)] px-[min(9vh,9vw)]">
           <PlayerRowSingles player={players[1]} profileSize={profileSizeSingles} />
           <SinglesQr value={singlesQrValue} />
           <PlayerRowSingles player={players[2]} profileSize={profileSizeSingles} />
