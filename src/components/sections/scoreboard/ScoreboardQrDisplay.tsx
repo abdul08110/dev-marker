@@ -3,8 +3,9 @@ import { QrFlowPlayer, QrFlowState } from '@/hooks/useScoreboard';
 import { ClubData } from '@/stores/types';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ProfileCard } from '@/components/ProfileCard';
-import { CSSProperties, useEffect, useState } from 'react';
+import { CSSProperties } from 'react';
 import { useFluidPx } from '@/hooks/useFluidPx';
+import { ScoreBoardState } from '@/hooks/useScoreboard';
 
 interface Props {
   qrFlowState: QrFlowState;
@@ -189,7 +190,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
           </div>
         </div>
         <p className="text-score-text font-semibold text-[min(3vh,3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end py-[min(1vh,1vw)]">
-          {qrFlowState.sport ?? 'Scan to play'}
+          Scan to play
         </p>
       </div>
     </main>

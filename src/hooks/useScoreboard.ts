@@ -23,7 +23,6 @@ export interface QrFlowState {
   isActive: boolean;
   playerCount: 2 | 4;
   players: Record<number, QrFlowPlayer>;
-  sport: string | null;
 }
 
 export interface ScoreBoardState {
@@ -76,7 +75,6 @@ const useScoreboard = () => {
     isActive: false,
     playerCount: 2,
     players: {},
-    sport: null,
   });
   const [searchParams] = useSearchParams();
   const searchParamsMatchId = searchParams.get('matchId');
@@ -267,7 +265,7 @@ const useScoreboard = () => {
         break;
       case 'match-end':
         setScoreboardData(null);
-        setQrFlowState({ isActive: false, playerCount: 2, players: {}, sport: null });
+        setQrFlowState({ isActive: false, playerCount: 2, players: {} });
         navigate('/app/scoreboard');
         setShowTimeOverAlert(false);
         break;
@@ -288,7 +286,6 @@ const useScoreboard = () => {
           isActive: true,
           playerCount: parsedMessage.playerCount as 2 | 4,
           players: {},
-          sport: parsedMessage.sport ?? null,
         });
         break;
       case 'scoreboard/add-player':
@@ -301,7 +298,7 @@ const useScoreboard = () => {
         }));
         break;
       case 'scoreboard/cancel':
-        setQrFlowState({ isActive: false, playerCount: 2, players: {}, sport: null });
+        setQrFlowState({ isActive: false, playerCount: 2, players: {} });
         break;
     }
   };
