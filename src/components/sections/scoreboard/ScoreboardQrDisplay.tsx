@@ -45,7 +45,7 @@ function SinglesQr({ value }: { value: string }) {
         value={value}
         size={300}
         fgColor="white"
-        className="p-[min(3vh,3vw)] h-auto max-w-full w-full"
+        className="p-[min(4vh,4vw)] h-auto max-w-full w-full"
       />
     </div>
   );
@@ -54,7 +54,7 @@ function SinglesQr({ value }: { value: string }) {
 // Doubles corner-bracket QR  (h-8 / offset-4 brackets, size 300)
 function DoublesQr({ value }: { value: string }) {
   return (
-    <div className="flex justify-center items-center relative">
+    <div className="w-[min(35vh,35vw)] flex justify-center items-center relative">
       <div className="h-[min(3vh,3vw)] bg-white w-px absolute left-0 top-0" />
       <div className="h-[min(3vh,3vw)] bg-white w-px absolute left-[min(1.5vh,1.5vw)] -top-[min(1.5vh,1.5vw)] rotate-90" />
       <div className="h-[min(3vh,3vw)] bg-white w-px absolute left-0 bottom-0" />
@@ -76,7 +76,7 @@ function DoublesQr({ value }: { value: string }) {
 
 function PlayerRowSingles({ player, profileSize }: { player: QrFlowPlayer | undefined; profileSize: number }) {
   return (
-    <div className="relative p-[min(2.2vh,2.2vw)] flex items-center gap-[min(1.5vh,1.5vw)] h-fit">
+    <div className="relative p-[min(2.2vh,2.2vw)] flex items-center gap-[min(1.5vh,1.5vw)] h-fit grow ">
       <div className="absolute -inset-[1px] pointer-events-none" style={glassStyle} />
       <div className="shrink-0">
         <ProfileCard
@@ -141,9 +141,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
         </div>
 
         <ImageWithFallback
-          className="object-cover justify-self-center"
-          width={300}
-          height={86}
+          className="justify-self-center w-[min(40vh,40vw)] h-auto"
           fallback="/images/clubliv-final-logo.png"
           src="/images/logos/clubliv-logo.svg"
         />
@@ -155,7 +153,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
 
       {/* Body */}
       {isSingles ? (
-        <div className="flex-1 w-full grid grid-cols-3 items-center gap-[min(7.5vh,7.5vw)] py-[min(5vh,5vw)]">
+        <div className="flex-1 w-full flex justify-around items-center gap-[min(7.5vh,7.5vw)] py-[min(5vh,5vw)] px-[100px]">
           <PlayerRowSingles player={players[1]} profileSize={profileSizeSingles} />
           <SinglesQr value={singlesQrValue} />
           <PlayerRowSingles player={players[2]} profileSize={profileSizeSingles} />
@@ -194,9 +192,9 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
         <p className="text-score-text font-semibold text-[min(3vh,3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-start py-[min(1vh,1vw)]">
           {isSingles ? 'Singles' : 'Doubles'}
         </p>
-        <div className="justify-self-center bg-[url(/table-number-bg.svg)] bg-no-repeat relative h-16 w-[289px]">
-          <div className="px-4 absolute inset-0 flex justify-center items-center">
-            <p className="text-score-text font-semibold text-3xl drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase">
+        <div className="justify-self-center bg-[url(/table-number-bg.svg)] bg-no-repeat bg-contain relative h-[min(6vh,6vw)] w-[min(27vh,27vw)]">
+          <div className="px-[min(1.5vh,1.5vw)] absolute inset-0 flex justify-center items-center">
+            <p className="text-score-text font-semibold text-[min(3vh,3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase">
               Table {activeClub?.venueNo}
             </p>
           </div>
