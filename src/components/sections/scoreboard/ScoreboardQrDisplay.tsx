@@ -2,6 +2,7 @@ import QRCode from 'react-qr-code';
 import { QrFlowPlayer, QrFlowState } from '@/hooks/useScoreboard';
 import { ClubData } from '@/stores/types';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
+import { ProfileCard } from '@/components/ProfileCard';
 
 interface Props {
   qrFlowState: QrFlowState;
@@ -52,8 +53,6 @@ function PlayerCard({ player }: { player: QrFlowPlayer }) {
 function QrSlot({ slot, player, venueId }: { slot: SlotConfig; player: QrFlowPlayer | undefined; venueId: string }) {
   const qrValue = `${venueId}_${slot.playerNumber}`;
 
-  console.log({ qrValue });
-
   return (
     <div className="flex flex-col items-center gap-4">
       <p className="text-score-text text-lg font-semibold uppercase tracking-wide opacity-70">{slot.label}</p>
@@ -80,6 +79,9 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
   const filledCount = Object.keys(players).length;
 
   const isSingles = playerCount === 2;
+
+  const photoUrl =
+    'https://i2-prod.mirror.co.uk/article34787567.ece/ALTERNATES/s1200b/0_Stade-Brestois-29-v-Paris-Saint-Germain-UEFA-Champions-League-202425-League-Knockout-Play-off-Fir.jpg';
 
   return (
     <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center min-h-screen px-10 py-7 bg-no-repeat flex flex-col justify-between gap-10">
@@ -108,7 +110,165 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
           {filledCount} / {playerCount} Players
         </p>
       </div>
+      <div className="flex justify-between items-center gap-5">
+        <div className="space-y-20 text-center">
+          <p className="font-medium text-3xl leading-[130%] uppercase text-score-text">Team a</p>
+          <div className="flex justify-center items-center relative">
+            <div className="h-8 bg-white w-px absolute left-0 top-0"></div>
+            <div className="h-8 bg-white w-px absolute left-4 -top-4 rotate-90"></div>
+            <div className="h-8 bg-white w-px absolute left-0 bottom-0"></div>
+            <div className="h-8 bg-white w-px absolute left-4 -bottom-4 rotate-90"></div>
+            <div className="h-8 bg-white w-px absolute top-0 right-0"></div>
+            <div className="h-8 bg-white w-px absolute -top-4 right-4 rotate-90"></div>
+            <div className="h-8 bg-white w-px absolute bottom-0 right-0"></div>
+            <div className="h-8 bg-white w-px absolute -bottom-4 right-4 rotate-90"></div>
 
+            <QRCode
+              bgColor="transparent"
+              value={'123'}
+              size={500}
+              fgColor="white"
+              className="p-4 h-auto max-w-full w-full"
+            />
+          </div>
+        </div>
+        <div className="w-full space-y-8">
+          <div className="space-y-3">
+            <div className="relative p-4 flex items-center gap-4 h-fit">
+              <div
+                className="absolute -inset-[1px] pointer-events-none"
+                style={{
+                  backdropFilter: 'blur(0.5px)',
+                  WebkitBackdropFilter: 'blur(0.5px)',
+                  boxShadow: `inset 0 0 0.5px 0.5px rgba(255,255,255,0.2)
+              `,
+                }}
+              />
+              <ProfileCard imageUrl={photoUrl} size={60} />
+
+              <p className="font-medium text-xl leading-[130%] uppercase text-score-text z-10"> Player 1</p>
+            </div>
+
+            {/* Empty user: user is not scanned yet */}
+            <div className="relative p-4 flex items-center gap-4 h-fit">
+              <div
+                className="absolute -inset-[1px] pointer-events-none"
+                style={{
+                  backdropFilter: 'blur(0.5px)',
+                  WebkitBackdropFilter: 'blur(0.5px)',
+                  boxShadow: `inset 0 0 0.5px 0.5px rgba(255,255,255,0.2)
+              `,
+                }}
+              />
+              <ProfileCard imageUrl={'/images/empty-user.svg'} size={60} color="white" />
+
+              <p className="font-medium text-xl leading-[130%] uppercase text-score-text z-10"> ----------------</p>
+            </div>
+          </div>
+          <hr className="border-white" />
+
+          <div className="space-y-3">
+            <div className="relative p-4 flex items-center gap-4 h-fit">
+              <div
+                className="absolute -inset-[1px] pointer-events-none"
+                style={{
+                  backdropFilter: 'blur(0.5px)',
+                  WebkitBackdropFilter: 'blur(0.5px)',
+                  boxShadow: `inset 0 0 0.5px 0.5px rgba(255,255,255,0.2)
+              `,
+                }}
+              />
+              <ProfileCard imageUrl={photoUrl} size={60} />
+
+              <p className="font-medium text-xl leading-[130%] uppercase text-score-text z-10"> Player 1</p>
+            </div>
+            <div className="relative p-4 flex items-center gap-4 h-fit">
+              <div
+                className="absolute -inset-[1px] pointer-events-none"
+                style={{
+                  backdropFilter: 'blur(0.5px)',
+                  WebkitBackdropFilter: 'blur(0.5px)',
+                  boxShadow: `inset 0 0 0.5px 0.5px rgba(255,255,255,0.2)
+              `,
+                }}
+              />
+              <ProfileCard imageUrl={photoUrl} size={60} />
+
+              <p className="font-medium text-xl leading-[130%] uppercase text-score-text z-10"> Player 1</p>
+            </div>
+          </div>
+        </div>
+        <div className="space-y-20 text-center">
+          <p className="font-medium text-3xl leading-[130%] uppercase text-score-text">Team b</p>
+          <div className="flex justify-center items-center relative">
+            <div className="h-8 bg-white w-px absolute left-0 top-0"></div>
+            <div className="h-8 bg-white w-px absolute left-4 -top-4 rotate-90"></div>
+            <div className="h-8 bg-white w-px absolute left-0 bottom-0"></div>
+            <div className="h-8 bg-white w-px absolute left-4 -bottom-4 rotate-90"></div>
+            <div className="h-8 bg-white w-px absolute top-0 right-0"></div>
+            <div className="h-8 bg-white w-px absolute -top-4 right-4 rotate-90"></div>
+            <div className="h-8 bg-white w-px absolute bottom-0 right-0"></div>
+            <div className="h-8 bg-white w-px absolute -bottom-4 right-4 rotate-90"></div>
+
+            <QRCode
+              bgColor="transparent"
+              value={'123'}
+              size={500}
+              fgColor="white"
+              className="p-4 h-auto max-w-full w-full"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className=" w-full grid grid-cols-3 items-center gap-20">
+        <div className="relative p-6 flex items-center gap-4 h-fit">
+          <div
+            className="absolute -inset-[1px] pointer-events-none"
+            style={{
+              backdropFilter: 'blur(0.5px)',
+              WebkitBackdropFilter: 'blur(0.5px)',
+              boxShadow: `inset 0 0 0.5px 0.5px rgba(255,255,255,0.2)
+              `,
+            }}
+          />
+          <ProfileCard imageUrl={photoUrl} size={80} />
+
+          <p className="font-medium text-3xl leading-[130%] uppercase text-score-text z-10"> Player 1</p>
+        </div>
+        <div className="flex justify-center items-center relative">
+          <div className="h-12 bg-white w-px absolute left-0 top-0"></div>
+          <div className="h-12 bg-white w-px absolute left-6 -top-6 rotate-90"></div>
+          <div className="h-12 bg-white w-px absolute left-0 bottom-0"></div>
+          <div className="h-12 bg-white w-px absolute left-6 -bottom-6 rotate-90"></div>
+          <div className="h-12 bg-white w-px absolute top-0 right-0"></div>
+          <div className="h-12 bg-white w-px absolute -top-6 right-6 rotate-90"></div>
+          <div className="h-12 bg-white w-px absolute bottom-0 right-0"></div>
+          <div className="h-12 bg-white w-px absolute -bottom-6 right-6 rotate-90"></div>
+
+          <QRCode
+            bgColor="transparent"
+            value={'123'}
+            size={300}
+            fgColor="white"
+            className="p-8 h-auto max-w-full w-full"
+          />
+        </div>
+        <div className="relative p-6 flex items-center gap-4 h-fit">
+          <div
+            className="absolute -inset-[1px] pointer-events-none"
+            style={{
+              backdropFilter: 'blur(0.5px)',
+              WebkitBackdropFilter: 'blur(0.5px)',
+              boxShadow: `inset 0 0 0.5px 0.5px rgba(255,255,255,0.2)
+              `,
+            }}
+          />
+          <ProfileCard imageUrl={photoUrl} size={80} color="white" />
+
+          <p className="font-medium text-3xl leading-[130%] uppercase text-score-text z-10"> Player 1</p>
+        </div>
+      </div>
       {/* QR / Player slots */}
       {isSingles ? (
         // Singles — side by side

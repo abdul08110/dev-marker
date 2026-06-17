@@ -47,7 +47,7 @@ import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { NoOfPlayersDefault, SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
-import { setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
+import { addPlayer, setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
 
 const useSnookerScoring = () => {
   // REDUX STATE
@@ -155,6 +155,19 @@ const useSnookerScoring = () => {
 
     fetchMatchData();
   }, [matchId, dispatch]);
+
+  // Pre-build second player slots when 4-player mode is chosen upfront (manual flow).
+  // Skip if slots already have IDs — that means they came from the MQTT scoreboard flow.
+  useEffect(() => {
+    if (defaultNoOfPlayers === '4') {
+      if (!snookerScoring.team1.players[1]?.id) {
+        dispatch(addPlayer({ teamIndex: 0 }));
+      }
+      if (!snookerScoring.team2.players[1]?.id) {
+        dispatch(addPlayer({ teamIndex: 1 }));
+      }
+    }
+  }, []);
 
   // SIDE EFFECTS
   useEffect(() => {
@@ -449,8 +462,18 @@ const useSnookerScoring = () => {
         teamIndex: selectedTeamIndex,
       }),
     );
-    if (selectedPlayerIndex === 0 && selectedTeamIndex === 0 && snookerScoring.team2.players[0].id === null) {
+
+    // 2-player: team1/p0 → team2/p0 → done
+    // 4-player: team1/p0 → team2/p0 → team1/p1 → team2/p1 → done
+    if (selectedTeamIndex === 0 && selectedPlayerIndex === 0 && snookerScoring.team2.players[0].id === null) {
       setSelectedTeamIndex(1);
+      setSelectedPlayerIndex(0);
+    } else if (selectedTeamIndex === 1 && selectedPlayerIndex === 0 && defaultNoOfPlayers === '4' && !snookerScoring.team1.players[1]?.id) {
+      setSelectedTeamIndex(0);
+      setSelectedPlayerIndex(1);
+    } else if (selectedTeamIndex === 0 && selectedPlayerIndex === 1 && !snookerScoring.team2.players[1]?.id) {
+      setSelectedTeamIndex(1);
+      setSelectedPlayerIndex(1);
     } else {
       setOpenPlayerSelectCard(false);
     }
