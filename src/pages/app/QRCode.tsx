@@ -107,7 +107,7 @@ const WaitingForPlayers = () => {
     players.forEach((mqttPlayer, playerNumber) => {
       const { teamIndex, playerIndex } = playerSlot(playerNumber, playerCount);
       const player: Player = {
-        name: `${mqttPlayer.playerName} ${mqttPlayer.playerLastName}`.trim(),
+        name: `${mqttPlayer.playerName} ${mqttPlayer?.playerLastName || ''}`.trim(),
         id: mqttPlayer.playerId,
         profilePhoto: mqttPlayer.profilePhoto ?? null,
       };
@@ -153,9 +153,7 @@ const WaitingForPlayers = () => {
       <div className="flex-1 flex flex-col items-center justify-center px-6 gap-8">
         <div className="text-center space-y-2">
           <h1 className="text-white text-2xl font-bold">Waiting for Players</h1>
-          <p className="text-gray-400 text-sm">
-            Ask players to scan the QR code on the scoreboard
-          </p>
+          <p className="text-gray-400 text-sm">Ask players to scan the QR code on the scoreboard</p>
         </div>
 
         <div className="w-full max-w-sm space-y-3">
@@ -186,7 +184,7 @@ const WaitingForPlayers = () => {
                   <p className="text-xs text-gray-400 uppercase tracking-wide">{slotLabels[i]}</p>
                   {arrived ? (
                     <p className="text-white font-medium truncate">
-                      {arrived.playerName} {arrived.playerLastName}
+                      {arrived.playerName} {arrived?.playerLastName || ''}
                     </p>
                   ) : (
                     <p className="text-gray-500 text-sm">Waiting…</p>

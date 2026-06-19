@@ -90,8 +90,7 @@ const useSnookerScoring = () => {
   const [searchParams] = useSearchParams();
   const matchId = searchParams.get('matchId');
   const playerCountParam = searchParams.get('playerCount');
-  const defaultNoOfPlayers: NoOfPlayersDefault =
-    playerCountParam === '4' ? '4' : '2';
+  const defaultNoOfPlayers: NoOfPlayersDefault = playerCountParam === '4' ? '4' : '2';
   useBackButtonHandler(handleBackButtonClick);
 
   // API
@@ -192,14 +191,23 @@ const useSnookerScoring = () => {
     const { teamIndex, playerIndex } = playerSlot(data.playerNumber, count);
     const player: Player = {
       id: data.playerId,
-      name: `${data.playerName} ${data.playerLastName}`.trim(),
+      name: `${data.playerName} ${data?.playerLastName || ''}`.trim(),
       profilePhoto: data.profilePhoto ?? null,
     };
     dispatch(setTeamPlayer({ teamIndex, playerIndex, player }));
 
-    const order: { t: number; p: number }[] = count === 4
-      ? [{ t: 0, p: 0 }, { t: 1, p: 0 }, { t: 0, p: 1 }, { t: 1, p: 1 }]
-      : [{ t: 0, p: 0 }, { t: 1, p: 0 }];
+    const order: { t: number; p: number }[] =
+      count === 4
+        ? [
+            { t: 0, p: 0 },
+            { t: 0, p: 1 },
+            { t: 1, p: 0 },
+            { t: 1, p: 1 },
+          ]
+        : [
+            { t: 0, p: 0 },
+            { t: 1, p: 0 },
+          ];
 
     const isNowFilled = (t: number, p: number) => {
       if (t === teamIndex && p === playerIndex) return true;
@@ -223,10 +231,14 @@ const useSnookerScoring = () => {
     const topic = `${clubs.activeClub.venueId}/marker/add-player`;
     client.on('connect', () => client.subscribe(topic));
     client.on('message', (_t, msg) => {
-      try { onMqttPlayerRef.current?.(JSON.parse(msg.toString())); } catch {}
+      try {
+        onMqttPlayerRef.current?.(JSON.parse(msg.toString()));
+      } catch {}
     });
     client.on('error', () => client.end());
-    return () => { client.end(); };
+    return () => {
+      client.end();
+    };
   }, [clubs.activeClub?.venueId, snookerScoring.matchId]);
 
   // HANDLERS
@@ -270,8 +282,12 @@ const useSnookerScoring = () => {
       isTeamReveresed = true;
     }
 
-    const teamOneHandicap = isTeamReveresed ? currentImplementationSnookerScoring.teamTwoHandicap : currentImplementationSnookerScoring.teamOneHandicap;
-    const teamTwoHandicap = isTeamReveresed ? currentImplementationSnookerScoring.teamOneHandicap : currentImplementationSnookerScoring.teamTwoHandicap;
+    const teamOneHandicap = isTeamReveresed
+      ? currentImplementationSnookerScoring.teamTwoHandicap
+      : currentImplementationSnookerScoring.teamOneHandicap;
+    const teamTwoHandicap = isTeamReveresed
+      ? currentImplementationSnookerScoring.teamOneHandicap
+      : currentImplementationSnookerScoring.teamTwoHandicap;
 
     const currentDate = new Date();
     const expectedEndTimeDate =
@@ -281,8 +297,12 @@ const useSnookerScoring = () => {
     const matchId = await startMatchHook.startMatch({
       clubId: clubs.activeClub!.clubId,
       expectedEndTimeDate: expectedEndTimeDate,
-      sideOnePlayerOneId: isTeamReveresed ? currentImplementationSnookerScoring.team2.players[0].id! : currentImplementationSnookerScoring.team1.players[0].id!,
-      sideTwoPlayerOneId: isTeamReveresed ? currentImplementationSnookerScoring.team1.players[0].id! : currentImplementationSnookerScoring.team2.players[0].id!,
+      sideOnePlayerOneId: isTeamReveresed
+        ? currentImplementationSnookerScoring.team2.players[0].id!
+        : currentImplementationSnookerScoring.team1.players[0].id!,
+      sideTwoPlayerOneId: isTeamReveresed
+        ? currentImplementationSnookerScoring.team1.players[0].id!
+        : currentImplementationSnookerScoring.team2.players[0].id!,
       sideOnePlayerTwoId:
         currentImplementationSnookerScoring.team1.players.length > 1
           ? isTeamReveresed
@@ -299,34 +319,49 @@ const useSnookerScoring = () => {
       sportType: snookerScoring.format,
       streamingType: snookerScoring.streaming,
       venueId: clubs.activeClub!.venueId,
-      handicap: isTeamReveresed ? -currentImplementationSnookerScoring.handicap : currentImplementationSnookerScoring.handicap,
+      handicap: isTeamReveresed
+        ? -currentImplementationSnookerScoring.handicap
+        : currentImplementationSnookerScoring.handicap,
       maxScorePerSet: currentImplementationSnookerScoring.maxScorePerSet,
       noOfSets: currentImplementationSnookerScoring.noOfSets,
       cumulativeScoring: currentImplementationSnookerScoring.isCumulativeScoring,
       tournamentTeamOneId:
-        currentImplementationSnookerScoring.tournamentTeamOneId !== null && currentImplementationSnookerScoring.tournamentTeamTwoId !== null
+        currentImplementationSnookerScoring.tournamentTeamOneId !== null &&
+        currentImplementationSnookerScoring.tournamentTeamTwoId !== null
           ? isTeamReveresed
             ? currentImplementationSnookerScoring.tournamentTeamTwoId
             : currentImplementationSnookerScoring.tournamentTeamOneId
           : undefined,
       tournamentTeamTwoId:
-        currentImplementationSnookerScoring.tournamentTeamOneId !== null && currentImplementationSnookerScoring.tournamentTeamTwoId !== null
+        currentImplementationSnookerScoring.tournamentTeamOneId !== null &&
+        currentImplementationSnookerScoring.tournamentTeamTwoId !== null
           ? isTeamReveresed
             ? currentImplementationSnookerScoring.tournamentTeamOneId
             : currentImplementationSnookerScoring.tournamentTeamTwoId
           : undefined,
-      tournamentId: currentImplementationSnookerScoring.tournamentId ? currentImplementationSnookerScoring.tournamentId : undefined,
-      tournamentTeamOneScore: currentImplementationSnookerScoring.tournamentTeamOneScore ? currentImplementationSnookerScoring.tournamentTeamOneScore : undefined,
-      tournamentTeamTwoScore: currentImplementationSnookerScoring.tournamentTeamTwoScore ? currentImplementationSnookerScoring.tournamentTeamTwoScore : undefined,
+      tournamentId: currentImplementationSnookerScoring.tournamentId
+        ? currentImplementationSnookerScoring.tournamentId
+        : undefined,
+      tournamentTeamOneScore: currentImplementationSnookerScoring.tournamentTeamOneScore
+        ? currentImplementationSnookerScoring.tournamentTeamOneScore
+        : undefined,
+      tournamentTeamTwoScore: currentImplementationSnookerScoring.tournamentTeamTwoScore
+        ? currentImplementationSnookerScoring.tournamentTeamTwoScore
+        : undefined,
       teamOneHandicap: teamOneHandicap != null ? teamOneHandicap : undefined,
       teamTwoHandicap: teamTwoHandicap != null ? teamTwoHandicap : undefined,
       format: currentImplementationSnookerScoring.formatName
         ? currentImplementationSnookerScoring.formatName
-        : snookerSportTypeToFormat(currentImplementationSnookerScoring.format, currentImplementationSnookerScoring.isCumulativeScoring),
-      tournamentSubItemId: currentImplementationSnookerScoring.tournamentSubItemId ? currentImplementationSnookerScoring.tournamentSubItemId : undefined,
+        : snookerSportTypeToFormat(
+            currentImplementationSnookerScoring.format,
+            currentImplementationSnookerScoring.isCumulativeScoring,
+          ),
+      tournamentSubItemId: currentImplementationSnookerScoring.tournamentSubItemId
+        ? currentImplementationSnookerScoring.tournamentSubItemId
+        : undefined,
       switchType: snookerScoring.switchType ? snookerScoring.switchType : null,
       isRankingEvent: currentImplementationSnookerScoring.isRankingEvent,
-      phase: currentImplementationSnookerScoring.phase
+      phase: currentImplementationSnookerScoring.phase,
     });
 
     if (matchId) {
@@ -498,11 +533,13 @@ const useSnookerScoring = () => {
     const team1Count = snookerScoring.team1.players.length;
     const teamIndex = globalIndex < team1Count ? 0 : 1;
     const playerIndex = globalIndex < team1Count ? globalIndex : globalIndex - team1Count;
-    dispatch(setTeamPlayer({
-      teamIndex,
-      playerIndex,
-      player: { id: null, name: `Player ${playerIndex + 1}`, profilePhoto: null },
-    }));
+    dispatch(
+      setTeamPlayer({
+        teamIndex,
+        playerIndex,
+        player: { id: null, name: `Player ${playerIndex + 1}`, profilePhoto: null },
+      }),
+    );
     setSelectedTeamIndex(teamIndex);
     setSelectedPlayerIndex(playerIndex);
   };
@@ -516,19 +553,26 @@ const useSnookerScoring = () => {
       }),
     );
 
-    // 2-player: team1/p0 → team2/p0 → done
-    // 4-player: team1/p0 → team2/p0 → team1/p1 → team2/p1 → done
-    if (selectedTeamIndex === 0 && selectedPlayerIndex === 0 && snookerScoring.team2.players[0].id === null) {
-      setSelectedTeamIndex(1);
-      setSelectedPlayerIndex(0);
-    } else if (selectedTeamIndex === 1 && selectedPlayerIndex === 0 && defaultNoOfPlayers === '4' && !snookerScoring.team1.players[1]?.id) {
-      setSelectedTeamIndex(0);
-      setSelectedPlayerIndex(1);
-    } else if (selectedTeamIndex === 0 && selectedPlayerIndex === 1 && !snookerScoring.team2.players[1]?.id) {
-      setSelectedTeamIndex(1);
-      setSelectedPlayerIndex(1);
+    // 2-player: T1P1 → T2P1 → done
+    // 4-player: T1P1 → T1P2 → T2P1 → T2P2 → done (complete Team 1 first)
+    if (defaultNoOfPlayers === '4') {
+      if (selectedTeamIndex === 0 && selectedPlayerIndex === 0) {
+        setSelectedPlayerIndex(1); // T1P1 → T1P2
+      } else if (selectedTeamIndex === 0 && selectedPlayerIndex === 1) {
+        setSelectedTeamIndex(1);
+        setSelectedPlayerIndex(0); // T1P2 → T2P1
+      } else if (selectedTeamIndex === 1 && selectedPlayerIndex === 0) {
+        setSelectedPlayerIndex(1); // T2P1 → T2P2
+      } else {
+        setOpenPlayerSelectCard(false); // T2P2 → done
+      }
     } else {
-      setOpenPlayerSelectCard(false);
+      if (selectedTeamIndex === 0 && snookerScoring.team2.players[0].id === null) {
+        setSelectedTeamIndex(1);
+        setSelectedPlayerIndex(0); // T1P1 → T2P1
+      } else {
+        setOpenPlayerSelectCard(false);
+      }
     }
   };
 
@@ -564,7 +608,7 @@ const useSnookerScoring = () => {
   const handleEndGame = async () => {
     setShowLoadingModal(true);
     setShowMenuDrawer(false);
-    
+
     try {
       await dispatch(handleEndGameThrunk({}));
 

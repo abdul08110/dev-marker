@@ -89,7 +89,7 @@ function PlayerRowSingles({
         />
       </div>
       <p className="font-medium text-[min(3vh,3vw)] leading-[130%] uppercase text-score-text z-10 truncate">
-        {player ? `${player.playerName} ${player.playerLastName}` : `Player ${playerNumber}`}
+        {player ? `${player.playerName}` : `Player ${playerNumber}`}
       </p>
     </div>
   );
@@ -115,7 +115,7 @@ function PlayerRowDoubles({
         />
       </div>
       <p className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text z-10 line-clamp-2">
-        {player ? `${player.playerName} ${player.playerLastName}` : `Player ${playerNumber}`}
+        {player ? `${player.playerName}` : `Player ${playerNumber}`}
       </p>
     </div>
   );

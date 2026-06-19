@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import PinkBorderSVG from '@/components/PinkBorderSVG';
 import YellowBorderSVG from '@/components/YellowBorderSVG';
@@ -28,6 +29,18 @@ interface NewScoreBoardProps {
 }
 
 const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
+  const [elapsed, setElapsed] = useState(() =>
+    state.actualStartTime ? Math.floor((Date.now() - new Date(state.actualStartTime).getTime()) / 1000) : 0,
+  );
+
+  useEffect(() => {
+    if (!state.actualStartTime) return;
+    const id = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - new Date(state.actualStartTime!).getTime()) / 1000));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [state.actualStartTime]);
+
   const activeSet = getActiveSet(state.sets);
   const activeTurn = getActiveTurn(activeSet);
   const isTeamOneActive =
@@ -135,7 +148,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         />
 
         <p className="text-score-text font-semibold text-[min(3.3vh,3.3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
-          match time {formatTime(timeLeft)}
+          match time {formatTime(elapsed)}
         </p>
       </div>
 
@@ -440,12 +453,12 @@ function BallGrid({ balls }: { balls: SnookerPointType[][] }) {
     .flatMap((turnBalls) => turnBalls)
     .filter((type): type is SnookerPointType => type in BALL_IMAGE_MAP);
 
-  // Reset every 22 balls — the 22nd ball still fills the last slot, reset happens on the 23rd
-  const offset = potted.length === 0 ? 0 : Math.floor((potted.length - 1) / TOTAL_SLOTS) * TOTAL_SLOTS;
-  const currentPage = potted.slice(offset);
+  // Sliding queue: newest ball at slot 0 (row 1 left), oldest visible ball falls off row 2 right
+  const recent = potted.slice(-TOTAL_SLOTS);
+  const display = [...recent].reverse();
 
   const slots = Array.from({ length: TOTAL_SLOTS }, (_, i) =>
-    i < currentPage.length ? BALL_IMAGE_MAP[currentPage[i]]! : '/images/balls/placeholder-ball.svg',
+    i < display.length ? BALL_IMAGE_MAP[display[i]]! : '/images/balls/placeholder-ball.svg',
   );
 
   return (

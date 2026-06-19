@@ -11,7 +11,6 @@ export function ScoreBoard() {
   const { loading, scoreBoardData, timeLeft, orientation, setOrientation, showTimeOverAlert, activeClub, qrFlowState } =
     useScoreboard();
   const [showScoreBoardOrientationModal, setShowScoreBoardOrientationModal] = useState(true);
-  console.log(qrFlowState);
 
   return (
     <section>

@@ -31,7 +31,7 @@ export function useScoreboardPlayerSync(venueId: string, playerCount: 2 | 4, ena
         const { teamIndex, playerIndex } = playerSlot(data.playerNumber, playerCount);
         const player: Player = {
           id: data.playerId,
-          name: `${data.playerName} ${data.playerLastName}`.trim(),
+          name: `${data.playerName} ${data?.playerLastName || ''}`.trim(),
           profilePhoto: data.profilePhoto ?? null,
         };
         dispatch(setTeamPlayer({ teamIndex, playerIndex, player }));

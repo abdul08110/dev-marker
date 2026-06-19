@@ -145,7 +145,7 @@ const useBilliardsScoring = () => {
     const { teamIndex, playerIndex } = playerSlot(data.playerNumber);
     const player: Player = {
       id: data.playerId,
-      name: `${data.playerName} ${data.playerLastName}`.trim(),
+      name: `${data.playerName} ${data.playerLastName || ''}`.trim(),
       profilePhoto: data.profilePhoto ?? null,
     };
     dispatch(setTeamPlayer({ teamIndex, playerIndex, player }));
@@ -166,10 +166,14 @@ const useBilliardsScoring = () => {
     const topic = `${clubs.activeClub.venueId}/marker/add-player`;
     client.on('connect', () => client.subscribe(topic));
     client.on('message', (_t, msg) => {
-      try { onMqttPlayerRef.current?.(JSON.parse(msg.toString())); } catch {}
+      try {
+        onMqttPlayerRef.current?.(JSON.parse(msg.toString()));
+      } catch {}
     });
     client.on('error', () => client.end());
-    return () => { client.end(); };
+    return () => {
+      client.end();
+    };
   }, [clubs.activeClub?.venueId, billiardsScoring.matchId]);
 
   const handleBackClick = () => handleGoToHome();
@@ -287,11 +291,13 @@ const useBilliardsScoring = () => {
     const team1Count = billiardsScoring.team1.players.length;
     const teamIndex = globalIndex < team1Count ? 0 : 1;
     const playerIndex = globalIndex < team1Count ? globalIndex : globalIndex - team1Count;
-    dispatch(setTeamPlayer({
-      teamIndex,
-      playerIndex,
-      player: { id: null, name: `Player ${playerIndex + 1}`, profilePhoto: null },
-    }));
+    dispatch(
+      setTeamPlayer({
+        teamIndex,
+        playerIndex,
+        player: { id: null, name: `Player ${playerIndex + 1}`, profilePhoto: null },
+      }),
+    );
     setSelectedTeamIndex(teamIndex);
     setSelectedPlayerIndex(playerIndex);
   };
