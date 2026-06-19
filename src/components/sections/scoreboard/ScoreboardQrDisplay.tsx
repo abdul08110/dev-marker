@@ -26,7 +26,7 @@ const glassStyle: CSSProperties = {
 // Singles corner-bracket QR  (h-12 / offset-6 brackets, size 300)
 function SinglesQr({ value }: { value: string }) {
   return (
-    <div className="w-[min(35vh,35vw)] flex justify-center items-center relative grow">
+    <div className="w-[min(50vh,50vw)] flex justify-center items-center relative shrink-0">
       <div className="h-[min(4.5vh,4.5vw)] bg-white w-px absolute left-0 top-0" />
       <div className="h-[min(4.5vh,4.5vw)] bg-white w-px absolute left-[min(2.25vh,2.25vw)] -top-[min(2.25vh,2.25vw)] rotate-90" />
       <div className="h-[min(4.5vh,4.5vw)] bg-white w-px absolute left-0 bottom-0" />
@@ -137,7 +137,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
   const teamBQrValue = !players[3] ? `${venueId}_3` : `${venueId}_4`;
 
   return (
-    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center min-h-screen px-[min(4vh,4vw)] py-[min(2.6vh,2.6vw)] bg-no-repeat flex flex-col justify-between gap-[min(4vh,4vw)]">
+    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(4vh,4vw)] py-[min(2.6vh,2.6vw)] bg-no-repeat flex flex-col justify-between overflow-hidden gap-[min(4vh,4vw)]">
       {/* Header */}
       <div className="grid grid-cols-3 items-center border-b-2 py-[min(2vh,2vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
         <div className="flex items-center gap-[min(2vh,2vw)] py-[min(1.2vh,1.2vw)] w-fit justify-self-start">
@@ -164,15 +164,15 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
 
       {/* Body */}
       {isSingles ? (
-        <div className="flex-1 w-full flex items-center gap-[min(5.5vh,5.5vw)] py-[min(12vh,12vw)] px-[min(9vh,9vw)]">
+        <div className="flex-1 w-full flex justify-center items-center gap-[min(5.5vh,5.5vw)] px-[min(5vh,5vw)]">
           <PlayerRowSingles player={players[1]} profileSize={profileSizeSingles} playerNumber={1} />
           <SinglesQr value={singlesQrValue} />
           <PlayerRowSingles player={players[2]} profileSize={profileSizeSingles} playerNumber={2} />
         </div>
       ) : (
-        <div className="flex-1 flex justify-center items-center gap-[min(7.5vh,7.5vw)] py-[min(8vh,8vw)]">
+        <div className="flex-1 flex justify-center items-center gap-[min(7.5vh,7.5vw)]">
           {/* Team A QR */}
-          <div className="space-y-[min(7.5vh,7.5vw)] text-center">
+          <div className="space-y-[min(3vh,3vw)] text-center">
             <p className="font-medium text-[min(3vh,3vw)] leading-[130%] uppercase text-score-text">Team A</p>
             <DoublesQr value={teamAQrValue} />
           </div>
@@ -191,7 +191,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
           </div>
 
           {/* Team B QR */}
-          <div className="space-y-[min(7.5vh,7.5vw)] text-center">
+          <div className="space-y-[min(3vh,3vw)] text-center">
             <p className="font-medium text-[min(3vh,3vw)] leading-[130%] uppercase text-score-text">Team B</p>
             <DoublesQr value={teamBQrValue} />
           </div>

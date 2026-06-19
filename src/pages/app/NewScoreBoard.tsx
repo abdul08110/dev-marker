@@ -127,7 +127,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         : null;
 
   return (
-    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center min-h-screen px-[min(5.6vh,5.6vw)] py-[min(3.7vh,3.7vw)] bg-no-repeat flex flex-col justify-between gap-[min(6.5vh,6.5vw)]">
+    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(5.6vh,5.6vw)] py[min(3.7vh,3.7vw)] bg-no-repeat flex flex-col justify-between overflow-hidden gap-[min(6.5vh,6.5vw)]">
       {/* Header */}
       <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
         <div className="flex items-center gap-[min(2.6vh,2.6vw)] py-[min(1.1vh,1.1vw)] w-fit justify-self-start">
