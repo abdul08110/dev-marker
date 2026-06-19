@@ -32,6 +32,12 @@ import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@
 import { BilliardsPracticeSettingsData } from '@/components/forms/app/billiardsPracticeSettings';
 import { BilliardsScoringButtonEnum } from '@/components/sections/scoring/billiardsScoringButton';
 import { setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
+import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
+import mqtt from 'mqtt';
+
+function playerSlot(playerNumber: number): { teamIndex: number; playerIndex: number } {
+  return { teamIndex: playerNumber - 1, playerIndex: 0 };
+}
 
 const useBilliardsScoring = () => {
   // REDUX STATE
@@ -65,6 +71,7 @@ const useBilliardsScoring = () => {
   // API
   const startMatchHook = useStartMatch();
   const getLiveMatchHook = useGetMatchLiveData();
+  const { cancelScoreboardEntry } = useCancelScoreboardEntry();
 
   // LOCAL STATE
   const [openSettingsDrawer, setOpenSettingsDrawer] = React.useState(false);
@@ -131,6 +138,39 @@ const useBilliardsScoring = () => {
       navigate('/');
     }
   }, [clubs.activeClub, navigate]);
+
+  // MQTT — auto-fill player slots from QR scans and advance drawer
+  const onMqttPlayerRef = React.useRef<((data: any) => void) | null>(null);
+  onMqttPlayerRef.current = (data) => {
+    const { teamIndex, playerIndex } = playerSlot(data.playerNumber);
+    const player: Player = {
+      id: data.playerId,
+      name: `${data.playerName} ${data.playerLastName}`.trim(),
+      profilePhoto: data.profilePhoto ?? null,
+    };
+    dispatch(setTeamPlayer({ teamIndex, playerIndex, player }));
+
+    // Billiards is always 2 players: player 1 → advance to slot 2; player 2 → close
+    if (data.playerNumber === 1 && !billiardsScoring.team2.players[0]?.id) {
+      setSelectedTeamIndex(1);
+      setSelectedPlayerIndex(0);
+    } else {
+      setOpenPlayerSelectCard(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!clubs.activeClub || billiardsScoring.matchId !== null) return;
+    const brokerUrl = import.meta.env.VITE_MQTT_URL;
+    const client = mqtt.connect(brokerUrl, { keepalive: 60, reconnectPeriod: 2000 });
+    const topic = `${clubs.activeClub.venueId}/marker/add-player`;
+    client.on('connect', () => client.subscribe(topic));
+    client.on('message', (_t, msg) => {
+      try { onMqttPlayerRef.current?.(JSON.parse(msg.toString())); } catch {}
+    });
+    client.on('error', () => client.end());
+    return () => { client.end(); };
+  }, [clubs.activeClub?.venueId, billiardsScoring.matchId]);
 
   const handleBackClick = () => handleGoToHome();
 
@@ -262,6 +302,9 @@ const useBilliardsScoring = () => {
   };
 
   const handleGoToHome = () => {
+    if (clubs.activeClub) {
+      cancelScoreboardEntry({ venueId: clubs.activeClub.venueId });
+    }
     navigate('/app/home');
   };
 

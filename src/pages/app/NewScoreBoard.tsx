@@ -201,18 +201,15 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 </p>
                 <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
                   <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full">
-                    {/* {state.teamOneScore} */}
-                    162
+                    {state.teamOneScore}
                   </p>
                   {teamScoreCenter && (
                     <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1] w-full">
-                      {/* {teamScoreCenter} */}
-                      (1/7)
+                      {teamScoreCenter}
                     </p>
                   )}
                   <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full">
-                    {/* {state.teamTwoScore} */}
-                    162
+                    {state.teamTwoScore}
                   </p>
                 </div>
               </div>

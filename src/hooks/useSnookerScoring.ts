@@ -48,6 +48,14 @@ import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { NoOfPlayersDefault, SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
 import { addPlayer, setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
+import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
+import mqtt from 'mqtt';
+
+function playerSlot(playerNumber: number, playerCount: number): { teamIndex: number; playerIndex: number } {
+  if (playerCount === 2) return { teamIndex: playerNumber - 1, playerIndex: 0 };
+  if (playerNumber <= 2) return { teamIndex: 0, playerIndex: playerNumber - 1 };
+  return { teamIndex: 1, playerIndex: playerNumber - 3 };
+}
 
 const useSnookerScoring = () => {
   // REDUX STATE
@@ -89,6 +97,7 @@ const useSnookerScoring = () => {
   // API
   const startMatchHook = useStartMatch();
   const getLiveMatchHook = useGetMatchLiveData();
+  const { cancelScoreboardEntry } = useCancelScoreboardEntry();
 
   // LOCAL STATE
   const [openFoulDrawer, setOpenFoulDrawer] = React.useState(false);
@@ -175,6 +184,50 @@ const useSnookerScoring = () => {
       navigate('/');
     }
   }, [clubs.activeClub, navigate]);
+
+  // MQTT — auto-fill player slots from QR scans and advance drawer
+  const onMqttPlayerRef = React.useRef<((data: any) => void) | null>(null);
+  onMqttPlayerRef.current = (data) => {
+    const count = defaultNoOfPlayers === '4' ? 4 : 2;
+    const { teamIndex, playerIndex } = playerSlot(data.playerNumber, count);
+    const player: Player = {
+      id: data.playerId,
+      name: `${data.playerName} ${data.playerLastName}`.trim(),
+      profilePhoto: data.profilePhoto ?? null,
+    };
+    dispatch(setTeamPlayer({ teamIndex, playerIndex, player }));
+
+    const order: { t: number; p: number }[] = count === 4
+      ? [{ t: 0, p: 0 }, { t: 1, p: 0 }, { t: 0, p: 1 }, { t: 1, p: 1 }]
+      : [{ t: 0, p: 0 }, { t: 1, p: 0 }];
+
+    const isNowFilled = (t: number, p: number) => {
+      if (t === teamIndex && p === playerIndex) return true;
+      const team = t === 0 ? snookerScoring.team1 : snookerScoring.team2;
+      return !!team.players[p]?.id;
+    };
+
+    const next = order.find(({ t, p }) => !isNowFilled(t, p));
+    if (!next) {
+      setOpenPlayerSelectCard(false);
+    } else {
+      setSelectedTeamIndex(next.t);
+      setSelectedPlayerIndex(next.p);
+    }
+  };
+
+  useEffect(() => {
+    if (!clubs.activeClub || snookerScoring.matchId !== null) return;
+    const brokerUrl = import.meta.env.VITE_MQTT_URL;
+    const client = mqtt.connect(brokerUrl, { keepalive: 60, reconnectPeriod: 2000 });
+    const topic = `${clubs.activeClub.venueId}/marker/add-player`;
+    client.on('connect', () => client.subscribe(topic));
+    client.on('message', (_t, msg) => {
+      try { onMqttPlayerRef.current?.(JSON.parse(msg.toString())); } catch {}
+    });
+    client.on('error', () => client.end());
+    return () => { client.end(); };
+  }, [clubs.activeClub?.venueId, snookerScoring.matchId]);
 
   // HANDLERS
   const handleBackClick = () => handleGoToHome();
@@ -490,6 +543,9 @@ const useSnookerScoring = () => {
   };
 
   const handleGoToHome = () => {
+    if (clubs.activeClub) {
+      cancelScoreboardEntry({ venueId: clubs.activeClub.venueId });
+    }
     navigate('/app/home');
   };
 

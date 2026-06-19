@@ -14,6 +14,8 @@ import TimeManager from '@/components/sections/scoring/timeManager';
 import { Button } from '@/components/ui/button';
 import useBilliardsScoring from '@/hooks/useBilliardsScoring';
 import { getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex } from '@/stores/selectors/commonSport';
+import useSelectPlayer from '@/api/app/useSelectPlayer';
+import { Player } from '@/stores/types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -63,6 +65,16 @@ export function BilliardsScoring() {
     showTimerModal,
     handleTimerButtonAction,
   } = useBilliardsScoring();
+
+  const { selectPlayer } = useSelectPlayer();
+
+  const handlePlayerConfirmWithApi = async (player: Player) => {
+    const teamIdx = selectedTeamIndex;
+    await handlePlayerConfirm(player);
+    if (clubs.activeClub && player.id) {
+      selectPlayer({ venueId: clubs.activeClub.venueId, playerNumber: teamIdx + 1, userId: player.id });
+    }
+  };
 
   const [showEndFrameAlert, setShowEndFrameAlert] = React.useState(false);
   const [showEndGameAlert, setShowEndGameAlert] = React.useState(false);
@@ -129,7 +141,7 @@ export function BilliardsScoring() {
             />
 
             <SelectPlayerDrawer
-              onSubmit={handlePlayerConfirm}
+              onSubmit={handlePlayerConfirmWithApi}
               setOpen={setOpenPlayerSelectCard}
               open={openPlayerSelectCard}
               playerIndex={selectedPlayerIndex}

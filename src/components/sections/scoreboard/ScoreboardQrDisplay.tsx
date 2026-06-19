@@ -79,7 +79,7 @@ function PlayerRowSingles({
   playerNumber: number;
 }) {
   return (
-    <div className="relative p-[min(2.2vh,2.2vw)] flex items-center gap-[min(1.5vh,1.5vw)] h-fit grow backdrop-blur-lg ">
+    <div className="relative p-[min(2.2vh,2.2vw)] flex items-center gap-[min(1.5vh,1.5vw)] h-fit grow backdrop-blur-lg max-w-[min(50vw,50vh)]">
       <div className="absolute -inset-[1px] pointer-events-none" style={glassStyle} />
       <div className="shrink-0">
         <ProfileCard
@@ -88,7 +88,7 @@ function PlayerRowSingles({
           color={player ? undefined : 'white'}
         />
       </div>
-      <p className="font-medium text-[min(3vh,3vw)] leading-[130%] uppercase text-score-text z-10">
+      <p className="font-medium text-[min(3vh,3vw)] leading-[130%] uppercase text-score-text z-10 truncate">
         {player ? `${player.playerName} ${player.playerLastName}` : `Player ${playerNumber}`}
       </p>
     </div>
@@ -114,7 +114,7 @@ function PlayerRowDoubles({
           color={player ? undefined : 'white'}
         />
       </div>
-      <p className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text z-10">
+      <p className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text z-10 line-clamp-2">
         {player ? `${player.playerName} ${player.playerLastName}` : `Player ${playerNumber}`}
       </p>
     </div>

@@ -16,8 +16,9 @@ import { useNavigate } from 'react-router-dom';
 import { Smartphone } from 'lucide-react';
 import { ScanQrModal } from '@/components/modals/scanQrModal';
 import { RootState } from '@/stores';
+import useInitiateScoreboardEntry from '@/api/app/useInitiateScoreboardEntry';
 
-type PracticeStep = 'sport' | 'count' | 'method';
+type PracticeStep = 'sport' | 'count';
 type SportChoice = 'snooker' | 'billiards';
 type CountChoice = 2 | 4;
 
@@ -39,11 +40,10 @@ export function Home() {
   // Practice match multi-step state
   const [practiceDialogOpen, setPracticeDialogOpen] = useState(false);
   const [practiceStep, setPracticeStep] = useState<PracticeStep>('sport');
-  const [sportChoice, setSportChoice] = useState<SportChoice>('snooker');
-  const [countChoice, setCountChoice] = useState<CountChoice>(2);
 
   const { logout } = useLogout();
   const navigate = useNavigate();
+  const { initiateScoreboardEntry } = useInitiateScoreboardEntry();
 
   const openPracticeDialog = () => {
     setPracticeStep('sport');
@@ -51,32 +51,26 @@ export function Home() {
   };
 
   const handleSportChoice = (sport: SportChoice) => {
-    setSportChoice(sport);
+    dispatch(clearUndoStack());
     if (sport === 'snooker') {
       dispatch(resetStateSnooker());
       setPracticeStep('count');
     } else {
       dispatch(resetStateBilliards());
-      setCountChoice(2);
-      setPracticeStep('method');
+      setPracticeDialogOpen(false);
+      if (activeClub) {
+        initiateScoreboardEntry({ venueId: activeClub.venueId, playerCount: 2, sport: 'billiards' });
+      }
+      navigate('/app/billiards?playerCount=2');
     }
-    dispatch(clearUndoStack());
   };
 
   const handleCountChoice = (count: CountChoice) => {
-    setCountChoice(count);
-    setPracticeStep('method');
-  };
-
-  const handleManual = () => {
     setPracticeDialogOpen(false);
-    const route = sportChoice === 'billiards' ? '/app/billiards' : '/app/snooker';
-    navigate(`${route}?playerCount=${countChoice}`);
-  };
-
-  const handleFromScoreboard = () => {
-    setPracticeDialogOpen(false);
-    navigate(`/app/qr?sport=${sportChoice}&playerCount=${countChoice}`);
+    if (activeClub) {
+      initiateScoreboardEntry({ venueId: activeClub.venueId, playerCount: count, sport: 'snooker' });
+    }
+    navigate(`/app/snooker?playerCount=${count}`);
   };
 
   useEffect(() => {
@@ -219,33 +213,6 @@ export function Home() {
                       </div>
                     )}
 
-                    {practiceStep === 'method' && (
-                      <div className="w-full bg-[#1F1F1F] p-6 flex flex-col gap-4 rounded-lg shadow-xl">
-                        <h3 className="text-white text-lg font-semibold text-center">Add Players</h3>
-                        <div className="flex flex-col gap-3">
-                          <button
-                            onClick={handleManual}
-                            className="w-full bg-white/10 hover:bg-white/20 rounded-xl py-5 flex flex-col items-center gap-1 transition-colors"
-                          >
-                            <span className="text-white font-semibold">Manually</span>
-                            <span className="text-gray-400 text-xs">Enter player names yourself</span>
-                          </button>
-                          <button
-                            onClick={handleFromScoreboard}
-                            className="w-full bg-white/10 hover:bg-white/20 rounded-xl py-5 flex flex-col items-center gap-1 transition-colors"
-                          >
-                            <span className="text-white font-semibold">From Scoreboard</span>
-                            <span className="text-gray-400 text-xs">Players scan QR on the display</span>
-                          </button>
-                        </div>
-                        <button
-                          onClick={() => setPracticeStep(sportChoice === 'billiards' ? 'sport' : 'count')}
-                          className="text-gray-400 text-sm text-center mt-1 hover:text-white transition-colors"
-                        >
-                          ← Back
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
               </DialogContent>
