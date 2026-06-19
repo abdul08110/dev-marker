@@ -13,9 +13,14 @@ interface Props {
 }
 
 const glassStyle: CSSProperties = {
-  backdropFilter: 'blur(0.5px)',
-  WebkitBackdropFilter: 'blur(0.5px)',
-  boxShadow: 'inset 0 0 0.5px 0.5px rgba(255,255,255,0.2)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  boxShadow: `
+  inset 1px 0 0 rgba(255,255,255,0.2),
+  inset -1px 0 0 rgba(255,255,255,0.2),
+   inset 0 0.4px 0 rgba(255,255,255,0.2),
+    inset 0 -0.5px 0 rgba(255,255,255,0.2)
+`,
 };
 
 // Singles corner-bracket QR  (h-12 / offset-6 brackets, size 300)
@@ -44,29 +49,37 @@ function SinglesQr({ value }: { value: string }) {
 // Doubles corner-bracket QR  (h-8 / offset-4 brackets, size 300)
 function DoublesQr({ value }: { value: string }) {
   return (
-    <div className="w-[min(35vh,35vw)] flex justify-center items-center relative">
-      <div className="h-[min(3vh,3vw)] bg-white w-px absolute left-0 top-0" />
-      <div className="h-[min(3vh,3vw)] bg-white w-px absolute left-[min(1.5vh,1.5vw)] -top-[min(1.5vh,1.5vw)] rotate-90" />
-      <div className="h-[min(3vh,3vw)] bg-white w-px absolute left-0 bottom-0" />
-      <div className="h-[min(3vh,3vw)] bg-white w-px absolute left-[min(1.5vh,1.5vw)] -bottom-[min(1.5vh,1.5vw)] rotate-90" />
-      <div className="h-[min(3vh,3vw)] bg-white w-px absolute top-0 right-0" />
-      <div className="h-[min(3vh,3vw)] bg-white w-px absolute -top-[min(1.5vh,1.5vw)] right-[min(1.5vh,1.5vw)] rotate-90" />
-      <div className="h-[min(3vh,3vw)] bg-white w-px absolute bottom-0 right-0" />
-      <div className="h-[min(3vh,3vw)] bg-white w-px absolute -bottom-[min(1.5vh,1.5vw)] right-[min(1.5vh,1.5vw)] rotate-90" />
+    <div className="w-[min(45vh,45vw)] flex justify-center items-center relative">
+      <div className="h-[min(4vh,4vw)] bg-white w-px absolute left-0 top-0" />
+      <div className="h-[min(4vh,4vw)] bg-white w-px absolute left-[min(2vh,2vw)] -top-[min(2vh,2vw)] rotate-90" />
+      <div className="h-[min(4vh,4vw)] bg-white w-px absolute left-0 bottom-0" />
+      <div className="h-[min(4vh,4vw)] bg-white w-px absolute left-[min(2vh,2vw)] -bottom-[min(2vh,2vw)] rotate-90" />
+      <div className="h-[min(4vh,4vw)] bg-white w-px absolute top-0 right-0" />
+      <div className="h-[min(4vh,4vw)] bg-white w-px absolute -top-[min(2vh,2vw)] right-[min(2vh,2vw)] rotate-90" />
+      <div className="h-[min(4vh,4vw)] bg-white w-px absolute bottom-0 right-0" />
+      <div className="h-[min(4vh,4vw)] bg-white w-px absolute -bottom-[min(2vh,2vw)] right-[min(2vh,2vw)] rotate-90" />
       <QRCode
         bgColor="transparent"
         value={value}
-        size={300}
+        size={400}
         fgColor="white"
-        className="p-[min(1.5vh,1.5vw)] h-auto max-w-full w-full"
+        className="p-[min(2.5vh,2.5vw)] h-auto max-w-full w-full"
       />
     </div>
   );
 }
 
-function PlayerRowSingles({ player, profileSize }: { player: QrFlowPlayer | undefined; profileSize: number }) {
+function PlayerRowSingles({
+  player,
+  profileSize,
+  playerNumber,
+}: {
+  player: QrFlowPlayer | undefined;
+  profileSize: number;
+  playerNumber: number;
+}) {
   return (
-    <div className="relative p-[min(2.2vh,2.2vw)] flex items-center gap-[min(1.5vh,1.5vw)] h-fit grow ">
+    <div className="relative p-[min(2.2vh,2.2vw)] flex items-center gap-[min(1.5vh,1.5vw)] h-fit grow backdrop-blur-lg ">
       <div className="absolute -inset-[1px] pointer-events-none" style={glassStyle} />
       <div className="shrink-0">
         <ProfileCard
@@ -76,15 +89,23 @@ function PlayerRowSingles({ player, profileSize }: { player: QrFlowPlayer | unde
         />
       </div>
       <p className="font-medium text-[min(3vh,3vw)] leading-[130%] uppercase text-score-text z-10">
-        {player ? `${player.playerName} ${player.playerLastName}` : '----------------'}
+        {player ? `${player.playerName} ${player.playerLastName}` : `Player ${playerNumber}`}
       </p>
     </div>
   );
 }
 
-function PlayerRowDoubles({ player, profileSize }: { player: QrFlowPlayer | undefined; profileSize: number }) {
+function PlayerRowDoubles({
+  player,
+  profileSize,
+  playerNumber,
+}: {
+  player: QrFlowPlayer | undefined;
+  profileSize: number;
+  playerNumber: number;
+}) {
   return (
-    <div className="relative p-[min(1.5vh,1.5vw)] flex items-center gap-[min(1.5vh,1.5vw)] h-fit">
+    <div className="relative px-[min(1.8vh,1.8vw)] py-[min(2.3vh,2.3vw)] flex items-center gap-[min(1.5vh,1.5vw)] backdrop-blur-lg">
       <div className="absolute -inset-[1px] pointer-events-none" style={glassStyle} />
       <div className="shrink-0">
         <ProfileCard
@@ -94,7 +115,7 @@ function PlayerRowDoubles({ player, profileSize }: { player: QrFlowPlayer | unde
         />
       </div>
       <p className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text z-10">
-        {player ? `${player.playerName} ${player.playerLastName}` : '----------------'}
+        {player ? `${player.playerName} ${player.playerLastName}` : `Player ${playerNumber}`}
       </p>
     </div>
   );
@@ -108,7 +129,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
 
   // Fluid pixel sizes for ProfileCard (mirrors min(Xvh, Xvw))
   const profileSizeSingles = useFluidPx(0.075); // ≈ 81px at 1080p
-  const profileSizeDoubles = useFluidPx(0.055); // ≈ 59px at 1080p
+  const profileSizeDoubles = useFluidPx(0.065); // ≈ 59px at 1080p
 
   // QR value advances to the next unfilled slot as players scan
   const singlesQrValue = !players[1] ? `${venueId}_1` : `${venueId}_2`;
@@ -132,7 +153,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
 
         <ImageWithFallback
           className="justify-self-center w-[min(40vh,40vw)] h-auto"
-          fallback="/images/clubliv-final-logo.png"
+          fallback="/images/logos/clubliv-logo.svg"
           src="/images/logos/clubliv-logo.svg"
         />
 
@@ -143,13 +164,13 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
 
       {/* Body */}
       {isSingles ? (
-        <div className="flex-1 w-full flex justify-around items-center gap-[min(7.5vh,7.5vw)] py-[min(5vh,5vw)] px-[min(9vh,9vw)]">
-          <PlayerRowSingles player={players[1]} profileSize={profileSizeSingles} />
+        <div className="flex-1 w-full flex items-center gap-[min(5.5vh,5.5vw)] py-[min(12vh,12vw)] px-[min(9vh,9vw)]">
+          <PlayerRowSingles player={players[1]} profileSize={profileSizeSingles} playerNumber={1} />
           <SinglesQr value={singlesQrValue} />
-          <PlayerRowSingles player={players[2]} profileSize={profileSizeSingles} />
+          <PlayerRowSingles player={players[2]} profileSize={profileSizeSingles} playerNumber={2} />
         </div>
       ) : (
-        <div className="flex-1 flex justify-center items-center gap-[min(7.5vh,7.5vw)] py-[min(5vh,5vw)]">
+        <div className="flex-1 flex justify-center items-center gap-[min(7.5vh,7.5vw)] py-[min(8vh,8vw)]">
           {/* Team A QR */}
           <div className="space-y-[min(7.5vh,7.5vw)] text-center">
             <p className="font-medium text-[min(3vh,3vw)] leading-[130%] uppercase text-score-text">Team A</p>
@@ -157,15 +178,15 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
           </div>
 
           {/* Player list — Team A top, Team B bottom */}
-          <div className="w-full space-y-[min(3vh,3vw)] max-w-[min(35vh,35vw)]">
+          <div className="w-full space-y-[min(3vh,3vw)] max-w-[min(45vh,45vw)]">
             <div className="space-y-[min(1.1vh,1.1vw)]">
-              <PlayerRowDoubles player={players[1]} profileSize={profileSizeDoubles} />
-              <PlayerRowDoubles player={players[2]} profileSize={profileSizeDoubles} />
+              <PlayerRowDoubles player={players[1]} profileSize={profileSizeDoubles} playerNumber={1} />
+              <PlayerRowDoubles player={players[2]} profileSize={profileSizeDoubles} playerNumber={2} />
             </div>
             <hr className="border-white" />
             <div className="space-y-[min(1.1vh,1.1vw)]">
-              <PlayerRowDoubles player={players[3]} profileSize={profileSizeDoubles} />
-              <PlayerRowDoubles player={players[4]} profileSize={profileSizeDoubles} />
+              <PlayerRowDoubles player={players[3]} profileSize={profileSizeDoubles} playerNumber={3} />
+              <PlayerRowDoubles player={players[4]} profileSize={profileSizeDoubles} playerNumber={4} />
             </div>
           </div>
 

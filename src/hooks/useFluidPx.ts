@@ -1,11 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
-export function useFluidPx(factor: number) {
-  const [px, setPx] = useState(() => Math.round(Math.min(window.innerHeight, window.innerWidth) * factor));
-  useEffect(() => {
-    const update = () => setPx(Math.round(Math.min(window.innerHeight, window.innerWidth) * factor));
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, [factor]);
-  return px;
+const getFluidValue = (factor: number) => {
+  if (typeof window === 'undefined') return 0;
+  return Math.round(Math.min(window.innerHeight, window.innerWidth) * factor);
+};
+
+const subscribe = (callback: () => void) => {
+  window.addEventListener('resize', callback);
+  return () => window.removeEventListener('resize', callback);
+};
+
+export function useFluidPx(factor: number): number {
+  return useSyncExternalStore(
+    subscribe,
+    () => getFluidValue(factor),
+    () => 0,
+  );
 }

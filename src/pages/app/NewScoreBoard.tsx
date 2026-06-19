@@ -169,9 +169,9 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               linear-gradient(347.86deg,rgba(210,154,245,0) 13.85%,#F4D3F2 105.37%)
             `,
             boxShadow: `
-              0px 0px 12px 0px #FFEDFF,
-              10px 10px 18px 0px #0F0B23CC,
-              -11px 0px 14px 0px #0E0B24CC
+              0px 0px 10px 0px #FFEDFF,
+              10px 10px 10px 0px #0F0B23CC,
+              -11px 0px 10px 0px #0E0B24CC
             `,
           }}
         >
@@ -196,19 +196,19 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               </div>
             ) : (
               <div className="space-y-[min(2.2vh,2.2vw)]">
-                <p className="text-text-light font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center">
-                  Frames Won
+                <p className="text-text-light font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center px-[min(2vw,2vh)]">
+                  Frames Score
                 </p>
                 <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
-                  <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20]">
+                  <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full">
                     {state.teamOneScore}
                   </p>
                   {teamScoreCenter && (
-                    <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1]">
+                    <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1] w-full">
                       {teamScoreCenter}
                     </p>
                   )}
-                  <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20]">
+                  <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full">
                     {state.teamTwoScore}
                   </p>
                 </div>
@@ -224,13 +224,13 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 game score
               </p>
               <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
-                <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20]">
+                <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full">
                   {teamOneFrameScore}
                 </p>
-                <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1]">
+                <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1] w-full">
                   {teamScoreCenter}
                 </p>
-                <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20]">
+                <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full">
                   {teamTwoFrameScore}
                 </p>
               </div>
@@ -369,7 +369,7 @@ function PlayerCard({
         <div className="p-[min(3vh,3vw)] relative flex justify-center items-center flex-1">
           <p className="font-semibold leading-[130%] uppercase text-score-text text-[min(18.5vh,18.5vw)]">{score}</p>
           {breakScore != null && (
-            <div className={clsx('absolute text-white top-1/2 -translate-y-1/2 right-[min(0.7vh,0.7vw)]')}>
+            <div className={clsx('absolute text-white top-1/2 -translate-y-[70%] right-[min(0.7vh,0.7vw)]')}>
               <p
                 className={clsx(
                   'font-semibold text-[min(2.4vh,2.4vw)] leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)] text-right',

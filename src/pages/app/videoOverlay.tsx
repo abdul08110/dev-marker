@@ -40,7 +40,7 @@ export function VideoOverlay() {
     const body = document.body;
 
     body.style.setProperty('background-color', 'transparent', 'important');
-    body.style.setProperty('pointer-events', 'none', 'important');
+    body.style.setProperty('pointerevents', 'none', 'important');
 
     return () => {
       body.style.removeProperty('background-color');
@@ -70,7 +70,7 @@ export function VideoOverlay() {
   const liveActiveTurn = getActiveTurn(liveActiveSet);
 
   return (
-    <div className="h-screen w-screen bg-transparent pointer-events-none">
+    <div className="h-screen w-screen bg-black pointerevents-none">
       <TopOverlay
         clubLogo={viewershipData!.clubLogo!}
         tournamentLogo={viewershipData.tournamentLogo}

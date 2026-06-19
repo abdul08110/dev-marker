@@ -3,6 +3,7 @@ import { Set, Turn } from '@/stores/types';
 import { convertHandicapToString, generatePlayerName } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import { useFluidPx } from '@/hooks/useFluidPx';
+import { cn } from '@/lib/utils';
 
 interface GeneralTemplateProps {
   state: StreamingState;
@@ -66,9 +67,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           />
         </div>
       </div>
-      <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
+      <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1">
+          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
             {generatePlayerName(state.sideOnePlayerOne.name, state.sideOnePlayerTwo?.name)}
           </p>
           <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -82,9 +83,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       <div className="shrink-0">
         <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
       </div>
-      <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
+      <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1">
+          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
             {generatePlayerName(state.sideOnePlayerOne.name)}
           </p>
           <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -103,9 +104,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       <div className="shrink-0">
         <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
       </div>
-      <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
+      <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1">
+          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
             {generatePlayerName(state.sideOnePlayerOne.name)}
           </p>
           <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -133,9 +134,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           />
         </div>
       </div>
-      <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
+      <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right">
+          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
             {generatePlayerName(state.sideTwoPlayerOne.name, state.sideTwoPlayerTwo?.name)}
           </p>
           <VioletHandicapPill handicap={state.teamTwoHandicap} />
@@ -149,9 +150,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       <div className="shrink-0">
         <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
       </div>
-      <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
+      <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right">
+          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
             {generatePlayerName(state.sideTwoPlayerOne.name)}
           </p>
           <VioletHandicapPill handicap={state.teamTwoHandicap} />
@@ -170,9 +171,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       <div className="shrink-0">
         <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
       </div>
-      <div className="flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0 flex-1">
+      <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right">
+          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
             {generatePlayerName(state.sideTwoPlayerOne.name)}
           </p>
           <VioletHandicapPill handicap={state.teamTwoHandicap} />
@@ -187,7 +188,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.9vh,1.9vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Top Banner — tournament name */}
 
-        <div className="absolute pointer-events-none w-full left-0 right-0 -top-1/4 flex justify-center items-center bg-transparent">
+        <div className="absolute pointer-events-none w-full left-0 right-0 -top-1/4 flex justify-center items-center">
           <div className="relative flex justify-center items-center w-[min(76.5vh,76.5vw)]">
             <div className="absolute left-[5%] right-[5%] top-0 h-2 pointer-events-none" />
             <img
@@ -198,7 +199,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 filter: 'drop-shadow(0px 0px 5px #BA91C8)',
               }}
             />
-            <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center align-baseline absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate">
+            <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center align-baseline absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate px-12 pb-1">
               {(state.clubName || state.tournamentName) ?? ''}
             </p>
           </div>
@@ -321,7 +322,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         {/* Left player card */}
         <div
-          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${leftShadow} shrink-0 backdrop-blur-[24px] grow flex items-center`}
+          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${leftShadow} shrink-0 backdrop-blur-[24px] grow flex items-center max-w-[min(70vh,70vw)]`}
           style={leftCardStyle}
         >
           {leftCardContent}
@@ -331,17 +332,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
         <div
           className="shrink-0 grow-0 flex rounded-[min(1.9vh,1.9vw)] z-20 relative items-stretch"
           style={{
-            background: `
-      linear-gradient(#11030F, #11030F) padding-box,
-      linear-gradient(233.61deg, #FFECFF -11.62%, rgba(255, 255, 255, 0) 50.44%) border-box,
-      linear-gradient(347.86deg, rgba(210, 154, 245, 0) 13.85%, #F4D3F2 105.37%) border-box
-    `,
             border: '2px solid transparent',
-            boxShadow: `
-      0px 0px 16px 0px rgba(255, 237, 255, 0.50),
-      10px 10px 28px 0px rgba(15, 11, 35, 0.80),
-      -11px 0px 24px 0px rgba(14, 11, 36, 0.80)
+            background: `
+              linear-gradient(#11030F, #11030F) padding-box,
+              linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%) border-box
     `,
+
+            filter: 'drop-shadow(-2px -2px 4px #BA91C8)',
           }}
         >
           {/* Format tag below center panel */}
@@ -403,7 +400,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <div className="flex items-stretch relative z-20 rounded-[min(1.9vh,1.9vw)] overflow-hidden py-[min(1vh,1vw)]">
             {/* Team 1 total score */}
             <div
-              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border border-l-0 shadow-[0px_4px_16px_0px_#FFFFFF40] w-[min(11vh,12vw)] flex justify-center items-center z-10"
+              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border border-l-0 w-[min(11vh,12vw)] flex justify-center items-center z-10"
               style={{
                 borderImageSource:
                   'linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%)',
@@ -416,13 +413,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             </div>
 
             {/* Team 1 current set score */}
-            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] drop-shadow-[0px_0px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
+            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
               {activeSet?.teamOneScore ?? 0}
             </p>
 
             {/* Current break / turn score */}
             <div
-              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border shadow-[0px_4px_16px_0px_#FFFFFF40] w-[min(11vh,12vw)] flex justify-center items-center "
+              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border w-[7vw] w[min(11vh,14vw)] flex justify-center items-center "
               style={{
                 borderImageSource:
                   'linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%)',
@@ -436,13 +433,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
             {/* Team 2 current set score */}
 
-            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] drop-shadow-[0px_0px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)] bg-[#595959]/[.20]">
+            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)] bg-[#595959]/[.20]">
               {activeSet?.teamTwoScore ?? 0}
             </p>
 
             {/* Team 2 total score */}
             <div
-              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] w-[min(11vh,12vw)] border border-r-0 shadow-[0px_4px_16px_0px_#FFFFFF40] flex justify-center items-center"
+              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] w-[min(11vh,12vw)] border border-r-0 flex justify-center items-center"
               style={{
                 borderImageSource:
                   'linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%)',
@@ -458,7 +455,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         {/* Right player card */}
         <div
-          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${rightShadow} shrink-0 backdrop-blur-[24px] grow flex items-center`}
+          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${rightShadow} shrink-0 backdrop-blur-[24px] grow flex items-center max-w-[min(70vh,70vw)]`}
           style={rightCardStyle}
         >
           {rightCardContent}
@@ -476,10 +473,10 @@ function YellowHandicapPill({ handicap }: { handicap: number | null }) {
   if (!label) return null;
   return (
     <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)] shrink-0">
-      <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text text-box-trim inline-block px-[min(1.5vh,1.5vw)] py-[min(0.6vh,0.6vw)]">
+      <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text text-box-trim inline-block px-[min(1.5vh,1.5vw)]">
         h
       </span>
-      <div className="bg-sandy-yellow px-[min(1.5vh,1.5vw)] py-[min(0.6vh,0.6vw)] shadow-[inset_0px_0px_3.07px_0px_#929504]">
+      <div className="bg-sandy-yellow px-[min(1.5vh,1.5vw)] shadow-[inset_0px_0px_3.07px_0px_#929504]">
         <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-box-trim text-[#11030F]">
           {label}
         </span>
@@ -494,10 +491,10 @@ function VioletHandicapPill({ handicap }: { handicap: number | null }) {
   if (!label) return null;
   return (
     <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)] shrink-0">
-      <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text text-box-trim inline-block px-[min(1.5vh,1.5vw)] py-[min(0.6vh,0.6vw)]">
+      <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text text-box-trim inline-block px-[min(1.5vh,1.5vw)]">
         h
       </span>
-      <div className="bg-violet px-[min(1.5vh,1.5vw)] py-[min(0.6vh,0.6vw)] shadow-[inset_0px_0px_3.03px_0px_#C600F7]">
+      <div className="bg-violet px-[min(1.5vh,1.5vw)] shadow-[inset_0px_0px_3.03px_0px_#C600F7]">
         <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-box-trim text-[#11030F]">
           {label}
         </span>
