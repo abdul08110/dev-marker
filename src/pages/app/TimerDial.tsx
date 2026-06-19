@@ -10,14 +10,19 @@ export default function TimerDial({ timeLeft }: TimerDialProps) {
 
   return (
     <div className="flex items-center justify-center py-[clamp(32px,min(4.4vh,4.4vw),58px)]">
-      <div className="relative size-[clamp(113px,min(15.7vh,15.7vw),209px)]">
+      <div className="relative size-[clamp(113px,min(17.7vh,17.7vw),209px)]">
         {Array.from({ length: totalTicks }).map((_, i) => {
           const angle = (i / totalTicks) * 360;
           const isActive = i < activeCount;
 
           return (
             <div key={i} className="absolute inset-0 flex justify-center" style={{ transform: `rotate(${angle}deg)` }}>
-              <div className={['absolute top-0 w-px h-[clamp(10px,min(1.5vh,1.5vw),20px)]', isActive ? 'bg-[#E126CD]' : 'bg-slate-500/50'].join(' ')} />
+              <div
+                className={[
+                  'absolute top-0 w-px h-[clamp(10px,min(1.5vh,1.5vw),20px)]',
+                  isActive ? 'bg-[#E126CD]' : 'bg-white/50',
+                ].join(' ')}
+              />
             </div>
           );
         })}

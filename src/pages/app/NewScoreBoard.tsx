@@ -140,7 +140,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       </div>
 
       {/* Cards + Center */}
-      <div className="grid grid-cols-[1fr_auto_1fr] gap-[min(6.7vh,6.7vw)] items-stretch">
+      <div className="grid grid-cols-[1fr_auto_1fr] gap-[min(6.7vh,6.7vw)] items-stretch px-[min(4vw,4vh)]">
         {/* Card 1 - Team One */}
         <PlayerCard
           isActive={isTeamOneActive}
@@ -201,15 +201,18 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 </p>
                 <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
                   <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full">
-                    {state.teamOneScore}
+                    {/* {state.teamOneScore} */}
+                    162
                   </p>
                   {teamScoreCenter && (
                     <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1] w-full">
-                      {teamScoreCenter}
+                      {/* {teamScoreCenter} */}
+                      (1/7)
                     </p>
                   )}
                   <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full">
-                    {state.teamTwoScore}
+                    {/* {state.teamTwoScore} */}
+                    162
                   </p>
                 </div>
               </div>
@@ -258,7 +261,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       </div>
 
       {/* Footer */}
-      <div className="grid grid-cols-3 items-center border-t-2 [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1] py-[min(1.7vh,1.7vw)]">
+      <div className="grid grid-cols-3 items-center border-t-2 [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1] py-[min(1.7vh,1.7vw)] px-[min(2.5vw,2.5vh)]">
         <p className="text-score-text font-semibold text-[min(3.3vh,3.3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-start py-[min(0.9vh,0.9vw)]">
           {footerLabel}
         </p>
@@ -317,7 +320,7 @@ function PlayerCard({
   const backPhoto = isPlayerOneActive ? (profilePhoto2 ?? profilePhoto) : profilePhoto;
 
   return (
-    <div className="relative w-full h-full backdrop-blur-sm">
+    <div className="relative w-full h-full backdrop-blur-lg">
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col p-[min(1.9vh,1.9vw)]">
         {/* Player info */}
@@ -339,7 +342,7 @@ function PlayerCard({
           {/* Player name(s) + handicap */}
           <div className="flex flex-col justify-center gap-[min(1.1vh,1.1vw)] min-w-0 flex-1">
             <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full">
-              <p className="font-medium text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text text-box-trim truncate">
+              <p className="font-medium text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text text-box-trim truncate text-wrap line-clamp-2">
                 {isDoubles ? (isPlayerOneActive ? playerOneName : playerTwoName) : playerOneName}
               </p>
               {handicap != null && <HandicapPill handicap={handicap} isApplied={isHandicapApplied} />}
@@ -366,8 +369,10 @@ function PlayerCard({
         </div>
 
         {/* Score + Break */}
-        <div className="p-[min(3vh,3vw)] relative flex justify-center items-center flex-1">
-          <p className="font-semibold leading-[130%] uppercase text-score-text text-[min(18.5vh,18.5vw)]">{score}</p>
+        <div className="p-[min(3vh,3vw)] relative">
+          <p className="font-semibold leading-[130%] uppercase text-score-text text-[min(18.5vh,18.5vw)] pl-[min(12.5vw,12.5vh)]">
+            {score}
+          </p>
           {breakScore != null && (
             <div className={clsx('absolute text-white top-1/2 -translate-y-[70%] right-[min(0.7vh,0.7vw)]')}>
               <p
@@ -379,7 +384,7 @@ function PlayerCard({
               </p>
               <div
                 className={clsx(
-                  'px-[min(1.9vh,1.9vw)] bg-[linear-gradient(69.46deg,rgba(172,236,84,0.078)_12.28%,rgba(111,255,0,0.6)_179.54%)] shadow-[0px_2px_4px_0px_#FFFFFF40_inset] break-card',
+                  'px-[min(1.9vh,1.9vw)] bg-[linear-gradient(69.46deg,rgba(172,236,84,0.078)_12.28%,rgba(111,255,0,0.6)_179.54%)] shadow-[0px_2px_4px_0px_#FFFFFF40_inset] break-card pt-1',
                 )}
               >
                 <p className="font-semibold text-[min(8.3vh,8.3vw)] leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)]">
@@ -448,14 +453,14 @@ function BallGrid({ balls }: { balls: SnookerPointType[][] }) {
 
   return (
     <>
-      <div className="flex gap-[min(0.4vh,0.4vw)]">
+      <div className="flex gap-[min(0.5vh,0.5vw)]">
         {slots.slice(0, BALLS_PER_ROW).map((src, i) => (
-          <img key={i} src={src} className="size-[min(3vh,3vw)] object-contain" />
+          <img key={i} src={src} className="size-[min(4vh,4vw)] object-contain" />
         ))}
       </div>
-      <div className="flex gap-[min(0.4vh,0.4vw)]">
+      <div className="flex gap-[min(0.5vh,0.5vw)]">
         {slots.slice(BALLS_PER_ROW).map((src, i) => (
-          <img key={i} src={src} className="size-[min(3vh,3vw)] object-contain" />
+          <img key={i} src={src} className="size-[min(4vh,4vw)] object-contain" />
         ))}
       </div>
     </>

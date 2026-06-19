@@ -170,13 +170,14 @@ textarea {
   position: relative;
   overflow: hidden;
   border-radius: 9999px 0 0 9999px;
+  /* background: linear-gradient(69.46deg, rgba(172, 236, 84, 0.078) 12.28%, rgba(111, 255, 0, 0.6) 179.54%); */
 }
 
 .break-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  padding: 4px;
+  padding: 4px 0px 4px 4px;
   border-radius: inherit;
 
   background: linear-gradient(125.03deg, #d7ffa9 -2.54%, rgba(128, 239, 0, 0) 167.77%),
@@ -184,7 +185,8 @@ textarea {
 
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+    linear-gradient(#fff 0 0),
+    linear-gradient(69.46deg, rgba(172, 236, 84, 0.078) 12.28%, rgba(111, 255, 0, 0.6) 179.54%);
 
   -webkit-mask-composite: xor;
   mask-composite: exclude;
