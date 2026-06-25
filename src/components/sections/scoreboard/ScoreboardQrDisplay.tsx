@@ -5,7 +5,6 @@ import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ProfileCard } from '@/components/ProfileCard';
 import { CSSProperties } from 'react';
 import { useFluidPx } from '@/hooks/useFluidPx';
-import { ScoreBoardState } from '@/hooks/useScoreboard';
 
 interface Props {
   qrFlowState: QrFlowState;

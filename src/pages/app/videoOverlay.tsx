@@ -7,7 +7,6 @@ import { CatholicSinglesTemplate } from '@/components/sections/stream/templates/
 import { CenturyTemplate } from '@/components/sections/stream/templates/Century';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { NewEca } from '@/components/sections/stream/templates/Eca-new';
-import { GeneralTemplate } from '@/components/sections/stream/templates/General';
 import { NewEcaTemplate } from '@/components/sections/stream/templates/NewEca';
 import { Singles } from '@/components/sections/stream/templates/Singles';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
