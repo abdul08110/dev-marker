@@ -453,12 +453,15 @@ function BallGrid({ balls }: { balls: SnookerPointType[][] }) {
     .flatMap((turnBalls) => turnBalls)
     .filter((type): type is SnookerPointType => type in BALL_IMAGE_MAP);
 
-  // Sliding queue: newest ball at slot 0 (row 1 left), oldest visible ball falls off row 2 right
-  const recent = potted.slice(-TOTAL_SLOTS);
-  const display = [...recent].reverse();
+  const remainder = potted.length % TOTAL_SLOTS;
+  const current = potted.length === 0
+    ? []
+    : remainder === 0
+      ? potted.slice(-TOTAL_SLOTS)
+      : potted.slice(-remainder);
 
   const slots = Array.from({ length: TOTAL_SLOTS }, (_, i) =>
-    i < display.length ? BALL_IMAGE_MAP[display[i]]! : '/images/balls/placeholder-ball.svg',
+    i < current.length ? BALL_IMAGE_MAP[current[i]]! : '/images/balls/placeholder-ball.svg',
   );
 
   return (
