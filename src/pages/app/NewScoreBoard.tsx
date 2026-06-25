@@ -331,7 +331,7 @@ function PlayerCard({
   const backPhoto = isPlayerOneActive ? (profilePhoto2 ?? profilePhoto) : profilePhoto;
 
   return (
-    <div className="relative w-full h-full backdrop-blur-lg">
+    <div className="relative w-full h-full backdrop-blur-lg overflow-hidden">
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col p-[min(1.9vh,1.9vw)]">
         {/* Player info */}
