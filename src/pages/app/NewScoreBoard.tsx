@@ -22,6 +22,7 @@ const BALL_IMAGE_MAP: Partial<Record<SnookerPointType, string>> = {
 import TimerDial from './TimerDial';
 import { ProfileCard } from '@/components/ProfileCard';
 import { useFluidPx } from '@/hooks/useFluidPx';
+import { cn } from '@/lib/utils';
 
 interface NewScoreBoardProps {
   state: ScoreBoardState;
@@ -380,7 +381,7 @@ function PlayerCard({
 
         {/* Score + Break */}
         <div className="p-[min(3vh,3vw)] relative">
-          <p className="font-semibold leading-[130%] uppercase text-score-text text-[min(18.5vh,18.5vw)] pl-[min(12.5vw,12.5vh)]">
+          <p className={cn('font-semibold leading-[130%] uppercase text-score-text text-[min(16.5vh,16.5vw)]')}>
             {score}
           </p>
           {breakScore != null && (
