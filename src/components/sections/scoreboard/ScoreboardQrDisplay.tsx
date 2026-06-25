@@ -142,7 +142,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
         <div className="flex items-center gap-[min(2vh,2vw)] py-[min(1.2vh,1.2vw)] w-fit justify-self-start">
           <ImageWithFallback
             className="object-cover size-[min(5.5vh,5.5vw)]"
-            fallback="/images/user-dummy-pic.png"
+            fallback="/images/user-dummy-pic.jpg"
             src={activeClub?.clubLogo ?? ''}
           />
           <p className="text-score-text font-semibold text-[min(3vh,3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase">

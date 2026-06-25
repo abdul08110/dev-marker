@@ -15,14 +15,14 @@ interface TournamentPlayerSelectorProps {
   selectedPlayer?: Player | null;
 }
 
-export function TournamentPlayerSelector({ 
+export function TournamentPlayerSelector({
   tournamentId,
   teamId,
-  onPlayerSelect, 
-  disabledPlayerList, 
-  placeholder = "Search player...",
-  title = "Select Player",
-  selectedPlayer
+  onPlayerSelect,
+  disabledPlayerList,
+  placeholder = 'Search player...',
+  title = 'Select Player',
+  selectedPlayer,
 }: TournamentPlayerSelectorProps) {
   const [open, setOpen] = React.useState<boolean>(false);
 
@@ -37,7 +37,7 @@ export function TournamentPlayerSelector({
         {selectedPlayer ? (
           <div className="flex items-center gap-2 w-full">
             <img
-              src={selectedPlayer.profilePhoto ? selectedPlayer.profilePhoto : '/images/user-dummy-pic.png'}
+              src={selectedPlayer.profilePhoto ? selectedPlayer.profilePhoto : '/images/user-dummy-pic.jpg'}
               className="h-6 w-6 rounded-full object-cover"
             />
             <span className="flex-1">{selectedPlayer.name}</span>
@@ -59,4 +59,4 @@ export function TournamentPlayerSelector({
       />
     </div>
   );
-} 
+}

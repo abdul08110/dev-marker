@@ -22,9 +22,9 @@ export function NewEca(props: NewEcaProps) {
         <div className="p-[min(2.5vh,2.5vw)]">
           <div className="overflow-hidden size-[min(10vh,10vw)] aspect-square">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="size-full object-cover"
-              src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.png'}
+              src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>
@@ -62,7 +62,8 @@ export function NewEca(props: NewEcaProps) {
             <div className="col-span-1">
               <h5 className="text-[min(3.5vh,3.5vw)] text-white text-left uppercase whitespace-nowrap">
                 {generatePlayerName(props.state!.sideOnePlayerOne.name, props.state!.sideOnePlayerTwo?.name)}
-                &nbsp;&nbsp;{props.state?.teamOneHandicap ? `  (${convertHandicapToString(props.state?.teamOneHandicap)})` : ''}
+                &nbsp;&nbsp;
+                {props.state?.teamOneHandicap ? `  (${convertHandicapToString(props.state?.teamOneHandicap)})` : ''}
               </h5>
             </div>
             <div className="col-span-1">
@@ -71,12 +72,12 @@ export function NewEca(props: NewEcaProps) {
 
                 <div>
                   {isTeamReveresed
-                  ? props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!
-                  : props.state!.tournamentSubItem?.tournamentItem.teamOneScore!}
+                    ? props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!
+                    : props.state!.tournamentSubItem?.tournamentItem.teamOneScore!}
                   &nbsp;(4)&nbsp;
                   {isTeamReveresed
-                  ? props.state!.tournamentSubItem?.tournamentItem.teamOneScore!
-                  : props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!}
+                    ? props.state!.tournamentSubItem?.tournamentItem.teamOneScore!
+                    : props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!}
                 </div>
                 <div>
                   <span className="font-bold">{props.activeSet ? props.activeSet?.teamTwoScore : 0}</span>
@@ -86,7 +87,8 @@ export function NewEca(props: NewEcaProps) {
             <div className="col-span-1">
               <h5 className="text-[min(3.5vh,3.5vw)] text-white text-right uppercase whitespace-nowrap">
                 {generatePlayerName(props.state!.sideTwoPlayerOne.name, props.state!.sideTwoPlayerTwo?.name)}
-                &nbsp;&nbsp;{props.state?.teamTwoHandicap ? `  (${convertHandicapToString(props.state?.teamTwoHandicap)})` : ''}
+                &nbsp;&nbsp;
+                {props.state?.teamTwoHandicap ? `  (${convertHandicapToString(props.state?.teamTwoHandicap)})` : ''}
               </h5>
             </div>
           </div>
@@ -114,9 +116,9 @@ export function NewEca(props: NewEcaProps) {
         <div className="p-[min(2.5vh,2.5vw)]">
           <div className="overflow-hidden size-[min(10vh,10vw)] aspect-square">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="size-full object-cover"
-              src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.png'}
+              src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>

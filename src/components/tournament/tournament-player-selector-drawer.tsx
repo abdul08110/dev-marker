@@ -219,7 +219,7 @@ export function TournamentPlayerSelectorDrawer({
                       onClick={() => handleSelect(player.id!)}
                     >
                       <img
-                        src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.png'}
+                        src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.jpg'}
                         className="h-8 w-8 rounded-full object-cover"
                       />
                       <div className="flex flex-col justify-between">

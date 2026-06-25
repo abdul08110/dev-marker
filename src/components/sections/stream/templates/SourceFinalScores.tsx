@@ -13,21 +13,21 @@ export function SourceWithFinalScores(props: SourceFinalScoresTemplateProps) {
           <div>
             {props.state.tournamentLogo ? (
               <ImageWithFallback
-                fallback="/images/user-dummy-pic.png"
+                fallback="/images/user-dummy-pic.jpg"
                 className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                src={props.state.teamOneLogo ? props.state.teamOneLogo : '/images/user-dummy-pic.png'}
+                src={props.state.teamOneLogo ? props.state.teamOneLogo : '/images/user-dummy-pic.jpg'}
               />
             ) : (
               <></>
             )}
             {props.state.tournamentLogo === null ? (
               <ImageWithFallback
-                fallback="/images/user-dummy-pic.png"
+                fallback="/images/user-dummy-pic.jpg"
                 className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                 src={
                   props.state.sideOnePlayerOne.profilePhoto
                     ? props.state.sideOnePlayerOne.profilePhoto
-                    : '/images/user-dummy-pic.png'
+                    : '/images/user-dummy-pic.jpg'
                 }
               />
             ) : (
@@ -67,21 +67,21 @@ export function SourceWithFinalScores(props: SourceFinalScoresTemplateProps) {
             <div>
               {props.state.tournamentLogo ? (
                 <ImageWithFallback
-                  fallback="/images/user-dummy-pic.png"
+                  fallback="/images/user-dummy-pic.jpg"
                   className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                  src={props.state.teamTwoLogo ? props.state.teamTwoLogo : '/images/user-dummy-pic.png'}
+                  src={props.state.teamTwoLogo ? props.state.teamTwoLogo : '/images/user-dummy-pic.jpg'}
                 />
               ) : (
                 <></>
               )}
               {props.state.tournamentLogo === null ? (
                 <ImageWithFallback
-                  fallback="/images/user-dummy-pic.png"
+                  fallback="/images/user-dummy-pic.jpg"
                   className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
                   src={
                     props.state.sideTwoPlayerOne.profilePhoto
                       ? props.state.sideTwoPlayerOne.profilePhoto
-                      : '/images/user-dummy-pic.png'
+                      : '/images/user-dummy-pic.jpg'
                   }
                 />
               ) : (

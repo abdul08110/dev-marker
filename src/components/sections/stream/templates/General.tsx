@@ -17,12 +17,12 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
         <div className="p-[min(2.5vh,2.5vw)]">
           <div className="overflow-hidden size-[min(10vh,10vw)] aspect-square">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="size-full object-cover"
               src={
                 props.state!.sideOnePlayerOne.profilePhoto
                   ? props.state!.sideOnePlayerOne.profilePhoto
-                  : '/images/user-dummy-pic.png'
+                  : '/images/user-dummy-pic.jpg'
               }
             />
           </div>
@@ -107,12 +107,12 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
         <div className="p-[min(2.5vh,2.5vw)]">
           <div className="overflow-hidden size-[min(10vh,10vw)] aspect-square">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="size-full object-cover"
               src={
                 props.state!.sideTwoPlayerOne?.profilePhoto
                   ? props.state!.sideTwoPlayerOne?.profilePhoto
-                  : '/images/user-dummy-pic.png'
+                  : '/images/user-dummy-pic.jpg'
               }
             />
           </div>

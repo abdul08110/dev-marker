@@ -56,7 +56,7 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
           {confirmedPlayers.map(({ player, index }) => (
             <div key={index} className="flex items-center gap-2 mt-1">
               <img
-                src={player.profilePhoto ?? '/images/user-dummy-pic.png'}
+                src={player.profilePhoto ?? '/images/user-dummy-pic.jpg'}
                 className="h-7 w-7 rounded-full object-cover shrink-0"
               />
               <span className="text-sm text-white/80">

@@ -21,9 +21,9 @@ export function CatholicAprilTemplate(props: CatholicSinglesTemplateProps) {
       <div className="w-full h-auto flex items-center">
         <div className={`${props.isTv ? 'p-2' : '360p:p-2  p-4'}`}>
           <ImageWithFallback
-            fallback="/images/user-dummy-pic.png"
+            fallback="/images/user-dummy-pic.jpg"
             className={`${props.isTv ? 'size-[4rem]' : '360p:size-6 720p:size-[4rem]  1080p:size-[8rem]'} aspect-square rounded-full object-cover`}
-            src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.png'}
+            src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.jpg'}
           />
         </div>
         <div className="flex-grow flex flex-col h-full">
@@ -83,7 +83,9 @@ export function CatholicAprilTemplate(props: CatholicSinglesTemplateProps) {
                     : props.state!.tournamentSubItem?.tournamentItem.teamOneScore!}
 
                   {props.state?.tournamentSubItem?.gameFormat.matchNo && (
-                    <div>({props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length})</div>
+                    <div>
+                      ({props.state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats.length})
+                    </div>
                   )}
 
                   {isTeamReveresed
@@ -134,9 +136,9 @@ export function CatholicAprilTemplate(props: CatholicSinglesTemplateProps) {
         </div>
         <div className={`${props.isTv ? 'p-2' : '360p:p-2  p-4'}`}>
           <ImageWithFallback
-            fallback="/images/user-dummy-pic.png"
+            fallback="/images/user-dummy-pic.jpg"
             className={`${props.isTv ? 'size-[4rem]' : '360p:size-6 720p:size-[4rem] 1080p:size-[8rem]'} aspect-square rounded-full object-cover`}
-            src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.png'}
+            src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.jpg'}
           />
         </div>
       </div>

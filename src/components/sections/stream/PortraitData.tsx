@@ -94,13 +94,13 @@ export function PortraitData(props: PortraitStreamDataProps) {
           <div className="w-full flex justify-center items-center">
             <ImageWithFallback
               className="aspect-square border-white w-12 h-12 object-cover"
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               src={
                 props.state.teamOneLogo
                   ? props.state.teamOneLogo
                   : props.state.sideOnePlayerOne.profilePhoto
                     ? props.state.sideOnePlayerOne.profilePhoto
-                    : '/images/user-dummy-pic.png'
+                    : '/images/user-dummy-pic.jpg'
               }
             ></ImageWithFallback>
           </div>
@@ -136,14 +136,14 @@ export function PortraitData(props: PortraitStreamDataProps) {
           {props.state.teamTwoName && <span className="font-bold text-xs">{props.state.teamTwoName}</span>}
           <div className="w-full flex justify-center items-center">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="aspect-square border-white size-12 object-cover"
               src={
                 props.state.teamTwoLogo
                   ? props.state.teamTwoLogo
                   : props.state.sideTwoPlayerOne.profilePhoto
                     ? props.state.sideTwoPlayerOne.profilePhoto
-                    : '/images/user-dummy-pic.png'
+                    : '/images/user-dummy-pic.jpg'
               }
             ></ImageWithFallback>
           </div>

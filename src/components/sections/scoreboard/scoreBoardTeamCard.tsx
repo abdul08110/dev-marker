@@ -52,10 +52,10 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
                 isPlayerOneActive
                   ? props.playerOne.profilePhoto
                     ? props.playerOne.profilePhoto
-                    : '/images/user-dummy-pic.png'
+                    : '/images/user-dummy-pic.jpg'
                   : props.playerTwo!.profilePhoto
                     ? props.playerTwo!.profilePhoto
-                    : '/images/user-dummy-pic.png'
+                    : '/images/user-dummy-pic.jpg'
               }
               className={clsx(' aspect-square object-cover rounded-full overflow-hidden', {
                 '-rotate-90 w-full h-auto': props.contentfrom === 'left',
@@ -68,7 +68,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
                 '-rotate-90 w-full h-auto': props.contentfrom === 'left',
                 'h-full w-auto': props.contentfrom === 'top',
               })}
-              src={props.playerOne.profilePhoto ? props.playerOne.profilePhoto : '/images/user-dummy-pic.png'}
+              src={props.playerOne.profilePhoto ? props.playerOne.profilePhoto : '/images/user-dummy-pic.jpg'}
             />
           )}
         </div>
@@ -80,7 +80,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
           })}
         >
           <img
-            src={props.tournamentTeamLogo ? props.tournamentTeamLogo : '/images/user-dummy-pic.png'}
+            src={props.tournamentTeamLogo ? props.tournamentTeamLogo : '/images/user-dummy-pic.jpg'}
             className={clsx(' aspect-square object-cover rounded-full overflow-hidden', {
               '-rotate-90 w-full h-auto': props.contentfrom === 'left',
               'h-full w-auto': props.contentfrom === 'top',
@@ -99,7 +99,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
           className={clsx({
             'h-[50%]': props.contentfrom === 'top',
             'w-[20%] h-full flex justify-center items-center rotate-180': props.contentfrom === 'left',
-            'hidden': props.sport === 'BILLIARDS'
+            hidden: props.sport === 'BILLIARDS',
           })}
         >
           {props.sport === 'SNOOKER' && props.teamTurns ? (
@@ -187,7 +187,7 @@ export function ScoreBoardTeamCard(props: ScoreBoardTeamCardProps) {
                 'text-center',
               )}
             >
-              <span className='leading-[1px]'>
+              <span className="leading-[1px]">
                 {truncateText(generatePlayerName(props.playerOne.name, props.playerTwo?.name))}
               </span>
               <span className={props.isHandicapApplied === true ? 'line-through ml-4' : 'ml-4'}>

@@ -22,9 +22,9 @@ export function CatholicJune(props: CatholicJuneProps) {
         <div className="h-full flex items-center">
           <div className="h-full w-[min(13vh,13vw)] rounded-lg overflow-hidden">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="w-full h-full object-cover"
-              src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.png'}
+              src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>
@@ -137,9 +137,9 @@ export function CatholicJune(props: CatholicJuneProps) {
         <div className="h-full flex items-center">
           <div className="h-full w-[min(13vh,13vw)] rounded-lg overflow-hidden">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="w-full h-full object-cover"
-              src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.png'}
+              src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>

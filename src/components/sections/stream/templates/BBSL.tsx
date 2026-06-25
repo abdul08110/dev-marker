@@ -21,9 +21,9 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
       <div className="w-full h-auto flex items-center">
         <div className={`${props.isTv ? 'p-2' : '360p:p-2  p-4'}`}>
           <ImageWithFallback
-            fallback="/images/user-dummy-pic.png"
+            fallback="/images/user-dummy-pic.jpg"
             className={`${props.isTv ? 'size-[4rem]' : '360p:size-6 720p:size-[4rem]  1080p:size-[8rem]'} aspect-square rounded-full object-cover`}
-            src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.png'}
+            src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.jpg'}
           />
         </div>
         <div className="flex-grow flex flex-col h-full">
@@ -75,9 +75,13 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
                 <div className="font-bold">{props.activeSet ? props.activeSet?.teamOneScore : 0}</div>
 
                 <div>
-                  {props.state!.format !== '6 Reds Cumulative' && props.state?.format !== '125 UP' ? props.state?.teamOneScore : ''}
+                  {props.state!.format !== '6 Reds Cumulative' && props.state?.format !== '125 UP'
+                    ? props.state?.teamOneScore
+                    : ''}
                   &nbsp;({props.state?.tournamentSubItem?.gameFormat.noOfSets})&nbsp;
-                  {props.state!.format !== '6 Reds Cumulative' && props.state?.format !== '125 UP' ? props.state?.teamTwoScore : ''}
+                  {props.state!.format !== '6 Reds Cumulative' && props.state?.format !== '125 UP'
+                    ? props.state?.teamTwoScore
+                    : ''}
                 </div>
 
                 <div>
@@ -98,7 +102,8 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
               <h5
                 className={`${props.isTv ? 'text-lg' : '360p:text-[0.5rem] 720p:text-lg 1080p:text-4xl'} text-white font-bold text-left uppercase whitespace-nowrap`}
               >
-                {props.state?.teamOneName}{'  '}
+                {props.state?.teamOneName}
+                {'  '}
                 {isTeamReveresed
                   ? props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!
                   : props.state!.tournamentSubItem?.tournamentItem.teamOneScore!}
@@ -115,7 +120,8 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
               <h5
                 className={`${props.isTv ? 'text-lg' : '360p:text-[0.5rem] 720p:text-lg 1080p:text-4xl'} text-white font-bold text-right uppercase whitespace-nowrap`}
               >
-                {props.state?.teamTwoName}{'  '}
+                {props.state?.teamTwoName}
+                {'  '}
                 {isTeamReveresed
                   ? props.state!.tournamentSubItem?.tournamentItem.teamOneScore!
                   : props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!}
@@ -125,9 +131,9 @@ export function BBSLTemplate(props: BBSLTemplateProps) {
         </div>
         <div className={`${props.isTv ? 'p-2' : '360p:p-2  p-4'}`}>
           <ImageWithFallback
-            fallback="/images/user-dummy-pic.png"
+            fallback="/images/user-dummy-pic.jpg"
             className={`${props.isTv ? 'size-[4rem]' : '360p:size-6 720p:size-[4rem] 1080p:size-[8rem]'} aspect-square rounded-full object-cover`}
-            src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.png'}
+            src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.jpg'}
           />
         </div>
       </div>

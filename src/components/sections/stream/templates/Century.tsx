@@ -22,31 +22,27 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
         <div>
           <div className="overflow-hidden h-[min(13vh,13vw)] aspect-square">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="size-full object-cover"
-              src={
-                props.state!.teamOneLogo
-                  ? props.state!.teamOneLogo
-                  : '/images/user-dummy-pic.png'
-              }
+              src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>
         <div className="flex-grow flex flex-col h-full">
           <div className="w-full h-1/3 flex justify-between items-center bg-[#D5D5D5]">
             <div className="w-auto flex min-w-[20%]">
-              {(props.state!.activePlayerId === props.state!.sideOnePlayerOne.id ||
-                props.state!.activePlayerId === props.state!.sideOnePlayerTwo?.id) ? (
+              {props.state!.activePlayerId === props.state!.sideOnePlayerOne.id ||
+              props.state!.activePlayerId === props.state!.sideOnePlayerTwo?.id ? (
                 <div className="inline-block relative bg-primary">
                   <div className="px-[min(2vh,2vw)] py-[min(0.6vh,0.6vw)] pl-[min(3vh,3vw)]">
                     <h5 className="text-[min(2.8vh,2.8vw)] text-white font-bold uppercase whitespace-nowrap">
-                      <span className="ml-3">
-                        BREAK {props.activeTurn?.score || 0}
-                      </span>
+                      <span className="ml-3">BREAK {props.activeTurn?.score || 0}</span>
                     </h5>
                   </div>
                 </div>
-              ) : <div className="w-[min(20vh,20vw)] bg-[#D5D5D5]" />}
+              ) : (
+                <div className="w-[min(20vh,20vw)] bg-[#D5D5D5]" />
+              )}
             </div>
             <div className="flex-1 bg-[#D5D5D5] h-[min(5vh,5vw)] flex items-center justify-center">
               <h5 className="text-[min(2.4vh,2.4vw)] text-primary font-bold uppercase whitespace-nowrap text-center w-full">
@@ -55,18 +51,18 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
               </h5>
             </div>
             <div className="w-auto flex justify-end min-w-[20%]">
-              {(props.state!.activePlayerId === props.state!.sideTwoPlayerOne.id ||
-                props.state!.activePlayerId === props.state!.sideTwoPlayerTwo?.id) ? (
+              {props.state!.activePlayerId === props.state!.sideTwoPlayerOne.id ||
+              props.state!.activePlayerId === props.state!.sideTwoPlayerTwo?.id ? (
                 <div className="inline-block relative bg-primary">
                   <div className="px-[min(2vh,2vw)] py-[min(0.6vh,0.6vw)] pr-[min(3vh,3vw)]">
                     <h5 className="text-[min(2.8vh,2.8vw)] text-white font-bold uppercase whitespace-nowrap">
-                      <span className="ml-3">
-                        BREAK {props.activeTurn?.score || 0}
-                      </span>
+                      <span className="ml-3">BREAK {props.activeTurn?.score || 0}</span>
                     </h5>
                   </div>
                 </div>
-              ) : <div className="w-[min(20vh,20vw)]" />}
+              ) : (
+                <div className="w-[min(20vh,20vw)]" />
+              )}
             </div>
           </div>
           <div className="w-full h-1/3 bg-[#424242] grid grid-cols-3 items-center px-[min(2vh,2vw)]">
@@ -112,9 +108,14 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
                 {props.state?.tournamentSubItem?.tournamentItem.teamOneLastestGameHandicap !== undefined && (
                   <span className="ml-2 text-yellow-400">
                     {isTeamReveresed === true
-                      ? props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap > 0 ? '+' : ''
-                      : props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap > 0 ? '+' : ''
-                    }
+                      ? props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap &&
+                        props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap > 0
+                        ? '+'
+                        : ''
+                      : props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap &&
+                          props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap > 0
+                        ? '+'
+                        : ''}
                     {isTeamReveresed === true
                       ? props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap
                       : props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap}
@@ -122,17 +123,21 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
                 )}
               </h5>
             </div>
-            <div className="min-w-[10%] flex justify-center">
-            </div>
+            <div className="min-w-[10%] flex justify-center"></div>
             <div className="min-w-[45%] px-[min(2vh,2vw)]">
               <h5 className="text-[min(2.2vh,2.2vw)] text-white font-bold text-right uppercase whitespace-nowrap">
                 {props.state?.teamTwoName}
                 {props.state?.tournamentSubItem?.tournamentItem.teamTwoLastestGameHandicap !== undefined && (
                   <span className="ml-2 text-yellow-400">
                     {isTeamReveresed === true
-                      ? props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap > 0 ? '+' : ''
-                      : props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap && props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap > 0 ? '+' : ''
-                    }
+                      ? props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap &&
+                        props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap > 0
+                        ? '+'
+                        : ''
+                      : props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap &&
+                          props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap > 0
+                        ? '+'
+                        : ''}
                     {isTeamReveresed === true
                       ? props.state.tournamentSubItem.tournamentItem.teamOneLastestGameHandicap
                       : props.state.tournamentSubItem.tournamentItem.teamTwoLastestGameHandicap}
@@ -145,13 +150,9 @@ export function CenturyTemplate(props: CenturyTemplateProps) {
         <div>
           <div className="overflow-hidden h-[min(13vh,13vw)] aspect-square">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="size-full object-cover"
-              src={
-                props.state!.teamTwoLogo
-                  ? props.state!.teamTwoLogo
-                  : '/images/user-dummy-pic.png'
-              }
+              src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>

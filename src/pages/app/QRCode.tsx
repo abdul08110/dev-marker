@@ -138,7 +138,7 @@ const WaitingForPlayers = () => {
             <ImageWithFallback
               className="size-10 object-contain"
               src={activeClub.clubLogo}
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
             />
           )}
           <div>
@@ -172,7 +172,7 @@ const WaitingForPlayers = () => {
                     <ImageWithFallback
                       className="size-12 rounded-full object-cover"
                       src={arrived.profilePhoto ?? ''}
-                      fallback="/images/user-dummy-pic.png"
+                      fallback="/images/user-dummy-pic.jpg"
                     />
                   ) : (
                     <div className="size-12 rounded-full bg-white/10 flex items-center justify-center">
