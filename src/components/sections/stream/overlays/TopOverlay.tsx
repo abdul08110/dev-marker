@@ -80,10 +80,20 @@ export function TopOverlay(props: TopOverlayProps) {
         )}
 
         {remaining !== null && (
-          <div className="bg-black/60 rounded-md px-2 py-1 text-center">
-            <small className="text-white font-mono font-semibold lg:text-xl text-base xl:text-xl">
-              {formatCountdown(remaining)}
-            </small>
+          <div className="flex flex-col items-center rounded-lg overflow-hidden border border-white/10 shadow-[0_0_12px_rgba(255,255,255,0.08)]">
+            <div className="bg-white/10 w-full text-center px-3 py-[2px]">
+              <span
+                className="text-white/50 font-medium uppercase tracking-widest"
+                style={{ fontSize: 'min(2vh, 2vw)' }}
+              >
+                Time Left
+              </span>
+            </div>
+            <div className="bg-black/70 px-3 py-1 w-full text-center">
+              <span className="text-white font-mono font-bold tabular-nums" style={{ fontSize: 'min(1.8vh, 1.8vw)' }}>
+                {formatCountdown(remaining)}
+              </span>
+            </div>
           </div>
         )}
       </div>
