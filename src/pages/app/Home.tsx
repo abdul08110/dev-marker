@@ -10,7 +10,7 @@ import { setActiveClub, setClubs } from '@/stores/slices/clubSlice';
 import { resetStateSnooker, resetStateBilliards } from '@/stores/slices/sportSlice';
 import { clearUndoStack } from '@/stores/slices/undoSlice';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@radix-ui/react-dialog';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Smartphone } from 'lucide-react';
@@ -36,6 +36,16 @@ export function Home() {
   const [liveSport, setLiveSport] = useState<'BILLIARDS' | 'SNOOKER' | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = useState<boolean>(false);
   const [venueId, setVenueId] = useState<string>('');
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const lastTapRef = useRef<number>(0);
+
+  const handleClubInfoDoubleTap = () => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 300) {
+      setIsMenuOpen(true);
+    }
+    lastTapRef.current = now;
+  };
 
   // Practice match multi-step state
   const [practiceDialogOpen, setPracticeDialogOpen] = useState(false);
@@ -76,7 +86,7 @@ export function Home() {
   useEffect(() => {
     dispatch(resetStateSnooker());
     dispatch(clearUndoStack());
-  
+
     const fetchData = async () => {
       const result = await getMarkerClubs();
       if (result) {
@@ -135,7 +145,7 @@ export function Home() {
           <div className="bg-black h-24">
             <div className="container h-full w-full py-6">
               <div className="flex justify-between h-full">
-                <div className="flex gap-2 items-center">
+                <div onClick={handleClubInfoDoubleTap} className="flex gap-2 items-center cursor-pointer select-none">
                   <img className="w-16 h-auto object-contain" src={data![0].club.imageUrl} />
 
                   <div className="flex flex-col justify-center h-full">
@@ -144,14 +154,32 @@ export function Home() {
                     <small className="text-muted/50">{version && version}</small>
                   </div>
                 </div>
-                <div className="flex gap-2 justify-center items-center">
-                  <Smartphone onClick={() => setIsQrModalOpen(true)} className="size-6 text-white" />
-                  <div onClick={() => navigate('/app/scoreboard')} className="flex cursor-pointer">
-                    <TvLogo className="h-6 w-auto" />
-                  </div>
-                  <img onClick={logout} className="w-6 h-auto object-contain cursor-pointer" src="/images/logout.png" />
-                </div>
               </div>
+
+              {isMenuOpen && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div
+                    className="bg-[#1F1F1F] rounded-2xl p-6 flex flex-col gap-5 shadow-xl w-56"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div onClick={() => { setIsQrModalOpen(true); setIsMenuOpen(false); }} className="flex items-center gap-3 cursor-pointer">
+                      <Smartphone className="size-6 text-white" />
+                      <span className="text-white text-sm">Scan QR</span>
+                    </div>
+                    <div onClick={() => { navigate('/app/scoreboard'); setIsMenuOpen(false); }} className="flex items-center gap-3 cursor-pointer">
+                      <TvLogo className="h-6 w-auto" />
+                      <span className="text-white text-sm">Scoreboard</span>
+                    </div>
+                    <div onClick={() => { logout(); setIsMenuOpen(false); }} className="flex items-center gap-3 cursor-pointer">
+                      <img className="w-6 h-auto object-contain" src="/images/logout.png" />
+                      <span className="text-white text-sm">Logout</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -212,7 +240,6 @@ export function Home() {
                         </button>
                       </div>
                     )}
-
                   </div>
                 </div>
               </DialogContent>
@@ -236,7 +263,11 @@ export function Home() {
                     <div className="w-full bg-[#1F1F1F] p-4 flex flex-col items-center gap-4 rounded-xl shadow-xl">
                       {tournaments && tournaments.length > 0 ? (
                         tournaments.map((value) => (
-                          <div key={value.id} className="flex justify-center" onClick={() => navigate(`/app/tournament?tournamentId=${value.id}`)}>
+                          <div
+                            key={value.id}
+                            className="flex justify-center"
+                            onClick={() => navigate(`/app/tournament?tournamentId=${value.id}`)}
+                          >
                             <img src={value.logo} className="h-56 w-auto object-contain rounded-xl overflow-hidden" />
                           </div>
                         ))
