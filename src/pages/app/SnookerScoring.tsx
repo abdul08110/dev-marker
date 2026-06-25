@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PlayerTeamManager } from '@/components/sections/scoring/playerTeamManager';
 import { ScoringHeader } from '@/components/sections/scoring/scoringHeader';
 import { SnookerScoringButtons } from '@/components/sections/scoring/snookerScoringButtons';
@@ -13,6 +14,8 @@ import {
 import { EndGameModal } from '@/components/modals/endGameModal';
 import { SelectPlayerDrawer } from '@/components/modals/selectPlayerDrawer';
 import useSnookerScoring from '@/hooks/useSnookerScoring';
+import useSelectPlayer from '@/api/app/useSelectPlayer';
+import { Player } from '@/stores/types';
 import { ScoreUpdateLoadingModal } from '@/components/modals/scoreUpdateLoading';
 import { OnlineOfflineIndicator } from '@/components/sections/scoring/onlineOfflineIndicator';
 import { PlayerOrderSelectModal } from '@/components/modals/playerOrderSelectModal';
@@ -86,9 +89,25 @@ export function SnookerScoring() {
     handleEndFrameButton,
     teamActiveSetPoints,
     onBackInPlayerSelectModal,
+    handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
+    defaultNoOfPlayers,
   } = useSnookerScoring();
+
+  const [searchParams] = useSearchParams();
+  const playerCount = Number(searchParams.get('playerCount') ?? '2') as 2 | 4;
+  const { selectPlayer } = useSelectPlayer();
+
+  const handlePlayerConfirmWithApi = async (player: Player) => {
+    const teamIdx = selectedTeamIndex;
+    const playerIdx = selectedPlayerIndex;
+    await handlePlayerConfirm(player);
+    if (clubs.activeClub && player.id) {
+      const playerNumber = playerCount === 2 ? teamIdx + 1 : teamIdx * 2 + playerIdx + 1;
+      selectPlayer({ venueId: clubs.activeClub.venueId, playerNumber, userId: player.id });
+    }
+  };
 
   const [showEndFrameAlert, setShowEndFrameAlert] = React.useState(false);
   const [showEndGameAlert, setShowEndGameAlert] = React.useState(false);
@@ -150,9 +169,10 @@ export function SnookerScoring() {
                 onSubmit={handleSettingsUpdate}
                 open={openSettingsDrawer}
                 setOpen={setOpenSettingsDrawer}
+                defaultNoOfPlayers={defaultNoOfPlayers}
               />
               <SelectPlayerDrawer
-                onSubmit={handlePlayerConfirm}
+                onSubmit={handlePlayerConfirmWithApi}
                 setOpen={setOpenPlayerSelectCard}
                 open={openPlayerSelectCard}
                 playerIndex={selectedPlayerIndex}
@@ -168,6 +188,8 @@ export function SnookerScoring() {
                 showCancel={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id !== null}
                 showBack={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id === null}
                 onBack={() => onBackInPlayerSelectModal()}
+                teamPlayers={[...snookerScoring.team1.players, ...snookerScoring.team2.players]}
+                onRemovePlayer={handleRemoveTeamPlayer}
               />
               <PlayerOrderSelectModal
                 isModalOpen={showPlayerOrderModal}

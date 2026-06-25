@@ -9,12 +9,13 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer"
-import { SnookerPracticeSettingsData, SnookerPracticeSettingsForm } from "../forms/app/snookerPracticeSettings";
+import { NoOfPlayersDefault, SnookerPracticeSettingsData, SnookerPracticeSettingsForm } from "../forms/app/snookerPracticeSettings";
 
 interface SnookerMarkerSettingsDrawerProps {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     onSubmit: (values: SnookerPracticeSettingsData) => void;
+    defaultNoOfPlayers?: NoOfPlayersDefault;
 }
 
 export function SnookerPracticeSettingsDrawer(props: SnookerMarkerSettingsDrawerProps) {
@@ -25,7 +26,7 @@ export function SnookerPracticeSettingsDrawer(props: SnookerMarkerSettingsDrawer
                     <DrawerTitle className="text-2xl">Settings</DrawerTitle>
                 </DrawerHeader>
                 <div className="px-4 h-full">
-                    <SnookerPracticeSettingsForm onSubmit={props.onSubmit} />
+                    <SnookerPracticeSettingsForm onSubmit={props.onSubmit} defaultNoOfPlayers={props.defaultNoOfPlayers} />
                 </div>
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>

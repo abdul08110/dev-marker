@@ -316,6 +316,10 @@ const sportSlice = createSlice({
     updateHandicap(state, action: PayloadAction<{ handicap: number }>) {
       state.handicap = action.payload.handicap;
     },
+    updateTeamHandicaps(state, action: PayloadAction<{ teamOneHandicap: number; teamTwoHandicap: number }>) {
+      state.teamOneHandicap = action.payload.teamOneHandicap || null;
+      state.teamTwoHandicap = action.payload.teamTwoHandicap || null;
+    },
     updateTimeInMinutes(state, action: PayloadAction<{ timeInMinutes: number }>) {
       state.timeInMinutes = action.payload.timeInMinutes;
     },
@@ -384,6 +388,7 @@ const sportSlice = createSlice({
 
 export const {
   updateHandicap,
+  updateTeamHandicaps,
   updateTimeInMinutes,
   updateFormat,
   updateStreaming,
@@ -411,6 +416,7 @@ export const {
   handleResetSet,
   handleBackendUpdatedState,
   resetStateSnooker,
+  resetStateBilliards,
   updateNoOfSets,
   updateMaxScorePerSet,
   updateTeamHandicapApplied,

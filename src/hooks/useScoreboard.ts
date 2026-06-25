@@ -1,13 +1,29 @@
 import { RootState } from '@/stores';
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import mqtt from 'mqtt';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
+import useMarkerClubs from '@/api/home/useMarkerClubs';
 import useTimer from './useTimer';
 import { toast } from '@/components/ui/use-toast';
 import { Player, Set, TournamentItem, TournamentSubItem } from '@/stores/types';
 import useBodyRotation from './useBodyRotation';
+import { setActiveClub, setClubs } from '@/stores/slices/clubSlice';
+
+export interface QrFlowPlayer {
+  playerNumber: number;
+  playerId: string;
+  playerName: string;
+  playerLastName: string;
+  profilePhoto: string | null;
+}
+
+export interface QrFlowState {
+  isActive: boolean;
+  playerCount: 2 | 4;
+  players: Record<number, QrFlowPlayer>;
+}
 
 export interface ScoreBoardState {
   matchId: string;
@@ -52,7 +68,14 @@ export interface ScoreBoardState {
 
 const useScoreboard = () => {
   const clubs = useSelector((state: RootState) => state.club);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { getMarkerClubs } = useMarkerClubs('MARKER');
+  const [qrFlowState, setQrFlowState] = React.useState<QrFlowState>({
+    isActive: false,
+    playerCount: 2,
+    players: {},
+  });
   const [searchParams] = useSearchParams();
   const searchParamsMatchId = searchParams.get('matchId');
 
@@ -64,73 +87,84 @@ const useScoreboard = () => {
   const { rotateBody } = useBodyRotation();
 
   const timeLeft = useTimer({
-    endTime:  scoreBoardData && scoreBoardData.expectedEndTimeDate ? new Date(scoreBoardData.expectedEndTimeDate) : null,
+    endTime: scoreBoardData && scoreBoardData.expectedEndTimeDate ? new Date(scoreBoardData.expectedEndTimeDate) : null,
     startTime: null,
-    onTimerComplete: () => {  setShowTimeOverAlert(true); },
+    onTimerComplete: () => {
+      setShowTimeOverAlert(true);
+    },
   });
 
   useEffect(() => {
     fetchMatchData(searchParamsMatchId);
   }, [searchParamsMatchId]);
 
+  // If the scoreboard is opened directly (without going through Home), fetch club data ourselves.
   useEffect(() => {
-    if (clubs.activeClub === null) {
-      navigate('/');
-    }
-  }, [clubs.activeClub, navigate]);
+    if (clubs.activeClub !== null) return;
+    setLoading(true);
+    const bootstrap = async () => {
+      const result = await getMarkerClubs();
+      if (result && result.length > 0) {
+        const formatted = result.map((v) => ({
+          clubId: v.club.id,
+          venueId: v.venue.id,
+          clubName: v.club.name,
+          clubLogo: v.club.imageUrl,
+          venueNo: v.venue.no,
+        }));
+        dispatch(setClubs(formatted));
+        dispatch(setActiveClub(formatted[0]));
+      }
+      setLoading(false);
+    };
+    bootstrap();
+  }, []);
 
   useEffect(() => {
     if (!clubs.activeClub) return;
 
     const brokerUrl = import.meta.env.VITE_MQTT_URL;
+    const venueId = clubs.activeClub.venueId;
     const topics = [
-      `${clubs.activeClub.venueId}/send-data`,
-      `${clubs.activeClub.venueId}/match-start`,
-      `${clubs.activeClub.venueId}/match-end`,
-      `${clubs.activeClub.venueId}/timer-updated`,
+      `${venueId}/send-data`,
+      `${venueId}/match-start`,
+      `${venueId}/match-end`,
+      `${venueId}/timer-updated`,
+      `${venueId}/scoreboard/initiate`,
+      `${venueId}/scoreboard/add-player`,
+      `${venueId}/scoreboard/cancel`,
     ];
 
-    const connectToMqtt = () => {
-      const mqttClient = mqtt.connect(brokerUrl, {
-        keepalive: 60,
-        reconnectPeriod: 2000,
+    let active = true;
+
+    // reconnectPeriod handles automatic retries — no manual reconnect loop needed
+    const mqttClient = mqtt.connect(brokerUrl, {
+      keepalive: 60,
+      reconnectPeriod: 2000,
+    });
+
+    mqttClient.on('connect', () => {
+      // Guard: cleanup may have fired before the connection resolved (React StrictMode)
+      if (!active) {
+        mqttClient.end(true);
+        return;
+      }
+      topics.forEach((topic) => {
+        mqttClient.subscribe(topic);
       });
+    });
 
-      mqttClient.on('connect', () => {
-        console.log('Connected to MQTT broker');
-        topics.forEach((topic) => {
-          mqttClient.subscribe(topic, (err) => {
-            if (err) console.error(`Subscription error for topic ${topic}: ${err.message}`);
-            else console.log(`Subscribed to topic ${topic}`);
-          });
-        });
-      });
+    mqttClient.on('message', (topic, message) => {
+      if (active) handleNewMessage(topic, message.toString());
+    });
 
-      mqttClient.on('message', (topic, message) => {
-        handleNewMessage(topic, message.toString());
-      });
-
-      mqttClient.on('reconnect', () => {
-        console.log('Attempting to reconnect to MQTT broker');
-      });
-
-      mqttClient.on('error', (err) => {
-        console.error('MQTT Error:', err);
-        mqttClient.end();
-      });
-
-      mqttClient.on('close', () => {
-        console.log('Disconnected from MQTT broker. Reconnecting...');
-        setTimeout(connectToMqtt, 2000); // Reconnect explicitly after a delay
-      });
-
-      return mqttClient;
-    };
-
-    const mqttClient = connectToMqtt();
+    mqttClient.on('error', (err) => {
+      console.error('MQTT Error:', err);
+    });
 
     return () => {
-      mqttClient.end();
+      active = false;
+      mqttClient.end(true); // force-close, suppresses reconnect
     };
   }, [clubs.activeClub]);
 
@@ -177,7 +211,7 @@ const useScoreboard = () => {
             noOfFrames: res.noOfSets ? res.noOfSets : null,
             showFormatsAsGameNumber: res.tournament ? res.tournament.showFormatsAsGameNumber : null,
             showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
-            showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null
+            showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null,
           });
         } else {
           toast({
@@ -202,11 +236,12 @@ const useScoreboard = () => {
 
   const handleNewMessage = async (topic: string, message: string) => {
     const parsedMessage = JSON.parse(message);
-    const topicWithoutId = topic.split('/')[1];
+    const venueId = clubs.activeClub?.venueId ?? '';
+    const subtopic = topic.startsWith(`${venueId}/`) ? topic.slice(venueId.length + 1) : topic.split('/')[1];
 
     console.log(`THE TOPIC IS ${topic}`);
 
-    switch (topicWithoutId) {
+    switch (subtopic) {
       case 'send-data':
         setScoreboardData((prevData) => {
           if (prevData === null) return null;
@@ -230,6 +265,7 @@ const useScoreboard = () => {
         break;
       case 'match-end':
         setScoreboardData(null);
+        setQrFlowState({ isActive: false, playerCount: 2, players: {} });
         navigate('/app/scoreboard');
         setShowTimeOverAlert(false);
         break;
@@ -245,6 +281,25 @@ const useScoreboard = () => {
         });
         setShowTimeOverAlert(false);
         break;
+      case 'scoreboard/initiate':
+        setQrFlowState({
+          isActive: true,
+          playerCount: parsedMessage.playerCount as 2 | 4,
+          players: {},
+        });
+        break;
+      case 'scoreboard/add-player':
+        setQrFlowState((prev) => ({
+          ...prev,
+          players: {
+            ...prev.players,
+            [parsedMessage.playerNumber]: parsedMessage as QrFlowPlayer,
+          },
+        }));
+        break;
+      case 'scoreboard/cancel':
+        setQrFlowState({ isActive: false, playerCount: 2, players: {} });
+        break;
     }
   };
 
@@ -256,6 +311,8 @@ const useScoreboard = () => {
     setOrientation,
     rotateBody,
     showTimeOverAlert,
+    activeClub: clubs.activeClub,
+    qrFlowState,
   };
 };
 

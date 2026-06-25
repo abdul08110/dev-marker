@@ -16,7 +16,8 @@ export interface BilliardsPracticeSettingsData {
   noOfFrames: number;
   maxPointsPerFrame: number;
   streaming: 'PUBLIC' | 'PRIVATE';
-  handicap: number;
+  teamOneHandicap: number;
+  teamTwoHandicap: number;
   isRankingEvent: boolean;
 }
 
@@ -26,7 +27,8 @@ const formSchema = z.object({
   noOfFrames: z.number(),
   maxPointsPerFrame: z.number(),
   streaming: z.enum(['PUBLIC', 'PRIVATE']),
-  handicap: z.number().min(-147).max(147),
+  teamOneHandicap: z.number().min(0).max(147),
+  teamTwoHandicap: z.number().min(0).max(147),
   isRankingEvent: z.boolean(),
 });
 
@@ -43,7 +45,8 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
       noOfFrames: 1,
       maxPointsPerFrame: 1,
       streaming: 'PRIVATE',
-      handicap: 0,
+      teamOneHandicap: 0,
+      teamTwoHandicap: 0,
     },
   });
 
@@ -127,24 +130,17 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
           </>
         )}
 
-        <FormField
-          control={form.control}
-          name="handicap"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <div className="space-y-1 leading-none">
-                <FormLabel className="text-white text-sm">Handicap</FormLabel>
-              </div>
-              <FormControl>
-                <HandicapSelector
-                  value={field.value}
-                  onChange={field.onChange}
-                  playerNames={{ player1: 'Player 1', player2: 'Player 2' }}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <FormItem className="flex flex-col">
+          <div className="space-y-1 leading-none">
+            <FormLabel className="text-white text-sm">Handicap</FormLabel>
+          </div>
+          <HandicapSelector
+            teamOneValue={form.watch('teamOneHandicap')}
+            teamTwoValue={form.watch('teamTwoHandicap')}
+            onTeamOneChange={(v) => form.setValue('teamOneHandicap', v)}
+            onTeamTwoChange={(v) => form.setValue('teamTwoHandicap', v)}
+          />
+        </FormItem>
 
         <FormField
           control={form.control}

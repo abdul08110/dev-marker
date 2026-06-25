@@ -109,7 +109,11 @@ export function GeneralTemplate(props: GeneralTemplateProps) {
             <ImageWithFallback
               fallback="/images/user-dummy-pic.png"
               className="size-full object-cover"
-              src={props.state!.sideTwoPlayerOne?.profilePhoto ? props.state!.sideTwoPlayerOne?.profilePhoto : '/images/user-dummy-pic.png'}
+              src={
+                props.state!.sideTwoPlayerOne?.profilePhoto
+                  ? props.state!.sideTwoPlayerOne?.profilePhoto
+                  : '/images/user-dummy-pic.png'
+              }
             />
           </div>
         </div>

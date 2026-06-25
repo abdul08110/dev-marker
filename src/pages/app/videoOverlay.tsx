@@ -7,7 +7,6 @@ import { CatholicSinglesTemplate } from '@/components/sections/stream/templates/
 import { CenturyTemplate } from '@/components/sections/stream/templates/Century';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
 import { NewEca } from '@/components/sections/stream/templates/Eca-new';
-import { GeneralTemplate } from '@/components/sections/stream/templates/General';
 import { NewEcaTemplate } from '@/components/sections/stream/templates/NewEca';
 import { Singles } from '@/components/sections/stream/templates/Singles';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
@@ -15,6 +14,7 @@ import { IGTemplate } from '@/components/sections/stream/templates/IG';
 import useStreaming from '@/hooks/useStreaming';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { useEffect, useState } from 'react';
+import NewGeneral from '@/components/sections/stream/templates/NewGeneral';
 
 export function VideoOverlay() {
   const [matchId, setMatchId] = useState<string | null>(null);
@@ -64,12 +64,17 @@ export function VideoOverlay() {
   const activeSet = getActiveSet(viewershipData ? viewershipData.sets : []);
   const activeTurn = getActiveTurn(activeSet);
 
+  // streamingData updates in real-time via MQTT send-data; viewershipData only updates via video playback timer
+  const liveActiveSet = getActiveSet(streamingData.sets);
+  const liveActiveTurn = getActiveTurn(liveActiveSet);
+
   return (
-    <div className="h-screen w-screen bg-transparent pointer-events-none">
+    <div className="h-screen w-screen bg-black pointer-events-none">
       <TopOverlay
         clubLogo={viewershipData!.clubLogo!}
         tournamentLogo={viewershipData.tournamentLogo}
         venueNo={viewershipData.venueNo!}
+        expectedEndTimeDate={viewershipData.expectedEndTimeDate}
         showIGLogo={streamingData.tournamentId === '6938036004eb9abe7e2c3d04'}
         showOtherLogos={
           viewershipData.tournamentId !== null &&
@@ -165,7 +170,8 @@ export function VideoOverlay() {
             <IGTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
           )
         ) : (
-          <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+          // <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+          <NewGeneral state={streamingData} activeSet={liveActiveSet} activeTurn={liveActiveTurn} isTv={false} />
         ))}
       {viewershipData && viewershipData.streams[0].overlayType === 'SOURCE_WITH_FINAL_SCORES' && (
         <SourceWithFinalScores state={viewershipData} />

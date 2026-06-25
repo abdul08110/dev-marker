@@ -23,6 +23,7 @@ import { LiveScoring } from './pages/app/liveScoring';
 import { Commentary } from './pages/app/Commentary';
 import { BowringArena3412 } from './pages/app/bowringArena3412';
 import { HbccTvArena } from './pages/app/hbccTvArena';
+import QRCode from './pages/app/QRCode';
 
 const App: React.FC = () => {
   const token = getToken();
@@ -47,12 +48,13 @@ const App: React.FC = () => {
         <Route path="/app/tv-hls-render" element={<TvHlsRender />} />
         <Route path="/app/bowring-render" element={<BowringArena />} />
         <Route path="/app/ksba-render" element={<KsbaArena />} />
-        <Route path="/app/bowring-3412" element={<BowringArena3412   />} />
+        <Route path="/app/bowring-3412" element={<BowringArena3412 />} />
         <Route path="/app/video-overlay" element={<VideoOverlay />} />
         <Route path="/app/portrait-overlay" element={<PortraitOverlay />} />
         <Route path="/app/live-scoring" element={<LiveScoring />} />
         <Route path="/app/commentary" element={<Commentary />} />
         <Route path="/app/hbcc-tv-arena" element={<HbccTvArena />} />
+        <Route path="/app/qr" element={<QRCode />} />
       </Routes>
     </Router>
   );

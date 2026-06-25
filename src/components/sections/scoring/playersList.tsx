@@ -14,7 +14,7 @@ interface PlayersListProps {
 
 export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: PlayersListProps) {
   const [searchQuery, setSearchQuery] = React.useState<string>('');
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const { getPlayers, players, loading, error } = useGetPlayers();
 
   React.useEffect(() => {
@@ -51,32 +51,31 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
           value={searchQuery}
           onValueChange={handleSearchChange}
         />
-        <CommandList className='max-h-full'>
-          {loading && <CommandEmpty>Loading players...</CommandEmpty>}
+        <CommandList className="max-h-full">
           {error && <CommandEmpty>Error loading players</CommandEmpty>}
           {!loading && !error && players && players.length === 0 && <CommandEmpty>No player found.</CommandEmpty>}
-          <CommandGroup>
-            {players?.map((player) =>
-              disabledPlayerList.includes(player.id) ? null : (
-                <CommandItem 
-                  key={player.id} 
-                  value={player.id!} 
-                  onSelect={() => handleSelect(player.id!)}
-                >
-                  <div className="flex gap-2 items-center">
-                    <img
-                      src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.png'}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                    <div className="flex flex-col justify-between">
-                      <span className="text-white">{player.name}</span>
-                      <small className="text-white/70">{player.phoneNumber}</small>
+          {loading ? (
+            <CommandEmpty>Loading players...</CommandEmpty>
+          ) : (
+            <CommandGroup>
+              {players?.map((player) =>
+                disabledPlayerList.includes(player.id) ? null : (
+                  <CommandItem key={player.id} value={player.id!} onSelect={() => handleSelect(player.id!)}>
+                    <div className="flex gap-2 items-center">
+                      <img
+                        src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.png'}
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
+                      <div className="flex flex-col justify-between">
+                        <span className="text-white">{player.name}</span>
+                        <small className="text-white/70">{player.phoneNumber}</small>
+                      </div>
                     </div>
-                  </div>
-                </CommandItem>
-              ),
-            )}
-          </CommandGroup>
+                  </CommandItem>
+                ),
+              )}
+            </CommandGroup>
+          )}
         </CommandList>
       </Command>
     </div>

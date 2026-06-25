@@ -31,7 +31,13 @@ import { matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@/stores/selectors/billiardsSelector';
 import { BilliardsPracticeSettingsData } from '@/components/forms/app/billiardsPracticeSettings';
 import { BilliardsScoringButtonEnum } from '@/components/sections/scoring/billiardsScoringButton';
-import { setExpectedEndTimeDate } from '@/stores/slices/sportSlice';
+import { setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
+import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
+import mqtt from 'mqtt';
+
+function playerSlot(playerNumber: number): { teamIndex: number; playerIndex: number } {
+  return { teamIndex: playerNumber - 1, playerIndex: 0 };
+}
 
 const useBilliardsScoring = () => {
   // REDUX STATE
@@ -65,6 +71,7 @@ const useBilliardsScoring = () => {
   // API
   const startMatchHook = useStartMatch();
   const getLiveMatchHook = useGetMatchLiveData();
+  const { cancelScoreboardEntry } = useCancelScoreboardEntry();
 
   // LOCAL STATE
   const [openSettingsDrawer, setOpenSettingsDrawer] = React.useState(false);
@@ -131,6 +138,43 @@ const useBilliardsScoring = () => {
       navigate('/');
     }
   }, [clubs.activeClub, navigate]);
+
+  // MQTT — auto-fill player slots from QR scans and advance drawer
+  const onMqttPlayerRef = React.useRef<((data: any) => void) | null>(null);
+  onMqttPlayerRef.current = (data) => {
+    const { teamIndex, playerIndex } = playerSlot(data.playerNumber);
+    const player: Player = {
+      id: data.playerId,
+      name: `${data.playerName}`.trim(),
+      profilePhoto: data.profilePhoto ?? null,
+    };
+    dispatch(setTeamPlayer({ teamIndex, playerIndex, player }));
+
+    // Billiards is always 2 players: player 1 → advance to slot 2; player 2 → close
+    if (data.playerNumber === 1 && !billiardsScoring.team2.players[0]?.id) {
+      setSelectedTeamIndex(1);
+      setSelectedPlayerIndex(0);
+    } else {
+      setOpenPlayerSelectCard(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!clubs.activeClub || billiardsScoring.matchId !== null) return;
+    const brokerUrl = import.meta.env.VITE_MQTT_URL;
+    const client = mqtt.connect(brokerUrl, { keepalive: 60, reconnectPeriod: 2000 });
+    const topic = `${clubs.activeClub.venueId}/marker/add-player`;
+    client.on('connect', () => client.subscribe(topic));
+    client.on('message', (_t, msg) => {
+      try {
+        onMqttPlayerRef.current?.(JSON.parse(msg.toString()));
+      } catch {}
+    });
+    client.on('error', () => client.end());
+    return () => {
+      client.end();
+    };
+  }, [clubs.activeClub?.venueId, billiardsScoring.matchId]);
 
   const handleBackClick = () => handleGoToHome();
 
@@ -243,12 +287,30 @@ const useBilliardsScoring = () => {
     }
   };
 
+  const handleRemoveTeamPlayer = (globalIndex: number) => {
+    const team1Count = billiardsScoring.team1.players.length;
+    const teamIndex = globalIndex < team1Count ? 0 : 1;
+    const playerIndex = globalIndex < team1Count ? globalIndex : globalIndex - team1Count;
+    dispatch(
+      setTeamPlayer({
+        teamIndex,
+        playerIndex,
+        player: { id: null, name: `Player ${playerIndex + 1}`, profilePhoto: null },
+      }),
+    );
+    setSelectedTeamIndex(teamIndex);
+    setSelectedPlayerIndex(playerIndex);
+  };
+
   const handleSettingsUpdate = async (values: BilliardsPracticeSettingsData) => {
     await dispatch(handleSettingsStateUpdateBilliards(values));
     setOpenSettingsDrawer(false);
   };
 
   const handleGoToHome = () => {
+    if (clubs.activeClub) {
+      cancelScoreboardEntry({ venueId: clubs.activeClub.venueId });
+    }
     navigate('/app/home');
   };
 
@@ -358,7 +420,7 @@ const useBilliardsScoring = () => {
       sportType: billiardsScoring.format,
       streamingType: billiardsScoring.streaming,
       venueId: clubs.activeClub!.venueId,
-      handicap: billiardsScoring.handicap,
+      handicap: 0,
       maxScorePerSet: billiardsScoring.maxScorePerSet,
       noOfSets: billiardsScoring.noOfSets,
       cumulativeScoring: billiardsScoring.isCumulativeScoring,
@@ -435,6 +497,7 @@ const useBilliardsScoring = () => {
     handleBilliardsSelectColorBall,
     handleEndFrameButton,
     onBackInPlayerSelectModal,
+    handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
   };

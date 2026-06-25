@@ -76,17 +76,10 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
           <div className="col-span-2 grid grid-cols-2 gap-2 ">
             <button
               disabled={props.disabledState[SnookerScoringButtonEnum.PLAY_SAFE]}
-              className={clsx(' bg-markerButton relative', commonClasses)}
+              className={clsx(' bg-markerButton relative col-span-2', commonClasses)}
               onClick={() => props.onButtonClick(SnookerScoringButtonEnum.PLAY_SAFE)}
             >
-              Play Safe
-            </button>
-            <button
-              disabled={props.disabledState[SnookerScoringButtonEnum.MISSED_POT]}
-              className={clsx(' bg-markerButton relative', commonClasses)}
-              onClick={() => props.onButtonClick(SnookerScoringButtonEnum.MISSED_POT)}
-            >
-              Missed Pot
+              Switch Player
             </button>
           </div>
         )}

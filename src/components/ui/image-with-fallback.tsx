@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -17,6 +17,10 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   ...props 
 }) => {
   const [imgSrc, setImgSrc] = useState<string>(src);
+
+  useEffect(() => {
+    setImgSrc(src);
+  }, [src]);
 
   const getClipPath = () => {
     if (!cutPosition) return undefined;
