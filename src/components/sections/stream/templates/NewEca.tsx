@@ -11,18 +11,19 @@ interface NewEcaTemplateProps {
 }
 
 export function NewEcaTemplate(props: NewEcaTemplateProps) {
-
   return (
     <div className="absolute bottom-0 mx-[min(1vh,1vw)] flex flex-col items-center bg-black w-[calc(100%-min(2vh,2vw))]">
       <div className="w-full h-auto flex items-center">
         <div>
           <div className="overflow-hidden h-[min(13vh,13vw)] aspect-square">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="size-full object-cover"
-              src={  props.state!.sideOnePlayerOne.profilePhoto
-                ? props.state!.sideOnePlayerOne.profilePhoto
-                : '/images/user-dummy-pic.png'}
+              src={
+                props.state!.sideOnePlayerOne.profilePhoto
+                  ? props.state!.sideOnePlayerOne.profilePhoto
+                  : '/images/user-dummy-pic.jpg'
+              }
             />
           </div>
         </div>
@@ -80,15 +81,11 @@ export function NewEcaTemplate(props: NewEcaTemplateProps) {
                 <div className="bg-primary px-[min(4vh,4vw)] py-[min(0.4vh,0.4vw)]">
                   {props.activeSet ? props.activeSet?.teamOneScore : 0}
                 </div>
-                <div className="bg-[#424242] px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">
-                  {props.state.teamOneScore}
-                </div>
+                <div className="bg-[#424242] px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">{props.state.teamOneScore}</div>
                 <div className="bg-primary px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">
                   {props.state.tournamentSubItem?.gameFormat.noOfSets}
                 </div>
-                <div className="bg-[#424242] px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">
-                  {props.state.teamTwoScore}
-                </div>
+                <div className="bg-[#424242] px-[min(2vh,2vw)] py-[min(0.4vh,0.4vw)]">{props.state.teamTwoScore}</div>
                 <div className="bg-primary px-[min(4vh,4vw)] py-[min(0.4vh,0.4vw)]">
                   {props.activeSet ? props.activeSet?.teamTwoScore : 0}
                 </div>
@@ -123,12 +120,12 @@ export function NewEcaTemplate(props: NewEcaTemplateProps) {
         <div>
           <div className="overflow-hidden h-[min(13vh,13vw)] aspect-square">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="size-full object-cover"
               src={
                 props.state!.sideTwoPlayerOne?.profilePhoto
                   ? props.state!.sideTwoPlayerOne?.profilePhoto
-                  : '/images/user-dummy-pic.png'
+                  : '/images/user-dummy-pic.jpg'
               }
             />
           </div>

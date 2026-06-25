@@ -133,7 +133,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         <div className="flex items-center gap-[min(2.6vh,2.6vw)] py-[min(1.1vh,1.1vw)] w-fit justify-self-start">
           <ImageWithFallback
             className="object-cover size-[min(5.9vh,5.9vw)]"
-            fallback="/images/user-dummy-pic.png"
+            fallback="/images/user-dummy-pic.jpg"
             src={state.clubLogo ?? ''}
           />
           <p className="text-score-text font-semibold text-[min(3.3vh,3.3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase">
@@ -454,11 +454,7 @@ function BallGrid({ balls }: { balls: SnookerPointType[][] }) {
     .filter((type): type is SnookerPointType => type in BALL_IMAGE_MAP);
 
   const remainder = potted.length % TOTAL_SLOTS;
-  const current = potted.length === 0
-    ? []
-    : remainder === 0
-      ? potted.slice(-TOTAL_SLOTS)
-      : potted.slice(-remainder);
+  const current = potted.length === 0 ? [] : remainder === 0 ? potted.slice(-TOTAL_SLOTS) : potted.slice(-remainder);
 
   const slots = Array.from({ length: TOTAL_SLOTS }, (_, i) =>
     i < current.length ? BALL_IMAGE_MAP[current[i]]! : '/images/balls/placeholder-ball.svg',

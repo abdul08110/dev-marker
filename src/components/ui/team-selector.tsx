@@ -65,11 +65,11 @@ export function TeamSelector(props: TeamSelectorProps) {
                   <CommandItem key={team.id} value={team.id} onSelect={() => handleSelect(team.id)}>
                     <div className="flex gap-2 items-center">
                       <img
-                        src={team.logo ? team.logo : '/images/user-dummy-pic.png'}
+                        src={team.logo ? team.logo : '/images/user-dummy-pic.jpg'}
                         className="h-8 w-8 rounded-full object-cover"
                       />
                       <div className="flex flex-col justify-between">
-                        <span className='data-[selected=true]:text-white'>{team.users[0].name}</span>
+                        <span className="data-[selected=true]:text-white">{team.users[0].name}</span>
                       </div>
                     </div>
                   </CommandItem>

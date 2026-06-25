@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
 import { calculateStatsForTeam, getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { generatePlayerName } from '@/utils/functions';
+import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import clsx from 'clsx';
@@ -52,26 +53,16 @@ export function PortraitView(props: PortraitStreamDataProps) {
           <div className={clsx({ 'bg-[#9B36BA]': isTeamOneActive, 'bg-[#1F1F1F]': !isTeamOneActive })}>
             <div className="p-4 space-y-4">
               <div className="flex items-center gap-3">
-                <div
-                  className="bg-[#FFD400] p-px size-[88px] relative rounded-xl overflow-hidden"
-                  style={{
-                    clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
-                    flexShrink: 0,
-                  }}
-                >
-                  <ImageWithFallback
-                    style={{
-                      clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
-                    }}
-                    className="object-cover rounded-xl w-full h-full"
-                    fallback="/images/user-dummy-pic.png"
-                    src={
+                <div className="relative" style={{ flexShrink: 0 }}>
+                  <ProfileCard
+                    imageUrl={
                       props.state.teamOneLogo
                         ? props.state.teamOneLogo
                         : props.state.sideOnePlayerOne.profilePhoto
                           ? props.state.sideOnePlayerOne.profilePhoto
-                          : '/images/user-dummy-pic.png'
+                          : '/images/user-dummy-pic.jpg'
                     }
+                    size={88}
                   />
                   {props.state.teamOneHandicap && (
                     <div className="absolute w-full bg-[#FFD400] bottom-0">
@@ -100,26 +91,28 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 )}
               </p>
             </div>
-            <div className="px-4 py-3 flex gap-3 items-center">
-              <ImageWithFallback
-                className="aspect-square rounded overflow-hidden border-white size-8 object-cover shrink-0"
-                fallback="/images/user-dummy-pic.png"
-                src={
-                  props.state.teamOneLogo
-                    ? props.state.teamOneLogo
-                    : props.state.sideOnePlayerOne.profilePhoto
-                      ? props.state.sideOnePlayerOne.profilePhoto
-                      : '/images/user-dummy-pic.png'
-                }
-              />
-              <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
-                {props.state.teamTwoName ||
-                  generatePlayerName(
-                    props.state.sideTwoPlayerOne.name,
-                    props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
-                  )}
-              </p>
-            </div>
+            {props.state.tournamentId && (
+              <div className="px-4 py-3 flex gap-3 items-center">
+                <ImageWithFallback
+                  className="aspect-square rounded overflow-hidden border-white size-8 object-cover shrink-0"
+                  fallback="/images/user-dummy-pic.jpg"
+                  src={
+                    props.state.teamOneLogo
+                      ? props.state.teamOneLogo
+                      : props.state.sideOnePlayerOne.profilePhoto
+                        ? props.state.sideOnePlayerOne.profilePhoto
+                        : '/images/user-dummy-pic.jpg'
+                  }
+                />
+                <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
+                  {props.state.teamOneName ||
+                    generatePlayerName(
+                      props.state.sideOnePlayerOne.name,
+                      props.state.sideOnePlayerTwo ? props.state.sideOnePlayerTwo.name : undefined,
+                    )}
+                </p>
+              </div>
+            )}
           </div>
           <div className={clsx({ 'bg-[#9B36BA]': isTeamTwoActive, 'bg-[#1F1F1F]': !isTeamTwoActive })}>
             <div className="p-4 space-y-4">
@@ -134,26 +127,16 @@ export function PortraitView(props: PortraitStreamDataProps) {
                   </span>
                 </div>
 
-                <div
-                  className="bg-[#FFD400] p-px size-[88px] relative rounded-xl overflow-hidden"
-                  style={{
-                    clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
-                    flexShrink: 0,
-                  }}
-                >
-                  <ImageWithFallback
-                    style={{
-                      clipPath: 'polygon(25px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 25px)',
-                    }}
-                    className="object-cover rounded-xl w-full h-full"
-                    fallback="/images/user-dummy-pic.png"
-                    src={
+                <div className="relative" style={{ flexShrink: 0 }}>
+                  <ProfileCard
+                    imageUrl={
                       props.state.teamTwoLogo
                         ? props.state.teamTwoLogo
                         : props.state.sideTwoPlayerOne.profilePhoto
                           ? props.state.sideTwoPlayerOne.profilePhoto
-                          : '/images/user-dummy-pic.png'
+                          : '/images/user-dummy-pic.jpg'
                     }
+                    size={88}
                   />
                   {props.state.teamTwoHandicap && (
                     <div className="absolute w-full bg-[#FFD400] bottom-0">
@@ -173,26 +156,28 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 )}
               </p>
             </div>
-            <div className="px-4 py-3 flex justify-end gap-3 items-center">
-              <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
-                {props.state.teamOneName ||
-                  generatePlayerName(
-                    props.state.sideOnePlayerOne.name,
-                    props.state.sideOnePlayerTwo ? props.state.sideOnePlayerTwo.name : undefined,
-                  )}
-              </p>
-              <ImageWithFallback
-                className="aspect-square rounded overflow-hidden border-white size-8 object-cover shrink-0"
-                fallback="/images/user-dummy-pic.png"
-                src={
-                  props.state.teamTwoLogo
-                    ? props.state.teamTwoLogo
-                    : props.state.sideTwoPlayerOne.profilePhoto
-                      ? props.state.sideTwoPlayerOne.profilePhoto
-                      : '/images/user-dummy-pic.png'
-                }
-              />
-            </div>
+            {props.state.tournamentId && (
+              <div className="px-4 py-3 flex justify-end gap-3 items-center">
+                <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
+                  {props.state.teamTwoName ||
+                    generatePlayerName(
+                      props.state.sideTwoPlayerOne.name,
+                      props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
+                    )}
+                </p>
+                <ImageWithFallback
+                  className="aspect-square rounded overflow-hidden border-white size-8 object-cover shrink-0"
+                  fallback="/images/user-dummy-pic.jpg"
+                  src={
+                    props.state.teamTwoLogo
+                      ? props.state.teamTwoLogo
+                      : props.state.sideTwoPlayerOne.profilePhoto
+                        ? props.state.sideTwoPlayerOne.profilePhoto
+                        : '/images/user-dummy-pic.jpg'
+                  }
+                />
+              </div>
+            )}
           </div>
         </div>
         {props.state.sport === 'SNOOKER' && (

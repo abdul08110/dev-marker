@@ -26,7 +26,7 @@ interface TournamentConfirmationModalProps {
 
 export function TournamentConfirmationModal(props: TournamentConfirmationModalProps) {
   if (!props.format) return null;
-  
+
   // For singles events, we don't need team objects
   if (props.isSinglesEvent) {
     if (!props.teamOnePlayers?.length || !props.teamTwoPlayers?.length) return null;
@@ -53,7 +53,7 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
                   <>
                     <div className="flex flex-col items-center gap-2">
                       <img
-                        src={props.teamOnePlayers[0]?.profilePhoto || '/images/user-dummy-pic.png'}
+                        src={props.teamOnePlayers[0]?.profilePhoto || '/images/user-dummy-pic.jpg'}
                         alt={props.teamOnePlayers[0]?.name || 'Player One'}
                         className="h-20 w-20 rounded-full object-cover"
                       />
@@ -66,7 +66,7 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
 
                     <div className="flex flex-col items-center gap-2">
                       <img
-                        src={props.teamTwoPlayers[0]?.profilePhoto || '/images/user-dummy-pic.png'}
+                        src={props.teamTwoPlayers[0]?.profilePhoto || '/images/user-dummy-pic.jpg'}
                         alt={props.teamTwoPlayers[0]?.name || 'Player Two'}
                         className="h-20 w-20 rounded-full object-cover"
                       />
@@ -108,18 +108,19 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
                     {props.isSinglesEvent ? 'Player One' : 'Team One Players'}
                   </h3>
                   <div className="space-y-2">
-                    {props.teamOnePlayers?.map((player) => (
-                      player && (
-                        <div key={player.id} className="flex items-center gap-2">
-                          <img
-                            src={player.profilePhoto || '/images/user-dummy-pic.png'}
-                            alt={player.name}
-                            className="h-8 w-8 rounded-full object-cover"
-                          />
-                          <span className="text-white text-xs">{player.name}</span>
-                        </div>
-                      )
-                    ))}
+                    {props.teamOnePlayers?.map(
+                      (player) =>
+                        player && (
+                          <div key={player.id} className="flex items-center gap-2">
+                            <img
+                              src={player.profilePhoto || '/images/user-dummy-pic.jpg'}
+                              alt={player.name}
+                              className="h-8 w-8 rounded-full object-cover"
+                            />
+                            <span className="text-white text-xs">{player.name}</span>
+                          </div>
+                        ),
+                    )}
                   </div>
                 </div>
 
@@ -128,18 +129,19 @@ export function TournamentConfirmationModal(props: TournamentConfirmationModalPr
                     {props.isSinglesEvent ? 'Player Two' : 'Team Two Players'}
                   </h3>
                   <div className="space-y-2">
-                    {props.teamTwoPlayers?.map((player) => (
-                      player && (
-                        <div key={player.id} className="flex items-center gap-2">
-                          <img
-                            src={player.profilePhoto || '/images/user-dummy-pic.png'}
-                            alt={player.name}
-                            className="h-8 w-8 rounded-full object-cover"
-                          />
-                          <span className="text-white text-xs">{player.name}</span>
-                        </div>
-                      )
-                    ))}
+                    {props.teamTwoPlayers?.map(
+                      (player) =>
+                        player && (
+                          <div key={player.id} className="flex items-center gap-2">
+                            <img
+                              src={player.profilePhoto || '/images/user-dummy-pic.jpg'}
+                              alt={player.name}
+                              className="h-8 w-8 rounded-full object-cover"
+                            />
+                            <span className="text-white text-xs">{player.name}</span>
+                          </div>
+                        ),
+                    )}
                   </div>
                 </div>
               </div>

@@ -25,9 +25,9 @@ export function EcaTemplate(props: EcaTemplateProps) {
         <div className="flex px-1 w-full gap-1 h-full justify-center">
           <div className="flex items-end lg:p-2">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-              src={props.teamOneLogo ? props.teamOneLogo : '/images/user-dummy-pic.png'}
+              src={props.teamOneLogo ? props.teamOneLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
 
@@ -99,9 +99,9 @@ export function EcaTemplate(props: EcaTemplateProps) {
           <div className="flex justify-end lg:p-2">
             <div className="flex items-end">
               <ImageWithFallback
-                fallback='/images/user-dummy-pic.png'
+                fallback="/images/user-dummy-pic.jpg"
                 className="lg:h-14 lg:w-14 xl:h-24 xl:w-24 h-8 w-8 aspect-square object-cover rounded-full"
-                src={props.teamTwoLogo ? props.teamTwoLogo : '/images/user-dummy-pic.png'}
+                src={props.teamTwoLogo ? props.teamTwoLogo : '/images/user-dummy-pic.jpg'}
               />
             </div>
           </div>

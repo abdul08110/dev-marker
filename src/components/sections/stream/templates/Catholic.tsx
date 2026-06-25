@@ -16,9 +16,9 @@ export function CatholicTemplate(props: CatholicTemplateProps) {
       <div className="w-full h-auto flex items-center">
         <div className={`${props.isTv ? 'p-2' : '360p:p-2  p-4'}`}>
           <ImageWithFallback
-            fallback="/images/user-dummy-pic.png"
+            fallback="/images/user-dummy-pic.jpg"
             className={`${props.isTv ? 'size-[4rem]' : '360p:size-6 720p:size-[4rem]  1080p:size-[8rem]'} aspect-square rounded-full object-cover`}
-            src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.png'}
+            src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.jpg'}
           />
         </div>
         <div className="flex-grow flex flex-col h-full">
@@ -60,7 +60,8 @@ export function CatholicTemplate(props: CatholicTemplateProps) {
               <h5
                 className={`${props.isTv ? 'text-lg' : '360p:text-[0.5rem] 720p:text-lg 1080p:text-4xl'} text-white text-left uppercase whitespace-nowrap`}
               >
-                {generatePlayerName(props.state!.sideOnePlayerOne.name, props.state!.sideOnePlayerTwo?.name)}&nbsp;&nbsp;({convertHandicapToString(props.state?.teamOneHandicap)})
+                {generatePlayerName(props.state!.sideOnePlayerOne.name, props.state!.sideOnePlayerTwo?.name)}
+                &nbsp;&nbsp;({convertHandicapToString(props.state?.teamOneHandicap)})
               </h5>
             </div>
             <div className="col-span-1">
@@ -69,10 +70,7 @@ export function CatholicTemplate(props: CatholicTemplateProps) {
               >
                 <div className="font-bold">{props.activeSet ? props.activeSet?.teamOneScore : 0}</div>
 
-
-                <div>
-                    (DOUBLE FRAME)
-                </div>
+                <div>(DOUBLE FRAME)</div>
 
                 <div>
                   <span className="font-bold">{props.activeSet ? props.activeSet?.teamTwoScore : 0}</span>
@@ -83,7 +81,8 @@ export function CatholicTemplate(props: CatholicTemplateProps) {
               <h5
                 className={`${props.isTv ? 'text-lg' : '360p:text-[0.5rem] 720p:text-lg 1080p:text-4xl'} text-white text-right uppercase whitespace-nowrap`}
               >
-                {generatePlayerName(props.state!.sideTwoPlayerOne.name, props.state!.sideTwoPlayerTwo?.name)}&nbsp;&nbsp;({convertHandicapToString(props.state?.teamTwoHandicap)})
+                {generatePlayerName(props.state!.sideTwoPlayerOne.name, props.state!.sideTwoPlayerTwo?.name)}
+                &nbsp;&nbsp;({convertHandicapToString(props.state?.teamTwoHandicap)})
               </h5>
             </div>
           </div>
@@ -92,7 +91,8 @@ export function CatholicTemplate(props: CatholicTemplateProps) {
               <h5
                 className={`${props.isTv ? 'text-lg' : '360p:text-[0.5rem] 720p:text-lg 1080p:text-4xl'} text-white font-bold text-left uppercase whitespace-nowrap`}
               >
-                {props.state?.teamOneName}{'  '}
+                {props.state?.teamOneName}
+                {'  '}
                 {/* {isTeamReveresed
                   ? props.state!.tournamentSubItem?.tournamentItem.teamTwoScore!
                   : props.state!.tournamentSubItem?.tournamentItem.teamOneScore!} */}
@@ -119,9 +119,9 @@ export function CatholicTemplate(props: CatholicTemplateProps) {
         </div>
         <div className={`${props.isTv ? 'p-2' : '360p:p-2  p-4'}`}>
           <ImageWithFallback
-            fallback="/images/user-dummy-pic.png"
+            fallback="/images/user-dummy-pic.jpg"
             className={`${props.isTv ? 'size-[4rem]' : '360p:size-6 720p:size-[4rem] 1080p:size-[8rem]'} aspect-square rounded-full object-cover`}
-            src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.png'}
+            src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.jpg'}
           />
         </div>
       </div>

@@ -63,7 +63,7 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
                   <CommandItem key={player.id} value={player.id!} onSelect={() => handleSelect(player.id!)}>
                     <div className="flex gap-2 items-center">
                       <img
-                        src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.png'}
+                        src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.jpg'}
                         className="h-8 w-8 rounded-full object-cover"
                       />
                       <div className="flex flex-col justify-between">

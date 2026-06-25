@@ -36,7 +36,7 @@ export function ClublivNew(props: ClublivNewProps) {
             fill="url(#paint0_linear_4239_3740)"
           />
           <image
-            href={props.state!.teamOneLogo || '/images/user-dummy-pic.png'}
+            href={props.state!.teamOneLogo || '/images/user-dummy-pic.jpg'}
             x="8"
             y="8"
             width="48"
@@ -154,7 +154,7 @@ export function ClublivNew(props: ClublivNewProps) {
             fill="url(#paint0_linear_4239_3742)"
           />
           <image
-            href={props.state!.teamTwoLogo || '/images/user-dummy-pic.png'}
+            href={props.state!.teamTwoLogo || '/images/user-dummy-pic.jpg'}
             x="8"
             y="8"
             width="48"
@@ -232,9 +232,9 @@ export function ClublivNew(props: ClublivNewProps) {
         <div className="h-full flex items-center">
           <div className="h-full w-[min(13vh,13vw)] rounded-lg overflow-hidden">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="w-full h-full object-cover"
-              src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.png'}
+              src={props.state!.teamOneLogo ? props.state!.teamOneLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>
@@ -347,9 +347,9 @@ export function ClublivNew(props: ClublivNewProps) {
         <div className="h-full flex items-center">
           <div className="h-full w-[min(13vh,13vw)] rounded-lg overflow-hidden">
             <ImageWithFallback
-              fallback="/images/user-dummy-pic.png"
+              fallback="/images/user-dummy-pic.jpg"
               className="w-full h-full object-cover"
-              src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.png'}
+              src={props.state!.teamTwoLogo ? props.state!.teamTwoLogo : '/images/user-dummy-pic.jpg'}
             />
           </div>
         </div>
