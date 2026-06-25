@@ -22,6 +22,7 @@ const BALL_IMAGE_MAP: Partial<Record<SnookerPointType, string>> = {
 import TimerDial from './TimerDial';
 import { ProfileCard } from '@/components/ProfileCard';
 import { useFluidPx } from '@/hooks/useFluidPx';
+import { cn } from '@/lib/utils';
 
 interface NewScoreBoardProps {
   state: ScoreBoardState;
@@ -127,7 +128,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         : null;
 
   return (
-    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(5.6vh,5.6vw)] py[min(3.7vh,3.7vw)] bg-no-repeat flex flex-col justify-between overflow-hidden gap-[min(6.5vh,6.5vw)]">
+    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(5.6vh,5.6vw)] py[min(3.7vh,3.7vw)] bg-no-repeat flex flex-col justify-between overflow-hidden">
       {/* Header */}
       <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
         <div className="flex items-center gap-[min(2.6vh,2.6vw)] py-[min(1.1vh,1.1vw)] w-fit justify-self-start">
@@ -330,7 +331,7 @@ function PlayerCard({
   const backPhoto = isPlayerOneActive ? (profilePhoto2 ?? profilePhoto) : profilePhoto;
 
   return (
-    <div className="relative w-full h-full backdrop-blur-lg">
+    <div className="relative w-full h-full backdrop-blur-lg overflow-hidden">
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col p-[min(1.9vh,1.9vw)]">
         {/* Player info */}
@@ -380,7 +381,7 @@ function PlayerCard({
 
         {/* Score + Break */}
         <div className="p-[min(3vh,3vw)] relative">
-          <p className="font-semibold leading-[130%] uppercase text-score-text text-[min(18.5vh,18.5vw)] pl-[min(12.5vw,12.5vh)]">
+          <p className={cn('font-semibold leading-[130%] uppercase text-score-text text-[min(16.5vh,16.5vw)]')}>
             {score}
           </p>
           {breakScore != null && (
