@@ -420,7 +420,7 @@ const useBilliardsScoring = () => {
       sportType: billiardsScoring.format,
       streamingType: billiardsScoring.streaming,
       venueId: clubs.activeClub!.venueId,
-      handicap: billiardsScoring.handicap,
+      handicap: 0,
       maxScorePerSet: billiardsScoring.maxScorePerSet,
       noOfSets: billiardsScoring.noOfSets,
       cumulativeScoring: billiardsScoring.isCumulativeScoring,

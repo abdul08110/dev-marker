@@ -26,6 +26,7 @@ import {
   setTeamPlayer,
   updateFormat,
   updateHandicap,
+  updateTeamHandicaps,
   updateMatchStartedTimeDateUtc,
   updateStreaming,
   updateTimeInMinutes,
@@ -672,19 +673,20 @@ export const handleSettingsStateUpdate = createAsyncThunk<
     durationInMinutes: string;
     noOfPlayers: '2' | '4';
     streaming: 'PUBLIC' | 'PRIVATE';
-    handicap: number;
+    teamOneHandicap: number;
+    teamTwoHandicap: number;
     isRankingEvent: boolean;
   },
   { state: RootState; dispatch: AppDispatch }
 >(
   'sport/handleSettingsUpdate',
-  async ({ format, durationInMinutes, noOfPlayers, streaming, handicap, isRankingEvent }, { dispatch, getState }) => {
+  async ({ format, durationInMinutes, noOfPlayers, streaming, teamOneHandicap, teamTwoHandicap, isRankingEvent }, { dispatch, getState }) => {
     await dispatch(
       updateTimeInMinutes({ timeInMinutes: isRankingEvent ? 0 : timeStringToDecimalMinutes(durationInMinutes) }),
     );
     await dispatch(updateFormat({ format: format }));
     await dispatch(updateStreaming({ streaming }));
-    await dispatch(updateHandicap({ handicap }));
+    await dispatch(updateTeamHandicaps({ teamOneHandicap, teamTwoHandicap }));
     await dispatch(updateIsRankingEvent({ isRankingEvent }));
 
     if (isRankingEvent) {
@@ -712,14 +714,15 @@ export const handleSettingsStateUpdateBilliards = createAsyncThunk<
     noOfFrames: number;
     maxPointsPerFrame: number;
     streaming: 'PUBLIC' | 'PRIVATE';
-    handicap: number;
+    teamOneHandicap: number;
+    teamTwoHandicap: number;
     isRankingEvent: boolean;
   },
   { state: RootState; dispatch: AppDispatch }
 >(
   'sport/handleSettingsUpdateBilliards',
   async (
-    { format, durationInMinutes, noOfFrames, maxPointsPerFrame, streaming, handicap, isRankingEvent },
+    { format, durationInMinutes, noOfFrames, maxPointsPerFrame, streaming, teamOneHandicap, teamTwoHandicap, isRankingEvent },
     { dispatch },
   ) => {
     await dispatch(updateFormat({ format }));
@@ -727,7 +730,7 @@ export const handleSettingsStateUpdateBilliards = createAsyncThunk<
       updateTimeInMinutes({ timeInMinutes: isRankingEvent ? 0 : timeStringToDecimalMinutes(durationInMinutes) }),
     );
     await dispatch(updateStreaming({ streaming }));
-    await dispatch(updateHandicap({ handicap }));
+    await dispatch(updateTeamHandicaps({ teamOneHandicap, teamTwoHandicap }));
     await dispatch(updateIsRankingEvent({ isRankingEvent }));
 
     if (isRankingEvent) {

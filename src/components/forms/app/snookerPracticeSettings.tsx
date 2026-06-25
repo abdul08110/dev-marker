@@ -15,7 +15,8 @@ export interface SnookerPracticeSettingsData {
   durationInMinutes: string;
   noOfPlayers: '2' | '4';
   streaming: 'PUBLIC' | 'PRIVATE';
-  handicap: number;
+  teamOneHandicap: number;
+  teamTwoHandicap: number;
   isRankingEvent: boolean;
 }
 
@@ -26,7 +27,8 @@ const formSchema = z.object({
   durationInMinutes: z.string().regex(/^\d{1,2}:\d{2}$/, 'Duration must be in mm:ss format'),
   noOfPlayers: z.enum(['2', '4']),
   streaming: z.enum(['PUBLIC', 'PRIVATE']),
-  handicap: z.number().min(-147).max(147),
+  teamOneHandicap: z.number().min(0).max(147),
+  teamTwoHandicap: z.number().min(0).max(147),
   isRankingEvent: z.boolean(),
 });
 
@@ -43,7 +45,8 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
       durationInMinutes: '30:00',
       noOfPlayers: props.defaultNoOfPlayers ?? '2',
       streaming: 'PRIVATE',
-      handicap: 0,
+      teamOneHandicap: 0,
+      teamTwoHandicap: 0,
       isRankingEvent: false,
     },
   });
@@ -101,24 +104,17 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="handicap"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <div className="space-y-1 leading-none">
-                <FormLabel className="text-white text-sm">Handicap</FormLabel>
-              </div>
-              <FormControl>
-                <HandicapSelector
-                  value={field.value}
-                  onChange={field.onChange}
-                  playerNames={{ player1: 'Player 1', player2: 'Player 2' }}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <FormItem className="flex flex-col">
+          <div className="space-y-1 leading-none">
+            <FormLabel className="text-white text-sm">Handicap</FormLabel>
+          </div>
+          <HandicapSelector
+            teamOneValue={form.watch('teamOneHandicap')}
+            teamTwoValue={form.watch('teamTwoHandicap')}
+            onTeamOneChange={(v) => form.setValue('teamOneHandicap', v)}
+            onTeamTwoChange={(v) => form.setValue('teamTwoHandicap', v)}
+          />
+        </FormItem>
         <FormField
           control={form.control}
           name="streaming"

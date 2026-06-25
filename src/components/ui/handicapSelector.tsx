@@ -1,52 +1,53 @@
-import React, { useEffect, useRef } from 'react';
-import clsx from 'clsx';
+import React from 'react';
+import { Input } from '@/components/ui/input';
 
 interface HandicapSelectorProps {
-    value: number;
-    onChange: (value: number) => void;
-    playerNames: { player1: string; player2: string };
+    teamOneValue: number;
+    teamTwoValue: number;
+    onTeamOneChange: (value: number) => void;
+    onTeamTwoChange: (value: number) => void;
+    teamOneLabel?: string;
+    teamTwoLabel?: string;
 }
 
-const HandicapSelector: React.FC<HandicapSelectorProps> = ({ value, onChange, playerNames }) => {
-    const handicapOptions = Array.from({ length: 295 }, (_, i) => i - 147);
-    const selectedRef = useRef<HTMLDivElement | null>(null);
-
-    const getLabel = (points: number) => {
-        if (points < 0) {
-            return `Give + ${Math.abs(points)} to ${playerNames.player1}`;
-        } else if (points > 0) {
-            return `Give + ${points} to ${playerNames.player2}`;
-        }
-        return "Play off levels";
+const HandicapSelector: React.FC<HandicapSelectorProps> = ({
+    teamOneValue,
+    teamTwoValue,
+    onTeamOneChange,
+    onTeamTwoChange,
+    teamOneLabel = 'Team A',
+    teamTwoLabel = 'Team B',
+}) => {
+    const handleChange = (raw: string, cb: (v: number) => void) => {
+        if (raw === '') { cb(0); return; }
+        const parsed = parseInt(raw, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed <= 147) cb(parsed);
     };
 
-    useEffect(() => {
-        if (selectedRef.current) {
-            selectedRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-            });
-        }
-    }, [value]);
-
     return (
-        <div className="overflow-auto h-36 w-36 rounded-md shadow-inner">
-            {handicapOptions.map((option) => (
-                <div
-                    key={option}
-                    ref={value === option ? selectedRef : null}
-                    className={clsx(
-                        'text-center py-1 text-sm cursor-pointer',
-                        {
-                            'text-white font-bold': value === option,
-                            'text-gray-400': value !== option
-                        }
-                    )}
-                    onClick={() => onChange(option)}
-                >
-                    {getLabel(option)}
-                </div>
-            ))}
+        <div className="flex gap-6">
+            <div className="flex flex-col gap-1">
+                <p className="text-xs text-muted-foreground">{teamOneLabel}</p>
+                <Input
+                    type="number"
+                    min={0}
+                    max={147}
+                    value={teamOneValue}
+                    onChange={(e) => handleChange(e.target.value, onTeamOneChange)}
+                    className="w-24 text-white text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+            </div>
+            <div className="flex flex-col gap-1">
+                <p className="text-xs text-muted-foreground">{teamTwoLabel}</p>
+                <Input
+                    type="number"
+                    min={0}
+                    max={147}
+                    value={teamTwoValue}
+                    onChange={(e) => handleChange(e.target.value, onTeamTwoChange)}
+                    className="w-24 text-white text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+            </div>
         </div>
     );
 };

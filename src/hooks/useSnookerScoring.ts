@@ -319,9 +319,7 @@ const useSnookerScoring = () => {
       sportType: snookerScoring.format,
       streamingType: snookerScoring.streaming,
       venueId: clubs.activeClub!.venueId,
-      handicap: isTeamReveresed
-        ? -currentImplementationSnookerScoring.handicap
-        : currentImplementationSnookerScoring.handicap,
+      handicap: 0,
       maxScorePerSet: currentImplementationSnookerScoring.maxScorePerSet,
       noOfSets: currentImplementationSnookerScoring.noOfSets,
       cumulativeScoring: currentImplementationSnookerScoring.isCumulativeScoring,
