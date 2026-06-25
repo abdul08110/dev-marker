@@ -184,7 +184,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   return (
-    <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[min(3vh,3vw)] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8] mb-3">
+    <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[min(3vh,3vw)] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8]">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.9vh,1.9vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
