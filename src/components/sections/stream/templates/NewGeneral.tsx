@@ -186,25 +186,6 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   return (
     <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[min(3vh,3vw)] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8] mb-3">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.9vh,1.9vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
-        {/* Top Banner — tournament name */}
-
-        <div className="absolute pointer-events-none w-full left-0 right-0 -top-1/4 flex justify-center items-center">
-          <div className="relative flex justify-center items-center w-[min(76.5vh,76.5vw)]">
-            <div className="absolute left-[5%] right-[5%] top-0 h-2 pointer-events-none" />
-            <img
-              src="/tournament-name-box.svg"
-              alt="background pattern"
-              className="w-full h-auto"
-              style={{
-                filter: 'drop-shadow(0px 0px 5px #BA91C8)',
-              }}
-            />
-            <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center align-baseline absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate px-12 pb-1">
-              {(state.clubName || state.tournamentName) ?? ''}
-            </p>
-          </div>
-        </div>
-
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
           <div
@@ -322,7 +303,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         {/* Left player card */}
         <div
-          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${leftShadow} shrink-0 backdrop-blur-[24px] grow flex items-center max-w-[min(70vh,70vw)]`}
+          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${leftShadow} shrink-0 backdrop-blur-[24px] grow flex items-center max-w-[min(70vh,70vw)] z-50`}
           style={leftCardStyle}
         >
           {leftCardContent}
@@ -330,7 +311,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         {/* Middle score panel */}
         <div
-          className="shrink-0 grow-0 flex rounded-[min(1.9vh,1.9vw)] z-20 relative items-stretch"
+          className="shrink-0 grow-0 flex rounded-[min(1.9vh,1.9vw)] z-40 relative items-stretch"
           style={{
             border: '2px solid transparent',
             background: `
@@ -338,9 +319,25 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%) border-box
     `,
 
-            filter: 'drop-shadow(-2px -2px 4px #BA91C8)',
+            // filter: 'drop-shadow(-2px -2px 4px #BA91C8)',
+            filter: 'drop-shadow(-2px -2px -4px #BA91C8)',
           }}
         >
+          {/* Top Banner — tournament name, centered on this panel */}
+          <div className="absolute pointer-events-none left-1/2 -translate-x-1/2 -top-1/2 flex justify-center items-center z-20">
+            <div className="relative flex justify-center items-center w-[min(76.5vh,76.5vw)]">
+              <img
+                src="/tournament-name-box.svg"
+                alt="background pattern"
+                className="w-full h-auto"
+                style={{ filter: 'drop-shadow(0px 0px 5px #BA91C8)' }}
+              />
+              <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate px-12 pb-1">
+                {(state.clubName || state.tournamentName) ?? ''}
+              </p>
+            </div>
+          </div>
+
           {/* Format tag below center panel */}
           <div className="absolute -bottom-[min(3.5vh,3.5vw)] w-full flex justify-center items-center ">
             <div
@@ -455,7 +452,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         {/* Right player card */}
         <div
-          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${rightShadow} shrink-0 backdrop-blur-[24px] grow flex items-center max-w-[min(70vh,70vw)]`}
+          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${rightShadow} shrink-0 backdrop-blur-[24px] grow flex items-center max-w-[min(70vh,70vw)] z-50`}
           style={rightCardStyle}
         >
           {rightCardContent}
