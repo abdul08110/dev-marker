@@ -1,6 +1,5 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
 import { TimeUpModal } from '@/components/modals/timeUpModal';
-import { LegacyScoreboard } from '@/components/sections/scoreboard/legacyScoreBoard';
 import { ScoreboardRender } from '@/components/sections/scoreboard/scoreBoardRender';
 import useScoreboardRender from '@/hooks/useScoreboardRender';
 import NewScoreBoard from './NewScoreBoard';
