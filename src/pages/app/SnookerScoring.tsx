@@ -11,6 +11,8 @@ import {
   getActivePlayer,
   getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex,
 } from '@/stores/selectors/commonSport';
+import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { EndGameModal } from '@/components/modals/endGameModal';
 import { SelectPlayerDrawer } from '@/components/modals/selectPlayerDrawer';
 import useSnookerScoring from '@/hooks/useSnookerScoring';
@@ -111,6 +113,71 @@ export function SnookerScoring() {
 
   const [showEndFrameAlert, setShowEndFrameAlert] = React.useState(false);
   const [showEndGameAlert, setShowEndGameAlert] = React.useState(false);
+  const [showCloseConfirmDialog, setShowCloseConfirmDialog] = React.useState(false);
+  const closeConfirmSource = React.useRef<'player' | 'settings' | null>(null);
+
+  const handlePlayerDrawerClose = () => {
+    const allRequired =
+      snookerScoring.team1.players.every((p) => p.id !== null) &&
+      snookerScoring.team2.players.every((p) => p.id !== null);
+    if (allRequired) {
+      // All slots filled → auto-close after last player confirm, not a user gesture
+      return;
+    }
+    if (snookerScoring.team1.players[0].id !== null) {
+      closeConfirmSource.current = 'player';
+      setShowCloseConfirmDialog(true);
+      return;
+    }
+    handleGoToHome();
+  };
+
+  const handleSettingsDrawerClose = () => {
+    if (snookerScoring.matchId === null) {
+      closeConfirmSource.current = 'settings';
+      setShowCloseConfirmDialog(true);
+    }
+  };
+
+  const getTeamLabel = (players: typeof snookerScoring.team1.players) => {
+    const names = players.map((p) => p.name).filter(Boolean);
+    return names.length > 0 ? names.join(' / ') : undefined;
+  };
+
+  // ── Break-off player selection dialog ────────────────────────────────────
+  const [showBreakOffDialog, setShowBreakOffDialog] = React.useState(false);
+  const [selectedBreakOffTeamIdx, setSelectedBreakOffTeamIdx] = React.useState<number | null>(null);
+
+  const pendingBreakOff = React.useRef(false);
+  const handleScoringButtonClickRef = React.useRef(handleScoringButtonClick);
+  React.useEffect(() => { handleScoringButtonClickRef.current = handleScoringButtonClick; });
+
+  React.useEffect(() => {
+    if (pendingBreakOff.current && getActiveTeam(snookerScoring.team1, snookerScoring.team2) !== null) {
+      pendingBreakOff.current = false;
+      handleScoringButtonClickRef.current(SnookerScoringButtonEnum.BREAK_OFF);
+    }
+  }, [snookerScoring.team1, snookerScoring.team2]);
+
+  const handleScoringButtonClickWithGuard = (buttonType: SnookerScoringButtonEnum) => {
+    if (
+      buttonType === SnookerScoringButtonEnum.BREAK_OFF &&
+      snookerScoring.scoreHistory.length === 0 &&
+      getActiveTeam(snookerScoring.team1, snookerScoring.team2) === null
+    ) {
+      setSelectedBreakOffTeamIdx(null);
+      setShowBreakOffDialog(true);
+      return;
+    }
+    handleScoringButtonClick(buttonType);
+  };
+
+  const handleBreakOffConfirm = async () => {
+    if (selectedBreakOffTeamIdx === null) return;
+    setShowBreakOffDialog(false);
+    pendingBreakOff.current = true;
+    await handleTeamClick(selectedBreakOffTeamIdx);
+  };
 
   // PARENT UI
   return (
@@ -156,7 +223,7 @@ export function SnookerScoring() {
                 onLongClick={() => setIsLongActive(!isLongActive)}
                 isBreakOff={!getActiveSet(snookerScoring.scoreHistory)}
                 disabledState={snookerButtonDisabledState}
-                onButtonClick={handleScoringButtonClick}
+                onButtonClick={handleScoringButtonClickWithGuard}
               />
               <SnookerFoulDrawer
                 foulByPlayerName={getActivePlayer(snookerScoring.team1, snookerScoring.team2)}
@@ -170,6 +237,9 @@ export function SnookerScoring() {
                 open={openSettingsDrawer}
                 setOpen={setOpenSettingsDrawer}
                 defaultNoOfPlayers={defaultNoOfPlayers}
+                teamOneLabel={getTeamLabel(snookerScoring.team1.players)}
+                teamTwoLabel={getTeamLabel(snookerScoring.team2.players)}
+                onClose={handleSettingsDrawerClose}
               />
               <SelectPlayerDrawer
                 onSubmit={handlePlayerConfirmWithApi}
@@ -190,6 +260,7 @@ export function SnookerScoring() {
                 onBack={() => onBackInPlayerSelectModal()}
                 teamPlayers={[...snookerScoring.team1.players, ...snookerScoring.team2.players]}
                 onRemovePlayer={handleRemoveTeamPlayer}
+                onClose={handlePlayerDrawerClose}
               />
               <PlayerOrderSelectModal
                 isModalOpen={showPlayerOrderModal}
@@ -255,6 +326,22 @@ export function SnookerScoring() {
             </div>
           </div>
 
+          <AlertDialog open={showCloseConfirmDialog} onOpenChange={setShowCloseConfirmDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">Are you sure you want to close the game?</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => {
+                  if (closeConfirmSource.current === 'player') setOpenPlayerSelectCard(true);
+                  else if (closeConfirmSource.current === 'settings') setOpenSettingsDrawer(true);
+                  closeConfirmSource.current = null;
+                }}>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleEndGame}>Confirm</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
           <AlertDialog open={showEndFrameAlert} onOpenChange={setShowEndFrameAlert}>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -278,6 +365,54 @@ export function SnookerScoring() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          {/* ── Break-off player selection dialog ────────────────────── */}
+          <Dialog open={showBreakOffDialog} onOpenChange={(open) => { if (!open) setShowBreakOffDialog(false); }}>
+            <DialogContent className="max-w-sm w-[90vw] bg-[#1a1a1a] border-white/10 text-white">
+              <DialogTitle className="text-lg font-semibold text-white">Who is breaking off?</DialogTitle>
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                {[
+                  { idx: 0, players: snookerScoring.team1.players },
+                  { idx: 1, players: snookerScoring.team2.players },
+                ].map(({ idx, players }) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedBreakOffTeamIdx(idx)}
+                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${
+                      selectedBreakOffTeamIdx === idx
+                        ? 'border-white bg-white/10'
+                        : 'border-white/20 bg-white/5'
+                    }`}
+                  >
+                    <div className="flex gap-1 justify-center">
+                      {players.map((p, i) => (
+                        <img
+                          key={i}
+                          src={p.profilePhoto ?? '/images/user-dummy-pic.jpg'}
+                          className="h-14 w-14 rounded-full object-cover"
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm font-medium text-center leading-tight">
+                      {players.map((p) => p.name).filter(Boolean).join(' / ') || `Team ${idx + 1}`}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button variant="secondary" className="flex-1" onClick={() => setShowBreakOffDialog(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  className="flex-1"
+                  disabled={selectedBreakOffTeamIdx === null}
+                  onClick={handleBreakOffConfirm}
+                >
+                  Confirm
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </section>
       )}
     </section>

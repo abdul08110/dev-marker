@@ -33,6 +33,7 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
     const player = players?.find((value) => value.id === currentValue);
     if (player) {
       onPlayerSelect(player);
+      setSearchQuery('');
     }
   };
 
@@ -52,7 +53,7 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
             <CommandEmpty>Loading players...</CommandEmpty>
           ) : (
             <CommandGroup>
-              {players?.map((player) =>
+              {[...(players ?? [])].sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')).map((player) =>
                 disabledPlayerList.includes(player.id) ? null : (
                   <CommandItem key={player.id} value={player.id!} onSelect={() => handleSelect(player.id!)}>
                     <div className="flex gap-2 items-center">

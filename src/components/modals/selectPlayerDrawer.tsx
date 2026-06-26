@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-
-import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
+import { X } from 'lucide-react';
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { Player, PlayerDetails } from '@/stores/types';
 import { PlayersList } from '../sections/scoring/playersList';
 import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
@@ -21,6 +21,7 @@ interface SelectPlayerPopoverProps {
   showBack: boolean;
   teamPlayers: PlayerDetails[];
   onRemovePlayer: (playerIndex: number) => void;
+  onClose?: () => void;
 }
 
 export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
@@ -33,10 +34,29 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
     setShowAddModal(true);
   };
 
+  // Detect natural close (drag / overlay click) via prevOpen ref + useEffect.
+  // Intentional closes (Submit, Cancel, Back) don't need special handling because
+  // handlePlayerDrawerClose checks Redux state to distinguish auto-transitions.
+  const prevOpenRef = React.useRef(props.open);
+  React.useEffect(() => {
+    if (prevOpenRef.current && !props.open && props.onClose) {
+      props.onClose();
+    }
+    prevOpenRef.current = props.open;
+  }, [props.open]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSubmit = (player: Player) => {
+    props.onSubmit(player);
+  };
+
   const handlePlayerConfirmation = (player: Player) => {
     setShowAddModal(false);
     setStateModalOpen(false);
     props.onSubmit(player);
+  };
+
+  const handleCancel = () => {
+    props.setOpen(false);
   };
 
   const confirmedPlayers = props.teamPlayers
@@ -46,13 +66,21 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
   return (
     <Drawer open={props.open} onOpenChange={props.setOpen}>
       <DrawerContent className="border-0 h-dvh">
-        <DrawerHeader className="text-left text-white">
+        <DrawerHeader className="text-left text-white relative">
           <DrawerTitle className="text-2xl">
             Select{' '}
             {props.noOfPlayersPerTeam === 1
               ? `Player ${props.teamIndex + 1}`
               : `Team ${props.teamIndex + 1} Player ${props.playerIndex + 1}`}
           </DrawerTitle>
+          {props.onClose && (
+            <button
+              onClick={() => props.setOpen(false)}
+              className="absolute top-3 right-4 text-white/60 hover:text-white"
+            >
+              <X size={22} />
+            </button>
+          )}
           {confirmedPlayers.map(({ player, index }) => (
             <div key={index} className="flex items-center gap-2 mt-1">
               <img
@@ -69,7 +97,7 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
         <div className="px-4 h-[70%]">
           <PlayersList
             disabledPlayerList={props.disabledPlayerList}
-            onPlayerSelect={props.onSubmit}
+            onPlayerSelect={handleSubmit}
             clubId={props.clubId}
           />
         </div>
@@ -119,9 +147,9 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
           />
 
           {props.showCancel && (
-            <DrawerClose asChild>
-              <Button variant="secondary">Cancel</Button>
-            </DrawerClose>
+            <Button variant="secondary" onClick={handleCancel}>
+              Cancel
+            </Button>
           )}
           {props.showBack && (
             <Button type={'button'} onClick={props.onBack} variant={'secondary'}>

@@ -21,19 +21,30 @@ export interface BilliardsPracticeSettingsData {
   isRankingEvent: boolean;
 }
 
-const formSchema = z.object({
-  format: z.enum(['BILLIARDS_TIME_BASED', 'BILLIARDS_RACE_TO']),
-  durationInMinutes: z.string().regex(/^\d{1,2}:\d{2}$/, 'Duration must be in mm:ss format'),
-  noOfFrames: z.number(),
-  maxPointsPerFrame: z.number(),
-  streaming: z.enum(['PUBLIC', 'PRIVATE']),
-  teamOneHandicap: z.number().min(0).max(147),
-  teamTwoHandicap: z.number().min(0).max(147),
-  isRankingEvent: z.boolean(),
-});
+const formSchema = z
+  .object({
+    format: z.enum(['BILLIARDS_TIME_BASED', 'BILLIARDS_RACE_TO']),
+    durationInMinutes: z.string().regex(/^\d{1,2}:\d{2}:\d{2}$/, 'Duration must be in hh:mm:ss format'),
+    noOfFrames: z.number(),
+    maxPointsPerFrame: z.number(),
+    streaming: z.enum(['PUBLIC', 'PRIVATE']),
+    teamOneHandicap: z.number().min(0).max(147),
+    teamTwoHandicap: z.number().min(0).max(147),
+    isRankingEvent: z.boolean(),
+  })
+  .refine(
+    (data) => {
+      if (data.isRankingEvent) return true;
+      const [h, m, s] = data.durationInMinutes.split(':').map(Number);
+      return h > 0 || m > 0 || s > 0;
+    },
+    { message: 'Duration must be greater than 0', path: ['durationInMinutes'] },
+  );
 
 interface BilliardsSettingFormSchema {
   onSubmit: (values: z.infer<typeof formSchema>) => void;
+  teamOneLabel?: string;
+  teamTwoLabel?: string;
 }
 
 export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema) {
@@ -41,12 +52,13 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
     resolver: zodResolver(formSchema),
     defaultValues: {
       format: 'BILLIARDS_TIME_BASED',
-      durationInMinutes: '30:00',
+      durationInMinutes: '00:30:00',
       noOfFrames: 1,
       maxPointsPerFrame: 1,
       streaming: 'PRIVATE',
       teamOneHandicap: 0,
       teamTwoHandicap: 0,
+      isRankingEvent: false,
     },
   });
 
@@ -68,7 +80,7 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="BILLIARDS_TIME_BASED">Upto a Time</SelectItem>
+                  <SelectItem value="BILLIARDS_TIME_BASED">Time</SelectItem>
                   <SelectItem value="BILLIARDS_RACE_TO">Race to</SelectItem>
                 </SelectContent>
               </Select>
@@ -88,6 +100,7 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
               <FormControl>
                 <DurationPicker value={field.value} onChange={field.onChange} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -139,6 +152,8 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
             teamTwoValue={form.watch('teamTwoHandicap')}
             onTeamOneChange={(v) => form.setValue('teamOneHandicap', v)}
             onTeamTwoChange={(v) => form.setValue('teamTwoHandicap', v)}
+            teamOneLabel={props.teamOneLabel}
+            teamTwoLabel={props.teamTwoLabel}
           />
         </FormItem>
 
@@ -166,7 +181,7 @@ export function BilliardsPracticeSettingsForm(props: BilliardsSettingFormSchema)
                 <FormLabel className="text-white text-sm">Ranking</FormLabel>
               </div>
               <FormControl>
-                <Switch className='w-14 h-6' checked={field.value} onCheckedChange={field.onChange} />
+                <Switch className="w-14 h-6" checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
             </FormItem>
           )}
