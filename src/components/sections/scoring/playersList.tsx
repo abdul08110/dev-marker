@@ -18,12 +18,6 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
   const { getPlayers, players, loading, error } = useGetPlayers();
 
   React.useEffect(() => {
-    if (clubId) {
-      getPlayers({ id: clubId });
-    }
-  }, [clubId]);
-
-  React.useEffect(() => {
     if (debouncedSearchQuery.trim() !== '') {
       getPlayers({ id: clubId, search: debouncedSearchQuery });
     } else {
