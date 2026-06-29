@@ -14,6 +14,8 @@ interface BilliardsScoringProps {
   onButtonClick: (buttonType: BilliardsScoringButtonEnum) => void;
   showBreakOff: boolean;
   enableScoringButtons: boolean;
+  handleSwitchPlayer: () => void;
+  enableSwitchPlayer?: boolean;
 }
 
 export function BilliardsScoringButtons(props: BilliardsScoringProps) {
@@ -78,6 +80,13 @@ export function BilliardsScoringButtons(props: BilliardsScoringProps) {
           onClick={() => props.onButtonClick(BilliardsScoringButtonEnum.WHITE_POT)}
         >
           White Pot
+        </button>
+        <button
+          disabled={!props.enableSwitchPlayer}
+          className={clsx('col-span-8 h-14 row-span-1 bg-white relative', commonClasses)}
+          onClick={props.handleSwitchPlayer}
+        >
+          Switch Player
         </button>
       </div>
     </div>

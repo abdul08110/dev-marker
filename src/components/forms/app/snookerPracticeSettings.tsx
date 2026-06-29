@@ -22,19 +22,30 @@ export interface SnookerPracticeSettingsData {
 
 export type NoOfPlayersDefault = '2' | '4';
 
-const formSchema = z.object({
-  format: z.enum(['SNOOKER_15_RED', 'SNOOKER_10_RED', 'SNOOKER_6_RED']),
-  durationInMinutes: z.string().regex(/^\d{1,2}:\d{2}$/, 'Duration must be in mm:ss format'),
-  noOfPlayers: z.enum(['2', '4']),
-  streaming: z.enum(['PUBLIC', 'PRIVATE']),
-  teamOneHandicap: z.number().min(0).max(147),
-  teamTwoHandicap: z.number().min(0).max(147),
-  isRankingEvent: z.boolean(),
-});
+const formSchema = z
+  .object({
+    format: z.enum(['SNOOKER_15_RED', 'SNOOKER_10_RED', 'SNOOKER_6_RED']),
+    durationInMinutes: z.string().regex(/^\d{1,2}:\d{2}:\d{2}$/, 'Duration must be in hh:mm:ss format'),
+    noOfPlayers: z.enum(['2', '4']),
+    streaming: z.enum(['PUBLIC', 'PRIVATE']),
+    teamOneHandicap: z.number().min(0).max(147),
+    teamTwoHandicap: z.number().min(0).max(147),
+    isRankingEvent: z.boolean(),
+  })
+  .refine(
+    (data) => {
+      if (data.isRankingEvent) return true;
+      const [h, m, s] = data.durationInMinutes.split(':').map(Number);
+      return h > 0 || m > 0 || s > 0;
+    },
+    { message: 'Duration must be greater than 0', path: ['durationInMinutes'] },
+  );
 
 interface SnookerSettingsFormSchema {
   onSubmit: (values: z.infer<typeof formSchema>) => void;
   defaultNoOfPlayers?: NoOfPlayersDefault;
+  teamOneLabel?: string;
+  teamTwoLabel?: string;
 }
 
 export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
@@ -42,7 +53,7 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       format: 'SNOOKER_15_RED',
-      durationInMinutes: '30:00',
+      durationInMinutes: '00:30:00',
       noOfPlayers: props.defaultNoOfPlayers ?? '2',
       streaming: 'PRIVATE',
       teamOneHandicap: 0,
@@ -87,6 +98,7 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
               <FormControl>
                 <DurationPicker value={field.value} onChange={field.onChange} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -113,6 +125,8 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
             teamTwoValue={form.watch('teamTwoHandicap')}
             onTeamOneChange={(v) => form.setValue('teamOneHandicap', v)}
             onTeamTwoChange={(v) => form.setValue('teamTwoHandicap', v)}
+            teamOneLabel={props.teamOneLabel}
+            teamTwoLabel={props.teamTwoLabel}
           />
         </FormItem>
         <FormField

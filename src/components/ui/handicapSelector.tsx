@@ -24,28 +24,34 @@ const HandicapSelector: React.FC<HandicapSelectorProps> = ({
         if (!isNaN(parsed) && parsed >= 0 && parsed <= 147) cb(parsed);
     };
 
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.target.setSelectionRange(0, 0);
+    };
+
     return (
         <div className="flex gap-6">
             <div className="flex flex-col gap-1">
                 <p className="text-xs text-muted-foreground">{teamOneLabel}</p>
                 <Input
-                    type="number"
-                    min={0}
-                    max={147}
-                    value={teamOneValue}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={String(teamOneValue)}
                     onChange={(e) => handleChange(e.target.value, onTeamOneChange)}
-                    className="w-24 text-white text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    onFocus={handleFocus}
+                    className="w-24 text-white text-center"
                 />
             </div>
             <div className="flex flex-col gap-1">
                 <p className="text-xs text-muted-foreground">{teamTwoLabel}</p>
                 <Input
-                    type="number"
-                    min={0}
-                    max={147}
-                    value={teamTwoValue}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={String(teamTwoValue)}
                     onChange={(e) => handleChange(e.target.value, onTeamTwoChange)}
-                    className="w-24 text-white text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    onFocus={handleFocus}
+                    className="w-24 text-white text-center"
                 />
             </div>
         </div>

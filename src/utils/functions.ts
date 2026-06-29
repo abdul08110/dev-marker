@@ -1,12 +1,11 @@
 export function timeStringToDecimalMinutes(timeString: string): number {
-  const [minutesStr, secondsStr] = timeString.split(':');
-
-  const minutes = parseInt(minutesStr, 10);
-  const seconds = parseInt(secondsStr, 10);
-
-  const totalMinutes = minutes + seconds / 60;
-
-  return totalMinutes;
+  const parts = timeString.split(':').map((p) => parseInt(p, 10));
+  if (parts.length === 3) {
+    const [hours, minutes, seconds] = parts;
+    return hours * 60 + minutes + seconds / 60;
+  }
+  const [minutes, seconds] = parts;
+  return minutes + seconds / 60;
 }
 
 export function getTimeInMinutes(actualStart: string, expectedEnd: string): number {
