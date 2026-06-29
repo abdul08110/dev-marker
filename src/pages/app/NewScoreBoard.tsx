@@ -19,7 +19,6 @@ const BALL_IMAGE_MAP: Partial<Record<SnookerPointType, string>> = {
   [SnookerPointType.BLACK]: '/images/balls/black-ball.svg',
   [SnookerPointType.FOUL]: '/images/balls/placeholder-ball.svg',
 };
-import TimerDial from './TimerDial';
 import { ProfileCard } from '@/components/ProfileCard';
 import { useFluidPx } from '@/hooks/useFluidPx';
 import { cn } from '@/lib/utils';
@@ -229,8 +228,15 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               </div>
             )}
 
-            {/* Timer Dial */}
-            <TimerDial timeLeft={timeLeft} />
+            {/* Timer */}
+            <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)]">
+              <p className="text-score-text font-semibold text-[min(4.6vh,4.6vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
+                {formatTime(timeLeft)}
+              </p>
+              <p className="text-text-light font-medium text-[min(2vh,2vw)] leading-none uppercase tracking-widest">
+                Remaining
+              </p>
+            </div>
 
             {/* Game Score */}
             <div className="space-y-[min(2.2vh,2.2vw)]">
@@ -380,14 +386,14 @@ function PlayerCard({
         </div>
 
         {/* Score + Break */}
-        <div className="p-[min(3vh,3vw)] flex flex-col gap-[min(4.07vh,4.07vw)] justify-center items-center">
+        <div className="p-[min(3vh,3vw)] flex flex-col gap-[min(4.07vh,4.07vw)] justify-center items-center flex-1">
           <p
             className={`font-semibold text-[min(16.5vh,16.5vw)] text-white text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
           >
             {score}
           </p>
           {breakScore != null && (
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-4">
               <div
                 className={clsx(
                   'px-[min(1.9vh,1.9vw)] bg-[linear-gradient(69.46deg,rgba(172,236,84,0.078)_12.28%,rgba(111,255,0,0.6)_179.54%)] shadow-[0px_2px_4px_0px_#FFFFFF40_inset] break-card pt-1',
@@ -448,8 +454,7 @@ function HandicapPill({ handicap, isApplied }: { handicap: number; isApplied?: b
   );
 }
 
-const BALLS_PER_ROW = 11;
-const TOTAL_SLOTS = BALLS_PER_ROW * 2; // fixed 22 slots, always 2 rows
+const TOTAL_SLOTS = 11;
 
 function BallGrid({ balls }: { balls: SnookerPointType[][] }) {
   const potted = balls
@@ -464,18 +469,11 @@ function BallGrid({ balls }: { balls: SnookerPointType[][] }) {
   );
 
   return (
-    <>
-      <div className="flex gap-[min(0.5vh,0.5vw)]">
-        {slots.slice(0, BALLS_PER_ROW).map((src, i) => (
-          <img key={i} src={src} className="size-[min(4vh,4vw)] object-contain" />
-        ))}
-      </div>
-      <div className="flex gap-[min(0.5vh,0.5vw)]">
-        {slots.slice(BALLS_PER_ROW).map((src, i) => (
-          <img key={i} src={src} className="size-[min(4vh,4vw)] object-contain" />
-        ))}
-      </div>
-    </>
+    <div className="flex gap-[min(0.5vh,0.5vw)]">
+      {slots.map((src, i) => (
+        <img key={i} src={src} className="size-[min(4vh,4vw)] object-contain" />
+      ))}
+    </div>
   );
 }
 
