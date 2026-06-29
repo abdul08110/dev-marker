@@ -9,6 +9,7 @@ type PropsType = {
 export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap }: PropsType) => {
   const borderClipId = useId();
   const cardClipId = useId();
+  console.log(color);
 
   return (
     <div className="flex justify-center items-center" style={{ width: `${size}px`, height: `${size}px` }}>

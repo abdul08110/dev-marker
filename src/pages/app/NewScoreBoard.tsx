@@ -21,7 +21,6 @@ const BALL_IMAGE_MAP: Partial<Record<SnookerPointType, string>> = {
 };
 import { ProfileCard } from '@/components/ProfileCard';
 import { useFluidPx } from '@/hooks/useFluidPx';
-import { cn } from '@/lib/utils';
 
 interface NewScoreBoardProps {
   state: ScoreBoardState;
@@ -379,22 +378,21 @@ function PlayerCard({
                 {isDoubles ? (isPlayerOneActive ? playerOneName : playerTwoName) : playerOneName}
               </p>
 
+              <div
+                className="w-full h-[2px]"
+                style={{
+                  background: isActive
+                    ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
+                    : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
+                }}
+              />
+
               {isDoubles && playerTwoName && (
-                <>
-                  <div
-                    className="w-full h-[2px]"
-                    style={{
-                      background: isActive
-                        ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
-                        : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
-                    }}
-                  />
-                  <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full">
-                    <p className="font-extrabold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text text-box-trim truncate">
-                      {isPlayerOneActive ? playerTwoName : playerOneName}
-                    </p>
-                  </div>
-                </>
+                <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full">
+                  <p className="font-extrabold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text text-box-trim truncate">
+                    {isPlayerOneActive ? playerTwoName : playerOneName}
+                  </p>
+                </div>
               )}
             </div>
             {handicap != null && (
