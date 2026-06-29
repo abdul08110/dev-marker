@@ -393,9 +393,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             </div>
           </div>
 
-          {/* Score cells */}
+          {/* Score cells — Game Score | Frame Score | Total Frames | Frame Score | Game Score */}
           <div className="flex items-stretch relative z-20 rounded-[min(1.9vh,1.9vw)] overflow-hidden py-[min(1vh,1vw)]">
-            {/* Team 1 total score */}
+            {/* Team 1 game score (current frame points) */}
             <div
               className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border border-l-0 w-[min(11vh,12vw)] flex justify-center items-center z-10"
               style={{
@@ -405,18 +405,18 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               }}
             >
               <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
-                {state.teamOneScore}
+                {activeSet?.teamOneScore ?? 0}
               </span>
             </div>
 
-            {/* Team 1 current set score */}
+            {/* Team 1 frame score (frames won) */}
             <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
-              {activeSet?.teamOneScore ?? 0}
+              {state.teamOneScore}
             </p>
 
-            {/* Current break / turn score */}
+            {/* Total frames / break score */}
             <div
-              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border w-[7vw] w[min(11vh,14vw)] flex justify-center items-center "
+              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border w-[7vw] w[min(11vh,14vw)] flex justify-center items-center"
               style={{
                 borderImageSource:
                   'linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%)',
@@ -428,13 +428,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               </span>
             </div>
 
-            {/* Team 2 current set score */}
-
+            {/* Team 2 frame score (frames won) */}
             <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)] bg-[#595959]/[.20]">
-              {activeSet?.teamTwoScore ?? 0}
+              {state.teamTwoScore}
             </p>
 
-            {/* Team 2 total score */}
+            {/* Team 2 game score (current frame points) */}
             <div
               className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] w-[min(11vh,12vw)] border border-r-0 flex justify-center items-center"
               style={{
@@ -444,7 +443,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               }}
             >
               <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
-                {state.teamTwoScore}
+                {activeSet?.teamTwoScore ?? 0}
               </span>
             </div>
           </div>

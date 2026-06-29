@@ -196,3 +196,8 @@ textarea {
 .color-scrollbar {
   scrollbar-color: hsl(var(--primary)) #f1f5f9;
 }
+
+body,
+body * {
+  text-transform: uppercase !important;
+}

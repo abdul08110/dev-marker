@@ -173,24 +173,25 @@ export function PortraitView(props: PortraitStreamDataProps) {
           </div>
         </div>
         {props.state.sport === 'SNOOKER' && (
-          <div className="grid grid-cols-2 w-full gap-2 p-4 pb-0">
-            <div className="bg-[#2B2B2B] p-2 rounded-md">
+          <div className="grid grid-cols-2 w-full gap-2 py-4 pb-0">
+            <SnookerPointTypeDisplay
+              class={'gap-[0.3rem]'}
+              className={'text-[0.8rem] font-mono h-5 w-5 flex justify-center'}
+              placeholderCount={6}
+              activeTurnPointTypes={getSnookerPointTypesByTurns(
+                activeSet?.turns?.filter((value) =>
+                  [props.state!.sideOnePlayerOne, props.state!.sideOnePlayerTwo].some(
+                    (player) => player && value.turnPlayerId === player.id,
+                  ),
+                ) || [],
+              )}
+            />
+
+            <div>
               <SnookerPointTypeDisplay
                 class={'gap-[0.3rem]'}
                 className={'text-[0.8rem] font-mono h-5 w-5 flex justify-center'}
-                activeTurnPointTypes={getSnookerPointTypesByTurns(
-                  activeSet?.turns?.filter((value) =>
-                    [props.state!.sideOnePlayerOne, props.state!.sideOnePlayerTwo].some(
-                      (player) => player && value.turnPlayerId === player.id,
-                    ),
-                  ) || [],
-                )}
-              />
-            </div>
-            <div className="bg-[#2B2B2B] p-2 rounded-md">
-              <SnookerPointTypeDisplay
-                class={'gap-[0.3rem]'}
-                className={'text-[0.8rem] font-mono h-5 w-5 flex justify-center'}
+                placeholderCount={6}
                 activeTurnPointTypes={getSnookerPointTypesByTurns(
                   activeSet?.turns?.filter((value) =>
                     [props.state!.sideTwoPlayerOne, props.state!.sideTwoPlayerTwo].some(
