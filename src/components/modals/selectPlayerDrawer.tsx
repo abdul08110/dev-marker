@@ -65,7 +65,7 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
 
   return (
     <Drawer open={props.open} onOpenChange={props.setOpen}>
-      <DrawerContent className="border-0 h-dvh">
+      <DrawerContent className="border-0 h-dvh flex flex-col">
         <DrawerHeader className="text-left text-white relative">
           <DrawerTitle className="text-2xl">
             Select{' '}
@@ -94,7 +94,7 @@ export function SelectPlayerDrawer(props: SelectPlayerPopoverProps) {
             </div>
           ))}
         </DrawerHeader>
-        <div className="px-4 h-[70%]">
+        <div className="px-4 flex-1 overflow-auto">
           <PlayersList
             disabledPlayerList={props.disabledPlayerList}
             onPlayerSelect={handleSubmit}

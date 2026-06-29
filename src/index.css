@@ -192,3 +192,7 @@ textarea {
   mask-composite: exclude;
   pointer-events: none;
 }
+
+.color-scrollbar {
+  scrollbar-color: hsl(var(--primary)) #f1f5f9;
+}

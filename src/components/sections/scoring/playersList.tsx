@@ -46,29 +46,31 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
           value={searchQuery}
           onValueChange={handleSearchChange}
         />
-        <CommandList className="max-h-full">
+        <CommandList className="max-h-full color-scrollbar">
           {error && <CommandEmpty>Error loading players</CommandEmpty>}
           {!loading && !error && players && players.length === 0 && <CommandEmpty>No player found.</CommandEmpty>}
           {loading ? (
             <CommandEmpty>Loading players...</CommandEmpty>
           ) : (
-            <CommandGroup>
-              {[...(players ?? [])].sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '')).map((player) =>
-                disabledPlayerList.includes(player.id) ? null : (
-                  <CommandItem key={player.id} value={player.id!} onSelect={() => handleSelect(player.id!)}>
-                    <div className="flex gap-2 items-center">
-                      <img
-                        src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.jpg'}
-                        className="h-8 w-8 rounded-full object-cover"
-                      />
-                      <div className="flex flex-col justify-between">
-                        <span className="text-white">{player.name}</span>
-                        <small className="text-white/70">{player.phoneNumber}</small>
+            <CommandGroup className="[&>[cmdk-group-items]]:space-y-2">
+              {[...(players ?? [])]
+                .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''))
+                .map((player) =>
+                  disabledPlayerList.includes(player.id) ? null : (
+                    <CommandItem key={player.id} value={player.id!} onSelect={() => handleSelect(player.id!)}>
+                      <div className="flex gap-2 items-center">
+                        <img
+                          src={player.profilePhoto ? player.profilePhoto : '/images/user-dummy-pic.jpg'}
+                          className="h-8 w-8 rounded-full object-cover"
+                        />
+                        <div className="flex flex-col justify-between">
+                          <span className="text-white">{player.name}</span>
+                          <small className="text-white/70">{player.phoneNumber}</small>
+                        </div>
                       </div>
-                    </div>
-                  </CommandItem>
-                ),
-              )}
+                    </CommandItem>
+                  ),
+                )}
             </CommandGroup>
           )}
         </CommandList>
