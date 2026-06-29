@@ -72,7 +72,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
             {generatePlayerName(state.sideOnePlayerOne.name, state.sideOnePlayerTwo?.name)}
           </p>
-          <YellowHandicapPill handicap={state.teamOneHandicap} />
+          {isSideOneActive ? <YellowHandicapPill handicap={state.teamOneHandicap} /> : <VioletHandicapPill handicap={state.teamOneHandicap} />}
         </div>
         {isSideOneActive ? <YellowDivider /> : <VioletDivider />}
       </div>
@@ -88,7 +88,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
             {generatePlayerName(state.sideOnePlayerOne.name)}
           </p>
-          <YellowHandicapPill handicap={state.teamOneHandicap} />
+          {isSideOneActive ? <YellowHandicapPill handicap={state.teamOneHandicap} /> : <VioletHandicapPill handicap={state.teamOneHandicap} />}
         </div>
         {isSideOneActive ? <YellowDivider /> : <VioletDivider />}
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -109,7 +109,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
             {generatePlayerName(state.sideOnePlayerOne.name)}
           </p>
-          <YellowHandicapPill handicap={state.teamOneHandicap} />
+          {isSideOneActive ? <YellowHandicapPill handicap={state.teamOneHandicap} /> : <VioletHandicapPill handicap={state.teamOneHandicap} />}
         </div>
         {isSideOneActive ? <YellowDivider /> : <VioletDivider />}
       </div>
@@ -139,7 +139,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
             {generatePlayerName(state.sideTwoPlayerOne.name, state.sideTwoPlayerTwo?.name)}
           </p>
-          <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          {isSideTwoActive ? <YellowHandicapPill handicap={state.teamTwoHandicap} /> : <VioletHandicapPill handicap={state.teamTwoHandicap} />}
         </div>
         {isSideTwoActive ? <YellowDivider /> : <VioletDivider />}
       </div>
@@ -155,7 +155,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
             {generatePlayerName(state.sideTwoPlayerOne.name)}
           </p>
-          <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          {isSideTwoActive ? <YellowHandicapPill handicap={state.teamTwoHandicap} /> : <VioletHandicapPill handicap={state.teamTwoHandicap} />}
         </div>
         {isSideTwoActive ? <YellowDivider /> : <VioletDivider />}
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -176,7 +176,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
             {generatePlayerName(state.sideTwoPlayerOne.name)}
           </p>
-          <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          {isSideTwoActive ? <YellowHandicapPill handicap={state.teamTwoHandicap} /> : <VioletHandicapPill handicap={state.teamTwoHandicap} />}
         </div>
         {isSideTwoActive ? <YellowDivider /> : <VioletDivider />}
       </div>
