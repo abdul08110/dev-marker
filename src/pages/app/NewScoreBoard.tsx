@@ -348,8 +348,8 @@ function PlayerCard({
   const profileSizeDoubles = useFluidPx(0.1); // ≈108px at 1080p
 
   // Active player's photo goes to the front
-  const frontPhoto = isPlayerOneActive ? profilePhoto : (profilePhoto2 ?? profilePhoto);
-  const backPhoto = isPlayerOneActive ? (profilePhoto2 ?? profilePhoto) : profilePhoto;
+  const frontPhoto = isPlayerOneActive ? profilePhoto : profilePhoto2;
+  const backPhoto = isPlayerOneActive ? profilePhoto2 : profilePhoto;
 
   return (
     <div className="relative w-full h-full backdrop-blur-lg overflow-hidden">
@@ -361,14 +361,14 @@ function PlayerCard({
           {isDoubles && profilePhoto2 !== undefined ? (
             <div className="relative shrink-0 size-[min(15vh,15vw)]">
               <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
-                <ProfileCard imageUrl={backPhoto ?? '/images/empty-user.svg'} size={profileSizeDoubles} />
+                <ProfileCard imageUrl={backPhoto ?? '/images/user-dummy-pic.jpg'} size={profileSizeDoubles} />
               </div>
               <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
-                <ProfileCard imageUrl={frontPhoto ?? '/images/empty-user.svg'} size={profileSizeDoubles} />
+                <ProfileCard imageUrl={frontPhoto ?? '/images/user-dummy-pic.jpg'} size={profileSizeDoubles} />
               </div>
             </div>
           ) : (
-            <ProfileCard imageUrl={profilePhoto ?? '/images/empty-user.svg'} size={profileSizeSingle} />
+            <ProfileCard imageUrl={profilePhoto ?? '/images/user-dummy-pic.jpg'} size={profileSizeSingle} />
           )}
 
           {/* Player name(s) + handicap */}
