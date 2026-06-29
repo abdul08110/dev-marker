@@ -172,104 +172,106 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         />
 
         {/* Center Panel */}
-        <div
-          className="rounded-[min(5.6vh,5.6vw)] p-[min(0.5vh,0.5vw)] h-full"
-          style={{
-            background: `
+        <div className="py-[min(1.5vh,1.5vw)]">
+          <div
+            className="rounded-[min(5.6vh,5.6vw)] p-[min(0.5vh,0.5vw)] h-full"
+            style={{
+              background: `
               linear-gradient(233.61deg,#FFECFF -11.62%,rgba(255,255,255,0) 50.44%),
               linear-gradient(172.2deg,rgba(191,178,247,0) 71.46%,#E8B2F7 107.96%),
               linear-gradient(347.86deg,rgba(210,154,245,0) 13.85%,#F4D3F2 105.37%)
             `,
-            boxShadow: `
+              boxShadow: `
               0px 0px 10px 0px #FFEDFF,
               10px 10px 10px 0px #0F0B23CC,
               -11px 0px 10px 0px #0E0B24CC
             `,
-          }}
-        >
-          <div className="rounded-[min(5.1vh,5.1vw)] py-[min(4.1vh,4.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col justify-between shrink-0">
-            {/* Team / Tournament Score */}
-            {state.tournamentId && state.tournamentSubItem ? (
-              <div className="space-y-[min(2.2vh,2.2vw)]">
-                <p className="text-text-light font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center">
-                  Team Score
-                </p>
-                <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
-                  <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center">
-                    {tournamentTeamOneScore}
+            }}
+          >
+            <div className="rounded-[min(5.1vh,5.1vw)] py-[min(4.1vh,4.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col justify-between shrink-0">
+              {/* Team / Tournament Score */}
+              {state.tournamentId && state.tournamentSubItem ? (
+                <div className="space-y-[min(2.2vh,2.2vw)]">
+                  <p className="text-text-light font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center">
+                    Team Score
                   </p>
-                  <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1]">
-                    {teamScoreCenter}
-                  </p>
-                  <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center">
-                    {tournamentTeamTwoScore}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-[min(2.2vh,2.2vw)]">
-                <p className="text-text-light font-semibold text-[min(3.7vh,3.7vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center px-[min(2vw,2vh)]">
-                  Frame Score
-                </p>
-                <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
-                  <p className="text-score-text font-semibold text-[min(6.48vh,6.48vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full h-full">
-                    {state.teamOneScore}
-                  </p>
-
-                  {teamScoreCenter && (
-                    <p
-                      className="text-score-text font-semibold text-[min(6.48vh,6.48vw)] leading-[130%] uppercase border h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(90deg,#E3A9F2_0%,rgba(226,179,237,0.05)_55.91%,#E0BCE8_109.78%)] [border-image-slice:1] w-full bg-[#AB51C6] drop-shadow-[0px_4px_4px_0px_#00000040]
-"
-                    >
+                  <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
+                    <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center">
+                      {tournamentTeamOneScore}
+                    </p>
+                    <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase border-x h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(180deg,rgba(255,255,255,0.12)_-11.88%,#FFFFFF_55.63%,rgba(255,255,255,0.12)_123.13%)] [border-image-slice:1]">
                       {teamScoreCenter}
                     </p>
-                  )}
-                  <p className="text-score-text font-semibold text-[min(6.48vh,6.48vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full h-full">
-                    {state.teamTwoScore}
-                  </p>
+                    <p className="text-score-text font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center">
+                      {tournamentTeamTwoScore}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
-
-            {/* Timer */}
-            <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)]">
-              <p className="text-score-text font-semibold text-[min(8.8vh,8.8vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
-                {formatTime(timeLeft)}
-              </p>
-              <p className="text-text-light font-medium text-[min(3.7vh,3.7vw)] leading-none uppercase tracking-widest">
-                Remaining
-              </p>
-            </div>
-
-            <div className="flex justify-center items-center">
-              <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(6vh,6vw)] w-fit overflow-hidden shrink-0">
-                <div className="flex justify-center items-center bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] h-full">
-                  <p className="font-medium text-[min(5vh,5vw)] uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)]  text-center">
-                    t
-                  </p>
-                </div>
-                <div className="bg-white flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full">
-                  <p
-                    className={clsx(
-                      'font-medium text-[min(5vh,5vw)] leading-[130%] uppercase text-black text-box-trim py-[min(0.9vh,0.9vw)]',
-                    )}
-                  >
-                    1
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4 justify-center items-center">
-              {state.sport === 'SNOOKER' ? (
-                <img src="/images/snooker.svg" width={80} height={80} alt="" />
               ) : (
-                <img src="/images/billiards.svg" width={80} height={80} alt="" />
+                <div className="space-y-[min(2.2vh,2.2vw)]">
+                  <p className="text-text-light font-semibold text-[min(3.7vh,3.7vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center px-[min(2vw,2vh)]">
+                    Frame Score
+                  </p>
+                  <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
+                    <p className="text-score-text font-semibold text-[min(6.48vh,6.48vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full h-full">
+                      {state.teamOneScore}
+                    </p>
+
+                    {teamScoreCenter && (
+                      <p
+                        className="text-score-text font-semibold text-[min(6.48vh,6.48vw)] leading-[130%] uppercase border h-full text-center flex justify-center items-center size-[min(7.4vh,7.4vw)] [border-image-source:linear-gradient(90deg,#E3A9F2_0%,rgba(226,179,237,0.05)_55.91%,#E0BCE8_109.78%)] [border-image-slice:1] w-full bg-[#AB51C6] drop-shadow-[0px_4px_4px_0px_#00000040]
+"
+                      >
+                        {teamScoreCenter}
+                      </p>
+                    )}
+                    <p className="text-score-text font-semibold text-[min(6.48vh,6.48vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full h-full">
+                      {state.teamTwoScore}
+                    </p>
+                  </div>
+                </div>
               )}
 
-              <p className="text-score-text leading-[130%] text-[min(3.24vh,3.24vw)] font-semibold drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
-                {state.sport === 'SNOOKER' ? 'Snooker' : 'Billiards'}
-              </p>
+              {/* Timer */}
+              <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)]">
+                <p className="text-score-text font-semibold text-[min(8.8vh,8.8vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
+                  {formatTime(timeLeft)}
+                </p>
+                <p className="text-text-light font-medium text-[min(3.7vh,3.7vw)] leading-none uppercase tracking-widest ">
+                  Remaining
+                </p>
+              </div>
+
+              <div className="flex justify-center items-center">
+                <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(6vh,6vw)] w-fit overflow-hidden shrink-0">
+                  <div className="flex justify-center items-center bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] h-full">
+                    <p className="font-medium text-[min(5vh,5vw)] uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)]  text-center">
+                      t
+                    </p>
+                  </div>
+                  <div className="bg-white flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full">
+                    <p
+                      className={clsx(
+                        'font-medium text-[min(5vh,5vw)] leading-[130%] uppercase text-black text-box-trim py-[min(0.9vh,0.9vw)]',
+                      )}
+                    >
+                      1
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4 justify-center items-center">
+                {state.sport === 'SNOOKER' ? (
+                  <img src="/images/snooker.svg" width={80} height={80} alt="" />
+                ) : (
+                  <img src="/images/billiards.svg" width={80} height={80} alt="" />
+                )}
+
+                <p className="text-score-text leading-[130%] text-[min(3.24vh,3.24vw)] font-semibold drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
+                  {state.sport === 'SNOOKER' ? 'Snooker' : 'Billiards'}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -394,7 +396,7 @@ function PlayerCard({
         {/* Score + Break */}
         <div className="p-[min(3vh,3vw)] flex flex-col gap-[min(4.07vh,4.07vw)] justify-center items-center flex-1">
           <p
-            className={`font-semibold text-[min(16.5vh,16.5vw)] text-white text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
+            className={`font-semibold text-[min(18.5vh,18.5vw)] text-white text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
           >
             {score}
           </p>
@@ -443,7 +445,7 @@ function HandicapPill({
     <div className={clsx('flex w-full', align === 'end' ? 'justify-end' : 'justify-start')}>
       <div
         className={clsx(
-          'bg-white/5 rounded-[10px] flex items-center h-[min(4vh,4vw)] w-fit overflow-hidden shrink-0 shadow-[inset_0px_2px_4px_0px_#FFFFFF40]',
+          'bg-white/5 rounded-[10px] flex items-center h-[min(3.5vh,3.5vw)] w-fit overflow-hidden shrink-0 shadow-[inset_0px_2px_4px_0px_#FFFFFF40]',
         )}
       >
         <div className="font-medium text-[min(2.22vh,2.22vw)] leading-[130%] uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)] py-[min(0.9vh,0.9vw)] bg-white/5 h-full flex justify-center items-center">
