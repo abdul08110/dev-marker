@@ -338,7 +338,7 @@ function PlayerCard({
         <div className="border-b p-[min(3vh,3vw)] border-white/10 flex gap-[min(1.5vh,1.5vw)]">
           {/* Profile image */}
           {isDoubles && profilePhoto2 !== undefined ? (
-            <div className="relative shrink-0 size-[min(14vh,14vw)]">
+            <div className="relative shrink-0 size-[min(15vh,15vw)]">
               <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
                 <ProfileCard imageUrl={backPhoto ?? '/images/empty-user.svg'} size={profileSizeDoubles} />
               </div>
@@ -351,57 +351,59 @@ function PlayerCard({
           )}
 
           {/* Player name(s) + handicap */}
-          <div className="flex flex-col justify-center gap-[min(1.1vh,1.1vw)] min-w-0 flex-1">
-            <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full">
-              <p className="font-medium text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text text-box-trim truncate text-wrap line-clamp-2">
+          <div className="flex flex-col gap-[min(2.22vh,2.22vw)] min-w-0 flex-1">
+            <div className="space-y-[min(1.85vh,1.85vw)]">
+              <p className="text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text text-box-trim truncate text-wrap line-clamp-2 font-extrabold">
                 {isDoubles ? (isPlayerOneActive ? playerOneName : playerTwoName) : playerOneName}
               </p>
-              {handicap != null && <HandicapPill handicap={handicap} isApplied={isHandicapApplied} />}
-            </div>
 
-            {isDoubles && playerTwoName && (
-              <>
-                <div
-                  className="w-full h-[2px]"
-                  style={{
-                    background: isActive
-                      ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
-                      : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
-                  }}
-                />
-                <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full">
-                  <p className="font-medium text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text text-box-trim truncate">
-                    {isPlayerOneActive ? playerTwoName : playerOneName}
-                  </p>
-                </div>
-              </>
-            )}
+              {isDoubles && playerTwoName && (
+                <>
+                  <div
+                    className="w-full h-[2px]"
+                    style={{
+                      background: isActive
+                        ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
+                        : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
+                    }}
+                  />
+                  <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full">
+                    <p className="font-extrabold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text text-box-trim truncate">
+                      {isPlayerOneActive ? playerTwoName : playerOneName}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+            {handicap != null && <HandicapPill handicap={handicap} isApplied={isHandicapApplied} />}
           </div>
         </div>
 
         {/* Score + Break */}
-        <div className="p-[min(3vh,3vw)] relative">
-          <p className={cn('font-semibold leading-[130%] uppercase text-score-text text-[min(16.5vh,16.5vw)]')}>
+        <div className="p-[min(3vh,3vw)] flex flex-col gap-[min(4.07vh,4.07vw)] justify-center items-center">
+          <p
+            className={`font-semibold text-[min(16.5vh,16.5vw)] text-white text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
+          >
             {score}
           </p>
           {breakScore != null && (
-            <div className={clsx('absolute text-white top-1/2 -translate-y-[70%] right-[min(0.7vh,0.7vw)]')}>
-              <p
-                className={clsx(
-                  'font-semibold text-[min(2.4vh,2.4vw)] leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)] text-right',
-                )}
-              >
-                Break
-              </p>
+            <div className="flex flex-col">
               <div
                 className={clsx(
                   'px-[min(1.9vh,1.9vw)] bg-[linear-gradient(69.46deg,rgba(172,236,84,0.078)_12.28%,rgba(111,255,0,0.6)_179.54%)] shadow-[0px_2px_4px_0px_#FFFFFF40_inset] break-card pt-1',
                 )}
               >
-                <p className="font-semibold text-[min(8.3vh,8.3vw)] leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)]">
+                <p className="font-semibold text-[min(8.3vh,8.3vw)] leading-[130%] uppercase text-score-text px-[min(1.5vh,1.5vw)] text-center">
                   {breakScore}
                 </p>
               </div>
+              <p
+                className={clsx(
+                  'font-extrabold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)] text-right',
+                )}
+              >
+                Break
+              </p>
             </div>
           )}
         </div>
@@ -426,11 +428,14 @@ function PlayerCard({
 
 function HandicapPill({ handicap, isApplied }: { handicap: number; isApplied?: boolean }) {
   return (
-    <div className="bg-white/5 rounded-full shadow-[0px_2px_4px_0px_#FFFFFF40_inset] flex items-center h-[min(4.6vh,4.6vw)] w-fit overflow-hidden shrink-0">
+    <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_0px_5.3px_0px_#929504] flex items-center h-[min(4vh,4vw)] w-fit overflow-hidden shrink-0">
+      <div className="font-medium text-[min(2.22vh,2.22vw)] leading-[130%] uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)] py-[min(0.9vh,0.9vw)] bg-white/5 h-full flex justify-center items-center shadow-[inset_0px_2px_4px_0px_#FFFFFF40]">
+        h
+      </div>
       <div className="bg-sandy-yellow flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full">
         <p
           className={clsx(
-            'font-medium text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-black text-box-trim py-[min(0.9vh,0.9vw)]',
+            'font-medium text-[min(2.22vh,2.22vw)] leading-[130%] uppercase text-black text-box-trim py-[min(0.9vh,0.9vw)]',
             {
               'line-through': isApplied,
             },
@@ -439,9 +444,6 @@ function HandicapPill({ handicap, isApplied }: { handicap: number; isApplied?: b
           {convertHandicapToString(handicap)}
         </p>
       </div>
-      <span className="font-medium text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text text-box-trim inline-block px-[min(1.5vh,1.5vw)] py-[min(0.9vh,0.9vw)]">
-        h
-      </span>
     </div>
   );
 }
