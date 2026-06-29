@@ -126,7 +126,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         : null;
 
   return (
-    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(5.6vh,5.6vw)] py[min(3.7vh,3.7vw)] bg-no-repeat flex flex-col justify-between overflow-hidden">
+    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(5.6vh,5.6vw)] bg-no-repeat flex flex-col overflow-hidden gap-16">
       {/* Header */}
       <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
         <div className="flex items-center gap-[min(2.6vh,2.6vw)] py-[min(1.1vh,1.1vw)] w-fit justify-self-start">
@@ -291,23 +291,6 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           balls={teamTwoBalls}
           breakSide="left"
         />
-      </div>
-
-      {/* Footer */}
-      <div className="grid grid-cols-3 items-center border-t-2 [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1] py-[min(1.7vh,1.7vw)] px-[min(2.5vw,2.5vh)]">
-        <p className="text-score-text font-semibold text-[min(3.3vh,3.3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-start py-[min(0.9vh,0.9vw)]">
-          {footerLabel}
-        </p>
-        <div className="justify-self-center bg-[url(/table-number-bg.svg)] bg-no-repeat bg-contain relative h-[min(5.9vh,5.9vw)] w-[min(26.8vh,26.8vw)]">
-          <div className="px-[min(1.5vh,1.5vw)] absolute inset-0 flex justify-center items-center">
-            <p className="text-score-text font-semibold text-[min(3.3vh,3.3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase">
-              table {state.venueNo}
-            </p>
-          </div>
-        </div>
-        <p className="text-score-text font-semibold text-[min(3.3vh,3.3vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end py-[min(0.9vh,0.9vw)]">
-          {state.sport}
-        </p>
       </div>
     </main>
   );
