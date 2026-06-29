@@ -392,26 +392,16 @@ function PlayerCard({
           >
             {score}
           </p>
-          {breakScore != null && (
-            <div className="flex flex-col gap-4">
-              <div
-                className={clsx(
-                  'px-[min(1.9vh,1.9vw)] bg-[linear-gradient(69.46deg,rgba(172,236,84,0.078)_12.28%,rgba(111,255,0,0.6)_179.54%)] shadow-[0px_2px_4px_0px_#FFFFFF40_inset] break-card pt-1',
-                )}
-              >
-                <p className="font-semibold text-[min(8.3vh,8.3vw)] leading-[130%] uppercase text-score-text px-[min(1.5vh,1.5vw)] text-center">
-                  {breakScore}
-                </p>
-              </div>
-              <p
-                className={clsx(
-                  'font-extrabold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)] text-right',
-                )}
-              >
-                Break
+          <div className={clsx('flex flex-col gap-4', breakScore != null ? 'visible' : 'invisible')}>
+            <div className="px-[min(1.9vh,1.9vw)] bg-[linear-gradient(69.46deg,rgba(172,236,84,0.078)_12.28%,rgba(111,255,0,0.6)_179.54%)] shadow-[0px_2px_4px_0px_#FFFFFF40_inset] break-card pt-1">
+              <p className="font-semibold text-[min(8.3vh,8.3vw)] leading-[130%] uppercase text-score-text px-[min(1.5vh,1.5vw)] text-center">
+                {breakScore ?? 0}
               </p>
             </div>
-          )}
+            <p className="font-extrabold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)] text-right">
+              Break
+            </p>
+          </div>
         </div>
 
         {/* Balls (snooker only) */}
