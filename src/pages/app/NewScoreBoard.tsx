@@ -209,7 +209,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
             ) : (
               <div className="space-y-[min(2.2vh,2.2vw)]">
                 <p className="text-text-light font-semibold text-[min(3.7vh,3.7vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center px-[min(2vw,2vh)]">
-                  Frames Score
+                  Frame Score
                 </p>
                 <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
                   <p className="text-score-text font-semibold text-[min(6.48vh,6.48vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase size-[min(7.4vh,7.4vw)] flex justify-center items-center bg-[#595959]/[0.20] w-full h-full">
@@ -243,13 +243,15 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
             <div className="flex justify-center items-center">
               <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(6vh,6vw)] w-fit overflow-hidden shrink-0">
-                <p className="font-medium text-[min(4vh,4vw)] leading-none uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)] bg-white/5 h-full flex justify-center items-center shadow-[inset_0px_2px_4px_0px_#FFFFFF40] text-center">
-                  t
-                </p>
+                <div className="flex justify-center items-center bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] h-full">
+                  <p className="font-medium text-[min(5vh,5vw)] uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)]  text-center">
+                    t
+                  </p>
+                </div>
                 <div className="bg-white flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full">
                   <p
                     className={clsx(
-                      'font-medium text-[min(4vh,4vw)] leading-[130%] uppercase text-black text-box-trim py-[min(0.9vh,0.9vw)]',
+                      'font-medium text-[min(5vh,5vw)] leading-[130%] uppercase text-black text-box-trim py-[min(0.9vh,0.9vw)]',
                     )}
                   >
                     1
