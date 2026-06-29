@@ -244,9 +244,9 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
             <div className="flex justify-center items-center">
               <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(6vh,6vw)] w-fit overflow-hidden shrink-0">
-                <div className="font-medium text-[min(4vh,4vw)] uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)] bg-white/5 h-full flex justify-center items-center shadow-[inset_0px_2px_4px_0px_#FFFFFF40] text-center">
+                <p className="font-medium text-[min(4vh,4vw)] leading-none uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)] bg-white/5 h-full flex justify-center items-center shadow-[inset_0px_2px_4px_0px_#FFFFFF40] text-center">
                   t
-                </div>
+                </p>
                 <div className="bg-white flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full">
                   <p
                     className={clsx(

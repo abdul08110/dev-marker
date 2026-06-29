@@ -34,7 +34,7 @@ export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap }:
           style={{
             position: 'absolute',
             inset: 0,
-            background: `${color}`,
+            // background: `${color}`,
             clipPath: `url(#${borderClipId})`,
             filter: 'drop-shadow(0 3.6px 7.2px rgba(0, 0, 0, 0.25))',
           }}
