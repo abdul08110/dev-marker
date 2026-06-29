@@ -343,6 +343,7 @@ function PlayerCard({
   breakScore,
   sport,
   balls,
+  breakSide,
 }: PlayerCardProps) {
   const profileSizeSingle = useFluidPx(0.11); // ≈119px at 1080p
   const profileSizeDoubles = useFluidPx(0.1); // ≈108px at 1080p
@@ -396,7 +397,14 @@ function PlayerCard({
                 </>
               )}
             </div>
-            {handicap != null && <HandicapPill handicap={handicap} isApplied={isHandicapApplied} />}
+            {handicap != null && (
+              <HandicapPill
+                handicap={handicap}
+                isApplied={isHandicapApplied}
+                isActive={isActive}
+                align={breakSide === 'right' ? 'start' : 'end'}
+              />
+            )}
           </div>
         </div>
 
@@ -437,23 +445,43 @@ function PlayerCard({
   );
 }
 
-function HandicapPill({ handicap, isApplied }: { handicap: number; isApplied?: boolean }) {
+function HandicapPill({
+  handicap,
+  isApplied,
+  isActive,
+  align = 'start',
+}: {
+  handicap: number;
+  isApplied?: boolean;
+  isActive?: boolean;
+  align?: 'start' | 'end';
+}) {
   return (
-    <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_0px_5.3px_0px_#929504] flex items-center h-[min(4vh,4vw)] w-fit overflow-hidden shrink-0">
-      <div className="font-medium text-[min(2.22vh,2.22vw)] leading-[130%] uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)] py-[min(0.9vh,0.9vw)] bg-white/5 h-full flex justify-center items-center shadow-[inset_0px_2px_4px_0px_#FFFFFF40]">
-        h
-      </div>
-      <div className="bg-sandy-yellow flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full">
-        <p
+    <div className={clsx('flex w-full', align === 'end' ? 'justify-end' : 'justify-start')}>
+      <div
+        className={clsx(
+          'bg-white/5 rounded-[10px] flex items-center h-[min(4vh,4vw)] w-fit overflow-hidden shrink-0 shadow-[inset_0px_2px_4px_0px_#FFFFFF40]',
+        )}
+      >
+        <div className="font-medium text-[min(2.22vh,2.22vw)] leading-[130%] uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)] py-[min(0.9vh,0.9vw)] bg-white/5 h-full flex justify-center items-center">
+          h
+        </div>
+        <div
           className={clsx(
-            'font-medium text-[min(2.22vh,2.22vw)] leading-[130%] uppercase text-black text-box-trim py-[min(0.9vh,0.9vw)]',
-            {
-              'line-through': isApplied,
-            },
+            'flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full',
+            isActive ? 'bg-sandy-yellow' : 'bg-[#E07EF9]',
           )}
         >
-          {convertHandicapToString(handicap)}
-        </p>
+          <p
+            className={clsx(
+              'font-medium text-[min(2.22vh,2.22vw)] leading-[130%] uppercase text-box-trim py-[min(0.9vh,0.9vw)]',
+              isActive ? 'text-black' : 'text-white',
+              { 'line-through': isApplied },
+            )}
+          >
+            {convertHandicapToString(handicap)}
+          </p>
+        </div>
       </div>
     </div>
   );
