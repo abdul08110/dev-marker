@@ -39,7 +39,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
 
   return (
     <div className="flex-grow overflow-y-scroll flex flex-col px-2 gap-2 mt-2 mb-2">
-      <div className="bg-[#1C1C1C] rounded-md overflow-hidden">
+      <div className="bg-[#1C1C1C] rounded-md overflow-hidden h-dvh">
         {/* Tournament banner */}
         {props.state.tournamentName && (
           <div className="relative">
@@ -62,17 +62,13 @@ export function PortraitView(props: PortraitStreamDataProps) {
                           ? props.state.sideOnePlayerOne.profilePhoto
                           : '/images/user-dummy-pic.jpg'
                     }
-                    size={88}
+                    size={60}
+                    handicap={
+                      props.state.teamOneHandicap
+                        ? `H${props.state.teamOneHandicap > 0 ? '+' : ''}${props.state.teamOneHandicap}`
+                        : ''
+                    }
                   />
-                  {props.state.teamOneHandicap && (
-                    <div className="absolute w-full bg-[#FFD400] bottom-0">
-                      <p className="font-semibold text-base leading-[130%] uppercase text-center text-black py-1">
-                        {props.state.teamOneHandicap
-                          ? `H${props.state.teamOneHandicap > 0 ? '+' : ''}${props.state.teamOneHandicap}`
-                          : ''}
-                      </p>
-                    </div>
-                  )}
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -94,7 +90,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
             {props.state.tournamentId && (
               <div className="px-4 py-3 flex gap-3 items-center">
                 <ImageWithFallback
-                  className="aspect-square rounded overflow-hidden border-white size-8 object-cover shrink-0"
+                  className="aspect-square overflow-hidden border-white size-8 object-cover shrink-0 rounded-full"
                   fallback="/images/user-dummy-pic.jpg"
                   src={
                     props.state.teamOneLogo
@@ -116,7 +112,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
           </div>
           <div className={clsx({ 'bg-[#9B36BA]': isTeamTwoActive, 'bg-[#1F1F1F]': !isTeamTwoActive })}>
             <div className="p-4 space-y-4">
-              <div className="flex justify-end items-center gap-3">
+              <div className="flex flex-row-reverse justify-between items-center gap-3">
                 <div className="flex flex-col gap-1">
                   <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
                     {activeSet && activeSet?.teamTwoScore}
@@ -136,20 +132,16 @@ export function PortraitView(props: PortraitStreamDataProps) {
                           ? props.state.sideTwoPlayerOne.profilePhoto
                           : '/images/user-dummy-pic.jpg'
                     }
-                    size={88}
+                    size={60}
+                    handicap={
+                      props.state.teamTwoHandicap
+                        ? `H${props.state.teamTwoHandicap > 0 ? '+' : ''}${props.state.teamTwoHandicap}`
+                        : ''
+                    }
                   />
-                  {props.state.teamTwoHandicap && (
-                    <div className="absolute w-full bg-[#FFD400] bottom-0">
-                      <p className="font-semibold text-base leading-[130%] uppercase text-center text-black py-1">
-                        {props.state.teamTwoHandicap
-                          ? `H${props.state.teamTwoHandicap > 0 ? '+' : ''}${props.state.teamTwoHandicap}`
-                          : ''}
-                      </p>
-                    </div>
-                  )}
                 </div>
               </div>
-              <p className="font-medium text-[17px] leading-[130%] uppercase text-white line-clamp-1 text-right">
+              <p className="font-medium text-[17px] leading-[130%] uppercase text-white line-clamp-1 text-left">
                 {generatePlayerName(
                   props.state.sideTwoPlayerOne.name,
                   props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
@@ -166,7 +158,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                     )}
                 </p>
                 <ImageWithFallback
-                  className="aspect-square rounded overflow-hidden border-white size-8 object-cover shrink-0"
+                  className="aspect-square overflow-hidden border-white size-8 object-cover shrink-0 rounded-full"
                   fallback="/images/user-dummy-pic.jpg"
                   src={
                     props.state.teamTwoLogo
@@ -218,6 +210,14 @@ export function PortraitView(props: PortraitStreamDataProps) {
             <div className="bg-white/[.12] h-px w-full" />
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{props.state.teamTwoScore}</p>
           </div>
+
+          <div className="flex items-center gap-4 select-none">
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamOneStats.highestBreak}</p>
+            <div className="bg-white/[.12] h-px w-full" />
+            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Highest Break</p>
+            <div className="bg-white/[.12] h-px w-full" />
+            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamTwoStats.highestBreak}</p>
+          </div>
           {completedSets.length > 0 ? (
             <div>
               <div
@@ -250,14 +250,6 @@ export function PortraitView(props: PortraitStreamDataProps) {
               </div>
             </div>
           ) : null}
-
-          <div className="flex items-center gap-4 select-none">
-            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamOneStats.highestBreak}</p>
-            <div className="bg-white/[.12] h-px w-full" />
-            <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0">Highest Break</p>
-            <div className="bg-white/[.12] h-px w-full" />
-            <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{teamTwoStats.highestBreak}</p>
-          </div>
         </div>
       </div>
     </div>
