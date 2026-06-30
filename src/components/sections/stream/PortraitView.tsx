@@ -38,8 +38,8 @@ export function PortraitView(props: PortraitStreamDataProps) {
   }
 
   return (
-    <div className="flex-grow overflow-y-scroll flex flex-col px-2 gap-2 mt-2 mb-2">
-      <div className="bg-[#1C1C1C] rounded-md overflow-hidden h-dvh">
+    <div className="flex-grow min-h-0 overflow-y-scroll flex flex-col px-2 gap-2 mt-2 mb-2">
+      <div className="bg-[#1C1C1C] rounded-md min-h-full">
         {/* Tournament banner */}
         {props.state.tournamentName && (
           <div className="relative">
