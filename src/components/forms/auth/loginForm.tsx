@@ -74,7 +74,7 @@ export function LoginForm() {
               <FormItem>
                 <FormLabel className="text-white">Email</FormLabel>
                 <FormControl>
-                  <Input className="!capitalize" {...field} />
+                  <Input className="!normal-case" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -89,7 +89,7 @@ export function LoginForm() {
               <FormItem>
                 <FormLabel className="text-white">Password</FormLabel>
                 <FormControl>
-                  <Input className="!lowercase" {...field} />
+                  <Input className="!normal-case" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

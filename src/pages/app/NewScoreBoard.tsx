@@ -173,7 +173,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         />
 
         {/* Center Panel */}
-        <div className="py-[min(2vh,2vw)]">
+        <div className="py-[min(1.3vh,1.3vw)]">
           <div
             className="rounded-[min(5.6vh,5.6vw)] p-[min(0.5vh,0.5vw)] h-full"
             style={{
@@ -247,7 +247,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                       t
                     </p>
                   </div>
-                  <div className="bg-white flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full shadow-[inset_0px_0px_5.3px_0px_#929504]">
+                  <div className=" bg-white flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full">
                     <p
                       className={clsx(
                         'font-medium leading-[130%] text-[min(7.6vh,7.6vw)] text-black text-box-trim py-[min(0.9vh,0.9vw)]',
@@ -339,7 +339,8 @@ function PlayerCard({
   const backPhoto = isPlayerOneActive ? profilePhoto2 : profilePhoto;
 
   return (
-    <div className="relative w-full h-full backdrop-blur-xl overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden rounded-[min(5.6vh,5.6vw)]">
+      <div className="absolute inset-0 backdrop-blur-xl" />
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col px-[min(2vh,2vw)] py-[min(4vh,4vw)]">
         {/* Player info */}
