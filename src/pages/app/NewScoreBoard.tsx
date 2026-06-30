@@ -17,7 +17,7 @@ const BALL_IMAGE_MAP: Partial<Record<SnookerPointType, string>> = {
   [SnookerPointType.BLUE]: '/images/balls/blue-ball.svg',
   [SnookerPointType.PINK]: '/images/balls/pink-ball.svg',
   [SnookerPointType.BLACK]: '/images/balls/black-ball.svg',
-  [SnookerPointType.FOUL]: '/images/balls/placeholder-ball.svg',
+  [SnookerPointType.FOUL]: '/images/balls/foul-ball.svg',
 };
 import { ProfileCard } from '@/components/ProfileCard';
 import { useFluidPx } from '@/hooks/useFluidPx';
