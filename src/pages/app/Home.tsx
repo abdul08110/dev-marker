@@ -165,15 +165,33 @@ export function Home() {
                     className="bg-[#1F1F1F] rounded-2xl p-6 flex flex-col gap-5 shadow-xl w-56"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <div onClick={() => { setIsQrModalOpen(true); setIsMenuOpen(false); }} className="flex items-center gap-3 cursor-pointer">
+                    <div
+                      onClick={() => {
+                        setIsQrModalOpen(true);
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center gap-3 cursor-pointer"
+                    >
                       <Smartphone className="size-6 text-white" />
                       <span className="text-white text-sm">Scan QR</span>
                     </div>
-                    <div onClick={() => { navigate('/app/scoreboard'); setIsMenuOpen(false); }} className="flex items-center gap-3 cursor-pointer">
+                    <div
+                      onClick={() => {
+                        navigate('/app/scoreboard');
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center gap-3 cursor-pointer"
+                    >
                       <TvLogo className="h-6 w-auto" />
                       <span className="text-white text-sm">Scoreboard</span>
                     </div>
-                    <div onClick={() => { logout(); setIsMenuOpen(false); }} className="flex items-center gap-3 cursor-pointer">
+                    <div
+                      onClick={() => {
+                        logout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center gap-3 cursor-pointer"
+                    >
                       <img className="w-6 h-auto object-contain" src="/images/logout.png" />
                       <span className="text-white text-sm">Logout</span>
                     </div>

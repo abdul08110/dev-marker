@@ -314,11 +314,15 @@ export function BilliardsScoring() {
                 <AlertDialogTitle className="text-white">Are you sure you want to close the game?</AlertDialogTitle>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={() => {
-                  if (closeConfirmSource.current === 'player') setOpenPlayerSelectCard(true);
-                  else if (closeConfirmSource.current === 'settings') setOpenSettingsDrawer(true);
-                  closeConfirmSource.current = null;
-                }}>Cancel</AlertDialogCancel>
+                <AlertDialogCancel
+                  onClick={() => {
+                    if (closeConfirmSource.current === 'player') setOpenPlayerSelectCard(true);
+                    else if (closeConfirmSource.current === 'settings') setOpenSettingsDrawer(true);
+                    closeConfirmSource.current = null;
+                  }}
+                >
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction onClick={handleEndGame}>Confirm</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -407,7 +411,7 @@ export function BilliardsScoring() {
                         }`}
                       >
                         <img src={`/images/${ball}-ball.png`} className="h-14 w-14 object-contain" />
-                        <span className="text-sm font-medium capitalize">{ball}</span>
+                        <span className="text-sm font-medium uppercase">{ball}</span>
                       </button>
                     ))}
                   </div>

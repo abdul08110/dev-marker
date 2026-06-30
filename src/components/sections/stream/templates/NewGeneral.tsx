@@ -46,8 +46,8 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
   const leftCardStyle = isSideOneActive ? YELLOW_CARD_STYLE : PINK_CARD_STYLE;
   const rightCardStyle = isSideTwoActive ? YELLOW_CARD_STYLE : PINK_CARD_STYLE;
-  const leftShadow = isSideOneActive ? 'shadow-[0px_3px_20.8px_0px_#DCF756]' : 'shadow-[0px_3px_10.8px_0px_#E38BF9]';
-  const rightShadow = isSideTwoActive ? 'shadow-[0px_3px_20.8px_0px_#DCF756]' : 'shadow-[0px_3px_10.8px_0px_#E38BF9]';
+  const leftShadow = isSideOneActive ? 'shadow[0px_3px_20.8px_0px_#DCF756]' : 'shadow[0px_3px_10.8px_0px_#E38BF9]';
+  const rightShadow = isSideTwoActive ? 'shadow[0px_3px_20.8px_0px_#DCF756]' : 'shadow[0px_3px_10.8px_0px_#E38BF9]';
 
   // ── Left card inner content ─────────────────────────────────────────────────
   const leftCardContent = isDoubles ? (
@@ -72,7 +72,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
             {generatePlayerName(state.sideOnePlayerOne.name, state.sideOnePlayerTwo?.name)}
           </p>
-          <YellowHandicapPill handicap={state.teamOneHandicap} />
+          {isSideOneActive ? (
+            <YellowHandicapPill handicap={state.teamOneHandicap} />
+          ) : (
+            <VioletHandicapPill handicap={state.teamOneHandicap} />
+          )}
         </div>
         {isSideOneActive ? <YellowDivider /> : <VioletDivider />}
       </div>
@@ -88,7 +92,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
             {generatePlayerName(state.sideOnePlayerOne.name)}
           </p>
-          <YellowHandicapPill handicap={state.teamOneHandicap} />
+          {isSideOneActive ? (
+            <YellowHandicapPill handicap={state.teamOneHandicap} />
+          ) : (
+            <VioletHandicapPill handicap={state.teamOneHandicap} />
+          )}
         </div>
         {isSideOneActive ? <YellowDivider /> : <VioletDivider />}
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -109,7 +117,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
             {generatePlayerName(state.sideOnePlayerOne.name)}
           </p>
-          <YellowHandicapPill handicap={state.teamOneHandicap} />
+          {isSideOneActive ? (
+            <YellowHandicapPill handicap={state.teamOneHandicap} />
+          ) : (
+            <VioletHandicapPill handicap={state.teamOneHandicap} />
+          )}
         </div>
         {isSideOneActive ? <YellowDivider /> : <VioletDivider />}
       </div>
@@ -139,7 +151,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
             {generatePlayerName(state.sideTwoPlayerOne.name, state.sideTwoPlayerTwo?.name)}
           </p>
-          <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          {isSideTwoActive ? (
+            <YellowHandicapPill handicap={state.teamTwoHandicap} />
+          ) : (
+            <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          )}
         </div>
         {isSideTwoActive ? <YellowDivider /> : <VioletDivider />}
       </div>
@@ -155,7 +171,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
             {generatePlayerName(state.sideTwoPlayerOne.name)}
           </p>
-          <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          {isSideTwoActive ? (
+            <YellowHandicapPill handicap={state.teamTwoHandicap} />
+          ) : (
+            <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          )}
         </div>
         {isSideTwoActive ? <YellowDivider /> : <VioletDivider />}
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -176,7 +196,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
             {generatePlayerName(state.sideTwoPlayerOne.name)}
           </p>
-          <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          {isSideTwoActive ? (
+            <YellowHandicapPill handicap={state.teamTwoHandicap} />
+          ) : (
+            <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          )}
         </div>
         {isSideTwoActive ? <YellowDivider /> : <VioletDivider />}
       </div>
@@ -290,11 +314,10 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               </svg>
 
               <div className="flex justify-center items-center gap-[min(0.7vh,0.7vw)] pt-[min(0.9vh,0.9vw)] relative">
-                <p className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-sandy-yellow">
-                  Break
-                </p>
-                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-sandy-yellow">
-                  {breakScore}
+                <p className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-sandy-yellow">Break</p>
+                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] text-sandy-yellow">
+                  {/* {breakScore} */}
+                  134
                 </p>
               </div>
             </div>
@@ -303,7 +326,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         {/* Left player card */}
         <div
-          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${leftShadow} shrink-0 backdrop-blur-[24px] grow flex items-center max-w-[min(70vh,70vw)] z-50`}
+          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${leftShadow} backdrop-blur-[24px] flex-1 min-w-0 flex items-center z-50`}
           style={leftCardStyle}
         >
           {leftCardContent}
@@ -393,9 +416,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             </div>
           </div>
 
-          {/* Score cells */}
+          {/* Score cells — Game Score | Frame Score | Total Frames | Frame Score | Game Score */}
           <div className="flex items-stretch relative z-20 rounded-[min(1.9vh,1.9vw)] overflow-hidden py-[min(1vh,1vw)]">
-            {/* Team 1 total score */}
+            {/* Team 1 game score (current frame points) */}
             <div
               className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border border-l-0 w-[min(11vh,12vw)] flex justify-center items-center z-10"
               style={{
@@ -405,18 +428,18 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               }}
             >
               <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
-                {state.teamOneScore}
+                {activeSet?.teamOneScore ?? 0}
               </span>
             </div>
 
-            {/* Team 1 current set score */}
+            {/* Team 1 frame score (frames won) */}
             <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
-              {activeSet?.teamOneScore ?? 0}
+              {state.teamOneScore}
             </p>
 
-            {/* Current break / turn score */}
+            {/* Total frames / break score */}
             <div
-              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border w-[7vw] w[min(11vh,14vw)] flex justify-center items-center "
+              className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] border w-[7vw] w[min(11vh,14vw)] flex justify-center items-center"
               style={{
                 borderImageSource:
                   'linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%)',
@@ -428,13 +451,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               </span>
             </div>
 
-            {/* Team 2 current set score */}
-
+            {/* Team 2 frame score (frames won) */}
             <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)] bg-[#595959]/[.20]">
-              {activeSet?.teamTwoScore ?? 0}
+              {state.teamTwoScore}
             </p>
 
-            {/* Team 2 total score */}
+            {/* Team 2 game score (current frame points) */}
             <div
               className="px-[min(1.1vh,1.1vw)] bg-[#AB51C6] w-[min(11vh,12vw)] border border-r-0 flex justify-center items-center"
               style={{
@@ -444,7 +466,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               }}
             >
               <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
-                {state.teamTwoScore}
+                {activeSet?.teamTwoScore ?? 0}
               </span>
             </div>
           </div>
@@ -452,7 +474,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         {/* Right player card */}
         <div
-          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${rightShadow} shrink-0 backdrop-blur-[24px] grow flex items-center max-w-[min(70vh,70vw)] z-50`}
+          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${rightShadow} backdrop-blur-[24px] flex-1 min-w-0 flex items-center z-50`}
           style={rightCardStyle}
         >
           {rightCardContent}
