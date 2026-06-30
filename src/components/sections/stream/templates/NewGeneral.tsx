@@ -4,6 +4,7 @@ import { convertHandicapToString, generatePlayerName } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import { useFluidPx } from '@/hooks/useFluidPx';
 import { cn } from '@/lib/utils';
+import clsx from 'clsx';
 
 interface GeneralTemplateProps {
   state: StreamingState;
@@ -20,7 +21,7 @@ const YELLOW_CARD_STYLE = {
 
 const PINK_CARD_STYLE = {
   background:
-    'linear-gradient(180deg, #371E56 0%, #0D0624 100%) padding-box, linear-gradient(144.83deg, rgba(210, 154, 245, 0.02) -0.26%, #B079E3 34.38%, #E38BF9 58.47%, #E38BF9 92.16%) border-box',
+    'linear-gradient(180deg, #371E56 0%, #0D0624 100%) padding-box, linear-gradient(144.83deg, rgba(210, 154, 245, 0.09) -0.26%, #B079E3 34.38%, #E38BF9 58.47%, #E38BF9 92.16%) border-box',
   border: '1px solid transparent',
 };
 
@@ -46,8 +47,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
   const leftCardStyle = isSideOneActive ? YELLOW_CARD_STYLE : PINK_CARD_STYLE;
   const rightCardStyle = isSideTwoActive ? YELLOW_CARD_STYLE : PINK_CARD_STYLE;
-  const leftShadow = isSideOneActive ? 'shadow[0px_3px_20.8px_0px_#DCF756]' : 'shadow[0px_3px_10.8px_0px_#E38BF9]';
-  const rightShadow = isSideTwoActive ? 'shadow[0px_3px_20.8px_0px_#DCF756]' : 'shadow[0px_3px_10.8px_0px_#E38BF9]';
+  const leftShadow = isSideOneActive
+    ? 'shadow-[0px_3px_10px_0px_rgba(220,247,86,0.8)]'
+    : 'shadow-[0px_3px_8px_0px_rgba(227,139,249,0.5)]';
+  const rightShadow = isSideTwoActive
+    ? 'shadow-[0px_3px_10px_0px_rgba(220,247,86,0.8)]'
+    : 'shadow-[0px_3px_8px_0px_rgba(227,139,249,0.5)]';
 
   // ── Left card inner content ─────────────────────────────────────────────────
   const leftCardContent = isDoubles ? (
@@ -208,8 +213,8 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   return (
-    <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center rounded-[min(3vh,3vw)] bg-black shadow-[0px_3px_20.8px_0px_#BA91C8]">
-      <div className="w-full h-auto flex justify-between items-stretch px-[min(1.9vh,1.9vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
+    <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_3px_20px_0px_rgba(186,145,200,0.5)] mb-3 bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
+      <div className="w-full h-auto flex justify-between items-stretch px-[min(1.5vh,1.5vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
           <div
@@ -231,7 +236,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 viewBox="0 0 210 52"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                }}
               >
                 <g filter="url(#filter0_i)">
                   <path
@@ -313,12 +323,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 </defs>
               </svg>
 
-              <div className="flex justify-center items-center gap-[min(0.7vh,0.7vw)] pt-[min(0.9vh,0.9vw)] relative">
-                <p className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-sandy-yellow">Break</p>
-                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] text-sandy-yellow">
-                  {/* {breakScore} */}
-                  134
-                </p>
+              <div className="flex justify-center items-center gap-[min(0.7vh,0.7vw)] py-[min(0.9vh,0.9vw)] relative">
+                <p className="font-semibold text-[min(2.8vh,2.8vw)] leading-[130%] text-sandy-yellow">Break</p>
+                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] text-sandy-yellow">{breakScore}</p>
               </div>
             </div>
           </div>
@@ -338,12 +345,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           style={{
             border: '2px solid transparent',
             background: `
-              linear-gradient(#11030F, #11030F) padding-box,
-              linear-gradient(90deg, #E3A9F2 0%, rgba(226, 179, 237, 0.05) 55.91%, #E0BCE8 109.78%) border-box
-    `,
-
-            // filter: 'drop-shadow(-2px -2px 4px #BA91C8)',
-            filter: 'drop-shadow(-2px -2px -4px #BA91C8)',
+  linear-gradient(#11030F, #11030F) padding-box,
+  linear-gradient(
+    180deg,
+    rgba(227, 169, 242, 1) 0%,
+    rgba(226, 179, 237, 0.6) 64%,
+    rgba(17, 3, 15, 0.6) 100%
+  ) border-box
+`,
           }}
         >
           {/* Top Banner — tournament name, centered on this panel */}
@@ -353,7 +362,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 src="/tournament-name-box.svg"
                 alt="background pattern"
                 className="w-full h-auto"
-                style={{ filter: 'drop-shadow(0px 0px 5px #BA91C8)' }}
+                style={{
+                  filter: 'drop-shadow(0px -14px 8px rgba(186, 145, 200, 0.35))',
+                }}
               />
               <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate px-12 pb-1">
                 {(state.clubName || state.tournamentName) ?? ''}
@@ -362,11 +373,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           </div>
 
           {/* Format tag below center panel */}
-          <div className="absolute -bottom-[min(3.5vh,3.5vw)] w-full flex justify-center items-center ">
+          <div className="absolute -bottom-[min(3.5vh,3.5vw)] w-full flex justify-center items-center z-0">
             <div
-              className="relative w-[min(22.2vh,22.2vw)] h-[min(4.4vh,4.4vw)]"
+              className="relative w-[min(25.2vh,25.2vw)] h-[min(4.7vh,4.7vw)]"
               style={{
-                filter: 'drop-shadow(0px 0px 4px #BA91C8)',
+                filter: 'drop-shadow(0px 14px 10px rgba(186, 145, 200, 0.35))',
               }}
             >
               <svg
@@ -409,8 +420,8 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 </defs>
               </svg>
               <div className="absolute inset-0 flex justify-center items-center">
-                <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text px-[min(1.3vh,1.3vw)] truncate">
-                  {state.format ?? ''}
+                <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
+                  {state.sport === 'SNOOKER' ? 'Snooker' : 'Billiards'}
                 </span>
               </div>
             </div>
@@ -427,15 +438,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 borderImageSlice: 1,
               }}
             >
-              <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
+              <span className="font-semibold text-[min(4.7vh,4.7vw)] leading-[130%] uppercase text-score-text text-box-trim">
                 {activeSet?.teamOneScore ?? 0}
               </span>
             </div>
 
-            {/* Team 1 frame score (frames won) */}
-            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
-              {state.teamOneScore}
-            </p>
+            <div className="text-score-text font-semibold text-[min(4.7vh,4.7vw)] leading[130%]  border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
+              <p className="text-box-trim">{state.teamOneScore}</p>
+            </div>
 
             {/* Total frames / break score */}
             <div
@@ -446,15 +456,16 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 borderImageSlice: 1,
               }}
             >
-              <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
-                {breakScore}
+              <span className="font-semibold text-[min(4.7vh,4.7vw)] leading-[130%] uppercase text-box-trim text-score-text text-box-trim">
+                {state.sets.length}
               </span>
             </div>
 
             {/* Team 2 frame score (frames won) */}
-            <p className="text-score-text font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)] bg-[#595959]/[.20]">
-              {state.teamTwoScore}
-            </p>
+
+            <div className="text-score-text font-semibold text-[min(4.7vh,4.7vw)] leading[130%]  border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
+              <p className="text-box-trim">{state.teamTwoScore}</p>
+            </div>
 
             {/* Team 2 game score (current frame points) */}
             <div
@@ -465,7 +476,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 borderImageSlice: 1,
               }}
             >
-              <span className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-score-text">
+              <span className="font-semibold text-[min(4.7vh,4.7vw)] leading-[130%] uppercase text-score-text text-box-trim">
                 {activeSet?.teamTwoScore ?? 0}
               </span>
             </div>
@@ -491,14 +502,24 @@ function YellowHandicapPill({ handicap }: { handicap: number | null }) {
   const label = convertHandicapToString(handicap);
   if (!label) return null;
   return (
-    <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)] shrink-0">
-      <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text text-box-trim inline-block px-[min(1.5vh,1.5vw)]">
-        h
-      </span>
-      <div className="bg-sandy-yellow px-[min(1.5vh,1.5vw)] shadow-[inset_0px_0px_3.07px_0px_#929504]">
-        <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-box-trim text-[#11030F]">
+    <div
+      className={clsx(
+        'bg-white/5 rounded-[6px] flex items-center h-[min(3.5vh,3.5vw)] w-fit overflow-hidden shrink-0 shadow-[inset_0px_2px_4px_0px_#FFFFFF40]',
+      )}
+    >
+      <div className="bg-white/5 h-full flex justify-center items-center">
+        <p className="font-medium text-[min(2.23vh,2.23vw)] leading-[130%] text-score-text text-box-trim px-[min(1.6vh,1.6vw)] ">
+          h
+        </p>
+      </div>
+      <div className={clsx('flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full bg-sandy-yellow')}>
+        <p
+          className={clsx(
+            'font-medium text-[min(2.23vh,2.23vw)] text-black leading-[130%] uppercase text-box-trim py-[min(0.9vh,0.9vw)]',
+          )}
+        >
           {label}
-        </span>
+        </p>
       </div>
     </div>
   );
@@ -509,14 +530,24 @@ function VioletHandicapPill({ handicap }: { handicap: number | null }) {
   const label = convertHandicapToString(handicap);
   if (!label) return null;
   return (
-    <div className="flex items-center rounded-full overflow-hidden bg-white/[0.05] backdrop-blur-[12px] border border-white/[0.08] shadow-[inset_0px_1.16px_2.32px_0px_rgba(255,255,255,0.25)] shrink-0">
-      <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text text-box-trim inline-block px-[min(1.5vh,1.5vw)]">
-        h
-      </span>
-      <div className="bg-violet px-[min(1.5vh,1.5vw)] shadow-[inset_0px_0px_3.03px_0px_#C600F7]">
-        <span className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-box-trim text-[#11030F]">
+    <div
+      className={clsx(
+        'bg-white/5 rounded-[6px] flex items-center h-[min(3.5vh,3.5vw)] w-fit overflow-hidden shrink-0 shadow-[inset_0px_2px_4px_0px_#FFFFFF40]',
+      )}
+    >
+      <div className="bg-white/5 h-full flex justify-center items-center">
+        <p className="font-medium text-[min(2.23vh,2.23vw)] leading-[130%] text-score-text text-box-trim px-[min(1.6vh,1.6vw)] ">
+          h
+        </p>
+      </div>
+      <div className={clsx('flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full bg-violet')}>
+        <p
+          className={clsx(
+            'font-medium text-[min(2.23vh,2.23vw)] text-black leading-[130%] uppercase text-box-trim py-[min(0.9vh,0.9vw)]',
+          )}
+        >
           {label}
-        </span>
+        </p>
       </div>
     </div>
   );

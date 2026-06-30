@@ -352,7 +352,7 @@ function PlayerCard({
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col px-[min(1vh,1vw)] py-[min(3.5vh,3.5vw)]">
         {/* Player info */}
-        <div className="border-b p-[min(2vh,2vw)] border-white/10 flex gap-[min(1.2vh,1.2vw)]">
+        <div className="border-b p-[min(2vh,2vw)] border-white/10 flex gap-[min(1.2vh,1.2vw)] mx-3">
           {/* Profile image */}
           {isDoubles && profilePhoto2 !== undefined ? (
             <div className="relative shrink-0 size-[min(16vh,16vw)]">
@@ -402,7 +402,7 @@ function PlayerCard({
               )}
             </div>
             <div className="space-y-2">
-              {!isDoubles && (
+              {/* {!isDoubles && (
                 <div
                   className="w-full h-[min(0.3vh,0.3vw)]"
                   style={{
@@ -411,7 +411,7 @@ function PlayerCard({
                       : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
                   }}
                 />
-              )}
+              )} */}
               {handicap != null && (
                 <HandicapPill handicap={handicap} isApplied={isHandicapApplied} isActive={isActive} />
               )}
