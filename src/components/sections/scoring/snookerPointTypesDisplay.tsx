@@ -19,7 +19,7 @@ const pointTypeToImageSrc: Partial<Record<SnookerPointType, string>> = {
   [SnookerPointType.BLUE]: '/images/balls/blue-ball.svg',
   [SnookerPointType.PINK]: '/images/balls/pink-ball.svg',
   [SnookerPointType.BLACK]: '/images/balls/black-ball.svg',
-  [SnookerPointType.FOUL]: '/images/balls/placeholder-ball.svg',
+  [SnookerPointType.FOUL]: '/images/balls/foul-ball.svg',
 };
 
 const hiddenTypes = new Set([SnookerPointType.MISSED_POT, SnookerPointType.PLAY_SAFE]);
