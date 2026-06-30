@@ -5,11 +5,11 @@ type PropsType = {
   size?: number;
   color?: string;
   handicap?: string;
+  isBorder?: boolean;
 };
-export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap }: PropsType) => {
+export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap, isBorder }: PropsType) => {
   const borderClipId = useId();
   const cardClipId = useId();
-  console.log(color);
 
   return (
     <div className="flex justify-center items-center" style={{ width: `${size}px`, height: `${size}px` }}>
@@ -35,13 +35,13 @@ export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap }:
           style={{
             position: 'absolute',
             inset: 0,
-            // background: `${color}`,
+            background: isBorder ? color : '',
             clipPath: `url(#${borderClipId})`,
             filter: 'drop-shadow(0 3.6px 7.2px rgba(0, 0, 0, 0.25))',
           }}
         />
         {handicap ? (
-          <div className="absolute bottom-0 left-0 right-0 h-5 z-30 bg-[#FFD400] w-full rounded-br-md rounded-bl-md font-semibold text-base leading-[130%] uppercase text-center text-black">
+          <div className="absolute bottom-0 left-0 right-0 h-5 z-30 bg-[#E07EF9] w-full rounded-br-md rounded-bl-md font-semibold text-base leading-[130%] uppercase text-center text-white">
             {handicap}
           </div>
         ) : null}

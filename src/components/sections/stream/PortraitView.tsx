@@ -55,6 +55,8 @@ export function PortraitView(props: PortraitStreamDataProps) {
               <div className="flex items-center gap-3">
                 <div className="relative" style={{ flexShrink: 0 }}>
                   <ProfileCard
+                    isBorder={true}
+                    color="#202020"
                     imageUrl={
                       props.state.teamOneLogo
                         ? props.state.teamOneLogo
@@ -125,6 +127,8 @@ export function PortraitView(props: PortraitStreamDataProps) {
 
                 <div className="relative" style={{ flexShrink: 0 }}>
                   <ProfileCard
+                    isBorder
+                    color="#202020"
                     imageUrl={
                       props.state.teamTwoLogo
                         ? props.state.teamTwoLogo

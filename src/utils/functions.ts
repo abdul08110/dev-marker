@@ -42,6 +42,19 @@ export const formatTime = (totalSeconds: number) => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
+export const formatTimeMatchTime = (totalSeconds: number) => {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const paddedHours = hours.toString().padStart(2, '0');
+  const paddedMinutes = minutes.toString().padStart(2, '0');
+  const paddedSeconds = seconds.toString().padStart(2, '0');
+
+  // Notice the space after the first colon to match "00: 12:16"
+  return `${paddedHours}: ${paddedMinutes}:${paddedSeconds}`;
+};
+
 export const getTimeDifferenceInMinutes = (isoTime1: string, isoTime2: string): number =>
   Math.abs(new Date(isoTime2).getTime() - new Date(isoTime1).getTime()) / 60000;
 

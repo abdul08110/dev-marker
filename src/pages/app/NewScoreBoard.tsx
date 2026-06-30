@@ -5,7 +5,7 @@ import YellowBorderSVG from '@/components/YellowBorderSVG';
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
-import { convertHandicapToString, formatTime } from '@/utils/functions';
+import { convertHandicapToString, formatTime, formatTimeMatchTime } from '@/utils/functions';
 import { SnookerPointType } from '@/stores/types';
 import clsx from 'clsx';
 
@@ -127,7 +127,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         : null;
 
   return (
-    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(3.7vh,3.7vw)] bg-no-repeat flex flex-col overflow-hidden">
+    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(3vh,3vw)] bg-no-repeat flex flex-col overflow-hidden">
       {/* Header */}
       <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
         <div className="flex items-center gap-[min(3vh,3vw)] py-[min(1.1vh,1.1vw)] w-fit justify-self-start">
@@ -148,12 +148,12 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         />
 
         <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
-          match time {formatTime(elapsed)}
+          match time {formatTimeMatchTime(elapsed)}
         </p>
       </div>
 
       {/* Cards + Center */}
-      <div className="flex gap-[min(1.7vh,1.7vw)] px-[min(3vw,3vh)] py-[min(2vh,2vw)] pb[min(2.1vh,2.1vw)">
+      <div className="flex gap-[min(1.7vh,1.7vw)] px[min(3vw,3vh)] py-[min(2vh,2vw)] pb[min(2.1vh,2.1vw)">
         {/* <div className="grid grid-cols-[1fr_auto_1fr] gap-[min(1.7vh,1.7vw)] items-stretch px-[min(3vw,3vh)] pt-[min(5.1vh,5.1vw)] pb-[min(2.1vh,2.1vw)]"> */}
         {/* Card 1 - Team One */}
         <PlayerCard
@@ -162,7 +162,6 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           profilePhoto2={isDoubles ? (state.sideOnePlayerTwo?.profilePhoto ?? null) : undefined}
           playerOneName={state.sideOnePlayerOne.name}
           playerTwoName={state.sideOnePlayerTwo?.name}
-          // playerOneName="rakesh chowhan"
           isDoubles={isDoubles}
           isPlayerOneActive={state.activePlayerId === state.sideOnePlayerOne.id}
           handicap={teamOneHandicap}
@@ -176,10 +175,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
         {/* Center Panel */}
         <div
-          className={cn(
-            'shrink-0',
-            state.sport === 'SNOOKER' ? 'py-[min(1.8vh,1.8vw)]' : 'py-[min(1.3vh,1.3vw)] shrink-0',
-          )}
+          className={cn('shrink-0', state.sport === 'SNOOKER' ? 'py-[min(1.8vh,1.8vw)]' : 'py-[min(2vh,2vw)] shrink-0')}
         >
           <div
             className="rounded-[min(5.6vh,5.6vw)] p-[min(0.5vh,0.5vw)] h-full"
@@ -240,15 +236,15 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               )}
 
               {/* Timer */}
-              <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)] pt-[min(7.4vh,7.4vw)]">
-                <p className="text-score-text font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
+              <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)] pt-[min(7.4vh,7.4vw)] space-y-2">
+                <p className="text-score-text text-box-trim font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
                   {formatTime(timeLeft)}
                 </p>
                 <p className="text-text-light font-medium text-[min(4vh,4vw)]">Remaining</p>
               </div>
 
               <div className="flex justify-center items-center pt-[min(6vh,6vw)]">
-                <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(8vh,8vw)] w-[min(15vh,15vw)] overflow-hidden shrink-0">
+                <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(8vh,8vw)] w-fit overflow-hidden shrink-0">
                   <div className="flex justify-center items-center bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] h-full">
                     <p className="font-medium uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)]  text-center text-[min(7.6vh,7.6vw)]">
                       t
@@ -260,13 +256,13 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                         'font-medium leading-[130%] text-[min(7.6vh,7.6vw)] text-black text-box-trim py-[min(0.9vh,0.9vw)]',
                       )}
                     >
-                      1
+                      {state?.venueNo || ''}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col justify-center items-center pt-[min(3vh,3vw)] gap-1">
+              <div className="flex flex-col justify-center items-center pt-[min(3vh,3vw)] pb-[min(3vh,3vw)] gap-1">
                 {state.sport === 'SNOOKER' ? (
                   <>
                     <img src="/images/snooker.svg" alt="" className="size-[min(7vh,7vw)]" />
@@ -294,8 +290,6 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           profilePhoto2={isDoubles ? (state.sideTwoPlayerTwo?.profilePhoto ?? null) : undefined}
           playerOneName={state.sideTwoPlayerOne.name}
           playerTwoName={state.sideTwoPlayerTwo?.name}
-          // playerOneName="Ravindranath Swami"
-          // playerTwoName="Ravindranath Swami"
           isDoubles={isDoubles}
           isPlayerOneActive={state.activePlayerId === state.sideTwoPlayerOne.id}
           handicap={teamTwoHandicap}
@@ -344,8 +338,9 @@ function PlayerCard({
   balls,
   breakSide,
 }: PlayerCardProps) {
-  const profileSizeSingle = useFluidPx(0.16); // ≈119px at 1080p
+  const profileSizeSingle = useFluidPx(0.17); // ≈119px at 1080p
   const profileSizeDoubles = useFluidPx(0.1); // ≈108px at 1080p
+  console.log(breakSide);
 
   // Active player's photo goes to the front
   const frontPhoto = isPlayerOneActive ? profilePhoto : profilePhoto2;
@@ -355,12 +350,12 @@ function PlayerCard({
     <div className="relative w-full h-full overflow-hidden rounded-[min(5.6vh,5.6vw)]">
       <div className="absolute inset-0 backdrop-blur-xl" />
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
-      <div className="relative z-10 h-full flex flex-col px-[min(2vh,2vw)] py-[min(3.5vh,3.5vw)]">
+      <div className="relative z-10 h-full flex flex-col px-[min(1vh,1vw)] py-[min(3.5vh,3.5vw)]">
         {/* Player info */}
-        <div className="border-b p-[min(3vh,3vw)] border-white/10 flex gap-[min(1.5vh,1.5vw)]">
+        <div className="border-b p-[min(2vh,2vw)] border-white/10 flex gap-[min(1.2vh,1.2vw)]">
           {/* Profile image */}
           {isDoubles && profilePhoto2 !== undefined ? (
-            <div className="relative shrink-0 size-[min(15vh,15vw)]">
+            <div className="relative shrink-0 size-[min(16vh,16vw)]">
               <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
                 <ProfileCard imageUrl={backPhoto ?? '/images/user-dummy-pic.jpg'} size={profileSizeDoubles} />
               </div>
@@ -373,51 +368,71 @@ function PlayerCard({
           )}
 
           {/* Player name(s) + handicap */}
-          <div className="flex flex-col gap-[min(1.3vh,1.3vw)] min-w-0 flex-1">
+          <div className="flex flex-col justify-between gap-[min(1.3vh,1.3vw)] min-w-0 flex-1">
             <div className="">
-              <div className="space-y[min(1.5vh,1.5vw)]">
+              <div>
                 <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim truncate text-wrap line-clamp-2 font-extrabold pt-[min(1.2vh,1.2vh)]">
-                  {isDoubles ? (isPlayerOneActive ? playerOneName : playerTwoName) : playerOneName}
+                  {isDoubles ? (isPlayerOneActive ? playerOneName : playerTwoName)?.split(' ')[0] : playerOneName}
                 </p>
 
-                <div className="pt-[min(1.5vh,1.5vw)]">
-                  <div
-                    className="w-full h-[min(0.3vh,0.3vw)]"
-                    style={{
-                      background: isActive
-                        ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
-                        : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
-                    }}
-                  />
-                </div>
+                {isDoubles && (
+                  <div className="pt-[min(1vh,1vw)]">
+                    <div
+                      className="w-full h-[min(0.3vh,0.3vw)]"
+                      style={{
+                        background: isActive
+                          ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
+                          : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {isDoubles && playerTwoName && (
                 <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full pt-[min(1.5vh,1.5vw)]">
-                  <p className="font-extrabold text-[min(5.3vh,5.3vw)] leading-[130%] uppercase text-score-text text-box-trim truncate">
-                    {isPlayerOneActive ? playerTwoName : playerOneName}
+                  <p className="font-extrabold text-[min(5.3vh,5.3vw)] leading-[130%] text-score-text text-box-trim truncate">
+                    {isDoubles
+                      ? (isPlayerOneActive ? playerTwoName : playerOneName)?.split(' ')[0]
+                      : isPlayerOneActive
+                        ? playerTwoName
+                        : playerOneName}
                   </p>
                 </div>
               )}
             </div>
-            {handicap != null && <HandicapPill handicap={handicap} isApplied={isHandicapApplied} isActive={isActive} />}
+            <div className="space-y-2">
+              {!isDoubles && (
+                <div
+                  className="w-full h-[min(0.3vh,0.3vw)]"
+                  style={{
+                    background: isActive
+                      ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
+                      : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
+                  }}
+                />
+              )}
+              {handicap != null && (
+                <HandicapPill handicap={handicap} isApplied={isHandicapApplied} isActive={isActive} />
+              )}
+            </div>
           </div>
         </div>
 
         {/* Score + Break */}
         <div className="p-[min(3vh,3vw)] flex flex-col gap-[min(4.07vh,4.07vw)] justify-center items-center flex-1">
           <p
-            className={`font-semibold text-[min(18.5vh,18.5vw)] text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
+            className={`font-semibold text-[min(24vh,24vw)] text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
           >
             {score}
           </p>
           <div className={clsx('flex flex-col items-center gap-4', breakScore != null ? 'visible' : 'invisible')}>
             <div className="px-[min(1.9vh,1.9vw)] bg-[linear-gradient(69.46deg,rgba(172,236,84,0.078)_12.28%,rgba(111,255,0,0.6)_179.54%)] shadow-[0px_2px_4px_0px_#FFFFFF40_inset] break-card w-[min(26vh,26vw)] h-[min(11.5vh,11.5vw)] flex justify-center items-center pb-5 pt-5">
-              <p className="font-semibold text-[min(9.5vh,9.5vw)] leading-[130%] text-box-trim text-score-text">
+              <p className="font-semibold text-[min(10.2vh,10.2vw)] leading-[130%] text-box-trim text-score-text">
                 {breakScore ?? 0}
               </p>
             </div>
-            <p className="font-extrabold text-[min(3.7vh,3.7vw)] leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)] text-right">
+            <p className="font-extrabold text-[min(3.7vh,3.7vw)] text-box-trim leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)] text-right">
               Break
             </p>
           </div>
@@ -426,7 +441,7 @@ function PlayerCard({
         {/* Balls (snooker only) */}
         {sport === 'SNOOKER' && (
           <div
-            className="border-t-2 [border-image-slice:1] py-[min(2.1vh,2.1vw)] flex flex-col items-center gap-[min(0.7vh,0.7vw)]"
+            className="border-t-2 [border-image-slice:1] py-[min(1.4vh,1.4vw)] flex flex-col items-center gap-[min(0.7vh,0.7vw)]"
             style={{
               borderImageSource: isActive
                 ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
