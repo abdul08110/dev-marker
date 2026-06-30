@@ -315,10 +315,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
               <div className="flex justify-center items-center gap-[min(0.7vh,0.7vw)] pt-[min(0.9vh,0.9vw)] relative">
                 <p className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-sandy-yellow">Break</p>
-                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] text-sandy-yellow">
-                  {/* {breakScore} */}
-                  134
-                </p>
+                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] text-sandy-yellow">{breakScore}</p>
               </div>
             </div>
           </div>
