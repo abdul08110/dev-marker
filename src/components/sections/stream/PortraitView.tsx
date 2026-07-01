@@ -44,8 +44,6 @@ export function PortraitView(props: PortraitStreamDataProps) {
     return <></>;
   }
 
-  console.log(props.state);
-
   return (
     <div className="flex-grow min-h-0 overflow-y-scroll flex flex-col px-2 gap-2 mt-2 mb-2">
       <div className="bg-[#141414] rounded-md min-h-full">
