@@ -17,8 +17,14 @@ interface PortraitStreamDataProps {
 export function PortraitView(props: PortraitStreamDataProps) {
   const activeSet = getActiveSet(props.state ? props.state.sets : []);
   const activeTurn = getActiveTurn(activeSet);
-  const isTeamOneActive = props.state ? props.state.sideOnePlayerOne.id === props.state.activePlayerId : false;
-  const isTeamTwoActive = props.state ? props.state.sideTwoPlayerOne.id === props.state.activePlayerId : false;
+  const isTeamOneActive = props.state
+    ? props.state.sideOnePlayerOne.id === props.state.activePlayerId ||
+      props.state.sideOnePlayerTwo?.id === props.state.activePlayerId
+    : false;
+  const isTeamTwoActive = props.state
+    ? props.state.sideTwoPlayerOne.id === props.state.activePlayerId ||
+      props.state.sideTwoPlayerTwo?.id === props.state.activePlayerId
+    : false;
 
   const teamOneStats = calculateStatsForTeam(
     [props.state?.sideOnePlayerOne.id || '', props.state?.sideOnePlayerTwo?.id || ''],
@@ -31,6 +37,8 @@ export function PortraitView(props: PortraitStreamDataProps) {
 
   const [showPreviousFrames, setShowPreviousFrames] = useState(false);
   const completedSets = (props.state?.sets ?? []).filter((s) => s.status === 'COMPLETED');
+  const isTeamOneDouble = !!props.state?.sideOnePlayerTwo;
+  const isTeamTwoDouble = !!props.state?.sideTwoPlayerTwo;
 
   if (!props.state) {
     return <></>;
@@ -53,23 +61,52 @@ export function PortraitView(props: PortraitStreamDataProps) {
             <div className="p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="relative space-y-2" style={{ flexShrink: 0 }}>
-                  <ProfileCard
-                    isBorder={true}
-                    color="#202020"
-                    imageUrl={
-                      props.state.teamOneLogo
-                        ? props.state.teamOneLogo
-                        : props.state.sideOnePlayerOne.profilePhoto
-                          ? props.state.sideOnePlayerOne.profilePhoto
-                          : '/images/user-dummy-pic.jpg'
-                    }
-                    size={70}
-                    handicap={
-                      props.state.teamOneHandicap
-                        ? `H${props.state.teamOneHandicap > 0 ? '+' : ''}${props.state.teamOneHandicap}`
-                        : ''
-                    }
-                  />
+                  <div
+                    className="relative"
+                    style={isTeamOneDouble ? { width: 90, height: 90 } : { width: 70, height: 70 }}
+                  >
+                    {isTeamOneDouble ? (
+                      <>
+                        <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
+                          <ProfileCard
+                            isBorder={true}
+                            color="#202020"
+                            imageUrl={props.state.sideOnePlayerOne.profilePhoto || '/images/user-dummy-pic.jpg'}
+                            size={60}
+                            isActive={isTeamOneActive}
+                          />
+                        </div>
+                        <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
+                          <ProfileCard
+                            isBorder={true}
+                            color="#202020"
+                            imageUrl={props.state.sideOnePlayerTwo?.profilePhoto || '/images/user-dummy-pic.jpg'}
+                            size={60}
+                            isActive={isTeamOneActive}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <ProfileCard
+                        isBorder={true}
+                        color="#202020"
+                        imageUrl={
+                          props.state.teamOneLogo
+                            ? props.state.teamOneLogo
+                            : props.state.sideOnePlayerOne.profilePhoto
+                              ? props.state.sideOnePlayerOne.profilePhoto
+                              : '/images/user-dummy-pic.jpg'
+                        }
+                        size={70}
+                        isActive={isTeamOneActive}
+                        handicap={
+                          props.state.teamOneHandicap
+                            ? `H${props.state.teamOneHandicap > 0 ? '+' : ''}${props.state.teamOneHandicap}`
+                            : ''
+                        }
+                      />
+                    )}
+                  </div>
                   <div className="flex justify-center items-center">
                     <div
                       className={cn('h-[2px] w-1/2 rounded-full', isTeamOneActive ? 'bg-white' : 'bg-transparent')}
@@ -120,23 +157,52 @@ export function PortraitView(props: PortraitStreamDataProps) {
             <div className="p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="relative space-y-2" style={{ flexShrink: 0 }}>
-                  <ProfileCard
-                    isBorder
-                    color="#202020"
-                    imageUrl={
-                      props.state.teamTwoLogo
-                        ? props.state.teamTwoLogo
-                        : props.state.sideTwoPlayerOne.profilePhoto
-                          ? props.state.sideTwoPlayerOne.profilePhoto
-                          : '/images/user-dummy-pic.jpg'
-                    }
-                    size={70}
-                    handicap={
-                      props.state.teamTwoHandicap
-                        ? `H${props.state.teamTwoHandicap > 0 ? '+' : ''}${props.state.teamTwoHandicap}`
-                        : ''
-                    }
-                  />
+                  <div
+                    className="relative"
+                    style={isTeamTwoDouble ? { width: 90, height: 90 } : { width: 70, height: 70 }}
+                  >
+                    {isTeamTwoDouble ? (
+                      <>
+                        <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
+                          <ProfileCard
+                            isBorder
+                            color="#202020"
+                            imageUrl={props.state.sideTwoPlayerOne.profilePhoto || '/images/user-dummy-pic.jpg'}
+                            size={60}
+                            isActive={isTeamTwoActive}
+                          />
+                        </div>
+                        <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
+                          <ProfileCard
+                            isBorder
+                            color="#202020"
+                            imageUrl={props.state.sideTwoPlayerTwo?.profilePhoto || '/images/user-dummy-pic.jpg'}
+                            size={60}
+                            isActive={isTeamTwoActive}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <ProfileCard
+                        isBorder
+                        color="#202020"
+                        imageUrl={
+                          props.state.teamTwoLogo
+                            ? props.state.teamTwoLogo
+                            : props.state.sideTwoPlayerOne.profilePhoto
+                              ? props.state.sideTwoPlayerOne.profilePhoto
+                              : '/images/user-dummy-pic.jpg'
+                        }
+                        size={70}
+                        isActive={isTeamTwoActive}
+                        handicap={
+                          props.state.teamTwoHandicap
+                            ? `H${props.state.teamTwoHandicap > 0 ? '+' : ''}${props.state.teamTwoHandicap}`
+                            : ''
+                        }
+                      />
+                    )}
+                  </div>
                   <div className="flex justify-center items-center">
                     <div
                       className={cn('h-[2px] w-1/2 rounded-full', isTeamTwoActive ? 'bg-white' : 'bg-transparent')}
