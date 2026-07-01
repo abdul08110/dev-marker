@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { Timer } from './Score-board/Timer';
 import { TableNumber } from './Score-board/TableNumber';
 import { GameFormat } from './Score-board/GameFormat';
-import { FrameScore } from './Score-board/FrameScore';
+import { TeamScore, FrameScorePanel } from './Score-board/FrameScore';
 import { PlayerCard } from './Score-board/PlayerCard';
 
 interface NewScoreBoardProps {
@@ -101,6 +101,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       : [];
 
   const isDoubles = !!state.sideOnePlayerTwo;
+  const isTournament = !!state.tournamentId;
 
   // const footerLabel =
   //   state.tournamentId && state.tournamentSubItem
@@ -160,7 +161,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           balls={teamOneBalls}
           breakSide="right"
           tournamentName={state.tournamentTeamOneName ?? ''}
-          isTournament={false}
+          isTournament={isTournament}
         />
 
         {/* Center Panel */}
@@ -184,8 +185,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           >
             <div className="rounded-[min(5.1vh,5.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col shrink-0">
               {/* Team / Tournament Score */}
-              <FrameScore
-                isTournament={false}
+              <TeamScore
                 hasTournamentCombo={!!(state.tournamentId && state.tournamentSubItem)}
                 tournamentTeamOneScore={tournamentTeamOneScore}
                 tournamentTeamTwoScore={tournamentTeamTwoScore}
@@ -194,14 +194,23 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 teamScoreCenter={teamScoreCenter}
               />
 
-              {/* Timer */}
-              <Timer timeLeft={timeLeft} isTournament={false} />
+              {/* Timer (non-tournament only) */}
+              <Timer timeLeft={timeLeft} isTournament={isTournament} />
 
               {/* Table Number */}
-              <TableNumber venueNo={state.venueNo} isTournament={false} />
+              <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
+
+              {/* Frame Score (tournament only) */}
+              {isTournament && (
+                <FrameScorePanel
+                  teamOneScore={state.teamOneScore}
+                  teamTwoScore={state.teamTwoScore}
+                  teamScoreCenter={teamScoreCenter}
+                />
+              )}
 
               {/* Game format */}
-              <GameFormat sport={state.sport} format={state.format} isTournament={false} />
+              <GameFormat sport={state.sport} format={state.format} isTournament={isTournament} />
             </div>
           </div>
         </div>
@@ -223,7 +232,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           balls={teamTwoBalls}
           breakSide="left"
           tournamentName={state.tournamentTeamTwoName ?? ''}
-          isTournament={false}
+          isTournament={isTournament}
         />
       </div>
     </main>

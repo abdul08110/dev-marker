@@ -116,7 +116,7 @@ export function PlayerCard({
               )}
             </div>
             <div className="space-y-2">
-              {/* {!isDoubles && (
+              {isTournament && !isDoubles && handicap != null && (
                 <div
                   className="w-full h-[min(0.3vh,0.3vw)]"
                   style={{
@@ -125,7 +125,7 @@ export function PlayerCard({
                       : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
                   }}
                 />
-              )} */}
+              )}
               {handicap != null && (
                 <HandicapPill handicap={handicap} isApplied={isHandicapApplied} isActive={isActive} />
               )}
