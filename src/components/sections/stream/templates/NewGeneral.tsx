@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
 import { convertHandicapToString, generatePlayerName } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import { useFluidPx } from '@/hooks/useFluidPx';
-import { cn } from '@/lib/utils';
+import { cn, getRandomPlaceholderProfileImage } from '@/lib/utils';
 import clsx from 'clsx';
 
 interface GeneralTemplateProps {
@@ -41,6 +42,9 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
   const breakScore = activeTurn?.score ?? 0;
 
+  // Stable per-slot fallback avatars — one each for sideOnePlayerOne/Two, sideTwoPlayerOne/Two
+  const [defaultImages] = useState(() => Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()));
+
   // Fluid px for ProfileCard — mirrors min(Xvh, Xvw) via the shared hook
   const profileSize = useFluidPx(0.067); // ≈ 72px at 1080p, matches size-[min(6.7vh,6.7vw)]
   const profileSizeSm = useFluidPx(0.05); // ≈ 54px at 1080p, matches size-[min(5vh,5vw)]
@@ -61,13 +65,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       <div className="relative shrink-0 size-[min(6.7vh,6.7vw)]">
         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
           <ProfileCard
-            imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'}
+            imageUrl={state.sideOnePlayerOne.profilePhoto ?? defaultImages[0]}
             size={profileSizeSm}
           />
         </div>
         <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
           <ProfileCard
-            imageUrl={state.sideOnePlayerTwo?.profilePhoto ?? '/images/empty-user.svg'}
+            imageUrl={state.sideOnePlayerTwo?.profilePhoto ?? defaultImages[1]}
             size={profileSizeSm}
           />
         </div>
@@ -90,7 +94,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Team Tournament layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0">
-        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
+        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? defaultImages[0]} size={profileSize} />
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -115,7 +119,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Single player layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0">
-        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
+        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? defaultImages[0]} size={profileSize} />
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -140,13 +144,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       <div className="relative shrink-0 size-[min(6.7vh,6.7vw)]">
         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
           <ProfileCard
-            imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'}
+            imageUrl={state.sideTwoPlayerOne.profilePhoto ?? defaultImages[2]}
             size={profileSizeSm}
           />
         </div>
         <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
           <ProfileCard
-            imageUrl={state.sideTwoPlayerTwo?.profilePhoto ?? '/images/empty-user.svg'}
+            imageUrl={state.sideTwoPlayerTwo?.profilePhoto ?? defaultImages[3]}
             size={profileSizeSm}
           />
         </div>
@@ -169,7 +173,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Team Tournament layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0">
-        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
+        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? defaultImages[2]} size={profileSize} />
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -194,7 +198,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Single player layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0">
-        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
+        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? defaultImages[2]} size={profileSize} />
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">

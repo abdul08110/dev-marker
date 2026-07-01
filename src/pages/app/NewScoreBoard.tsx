@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { Timer } from './Score-board/Timer';
 import { TableNumber } from './Score-board/TableNumber';
 import { GameFormat } from './Score-board/GameFormat';
-import { TeamScore, FrameScorePanel } from './Score-board/FrameScore';
+import { TeamScore } from './Score-board/FrameScore';
 import { PlayerCard } from './Score-board/PlayerCard';
 
 interface NewScoreBoardProps {

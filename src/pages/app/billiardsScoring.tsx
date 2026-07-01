@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import * as React from 'react';
+import { getRandomPlaceholderProfileImage } from '@/lib/utils';
 
 export function BilliardsScoring() {
   const {
@@ -73,6 +74,10 @@ export function BilliardsScoring() {
   } = useBilliardsScoring();
 
   const { selectPlayer } = useSelectPlayer();
+  const [defaultImages] = React.useState(() => [
+    getRandomPlaceholderProfileImage(),
+    getRandomPlaceholderProfileImage(),
+  ]);
 
   const handlePlayerConfirmWithApi = async (player: Player) => {
     const teamIdx = selectedTeamIndex;
@@ -375,7 +380,7 @@ export function BilliardsScoring() {
                         }`}
                       >
                         <img
-                          src={player.profilePhoto ?? '/images/user-dummy-pic.jpg'}
+                          src={player.profilePhoto ?? defaultImages[idx]}
                           className="h-16 w-16 rounded-full object-cover"
                         />
                         <span className="text-sm font-medium text-center leading-tight">

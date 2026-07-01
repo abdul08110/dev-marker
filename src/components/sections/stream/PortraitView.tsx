@@ -6,7 +6,7 @@ import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { SnookerPointTypeDisplay, hasVisibleSnookerPoints } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
-import { cn } from '@/lib/utils';
+import { cn, getRandomPlaceholderProfileImage } from '@/lib/utils';
 import ChevronIcon from '@/icons/chevron-icon';
 
 interface PortraitStreamDataProps {
@@ -40,6 +40,9 @@ export function PortraitView(props: PortraitStreamDataProps) {
   const isTeamOneDouble = !!props.state?.sideOnePlayerTwo;
   const isTeamTwoDouble = !!props.state?.sideTwoPlayerTwo;
 
+  // Stable per-slot fallback avatars — one each for sideOnePlayerOne/Two, sideTwoPlayerOne/Two
+  const [defaultImages] = useState(() => Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()));
+
   if (!props.state) {
     return <></>;
   }
@@ -69,14 +72,14 @@ export function PortraitView(props: PortraitStreamDataProps) {
                       <>
                         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
                           <ProfileCard
-                            imageUrl={props.state.sideOnePlayerOne.profilePhoto || '/images/user-dummy-pic.jpg'}
+                            imageUrl={props.state.sideOnePlayerOne.profilePhoto || defaultImages[0]}
                             size={60}
                             isActive={isTeamOneActive}
                           />
                         </div>
                         <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
                           <ProfileCard
-                            imageUrl={props.state.sideOnePlayerTwo?.profilePhoto || '/images/user-dummy-pic.jpg'}
+                            imageUrl={props.state.sideOnePlayerTwo?.profilePhoto || defaultImages[1]}
                             size={60}
                             isActive={isTeamOneActive}
                             handicap={
@@ -90,7 +93,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                     ) : (
                       <ProfileCard
                         isBorder={true}
-                        imageUrl={props.state.sideOnePlayerOne.profilePhoto || '/images/user-dummy-pic.jpg'}
+                        imageUrl={props.state.sideOnePlayerOne.profilePhoto || defaultImages[0]}
                         size={70}
                         isActive={isTeamOneActive}
                         handicap={
@@ -159,14 +162,14 @@ export function PortraitView(props: PortraitStreamDataProps) {
                       <>
                         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
                           <ProfileCard
-                            imageUrl={props.state.sideTwoPlayerOne.profilePhoto || '/images/user-dummy-pic.jpg'}
+                            imageUrl={props.state.sideTwoPlayerOne.profilePhoto || defaultImages[2]}
                             size={60}
                             isActive={isTeamTwoActive}
                           />
                         </div>
                         <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
                           <ProfileCard
-                            imageUrl={props.state.sideTwoPlayerTwo?.profilePhoto || '/images/user-dummy-pic.jpg'}
+                            imageUrl={props.state.sideTwoPlayerTwo?.profilePhoto || defaultImages[3]}
                             size={60}
                             isActive={isTeamTwoActive}
                             handicap={
@@ -179,7 +182,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                       </>
                     ) : (
                       <ProfileCard
-                        imageUrl={props.state.sideTwoPlayerOne.profilePhoto || '/images/user-dummy-pic.jpg'}
+                        imageUrl={props.state.sideTwoPlayerOne.profilePhoto || defaultImages[2]}
                         size={70}
                         isActive={isTeamTwoActive}
                         handicap={

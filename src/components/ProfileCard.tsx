@@ -8,8 +8,7 @@ type PropsType = {
   isBorder?: boolean;
   isActive?: boolean;
 };
-export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap, isBorder, isActive }: PropsType) => {
-  console.log(isBorder);
+export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap, isActive }: PropsType) => {
   const borderClipId = useId();
   const cardClipId = useId();
 

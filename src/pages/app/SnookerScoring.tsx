@@ -37,6 +37,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { getRandomPlaceholderProfileImage } from '@/lib/utils';
 
 export function SnookerScoring() {
   const {
@@ -100,6 +101,9 @@ export function SnookerScoring() {
   const [searchParams] = useSearchParams();
   const playerCount = Number(searchParams.get('playerCount') ?? '2') as 2 | 4;
   const { selectPlayer } = useSelectPlayer();
+  const [defaultImages] = React.useState(() =>
+    Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()),
+  );
 
   const handlePlayerConfirmWithApi = async (player: Player) => {
     const teamIdx = selectedTeamIndex;
@@ -389,7 +393,7 @@ export function SnookerScoring() {
                       {players.map((p, i) => (
                         <img
                           key={i}
-                          src={p.profilePhoto ?? '/images/user-dummy-pic.jpg'}
+                          src={p.profilePhoto ?? defaultImages[idx * 2 + i]}
                           className="h-14 w-14 rounded-full object-cover"
                         />
                       ))}

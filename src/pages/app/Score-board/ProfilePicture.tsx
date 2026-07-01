@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ProfileCard } from '@/components/ProfileCard';
 import { useFluidPx } from '@/hooks/useFluidPx';
+import { getRandomPlaceholderProfileImage } from '@/lib/utils';
 
 interface ProfilePictureProps {
   isDoubles: boolean;
@@ -22,14 +24,16 @@ export function ProfilePicture({
   const profileSizeSingle = useFluidPx(0.17); // ≈119px at 1080p
   const profileSizeDoubles = useFluidPx(0.1); // ≈108px at 1080p
 
+  const [defaultImage] = useState(getRandomPlaceholderProfileImage);
+
   if (!isTournament && isDoubles && profilePhoto2 !== undefined) {
     return (
       <div className="relative shrink-0 size-[min(16vh,16vw)]">
         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
-          <ProfileCard imageUrl={backPhoto ?? '/images/user-dummy-pic.jpg'} size={profileSizeDoubles} />
+          <ProfileCard imageUrl={backPhoto ?? defaultImage} size={profileSizeDoubles} />
         </div>
         <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
-          <ProfileCard imageUrl={frontPhoto ?? '/images/user-dummy-pic.jpg'} size={profileSizeDoubles} />
+          <ProfileCard imageUrl={frontPhoto ?? defaultImage} size={profileSizeDoubles} />
         </div>
       </div>
     );
@@ -45,5 +49,5 @@ export function ProfilePicture({
     );
   }
 
-  return <ProfileCard imageUrl={profilePhoto ?? '/images/user-dummy-pic.jpg'} size={profileSizeSingle} />;
+  return <ProfileCard imageUrl={profilePhoto ?? defaultImage} size={profileSizeSingle} />;
 }
