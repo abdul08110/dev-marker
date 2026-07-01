@@ -4,7 +4,6 @@ import { calculateStatsForTeam, getActiveSet, getActiveTurn } from '@/stores/sel
 import { generatePlayerName } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { SnookerPointTypeDisplay, hasVisibleSnookerPoints } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import { cn } from '@/lib/utils';
