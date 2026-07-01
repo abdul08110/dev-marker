@@ -5,8 +5,7 @@ import { generatePlayerName } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import clsx from 'clsx';
-import { SnookerPointTypeDisplay } from '../scoring/snookerPointTypesDisplay';
+import { SnookerPointTypeDisplay, hasVisibleSnookerPoints } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import { cn } from '@/lib/utils';
 
@@ -53,7 +52,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
           <div>
             <div className="p-4 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="relative" style={{ flexShrink: 0 }}>
+                <div className="relative space-y-2" style={{ flexShrink: 0 }}>
                   <ProfileCard
                     isBorder={true}
                     color="#202020"
@@ -71,6 +70,11 @@ export function PortraitView(props: PortraitStreamDataProps) {
                         : ''
                     }
                   />
+                  <div className="flex justify-center items-center">
+                    <div
+                      className={cn('h-[2px] w-1/2 rounded-full', isTeamOneActive ? 'bg-white' : 'bg-transparent')}
+                    ></div>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-1">
@@ -115,7 +119,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
           <div>
             <div className="p-4 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="relative" style={{ flexShrink: 0 }}>
+                <div className="relative space-y-2" style={{ flexShrink: 0 }}>
                   <ProfileCard
                     isBorder
                     color="#202020"
@@ -133,6 +137,11 @@ export function PortraitView(props: PortraitStreamDataProps) {
                         : ''
                     }
                   />
+                  <div className="flex justify-center items-center">
+                    <div
+                      className={cn('h-[2px] w-1/2 rounded-full', isTeamTwoActive ? 'bg-white' : 'bg-transparent')}
+                    ></div>
+                  </div>
                 </div>
                 <div className="flex flex-col gap-1">
                   <p className="font-medium text-box-trim text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
@@ -175,37 +184,49 @@ export function PortraitView(props: PortraitStreamDataProps) {
             )}
           </div>
         </div>
-        {props.state.sport === 'SNOOKER' && (
-          <div className="grid grid-cols-2 w-full gap-2 py-4 pb-0">
-            <SnookerPointTypeDisplay
-              class={'gap-[0.3rem]'}
-              className={'text-[0.8rem] w-fit font-mono h-5 items-start'}
-              placeholderCount={6}
-              activeTurnPointTypes={getSnookerPointTypesByTurns(
-                activeSet?.turns?.filter((value) =>
-                  [props.state!.sideOnePlayerOne, props.state!.sideOnePlayerTwo].some(
-                    (player) => player && value.turnPlayerId === player.id,
-                  ),
-                ) || [],
-              )}
-            />
+        {props.state.sport === 'SNOOKER' &&
+          (() => {
+            const teamOnePointTypes = getSnookerPointTypesByTurns(
+              activeSet?.turns?.filter((value) =>
+                [props.state!.sideOnePlayerOne, props.state!.sideOnePlayerTwo].some(
+                  (player) => player && value.turnPlayerId === player.id,
+                ),
+              ) || [],
+            );
+            const teamTwoPointTypes = getSnookerPointTypesByTurns(
+              activeSet?.turns?.filter((value) =>
+                [props.state!.sideTwoPlayerOne, props.state!.sideTwoPlayerTwo].some(
+                  (player) => player && value.turnPlayerId === player.id,
+                ),
+              ) || [],
+            );
 
-            <div>
-              <SnookerPointTypeDisplay
-                class={'gap-[0.3rem]'}
-                className={'text-[0.8rem] font-mono h-5 w-5 flex justify-center'}
-                placeholderCount={6}
-                activeTurnPointTypes={getSnookerPointTypesByTurns(
-                  activeSet?.turns?.filter((value) =>
-                    [props.state!.sideTwoPlayerOne, props.state!.sideTwoPlayerTwo].some(
-                      (player) => player && value.turnPlayerId === player.id,
-                    ),
-                  ) || [],
-                )}
-              />
-            </div>
-          </div>
-        )}
+            if (!hasVisibleSnookerPoints(teamOnePointTypes) && !hasVisibleSnookerPoints(teamTwoPointTypes)) {
+              return null;
+            }
+
+            return (
+              <div className="grid grid-cols-2 w-full gap-2 py-4 pb-0 px-4">
+                <SnookerPointTypeDisplay
+                  class={'gap-[0.3rem]'}
+                  className={'text-[0.8rem] w-fit font-mono h-5 items-start'}
+                  align="start"
+                  isActive={isTeamOneActive}
+                  activeTurnPointTypes={teamOnePointTypes}
+                />
+
+                <div className="px-4">
+                  <SnookerPointTypeDisplay
+                    class={'gap-[0.3rem]'}
+                    className={'text-[0.8rem] font-mono h-5 w-fit flex justify-center'}
+                    align="start"
+                    isActive={isTeamTwoActive}
+                    activeTurnPointTypes={teamTwoPointTypes}
+                  />
+                </div>
+              </div>
+            );
+          })()}
         <div className="p-4 space-y-2">
           <div className="flex items-center gap-4 select-none">
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{props.state.teamOneScore}</p>

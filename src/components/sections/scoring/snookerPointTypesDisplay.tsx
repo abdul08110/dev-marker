@@ -8,7 +8,8 @@ interface SnookerPointTypeDisplayProps {
   rotateBalls?: boolean;
   scaleBasedOnheight?: boolean;
   className?: string;
-  placeholderCount?: number;
+  align?: 'start' | 'center';
+  isActive?: boolean;
 }
 
 const pointTypeToImageSrc: Partial<Record<SnookerPointType, string>> = {
@@ -23,6 +24,10 @@ const pointTypeToImageSrc: Partial<Record<SnookerPointType, string>> = {
 };
 
 const hiddenTypes = new Set([SnookerPointType.MISSED_POT, SnookerPointType.PLAY_SAFE]);
+
+export function hasVisibleSnookerPoints(turnPointTypes: SnookerPointType[][]): boolean {
+  return turnPointTypes.some((turnPoints) => turnPoints.some((pointType) => !hiddenTypes.has(pointType)));
+}
 
 export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
   const flattenedPoints = props.activeTurnPointTypes.flatMap((turnPoints, turnIndex) => {
@@ -45,23 +50,18 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
     return points;
   });
 
-  if (flattenedPoints.length === 0 && props.placeholderCount) {
-    return (
-      <div className={clsx('w-full flex flex-wrap justify-center items-center', props.class)}>
-        {Array.from({ length: props.placeholderCount }).map((_, i) => (
-          <img
-            key={`placeholder-${i}`}
-            src="/images/balls/placeholder-ball.svg"
-            alt="placeholder"
-            className={clsx('h-4 w-4 object-contain', props.className)}
-          />
-        ))}
-      </div>
-    );
+  if (flattenedPoints.length === 0) {
+    return null;
   }
 
   return (
-    <div className={clsx('w-full flex flex-wrap justify-center items-center', props.class)}>
+    <div
+      className={clsx(
+        'w-full flex flex-wrap items-center',
+        props.align === 'start' ? 'justify-start' : 'justify-center',
+        props.class,
+      )}
+    >
       {flattenedPoints.map((item, index) => {
         if (item.isSeparator) {
           return (
