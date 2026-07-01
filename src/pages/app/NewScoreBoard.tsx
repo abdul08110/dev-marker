@@ -142,7 +142,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       </div>
 
       {/* Cards + Center */}
-      <div className="flex gap-[min(1.7vh,1.7vw)] px[min(3vw,3vh)] py-[min(2vh,2vw)] pb[min(2.1vh,2.1vw)">
+      <div className="flex gap-[min(1.7vh,1.7vw)] pt-[min(1.5vh,1.5vw)] pb-[min(2vh,2vw)]">
         {/* <div className="grid grid-cols-[1fr_auto_1fr] gap-[min(1.7vh,1.7vw)] items-stretch px-[min(3vw,3vh)] pt-[min(5.1vh,5.1vw)] pb-[min(2.1vh,2.1vw)]"> */}
         {/* Card 1 - Team One */}
         <PlayerCard

@@ -37,9 +37,9 @@ export function ProfilePicture({
 
   if (isTournament) {
     return (
-      <div className="rounded-full overflow-hidden">
+      <div className="rounded-full overflow-hidden shrink-0">
         <ImageWithFallback
-          className="object-cover size-[min(17vh,17vw)]"
+          className="object-cover size-[min(15vh,15vw)]"
           fallback="/images/user-dummy-pic.jpg"
           src={profilePhoto ?? ''}
         />

@@ -65,8 +65,8 @@ export function PlayerCard({
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col px-[min(1vh,1vw)] py-[min(3.5vh,3.5vw)]">
         {tournamentName && (
-          <div className="py-[min(3vh,3vw)] text-center border-b border-white/10 mx-3">
-            <p className="font-semibold text-[min(4.7vh,4.7vw)] text-box-trim text-score-text">{tournamentName}</p>
+          <div className="py-[min(2vh,2vw)] text-center border-b border-white/10 mx-3">
+            <p className="font-semibold text-[min(4vh,4vw)] text-box-trim text-score-text">{tournamentName}</p>
           </div>
         )}
         {/* Player info */}
@@ -134,13 +134,13 @@ export function PlayerCard({
         </div>
 
         {/* Score + Break */}
-        <div className="p-[min(3vh,3vw)] flex flex-col gap-[min(4.07vh,4.07vw)] justify-center items-center flex-1">
+        <div className="p-[min(2vh,2vw)] flex flex-col gap-[min(2.5vh,2.5vw)] justify-center items-center flex-1 ">
           <p
             className={`font-semibold text-[min(24vh,24vw)] text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
           >
             {score}
           </p>
-          <div className={clsx('flex flex-col items-center gap-4', breakScore != null ? 'visible' : 'invisible')}>
+          <div className={clsx('flex flex-col items-center gap-3', breakScore != null ? 'visible' : 'invisible')}>
             <div className="px-[min(1.9vh,1.9vw)] bg-[linear-gradient(69.46deg,rgba(172,236,84,0.078)_12.28%,rgba(111,255,0,0.6)_179.54%)] shadow-[0px_2px_4px_0px_#FFFFFF40_inset] break-card w-[min(26vh,26vw)] h-[min(11.5vh,11.5vw)] flex justify-center items-center pb-5 pt-5">
               <p className="font-semibold text-[min(10.2vh,10.2vw)] leading-[130%] text-box-trim text-score-text">
                 {breakScore ?? 0}
