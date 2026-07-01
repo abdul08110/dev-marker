@@ -6,9 +6,9 @@ interface TableNumberProps {
 export function TableNumber({ venueNo, isTournament }: TableNumberProps) {
   if (isTournament) {
     return (
-      <div className="pt-[min(3.9vh,3.9vw)]">
+      <div className="pt-[min(3.2vh,3.2vw)]">
         <div
-          className="border-y-4 [border-image-slice:1] py-[min(3.9vh,3.9vw)] flex flex-col items-center gap-[min(0.7vh,0.7vw)]"
+          className="border-y-2 [border-image-slice:1] py-[min(2vh,2vw)] flex flex-col items-center gap-[min(0.7vh,0.7vw)]"
           style={{
             borderImageSource:
               'linear-gradient(90deg, rgba(255, 255, 255, 0) 5%, rgba(255, 255, 255, 0.6) 51.16%, rgba(255, 255, 255, 0) 95%)',

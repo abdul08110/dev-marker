@@ -34,14 +34,15 @@ export function GameFormat({ sport, format, isTournament }: GameFormatProps) {
       {icon}
       <div className="text-center">
         <p className="text-score-text text-wrap whitespace-pre-line leading-[130%] text-[min(3.24vh,3.24vw)] font-semibold drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
-          {format?.split(' ').map((word, index) => {
+          {format}
+          {/* {format?.split(' ').map((word, index) => {
             return (
               <span key={index}>
                 {word}
                 {index === 1 ? <br /> : ' '}
               </span>
             );
-          })}
+          })} */}
         </p>
       </div>
     </div>

@@ -65,7 +65,7 @@ export function PlayerCard({
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col px-[min(1vh,1vw)] py-[min(3.5vh,3.5vw)]">
         {tournamentName && (
-          <div className="py-[30px] text-center border-b border-white/10 mx-3">
+          <div className="py-[min(3vh,3vw)] text-center border-b border-white/10 mx-3">
             <p className="font-semibold text-[min(4.7vh,4.7vw)] text-box-trim text-score-text">{tournamentName}</p>
           </div>
         )}
