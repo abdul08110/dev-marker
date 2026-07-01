@@ -49,7 +49,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
       <div className="bg-[#141414] rounded-md min-h-full">
         {/* Tournament banner */}
         {props.state.tournamentName && (
-          <div className="relative">
+          <div className="relative rounded-t-[8px] overflow-hidden">
             <img src="/images/bg-pattern.jpg" width={'100%'} height={64} className="h-16 object-cover" />
             <div className="absolute inset-0 flex justify-center items-center">
               <p className="font-medium text-xl leading-[130%] uppercase text-white">{props.state.tournamentName}</p>
@@ -131,7 +131,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
               </p>
             </div>
             {props.state.tournamentId && (
-              <div className="px-4 py-3 flex gap-3 items-center">
+              <div className="px-4 py-3 flex gap-3 items-center bg-[#272126]">
                 <ImageWithFallback
                   className="aspect-square overflow-hidden border-white size-8 object-cover shrink-0 rounded-full"
                   fallback="/images/user-dummy-pic.jpg"
@@ -227,7 +227,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
               </p>
             </div>
             {props.state.tournamentId && (
-              <div className="px-4 py-3 flex justify-end gap-3 items-center">
+              <div className="px-4 py-3 flex justify-end gap-3 items-center bg-[#272126]">
                 <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
                   {props.state.teamTwoName ||
                     generatePlayerName(

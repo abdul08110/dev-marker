@@ -32,22 +32,29 @@ export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap, i
 
       {/* Card Wrapper now matches the full container dimensions */}
       <div className="relative w-full h-full">
-        {/* Outer Border */}
+        {/* Shadow wrapper — filter must live outside the clipped element or clip-path crops the shadow */}
         <div
+          className="absolute inset-0"
           style={{
-            position: 'absolute',
-            inset: 0,
-            // background: isBorder ? color : '',
-            background: `${color}`,
-            clipPath: `url(#${borderClipId})`,
             filter: isActive
-              ? 'drop-shadow(0 9px 18px rgba(255, 255, 255, 0.5))'
+              ? 'drop-shadow(0 5px 6px rgba(255, 255, 255, 0.5))'
               : 'drop-shadow(0 3.6px 7.2px rgba(0, 0, 0, 0.35))',
           }}
-        />
+        >
+          {/* Outer Border */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              // background: isBorder ? color : '',
+              background: `${color}`,
+              clipPath: `url(#${borderClipId})`,
+            }}
+          />
+        </div>
         {handicap ? (
-          <div className="absolute bottom-0 left-0 right-0 h-5 z-30 bg-[#E07EF9] w-full rounded-br-md rounded-bl-md font-semibold text-base leading-[130%] uppercase text-center text-white">
-            {handicap}
+          <div className="absolute bottom-0 left-0 right-0 h-4 z-30 bg-[#EB3BFA] w-full rounded-br-md rounded-bl-md flex justify-center items-center ">
+            <p className="font-semibold text-xs leading-[130%] text-white">{handicap}</p>
           </div>
         ) : null}
 
