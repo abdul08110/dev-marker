@@ -309,10 +309,10 @@ export function SnookerScoring() {
                 onCancel={() => handleTimerButtonAction('CANCEL')}
                 onContinue={() => handleTimerButtonAction('CONFIRM')}
               />
-              <div className="flex gap-4 mt-4 mb-4 px-4">
-                <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
+              <div className="flex gap-4 mt-4 mb-4 px-4 container pb-4">
+                {/* <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
                   End Frame
-                </Button>
+                </Button> */}
                 <Button onClick={() => setShowEndGameAlert(true)} variant="destructive" className="flex-1">
                   End Match
                 </Button>

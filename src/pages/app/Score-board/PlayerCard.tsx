@@ -85,7 +85,7 @@ export function PlayerCard({
           <div className="flex flex-col justify-between gap-[min(1.3vh,1.3vw)] min-w-0 flex-1">
             <div className="">
               <div>
-                <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim truncate text-wrap line-clamp-2 font-extrabold pt-[min(1.2vh,1.2vh)]">
+                <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim truncate text-wrap line-clamp-2 font-medium pt-[min(1.2vh,1.2vh)]">
                   {isDoubles ? (isPlayerOneActive ? playerOneName : playerTwoName)?.split(' ')[0] : playerOneName}
                 </p>
 

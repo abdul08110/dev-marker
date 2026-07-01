@@ -69,7 +69,7 @@ interface FrameScorePanelProps {
 
 export function FrameScorePanel({ teamOneScore, teamTwoScore, teamScoreCenter }: FrameScorePanelProps) {
   return (
-    <div className="space-y-[min(1vh,1vw)] pt-[min(3.2vh,3.2vw)]">
+    <div className="space-y-[min(1vh,1vw)] pt-[min(4vh,4vw)]">
       <p className="text-text-light font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center px-[min(2vw,2vh)]">
         Frame Score
       </p>

@@ -49,7 +49,7 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
   return (
     <div className="w-full container flex flex-col gap-2 mt-auto">
       <div className="flex justify-end">
-        <button
+        {/* <button
           onClick={() => props.onLongClick()}
           disabled={props.disabledState[SnookerScoringButtonEnum.LONG_SHOT]}
           className={clsx(
@@ -61,7 +61,7 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
         >
           <ScaleLogo className="w-32 h-auto text-white" />
           <small className="bg-black p-1 text-center absolute text-white text-xs">LONG</small>
-        </button>
+        </button> */}
       </div>
       <div className="grid grid-cols-5 grid-rows-2 gap-2">
         {props.isBreakOff ? (

@@ -110,7 +110,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
   const teamScoreCenter =
     state.tournamentId && state.tournamentSubItem && state.showFormatsAsGameNumber && state.eventFormat === 'TEAMS'
-      ? `${state.tournamentSubItem.gameFormat.matchNo}/${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}`
+      ? `${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}`
       : noOfFrames
         ? `${noOfFrames}`
         : null;
@@ -183,7 +183,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
             `,
             }}
           >
-            <div className="rounded-[min(5.1vh,5.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col shrink-0">
+            <div className="rounded-[min(5.1vh,5.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col shrink-0 ">
               {/* Team / Tournament Score */}
               <TeamScore
                 hasTournamentCombo={!!(state.tournamentId && state.tournamentSubItem)}
@@ -196,18 +196,28 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
               {/* Timer (non-tournament only) */}
               <Timer timeLeft={timeLeft} isTournament={isTournament} />
-
-              {/* Table Number */}
-              <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
-
               {/* Frame Score (tournament only) */}
-              {isTournament && (
+              {/* {isTournament && (
                 <FrameScorePanel
                   teamOneScore={state.teamOneScore}
                   teamTwoScore={state.teamTwoScore}
-                  teamScoreCenter={teamScoreCenter}
+                  teamScoreCenter={state.sets.length}
                 />
+              )} */}
+
+              {isTournament && (
+                <div className="flex justify-center items-center py-4">
+                  {/* <ImageWithFallback src={state.clubLogo} fallback="/images/user-dummy-pic.jpg" /> */}
+                  <ImageWithFallback
+                    className="object-cover size-[min(15vh,15vw)] rounded-full overflow-hidden"
+                    fallback="/images/user-dummy-pic.jpg"
+                    src={state.clubLogo ?? ''}
+                  />
+                </div>
               )}
+
+              {/* Table Number */}
+              <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
 
               {/* Game format */}
               <GameFormat sport={state.sport} format={state.format} isTournament={isTournament} />
