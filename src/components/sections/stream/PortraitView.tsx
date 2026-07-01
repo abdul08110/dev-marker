@@ -39,7 +39,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
 
   return (
     <div className="flex-grow min-h-0 overflow-y-scroll flex flex-col px-2 gap-2 mt-2 mb-2">
-      <div className="bg-[#1C1C1C] rounded-md min-h-full">
+      <div className="bg-[#141414] rounded-md min-h-full">
         {/* Tournament banner */}
         {props.state.tournamentName && (
           <div className="relative">
@@ -50,7 +50,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
           </div>
         )}
         <div className="grid grid-cols-2 divide-x divide-white/[.12] border-b border-white/[.12]">
-          <div className={clsx({ 'bg-[#9B36BA]': isTeamOneActive, 'bg-[#1F1F1F]': !isTeamOneActive })}>
+          <div>
             <div className="p-4 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="relative" style={{ flexShrink: 0 }}>
@@ -64,7 +64,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                           ? props.state.sideOnePlayerOne.profilePhoto
                           : '/images/user-dummy-pic.jpg'
                     }
-                    size={60}
+                    size={70}
                     handicap={
                       props.state.teamOneHandicap
                         ? `H${props.state.teamOneHandicap > 0 ? '+' : ''}${props.state.teamOneHandicap}`
@@ -74,7 +74,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
+                  <p className="font-medium text-box-trim text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
                     {activeSet && activeSet?.teamOneScore}
                   </p>
                   <span className={cn('text-white/70 text-xs font-bold', isTeamOneActive ? '' : 'invisible')}>
@@ -112,19 +112,9 @@ export function PortraitView(props: PortraitStreamDataProps) {
               </div>
             )}
           </div>
-          <div className={clsx({ 'bg-[#9B36BA]': isTeamTwoActive, 'bg-[#1F1F1F]': !isTeamTwoActive })}>
+          <div>
             <div className="p-4 space-y-4">
-              <div className="flex flex-row-reverse justify-between items-center gap-3">
-                <div className="flex flex-col gap-1">
-                  <p className="font-medium text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
-                    {activeSet && activeSet?.teamTwoScore}
-                  </p>
-
-                  <span className={cn('text-white/70 text-xs font-bold', isTeamTwoActive ? '' : 'invisible')}>
-                    BREAK {activeTurn && activeTurn?.score}
-                  </span>
-                </div>
-
+              <div className="flex items-center gap-3">
                 <div className="relative" style={{ flexShrink: 0 }}>
                   <ProfileCard
                     isBorder
@@ -136,13 +126,22 @@ export function PortraitView(props: PortraitStreamDataProps) {
                           ? props.state.sideTwoPlayerOne.profilePhoto
                           : '/images/user-dummy-pic.jpg'
                     }
-                    size={60}
+                    size={70}
                     handicap={
                       props.state.teamTwoHandicap
                         ? `H${props.state.teamTwoHandicap > 0 ? '+' : ''}${props.state.teamTwoHandicap}`
                         : ''
                     }
                   />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="font-medium text-box-trim text-[28px] leading-[130%] text-white drop-shadow-[0px_2px_4px_0px_#000000FA]">
+                    {activeSet && activeSet?.teamTwoScore}
+                  </p>
+
+                  <span className={cn('text-white/70 text-xs font-bold', isTeamTwoActive ? '' : 'invisible')}>
+                    BREAK {activeTurn && activeTurn?.score}
+                  </span>
                 </div>
               </div>
               <p className="font-medium text-[17px] leading-[130%] uppercase text-white line-clamp-1 text-left">
@@ -180,7 +179,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
           <div className="grid grid-cols-2 w-full gap-2 py-4 pb-0">
             <SnookerPointTypeDisplay
               class={'gap-[0.3rem]'}
-              className={'text-[0.8rem] font-mono h-5 w-5 flex justify-center'}
+              className={'text-[0.8rem] w-fit font-mono h-5 items-start'}
               placeholderCount={6}
               activeTurnPointTypes={getSnookerPointTypesByTurns(
                 activeSet?.turns?.filter((value) =>
@@ -207,7 +206,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
             </div>
           </div>
         )}
-        <div className="p-4 space-y-6">
+        <div className="p-4 space-y-2">
           <div className="flex items-center gap-4 select-none">
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{props.state.teamOneScore}</p>
             <div className="bg-white/[.12] h-px w-full" />
