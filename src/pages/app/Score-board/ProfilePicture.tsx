@@ -22,7 +22,7 @@ export function ProfilePicture({
   const profileSizeSingle = useFluidPx(0.17); // ≈119px at 1080p
   const profileSizeDoubles = useFluidPx(0.1); // ≈108px at 1080p
 
-  if (isDoubles && profilePhoto2 !== undefined) {
+  if (!isTournament && isDoubles && profilePhoto2 !== undefined) {
     return (
       <div className="relative shrink-0 size-[min(16vh,16vw)]">
         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>

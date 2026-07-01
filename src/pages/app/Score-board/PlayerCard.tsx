@@ -49,12 +49,9 @@ export function PlayerCard({
   breakScore,
   sport,
   balls,
-  breakSide,
   tournamentName,
   isTournament,
 }: PlayerCardProps) {
-  console.log(breakSide);
-
   // Active player's photo goes to the front
   const frontPhoto = isPlayerOneActive ? profilePhoto : profilePhoto2;
   const backPhoto = isPlayerOneActive ? profilePhoto2 : profilePhoto;
@@ -105,7 +102,7 @@ export function PlayerCard({
 
               {isDoubles && playerTwoName && (
                 <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full pt-[min(1.5vh,1.5vw)]">
-                  <p className="font-extrabold text-[min(5.3vh,5.3vw)] leading-[130%] text-score-text text-box-trim truncate">
+                  <p className="font-medium text-[min(5.3vh,5.3vw)] leading-[130%] text-score-text text-box-trim truncate">
                     {isDoubles
                       ? (isPlayerOneActive ? playerTwoName : playerOneName)?.split(' ')[0]
                       : isPlayerOneActive
