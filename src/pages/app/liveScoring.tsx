@@ -4,7 +4,6 @@ import { CatholicTemplate } from '@/components/sections/stream/templates/Catholi
 import { CatholicJune } from '@/components/sections/stream/templates/CatholicJune';
 import { CenturyTemplate } from '@/components/sections/stream/templates/Century';
 import { EcaTemplate } from '@/components/sections/stream/templates/Eca';
-import { GeneralTemplate } from '@/components/sections/stream/templates/General';
 import { NewEcaTemplate } from '@/components/sections/stream/templates/NewEca';
 import { SourceWithFinalScores } from '@/components/sections/stream/templates/SourceFinalScores';
 import { Singles } from '@/components/sections/stream/templates/Singles';
@@ -12,6 +11,7 @@ import { IGTemplate } from '@/components/sections/stream/templates/IG';
 import useLiveScoring from '@/hooks/useLiveScoring';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { useEffect, useState } from 'react';
+import NewGeneral from '@/components/sections/stream/templates/NewGeneral';
 
 export function LiveScoring() {
   const [matchId, setMatchId] = useState<string | null>(null);
@@ -57,9 +57,8 @@ export function LiveScoring() {
           streamingData.tournamentId !== null &&
           streamingData.tournamentId !== undefined &&
           (streamingData.tournamentId === '686a26d5b2e48cf0cc86a61b' ||
-            streamingData.tournamentId === '69142512da7d00af591b5657'
-           || streamingData.tournamentId === '698d368d51dc1ec36260dc30'
-          )
+            streamingData.tournamentId === '69142512da7d00af591b5657' ||
+            streamingData.tournamentId === '698d368d51dc1ec36260dc30')
         }
       />
       {streamingData.tournamentId ? (
@@ -128,7 +127,8 @@ export function LiveScoring() {
           <IGTemplate state={streamingData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
         )
       ) : (
-        <GeneralTemplate state={streamingData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+        // <GeneralTemplate state={streamingData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+        <NewGeneral state={streamingData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
       )}
       {streamingData.overlayType === 'SOURCE_WITH_FINAL_SCORES' && <SourceWithFinalScores state={streamingData} />}
     </div>

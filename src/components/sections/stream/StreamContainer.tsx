@@ -7,7 +7,6 @@ import { VideoControls } from './Controls';
 import { useYouTubePlayer } from '@/hooks/useYoutubePlayer';
 import { TopOverlay } from './overlays/TopOverlay';
 import { EcaTemplate } from './templates/Eca';
-import { GeneralTemplate } from './templates/General';
 import { SourceWithFinalScores } from './templates/SourceFinalScores';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import clsx from 'clsx';
@@ -24,6 +23,7 @@ import { NewEcaTemplate } from './templates/NewEca';
 import { CatholicJune } from './templates/CatholicJune';
 import { Singles } from './templates/Singles';
 import { IGTemplate } from './templates/IG';
+import NewGeneral from './templates/NewGeneral';
 
 interface StreamContainerProps {
   state: StreamingState | null;
@@ -104,18 +104,15 @@ export function StreamContainer(props: StreamContainerProps) {
   }, []);
 
   // Clamp pan so video doesn't go out of bounds
-  const clampPan = useCallback(
-    (x: number, y: number, zoom: number) => {
-      if (zoom <= 1) return { x: 0, y: 0 };
-      const maxPanX = ((zoom - 1) / (2 * zoom)) * 100;
-      const maxPanY = ((zoom - 1) / (2 * zoom)) * 100;
-      return {
-        x: Math.max(-maxPanX, Math.min(maxPanX, x)),
-        y: Math.max(-maxPanY, Math.min(maxPanY, y)),
-      };
-    },
-    [],
-  );
+  const clampPan = useCallback((x: number, y: number, zoom: number) => {
+    if (zoom <= 1) return { x: 0, y: 0 };
+    const maxPanX = ((zoom - 1) / (2 * zoom)) * 100;
+    const maxPanY = ((zoom - 1) / (2 * zoom)) * 100;
+    return {
+      x: Math.max(-maxPanX, Math.min(maxPanX, x)),
+      y: Math.max(-maxPanY, Math.min(maxPanY, y)),
+    };
+  }, []);
 
   // Pinch-to-zoom touch handlers
   const handleTouchStartZoom = useCallback(
@@ -147,7 +144,13 @@ export function StreamContainer(props: StreamContainerProps) {
         const deltaX = e.touches[0].clientX - lastPanPosition.current.x;
         const deltaY = e.touches[0].clientY - lastPanPosition.current.y;
         lastPanPosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-        setPanOffset((prev) => clampPan(prev.x + (deltaX / (videoContainerRef.current?.clientWidth || 1)) * 100, prev.y + (deltaY / (videoContainerRef.current?.clientHeight || 1)) * 100, zoomLevel));
+        setPanOffset((prev) =>
+          clampPan(
+            prev.x + (deltaX / (videoContainerRef.current?.clientWidth || 1)) * 100,
+            prev.y + (deltaY / (videoContainerRef.current?.clientHeight || 1)) * 100,
+            zoomLevel,
+          ),
+        );
       }
     },
     [zoomLevel, clampPan],
@@ -499,12 +502,13 @@ export function StreamContainer(props: StreamContainerProps) {
                     <IGTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} isTv={props.isTv} />
                   )
                 ) : (
-                  <GeneralTemplate
-                    state={props.state}
-                    activeSet={activeSet}
-                    activeTurn={activeTurn}
-                    isTv={props.isTv}
-                  />
+                  // <GeneralTemplate
+                  //   state={props.state}
+                  //   activeSet={activeSet}
+                  //   activeTurn={activeTurn}
+                  //   isTv={props.isTv}
+                  // />
+                  <NewGeneral state={props.state} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
                 ))}
               {stream.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && (
                 <SourceWithFinalScores state={props.state} />
