@@ -175,15 +175,15 @@ export function BilliardsScoring() {
     handleScoringButtonClick(buttonType);
   };
 
-  const handleBreakOffPlayerNext = async () => {
+  const handleBreakOffPlayerNext = () => {
     if (selectedBreakOffTeamIdx === null) return;
-    await handleTeamClick(selectedBreakOffTeamIdx);
     setSelectedBall(null);
     setBreakOffStep('ball');
   };
 
   const handleBreakOffBallConfirm = async () => {
-    if (selectedBall === null) return;
+    if (selectedBall === null || selectedBreakOffTeamIdx === null) return;
+    await handleTeamClick(selectedBreakOffTeamIdx);
     await handleBilliardsSelectColorBall(selectedBall);
     setBreakOffStep(null);
     setSelectedBreakOffTeamIdx(null);

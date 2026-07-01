@@ -52,7 +52,7 @@ export const formatTimeMatchTime = (totalSeconds: number) => {
   const paddedSeconds = seconds.toString().padStart(2, '0');
 
   // Notice the space after the first colon to match "00: 12:16"
-  return `${paddedHours}: ${paddedMinutes}:${paddedSeconds}`;
+  return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
 };
 
 export const getTimeDifferenceInMinutes = (isoTime1: string, isoTime2: string): number =>

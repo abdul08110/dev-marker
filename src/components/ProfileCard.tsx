@@ -8,6 +8,7 @@ type PropsType = {
   isBorder?: boolean;
 };
 export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap, isBorder }: PropsType) => {
+  console.log(isBorder);
   const borderClipId = useId();
   const cardClipId = useId();
 
@@ -35,7 +36,8 @@ export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap, i
           style={{
             position: 'absolute',
             inset: 0,
-            background: isBorder ? color : '',
+            // background: isBorder ? color : '',
+            background: `${color}`,
             clipPath: `url(#${borderClipId})`,
             filter: 'drop-shadow(0 3.6px 7.2px rgba(0, 0, 0, 0.25))',
           }}

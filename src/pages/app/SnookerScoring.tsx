@@ -36,7 +36,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 
 export function SnookerScoring() {
   const {
@@ -150,7 +150,9 @@ export function SnookerScoring() {
 
   const pendingBreakOff = React.useRef(false);
   const handleScoringButtonClickRef = React.useRef(handleScoringButtonClick);
-  React.useEffect(() => { handleScoringButtonClickRef.current = handleScoringButtonClick; });
+  React.useEffect(() => {
+    handleScoringButtonClickRef.current = handleScoringButtonClick;
+  });
 
   React.useEffect(() => {
     if (pendingBreakOff.current && getActiveTeam(snookerScoring.team1, snookerScoring.team2) !== null) {
@@ -308,18 +310,10 @@ export function SnookerScoring() {
                 onContinue={() => handleTimerButtonAction('CONFIRM')}
               />
               <div className="flex gap-4 mt-4 mb-4 px-4">
-                <Button
-                  onClick={() => setShowEndFrameAlert(true)}
-                  variant="secondary"
-                  className="flex-1"
-                >
+                <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
                   End Frame
                 </Button>
-                <Button
-                  onClick={() => setShowEndGameAlert(true)}
-                  variant="destructive"
-                  className="flex-1"
-                >
+                <Button onClick={() => setShowEndGameAlert(true)} variant="destructive" className="flex-1">
                   End Match
                 </Button>
               </div>
@@ -332,11 +326,15 @@ export function SnookerScoring() {
                 <AlertDialogTitle className="text-white">Are you sure you want to close the game?</AlertDialogTitle>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={() => {
-                  if (closeConfirmSource.current === 'player') setOpenPlayerSelectCard(true);
-                  else if (closeConfirmSource.current === 'settings') setOpenSettingsDrawer(true);
-                  closeConfirmSource.current = null;
-                }}>Cancel</AlertDialogCancel>
+                <AlertDialogCancel
+                  onClick={() => {
+                    if (closeConfirmSource.current === 'player') setOpenPlayerSelectCard(true);
+                    else if (closeConfirmSource.current === 'settings') setOpenSettingsDrawer(true);
+                    closeConfirmSource.current = null;
+                  }}
+                >
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction onClick={handleEndGame}>Confirm</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -367,7 +365,12 @@ export function SnookerScoring() {
           </AlertDialog>
 
           {/* ── Break-off player selection dialog ────────────────────── */}
-          <Dialog open={showBreakOffDialog} onOpenChange={(open) => { if (!open) setShowBreakOffDialog(false); }}>
+          <Dialog
+            open={showBreakOffDialog}
+            onOpenChange={(open) => {
+              if (!open) setShowBreakOffDialog(false);
+            }}
+          >
             <DialogContent className="max-w-sm w-[90vw] bg-[#1a1a1a] border-white/10 text-white">
               <DialogTitle className="text-lg font-semibold text-white">Who is breaking off?</DialogTitle>
               <div className="grid grid-cols-2 gap-3 mt-2">
@@ -379,9 +382,7 @@ export function SnookerScoring() {
                     key={idx}
                     onClick={() => setSelectedBreakOffTeamIdx(idx)}
                     className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${
-                      selectedBreakOffTeamIdx === idx
-                        ? 'border-white bg-white/10'
-                        : 'border-white/20 bg-white/5'
+                      selectedBreakOffTeamIdx === idx ? 'border-white bg-white/10' : 'border-white/20 bg-white/5'
                     }`}
                   >
                     <div className="flex gap-1 justify-center">
@@ -394,7 +395,10 @@ export function SnookerScoring() {
                       ))}
                     </div>
                     <span className="text-sm font-medium text-center leading-tight">
-                      {players.map((p) => p.name).filter(Boolean).join(' / ') || `Team ${idx + 1}`}
+                      {players
+                        .map((p) => p.name)
+                        .filter(Boolean)
+                        .join(' / ') || `Team ${idx + 1}`}
                     </span>
                   </button>
                 ))}
@@ -403,11 +407,7 @@ export function SnookerScoring() {
                 <Button variant="secondary" className="flex-1" onClick={() => setShowBreakOffDialog(false)}>
                   Cancel
                 </Button>
-                <Button
-                  className="flex-1"
-                  disabled={selectedBreakOffTeamIdx === null}
-                  onClick={handleBreakOffConfirm}
-                >
+                <Button className="flex-1" disabled={selectedBreakOffTeamIdx === null} onClick={handleBreakOffConfirm}>
                   Confirm
                 </Button>
               </div>
