@@ -48,11 +48,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const leftCardStyle = isSideOneActive ? YELLOW_CARD_STYLE : PINK_CARD_STYLE;
   const rightCardStyle = isSideTwoActive ? YELLOW_CARD_STYLE : PINK_CARD_STYLE;
   const leftShadow = isSideOneActive
-    ? 'shadow-[0px_3px_10px_0px_rgba(220,247,86,0.8)]'
-    : 'shadow-[0px_3px_8px_0px_rgba(227,139,249,0.5)]';
+    ? 'shadow-[0px_2px_6px_0px_rgba(220,247,86,0.4)]'
+    : 'shadow-[0px_2px_5px_0px_rgba(227,139,249,0.25)]';
   const rightShadow = isSideTwoActive
-    ? 'shadow-[0px_3px_10px_0px_rgba(220,247,86,0.8)]'
-    : 'shadow-[0px_3px_8px_0px_rgba(227,139,249,0.5)]';
+    ? 'shadow-[0px_2px_6px_0px_rgba(220,247,86,0.4)]'
+    : 'shadow-[0px_2px_5px_0px_rgba(227,139,249,0.25)]';
 
   // ── Left card inner content ─────────────────────────────────────────────────
   const leftCardContent = isDoubles ? (
@@ -213,13 +213,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   return (
-    <div className="absolute bottom-[min(1.5vh,1.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_3px_20px_0px_rgba(186,145,200,0.5)] mb-3 bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
+    <div className="absolute bottom-0 mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] mb-2 bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.5vh,1.5vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
           <div
             className={[
-              'absolute -top-[min(3.9vh,3.9vw)]',
+              'absolute -top-[min(3.5vh,3.5vw)]',
               isSideOneActive ? 'left-[min(4.4vh,4.4vw)]' : 'right-[min(4.4vh,4.4vw)]',
             ].join(' ')}
           >
@@ -227,9 +227,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               <div
                 className="absolute inset-0"
                 style={{
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  clipPath: 'polygon(1% 95%, 5% 25%, 12% 0%, 88% 0%, 95% 25%, 99% 95%)',
+                  clipPath: 'polygon(1% 85%, 5% 25%, 12% 0%, 88% 0%, 95% 25%, 99% 85%)',
                 }}
               />
               <svg
@@ -363,7 +361,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 alt="background pattern"
                 className="w-full h-auto"
                 style={{
-                  filter: 'drop-shadow(0px -14px 8px rgba(186, 145, 200, 0.35))',
+                  filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
                 }}
               />
               <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate px-12 pb-1">
@@ -377,7 +375,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             <div
               className="relative w-[min(25.2vh,25.2vw)] h-[min(4.7vh,4.7vw)]"
               style={{
-                filter: 'drop-shadow(0px 14px 10px rgba(186, 145, 200, 0.35))',
+                filter: 'drop-shadow(0px 8px 6px rgba(186, 145, 200, 0.15))',
               }}
             >
               <svg
