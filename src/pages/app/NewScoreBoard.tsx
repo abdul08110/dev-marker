@@ -171,6 +171,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           sport={state.sport}
           balls={teamOneBalls}
           breakSide="right"
+          tournamentName={state.tournamentTeamOneName ?? ''}
         />
 
         {/* Center Panel */}
@@ -195,10 +196,11 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
             <div className="rounded-[min(5.1vh,5.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col shrink-0">
               {/* Team / Tournament Score */}
               {state.tournamentId && state.tournamentSubItem ? (
-                <div className="space-y-[min(1vh,1vw)] pt-[min(7.4vh,7.4vw)]">
-                  <p className="text-text-light font-semibold text-[min(2.8vh,2.8vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center">
+                <div className="space-y-[min(1vh,1vw)] pt-[min(7vh,7vw)]">
+                  <p className="text-text-light font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center px-[min(2vw,2vh)]">
                     Team Score
                   </p>
+
                   <div className="border-y border-white/[.12] grid grid-cols-3 place-items-center">
                     <p className="text-score-text font-semibold text-[min(6.48vh,6.48vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] bg-[#595959]/[0.20] text-box-trim h-full w-full text-center py-[min(1.5vh,1.5vw)]">
                       {tournamentTeamOneScore}
@@ -243,6 +245,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 <p className="text-text-light font-medium text-[min(4vh,4vw)]">Remaining</p>
               </div>
 
+              {/* Table Number */}
               <div className="flex justify-center items-center pt-[min(6vh,6vw)]">
                 <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(8vh,8vw)] w-fit overflow-hidden shrink-0">
                   <div className="flex justify-center items-center bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] h-full">
@@ -262,6 +265,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 </div>
               </div>
 
+              {/* Game format */}
               <div className="flex flex-col justify-center items-center pt-[min(3vh,3vw)] pb-[min(3vh,3vw)] gap-1">
                 {state.sport === 'SNOOKER' ? (
                   <>
@@ -299,6 +303,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           sport={state.sport}
           balls={teamTwoBalls}
           breakSide="left"
+          tournamentName={state.tournamentTeamTwoName ?? ''}
         />
       </div>
     </main>
@@ -320,6 +325,7 @@ interface PlayerCardProps {
   sport: string;
   balls: SnookerPointType[][];
   breakSide: 'left' | 'right';
+  tournamentName: string;
 }
 
 function PlayerCard({
@@ -337,6 +343,7 @@ function PlayerCard({
   sport,
   balls,
   breakSide,
+  tournamentName,
 }: PlayerCardProps) {
   const profileSizeSingle = useFluidPx(0.17); // ≈119px at 1080p
   const profileSizeDoubles = useFluidPx(0.1); // ≈108px at 1080p
@@ -351,6 +358,11 @@ function PlayerCard({
       <div className="absolute inset-0 backdrop-blur-xl" />
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col px-[min(1vh,1vw)] py-[min(3.5vh,3.5vw)]">
+        {tournamentName && (
+          <div className="py-[30px] text-center border-b border-white/10 mx-3">
+            <p className="font-semibold text-[min(4.7vh,4.7vw)] text-box-trim text-score-text">{tournamentName}</p>
+          </div>
+        )}
         {/* Player info */}
         <div className="border-b p-[min(2vh,2vw)] border-white/10 flex gap-[min(1.2vh,1.2vw)] mx-3">
           {/* Profile image */}
