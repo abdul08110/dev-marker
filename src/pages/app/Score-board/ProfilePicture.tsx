@@ -39,7 +39,7 @@ export function ProfilePicture({
     return (
       <div className="rounded-full overflow-hidden">
         <ImageWithFallback
-          className="object-cover size-[min(19vh,19vw)]"
+          className="object-cover size-[min(18vh,18vw)]"
           fallback="/images/user-dummy-pic.jpg"
           src={profilePhoto ?? ''}
         />
