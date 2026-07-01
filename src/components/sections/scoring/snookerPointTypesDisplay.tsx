@@ -65,7 +65,7 @@ export function SnookerPointTypeDisplay(props: SnookerPointTypeDisplayProps) {
       {flattenedPoints.map((item, index) => {
         if (item.isSeparator) {
           return (
-            <div key={`separator-${index}`} className={clsx('text-white items-center w-2', props.className)}>
+            <div key={`separator-${index}`} className={clsx('text-white items-center w-fit px-px', props.className)}>
               |
             </div>
           );
