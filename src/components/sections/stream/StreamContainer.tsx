@@ -294,7 +294,7 @@ export function StreamContainer(props: StreamContainerProps) {
     <div
       className={clsx('w-full flex justify-center items-center', {
         'h-auto': props.isPortrait,
-        'h-screen max-h-screen': !props.isPortrait,
+        'h-screen max-h-screen overflow-hidden': !props.isPortrait,
       })}
     >
       {props.state && stream ? (

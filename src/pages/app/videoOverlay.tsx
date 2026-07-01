@@ -69,7 +69,7 @@ export function VideoOverlay() {
   const liveActiveTurn = getActiveTurn(liveActiveSet);
 
   return (
-    <div className="h-screen w-screen bg-transparent pointer-events-none bg-cover bg-center">
+    <div className="h-screen w-screen bg-transparent pointer-events-none bg-cover bg-center overflow-hidden">
       <TopOverlay
         clubLogo={viewershipData!.clubLogo!}
         tournamentLogo={viewershipData.tournamentLogo}
