@@ -24,6 +24,8 @@ import { Commentary } from './pages/app/Commentary';
 import { BowringArena3412 } from './pages/app/bowringArena3412';
 import { HbccTvArena } from './pages/app/hbccTvArena';
 import QRCode from './pages/app/QRCode';
+import TestScreen from './pages/app/TestScreen';
+import ScoreTest from './pages/app/ScoreTest';
 
 const App: React.FC = () => {
   const token = getToken();
@@ -55,6 +57,8 @@ const App: React.FC = () => {
         <Route path="/app/commentary" element={<Commentary />} />
         <Route path="/app/hbcc-tv-arena" element={<HbccTvArena />} />
         <Route path="/app/qr" element={<QRCode />} />
+        <Route path="/test" element={<TestScreen />} />
+        <Route path="/scoretest" element={<ScoreTest />} />
       </Routes>
     </Router>
   );
