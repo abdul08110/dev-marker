@@ -8,6 +8,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { SnookerPointTypeDisplay, hasVisibleSnookerPoints } from '../scoring/snookerPointTypesDisplay';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import { cn } from '@/lib/utils';
+import ChevronIcon from '@/icons/chevron-icon';
 
 interface PortraitStreamDataProps {
   state: StreamingState | null;
@@ -58,7 +59,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
         )}
         <div className="grid grid-cols-2 divide-x divide-white/[.12] border-b border-white/[.12]">
           <div>
-            <div className="p-4 space-y-4">
+            <div className="p-3 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="relative space-y-2" style={{ flexShrink: 0 }}>
                   <div
@@ -70,7 +71,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
                           <ProfileCard
                             isBorder={true}
-                            color="#202020"
+                            color="#141414"
                             imageUrl={props.state.sideOnePlayerOne.profilePhoto || '/images/user-dummy-pic.jpg'}
                             size={60}
                             isActive={isTeamOneActive}
@@ -79,10 +80,15 @@ export function PortraitView(props: PortraitStreamDataProps) {
                         <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
                           <ProfileCard
                             isBorder={true}
-                            color="#202020"
+                            color="#141414"
                             imageUrl={props.state.sideOnePlayerTwo?.profilePhoto || '/images/user-dummy-pic.jpg'}
                             size={60}
                             isActive={isTeamOneActive}
+                            handicap={
+                              props.state.teamOneHandicap
+                                ? `H${props.state.teamOneHandicap > 0 ? '+' : ''}${props.state.teamOneHandicap}`
+                                : ''
+                            }
                           />
                         </div>
                       </>
@@ -131,7 +137,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
               </p>
             </div>
             {props.state.tournamentId && (
-              <div className="px-4 py-3 flex gap-3 items-center bg-[#272126]">
+              <div className="px-3 py-3 flex gap-3 items-center bg-[#272126]">
                 <ImageWithFallback
                   className="aspect-square overflow-hidden border-white size-8 object-cover shrink-0 rounded-full"
                   fallback="/images/user-dummy-pic.jpg"
@@ -154,7 +160,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
             )}
           </div>
           <div>
-            <div className="p-4 space-y-4">
+            <div className="p-3 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="relative space-y-2" style={{ flexShrink: 0 }}>
                   <div
@@ -166,7 +172,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
                           <ProfileCard
                             isBorder
-                            color="#202020"
+                            color="#141414"
                             imageUrl={props.state.sideTwoPlayerOne.profilePhoto || '/images/user-dummy-pic.jpg'}
                             size={60}
                             isActive={isTeamTwoActive}
@@ -175,17 +181,22 @@ export function PortraitView(props: PortraitStreamDataProps) {
                         <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
                           <ProfileCard
                             isBorder
-                            color="#202020"
+                            color="#141414"
                             imageUrl={props.state.sideTwoPlayerTwo?.profilePhoto || '/images/user-dummy-pic.jpg'}
                             size={60}
                             isActive={isTeamTwoActive}
+                            handicap={
+                              props.state.teamTwoHandicap
+                                ? `H${props.state.teamTwoHandicap > 0 ? '+' : ''}${props.state.teamTwoHandicap}`
+                                : ''
+                            }
                           />
                         </div>
                       </>
                     ) : (
                       <ProfileCard
                         isBorder
-                        color="#202020"
+                        color="#141414"
                         imageUrl={
                           props.state.teamTwoLogo
                             ? props.state.teamTwoLogo
@@ -227,14 +238,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
               </p>
             </div>
             {props.state.tournamentId && (
-              <div className="px-4 py-3 flex justify-end gap-3 items-center bg-[#272126]">
-                <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
-                  {props.state.teamTwoName ||
-                    generatePlayerName(
-                      props.state.sideTwoPlayerOne.name,
-                      props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
-                    )}
-                </p>
+              <div className="px-3 py-3 flex justify-end gap-3 items-center bg-[#272126]">
                 <ImageWithFallback
                   className="aspect-square overflow-hidden border-white size-8 object-cover shrink-0 rounded-full"
                   fallback="/images/user-dummy-pic.jpg"
@@ -246,6 +250,13 @@ export function PortraitView(props: PortraitStreamDataProps) {
                         : '/images/user-dummy-pic.jpg'
                   }
                 />
+                <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
+                  {props.state.teamTwoName ||
+                    generatePlayerName(
+                      props.state.sideTwoPlayerOne.name,
+                      props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
+                    )}
+                </p>
               </div>
             )}
           </div>
@@ -313,16 +324,16 @@ export function PortraitView(props: PortraitStreamDataProps) {
             <div>
               <div
                 onClick={() => setShowPreviousFrames((v) => !v)}
-                className="w-full border border-white/[.12] px-3 py-4 rounded bg-[#202020] "
+                className="w-full border border-white/[.12] px-3 py-2 rounded bg-[#202020] "
               >
                 <div className="flex justify-between items-center">
                   <p className="uppercase text-xs leading-[130%] text-[#FFFBFE]/60 shrink-0 select-none">
                     Previous Frame Scores
                   </p>
                   {showPreviousFrames ? (
-                    <ChevronUp size={16} className="text-white" />
+                    <ChevronIcon className="rotate-90 text-[#FFFBFE]/60 " />
                   ) : (
-                    <ChevronDown size={16} className="text-white" />
+                    <ChevronIcon className="-rotate-90 text-[#FFFBFE]/60 " />
                   )}
                 </div>
                 {showPreviousFrames && completedSets.length > 0 && (
