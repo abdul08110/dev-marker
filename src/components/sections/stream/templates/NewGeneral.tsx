@@ -17,7 +17,7 @@ interface GeneralTemplateProps {
 
 const YELLOW_CARD_STYLE = {
   background:
-    'linear-gradient(90deg, #010305 0%, #19162B 36.51%, #18142E 103.21%) padding-box, linear-gradient(144.83deg, rgba(213, 255, 154, 0.02) -0.26%, #C1F052 34.38%, #AAEA4B 58.47%, #B7F47B 92.16%) border-box',
+    'radial-gradient(50% 50% at 50% 50%, #39205C 0%, #181332 100%) padding-box, linear-gradient(144.83deg, rgba(213, 255, 154, 0.02) -0.26%, #C1F052 34.38%, #AAEA4B 58.47%, #B7F47B 92.16%) border-box',
   border: '1px solid transparent',
 };
 
