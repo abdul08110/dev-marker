@@ -62,8 +62,16 @@ export function PlayerCard({
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col px-[min(1vh,1vw)] py-[min(3.5vh,3.5vw)]">
         {tournamentName && (
-          <div className="py-[min(2vh,2vw)] text-center border-b border-white/10 mx-3">
-            <p className="font-semibold text-[min(4vh,4vw)] text-box-trim text-score-text">{tournamentName}</p>
+          // <div className="relative py-[min(2vh,2vw)] text-center border-b border-white/10 mx-3 flex items-center px-[min(3vh,3vw)]">
+          <div className="relative py-[min(2vh,2vw)] text-center border-b border-white/10 mx-3 grid grid-cols-3 px-[min(3vh,3vh)]">
+            <div className="w-fit col-span-1">
+              {isTournament && handicap != null && (
+                <HandicapPill handicap={handicap} isApplied={isHandicapApplied} isActive={isActive} />
+              )}
+            </div>
+            <p className="font-semibold text-[min(4vh,4vw)] text-box-trim text-score-text col-span-2 text-left truncate">
+              {tournamentName}
+            </p>
           </div>
         )}
         {/* Player info */}
@@ -89,17 +97,7 @@ export function PlayerCard({
             </div>
 
             <div className="space-y-2">
-              {isTournament && !isDoubles && handicap != null && (
-                <div
-                  className="w-full h-[min(0.3vh,0.3vw)]"
-                  style={{
-                    background: isActive
-                      ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
-                      : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
-                  }}
-                />
-              )}
-              {handicap != null && (
+              {!isTournament && handicap != null && (
                 <HandicapPill handicap={handicap} isApplied={isHandicapApplied} isActive={isActive} />
               )}
             </div>
