@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
 import { calculateStatsForTeam, getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
-import { generatePlayerName } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { SnookerPointTypeDisplay, hasVisibleSnookerPoints } from '../scoring/snookerPointTypesDisplay';
@@ -120,12 +119,11 @@ export function PortraitView(props: PortraitStreamDataProps) {
                   </span>
                 </div>
               </div>
-              <p className="font-medium text-[17px] leading-[130%] uppercase text-white line-clamp-1">
-                {generatePlayerName(
-                  props.state.sideOnePlayerOne.name,
-                  props.state.sideOnePlayerTwo ? props.state.sideOnePlayerTwo.name : undefined,
-                )}
-              </p>
+              <PlayerNameDisplay
+                className="font-medium text-[17px] leading-[130%] uppercase text-white"
+                playerOneName={props.state.sideOnePlayerOne.name}
+                playerTwoName={props.state.sideOnePlayerTwo?.name}
+              />
             </div>
             {props.state.tournamentId && (
               <div className="px-3 py-3 flex gap-3 items-center bg-[#272126]">
@@ -142,10 +140,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 />
                 <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
                   {props.state.teamOneName ||
-                    generatePlayerName(
-                      props.state.sideOnePlayerOne.name,
-                      props.state.sideOnePlayerTwo ? props.state.sideOnePlayerTwo.name : undefined,
-                    )}
+                    joinPlayerNames(props.state.sideOnePlayerOne.name, props.state.sideOnePlayerTwo?.name)}
                 </p>
               </div>
             )}
@@ -209,12 +204,11 @@ export function PortraitView(props: PortraitStreamDataProps) {
                   </span>
                 </div>
               </div>
-              <p className="font-medium text-[17px] leading-[130%] uppercase text-white line-clamp-1 text-left">
-                {generatePlayerName(
-                  props.state.sideTwoPlayerOne.name,
-                  props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
-                )}
-              </p>
+              <PlayerNameDisplay
+                className="font-medium text-[17px] leading-[130%] uppercase text-white text-left"
+                playerOneName={props.state.sideTwoPlayerOne.name}
+                playerTwoName={props.state.sideTwoPlayerTwo?.name}
+              />
             </div>
             {props.state.tournamentId && (
               <div className="px-3 py-3 flex justify-end gap-3 items-center bg-[#272126]">
@@ -231,10 +225,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 />
                 <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
                   {props.state.teamTwoName ||
-                    generatePlayerName(
-                      props.state.sideTwoPlayerOne.name,
-                      props.state.sideTwoPlayerTwo ? props.state.sideTwoPlayerTwo.name : undefined,
-                    )}
+                    joinPlayerNames(props.state.sideTwoPlayerOne.name, props.state.sideTwoPlayerTwo?.name)}
                 </p>
               </div>
             )}
@@ -335,4 +326,32 @@ export function PortraitView(props: PortraitStreamDataProps) {
       </div>
     </div>
   );
+}
+
+function joinPlayerNames(playerOneName: string, playerTwoName?: string) {
+  return playerTwoName ? `${playerOneName.trim()} & ${playerTwoName.trim()}` : playerOneName.trim();
+}
+
+function PlayerNameDisplay({
+  playerOneName,
+  playerTwoName,
+  className,
+}: {
+  playerOneName: string;
+  playerTwoName?: string;
+  className?: string;
+}) {
+  if (playerTwoName) {
+    return (
+      <div className="space-y-0.5">
+        <p className={cn('flex items-baseline gap-[0.3ch]', className)}>
+          <span className="min-w-0 truncate">{playerOneName.trim()}</span>
+          <span className="shrink-0">&</span>
+        </p>
+        <p className={cn('truncate', className)}>{playerTwoName.trim()}</p>
+      </div>
+    );
+  }
+
+  return <p className={cn('truncate', className)}>{playerOneName.trim()}</p>;
 }
