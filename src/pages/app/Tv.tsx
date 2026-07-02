@@ -29,6 +29,9 @@ export function Tv() {
     currentTime,
     updateTime,
     sponsorshipVideoUrl,
+    lineupData,
+    showLineup,
+    lineupClubInfo,
   } = useStreaming(venueId || undefined);
 
   if (loading || streamingLoading) {
@@ -47,6 +50,9 @@ export function Tv() {
         showBottomScrubber={false}
         isTv={true}
         sponsorshipVideoUrl={sponsorshipVideoUrl ?? undefined}
+        lineupData={lineupData}
+        showLineup={showLineup}
+        lineupClubInfo={lineupClubInfo}
       />
     </div>
   );

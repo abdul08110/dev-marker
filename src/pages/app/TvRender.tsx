@@ -15,6 +15,9 @@ export function TvRender() {
     currentTime,
     updateTime,
     sponsorshipVideoUrl,
+    lineupData,
+    showLineup,
+    lineupClubInfo,
   } = useStreaming(searchParamsVenueId || undefined);
 
   if (streamingLoading) {
@@ -33,6 +36,9 @@ export function TvRender() {
         isPortrait={false}
         showBottomScrubber={false}
         isTv={true}
+        lineupData={lineupData}
+        showLineup={showLineup}
+        lineupClubInfo={lineupClubInfo}
       />
     </div>
   );

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import { StreamingState } from '@/hooks/useStreaming';
+import { Lineup } from './Lineup';
+import { LineupResponse } from '@/api/app/types/lineup';
 
 interface HlsStreamContainerProps {
   hlsUrl: string;
@@ -10,6 +12,9 @@ interface HlsStreamContainerProps {
   timeLeft: number;
   stopWatchTime: number;
   updateTimer: (timeInMillseconds: number) => void;
+  lineupData?: LineupResponse | null;
+  showLineup?: boolean;
+  lineupClubInfo?: { clubName: string | null; clubLogo: string | null };
 }
 
 export function HlsStreamContainer(props: HlsStreamContainerProps) {
@@ -117,6 +122,8 @@ export function HlsStreamContainer(props: HlsStreamContainerProps) {
             </div>
           )}
         </div>
+      ) : props.showLineup && props.lineupData ? (
+        <Lineup data={props.lineupData} isTv clubName={props.lineupClubInfo?.clubName ?? null} clubLogo={props.lineupClubInfo?.clubLogo ?? null} />
       ) : (
         <video
           autoPlay

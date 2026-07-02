@@ -9,6 +9,10 @@ import { addMillisecondsToUTC } from '@/utils/functions';
 import { calculatePointsBySide, calculateTotalTeamScore } from '@/stores/selectors/commonSport';
 import useGetMatchStreams from '@/api/app/useGetStreamInfoMarker';
 import useGetSponsorshipVideo from '@/api/app/useGetSponsorshipVideo';
+import useGetLineup from '@/api/app/useGetLineup';
+import { LineupResponse } from '@/api/app/types/lineup';
+
+const LINEUP_DISPLAY_MS = 30_000;
 
 export interface StreamState {
   streamType: StreamType;
@@ -58,6 +62,7 @@ export interface StreamingState {
   teamTwoName: string | null;
   tournamentTeamOneId: string | null;
   tournamentTeamTwoId: string | null;
+  tournamentPhaseId?: string | null;
   format: string | null;
   eventFormat: 'SINGLES' | 'TEAMS';
   expectedEndTimeDate: string | null;
@@ -87,6 +92,11 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const getMatchStreamsHook = useGetMatchStreams();
   const getMarkerLiveMatchesByVenueHookData = useMarkerGetLiveMatchByVenue();
   const getSponsorshipVideoHook = useGetSponsorshipVideo();
+  const getLineupHook = useGetLineup();
+  const [lineupData, setLineupData] = useState<LineupResponse | null>(null);
+  const [showLineup, setShowLineup] = useState(false);
+  const [lineupClubInfo, setLineupClubInfo] = useState<{ clubName: string | null; clubLogo: string | null }>({ clubName: null, clubLogo: null });
+  const lineupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
   const timeLeft = useTimer({
     endTime: streamingData && streamingData.expectedEndTimeDate ? new Date(streamingData.expectedEndTimeDate) : null,
@@ -131,6 +141,17 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       console.log('Disconnected from MQTT broker');
     });
   };
+
+  const clearLineup = () => {
+    if (lineupTimerRef.current) clearTimeout(lineupTimerRef.current);
+    lineupTimerRef.current = null;
+    setShowLineup(false);
+    setLineupData(null);
+  };
+
+  useEffect(() => {
+    return () => clearLineup();
+  }, []);
 
   useEffect(() => {
     streamingDataRef.current = streamingData;
@@ -216,6 +237,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           tournamentSubItem: res.tournamentSubItem,
           tournamentTeamOneId: res.tournamentTeamOneId ? res.tournamentTeamOneId : null,
           tournamentTeamTwoId: res.tournamentTeamTwoId ? res.tournamentTeamTwoId : null,
+          tournamentPhaseId: res.tournamentSubItem?.tournamentItem?.tournamentPhase?.id ?? null,
           streams: streamRes.streams,
           eventFormat: res.tournament ? res.tournament.eventFormat : 'TEAMS',
           phase: res.phase ? res.phase : null,
@@ -231,6 +253,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         if (res.matchStatus === 'LIVE' && !venueId) {
           const venueTopics = [`${res.venueId}/send-data`, `${res.venueId}/match-end`, `${res.venueId}/timer-updated`];
           connectToMqtt(venueTopics);
+        }
+
+        if (res.matchStatus === 'COMPLETED') {
+          fetchLineupForCompletedMatch(initialData);
         }
       } else {
         toast({
@@ -292,6 +318,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         });
         break;
       case 'match-start':
+        clearLineup();
         fetchActiveMatchForVenue(venueId!);
         break;
       case 'timer-updated':
@@ -315,7 +342,39 @@ const useStreaming = (venueId?: string, matchId?: string) => {
             }
           }, 20000);
         }
+        fetchLineupForCompletedMatch(currentStreamingData);
         break;
+    }
+  };
+
+  const fetchLineupForCompletedMatch = async (matchData: StreamingState | null) => {
+    if (
+      !matchData ||
+      matchData.eventFormat !== 'TEAMS' ||
+      !matchData.tournamentId ||
+      !matchData.tournamentPhaseId ||
+      !matchData.tournamentTeamOneId ||
+      !matchData.tournamentTeamTwoId
+    ) {
+      return;
+    }
+
+    clearLineup();
+
+    const lineup = await getLineupHook.getLineup({
+      tournamentId: matchData.tournamentId,
+      phaseId: matchData.tournamentPhaseId,
+      teamOneId: matchData.tournamentTeamOneId,
+      teamTwoId: matchData.tournamentTeamTwoId,
+    });
+
+    if (lineup) {
+      setLineupData(lineup);
+      setLineupClubInfo({ clubName: matchData.clubName, clubLogo: matchData.clubLogo });
+      setShowLineup(true);
+      lineupTimerRef.current = setTimeout(() => {
+        setShowLineup(false);
+      }, LINEUP_DISPLAY_MS);
     }
   };
 
@@ -434,7 +493,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     onVideoEnd,
     currentTime,
     updateTime,
-    sponsorshipVideoUrl
+    sponsorshipVideoUrl,
+    lineupData,
+    showLineup,
+    lineupClubInfo,
   };
 };
 
