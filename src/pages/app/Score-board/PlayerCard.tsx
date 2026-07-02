@@ -80,40 +80,14 @@ export function PlayerCard({
 
           {/* Player name(s) + handicap */}
           <div className="flex flex-col justify-between gap-[min(1.3vh,1.3vw)] min-w-0 flex-1">
-            <div className="">
-              <div>
-                <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim truncate text-wrap line-clamp-2 font-medium pt-[min(1.2vh,1.2vh)]">
-                  {isDoubles
-                    ? (isPlayerOneActive ? playerOneName.trim() : playerTwoName?.trim())?.split(' ')[0]
-                    : playerOneName.trim()}
-                </p>
-
-                {isDoubles && (
-                  <div className="pt-[min(1vh,1vw)]">
-                    <div
-                      className="w-full h-[min(0.3vh,0.3vw)]"
-                      style={{
-                        background: isActive
-                          ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
-                          : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {isDoubles && playerTwoName && (
-                <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full pt-[min(1.5vh,1.5vw)]">
-                  <p className="font-medium text-[min(5.3vh,5.3vw)] leading-[130%] text-score-text text-box-trim truncate">
-                    {isDoubles
-                      ? (isPlayerOneActive ? playerTwoName.trim() : playerOneName.trim())?.split(' ')[0]
-                      : isPlayerOneActive
-                        ? playerTwoName.trim()
-                        : playerOneName.trim()}
-                  </p>
-                </div>
-              )}
+            <div>
+              <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim text-wrap line-clamp-2 font-medium pt-[min(1.2vh,1.2vh)]">
+                {isDoubles && playerTwoName
+                  ? `${playerOneName.trim()} & ${playerTwoName.trim()}`
+                  : playerOneName.trim()}
+              </p>
             </div>
+
             <div className="space-y-2">
               {isTournament && !isDoubles && handicap != null && (
                 <div
