@@ -89,11 +89,21 @@ export function PlayerCard({
           {/* Player name(s) + handicap */}
           <div className="flex flex-col justify-between gap-[min(1.3vh,1.3vw)] min-w-0 flex-1">
             <div>
-              <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim text-wrap line-clamp-2 font-medium pt-[min(1.2vh,1.2vh)]">
-                {isDoubles && playerTwoName
-                  ? `${playerOneName.trim()} & ${playerTwoName.trim()}`
-                  : playerOneName.trim()}
-              </p>
+              {isDoubles && playerTwoName ? (
+                <div className="space-y-3">
+                  <p className="flex items-baseline gap-[0.3ch] text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim font-medium pt-[min(1.2vh,1.2vh)]">
+                    <span className="min-w-0 truncate">{playerOneName.trim()}</span>
+                    <span className="shrink-0">&</span>
+                  </p>
+                  <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim truncate font-medium pt-[min(0.8vh,0.8vw)]">
+                    {playerTwoName.trim()}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim truncate font-medium pt-[min(1.2vh,1.2vh)]">
+                  {playerOneName.trim()}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
