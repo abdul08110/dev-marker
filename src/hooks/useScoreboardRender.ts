@@ -47,6 +47,7 @@ export interface ScoreBoardState {
   showFormatsAsGameNumber: boolean | null;
   showCummulativeScoreInCombination: boolean | null;
   showLatestHandicapInCombination: boolean | null;
+  tournamentLogo: string | null;
 }
 
 const useScoreboardRender = () => {
@@ -180,7 +181,8 @@ const useScoreboardRender = () => {
             noOfFrames: res.noOfSets ? res.noOfSets : null,
             showFormatsAsGameNumber: res.tournament ? res.tournament.showFormatsAsGameNumber : null,
             showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
-            showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null
+            showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null,
+            tournamentLogo: res.tournament?.logo ? res.tournament.logo : null,
           });
         } else {
           toast({

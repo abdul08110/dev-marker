@@ -180,7 +180,7 @@ const useBilliardsScoring = () => {
 
   const handleSettingsClick = () => setOpenSettingsDrawer(true);
 
-  const handleTeamClick = async (teamIndex: number) => {
+  const handleTeamClick = async (_teamIndex: number) => {
     const activeSet = getActiveSet(billiardsScoring.scoreHistory);
 
     if (activeSet) {

@@ -246,7 +246,7 @@ const useSnookerScoring = () => {
 
   const handleSettingsClick = () => setOpenSettingsDrawer(true);
 
-  const handleTeamClick = async (teamIndex: number) => {
+  const handleTeamClick = async (_teamIndex: number) => {
     const activeSet = getActiveSet(snookerScoring.scoreHistory);
 
     if (activeSet) {
