@@ -88,7 +88,18 @@ export function PlayerCard({
                     : playerOneName.trim()}
                 </p>
 
-                {isDoubles && (
+                {isDoubles ? (
+                  <div className="pt-[min(1vh,1vw)]">
+                    <div
+                      className="w-full h-[min(0.3vh,0.3vw)]"
+                      style={{
+                        background: isActive
+                          ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
+                          : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
+                      }}
+                    />
+                  </div>
+                ) : (
                   <div className="pt-[min(1vh,1vw)]">
                     <div
                       className="w-full h-[min(0.3vh,0.3vw)]"
