@@ -1,4 +1,3 @@
-import ScaleLogo from '@/icons/scale';
 import clsx from 'clsx';
 
 export enum SnookerScoringButtonEnum {

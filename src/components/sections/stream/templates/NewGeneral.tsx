@@ -32,7 +32,6 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const isDoubles = !!state.sideOnePlayerTwo;
   const hasTeamName = !!(state.teamOneName || state.teamTwoName);
   const isTournament = !!state.tournamentId;
-
   const isSideOneActive =
     !!state.activePlayerId &&
     (state.activePlayerId === state.sideOnePlayerOne.id || state.activePlayerId === state.sideOnePlayerTwo?.id);
@@ -518,7 +517,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               <div className="absolute inset-0 flex justify-center items-center">
                 {isTournament ? (
                   <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
-                    {state.phase || state.sport === 'SNOOKER' ? 'Snooker' : 'Billiards'}
+                    {state.tournamentSubItem?.tournamentItem?.tournamentPhase?.name
+                      ? state.tournamentSubItem.tournamentItem.tournamentPhase.name
+                      : state.sport === 'SNOOKER'
+                        ? 'Snooker'
+                        : 'Billiards'}
                   </span>
                 ) : (
                   <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">

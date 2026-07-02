@@ -60,7 +60,6 @@ export function VideoOverlay() {
   if (streamingLoading || viewershipData === null || streamingData === null) {
     return <></>;
   }
-
   const activeSet = getActiveSet(viewershipData ? viewershipData.sets : []);
   const activeTurn = getActiveTurn(activeSet);
 
