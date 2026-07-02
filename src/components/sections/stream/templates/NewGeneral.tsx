@@ -437,7 +437,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   linear-gradient(
     180deg,
     rgba(227, 169, 242, 1) 0%,
-    rgba(226, 179, 237, 0.6) 64%,
+    rgba(226, 179, 237, 0.6) 100%,
     rgba(17, 3, 15, 0.6) 100%
   ) border-box
 `,
