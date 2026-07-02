@@ -1,6 +1,8 @@
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { StreamingState, StreamState } from '@/hooks/useStreaming';
 import { StreamType } from '@/api/app/useGetMatchData';
+import { Lineup } from './Lineup';
+import { LineupResponse } from '@/api/app/types/lineup';
 import YouTube from 'react-youtube';
 import 'rc-slider/assets/index.css';
 import { VideoControls } from './Controls';
@@ -36,6 +38,8 @@ interface StreamContainerProps {
   isTv: boolean;
   startFromSeconds?: number;
   sponsorshipVideoUrl?: string;
+  lineupData?: LineupResponse | null;
+  showLineup?: boolean;
 }
 
 export function StreamContainer(props: StreamContainerProps) {
@@ -563,6 +567,8 @@ export function StreamContainer(props: StreamContainerProps) {
             <></>
           )}
         </div>
+      ) : props.showLineup && props.lineupData ? (
+        <Lineup data={props.lineupData} isTv={props.isTv} />
       ) : (
         <video
           autoPlay

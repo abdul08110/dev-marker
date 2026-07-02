@@ -17,6 +17,8 @@ export function TvHlsRender() {
     currentTime,
     updateTime,
     sponsorshipVideoUrl,
+    lineupData,
+    showLineup,
   } = useStreaming(venueId || undefined);
 
   const clubControllerHook = useGetClubController();
@@ -91,6 +93,8 @@ export function TvHlsRender() {
         onVideoEnd={onVideoEnd}
         timeLeft={timeLeft}
         state={viewershipData}
+        lineupData={lineupData}
+        showLineup={showLineup}
       />
     </div>
   );
