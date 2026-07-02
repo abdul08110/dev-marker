@@ -11,6 +11,8 @@ interface SnookerMarkerSettingsDrawerProps {
   defaultNoOfPlayers?: NoOfPlayersDefault;
   teamOneLabel?: string;
   teamTwoLabel?: string;
+  showBack?: boolean;
+  onBack?: () => void;
   onClose?: () => void;
 }
 
@@ -38,6 +40,11 @@ export function SnookerPracticeSettingsDrawer(props: SnookerMarkerSettingsDrawer
     props.setOpen(false);
   };
 
+  const handleBack = () => {
+    skipNextOnClose.current = true;
+    props.onBack?.();
+  };
+
   const handleXClick = () => {
     props.setOpen(false);
   };
@@ -63,7 +70,11 @@ export function SnookerPracticeSettingsDrawer(props: SnookerMarkerSettingsDrawer
           />
         </div>
         <DrawerFooter className="pt-2">
-          <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+          {props.showBack ? (
+            <Button variant="secondary" onClick={handleBack}>Back</Button>
+          ) : (
+            <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+          )}
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

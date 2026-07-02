@@ -39,7 +39,7 @@ export function PlayerTeamCard(props: PlayerTeamCardProps) {
         <button
           key={playerIndex}
           onClick={() => props.onPlayerCardClick(playerIndex)}
-          className={clsx('flex justify-center items-center px-4 py-1 rounded truncate w-full', {
+          className={clsx('flex justify-center items-center px-4 py-1 rounded w-full overflow-hidden', {
             'bg-lighterSecondary text-white': !isTeamActive,
             'bg-white text-black': isTeamActive,
             'text-black/50': isTeamActive && activePlayer.id !== player.id,
@@ -48,13 +48,13 @@ export function PlayerTeamCard(props: PlayerTeamCardProps) {
         >
           {props.matchId && props.showBilliardsBalls !== null ? (
             <img
-              className="h-6 w-6 object-contain"
+              className="h-6 w-6 object-contain flex-shrink-0"
               src={props.showBilliardsBalls === 'YELLOW' ? '/images/yellow-ball.png' : '/images/white-ball.png'}
             />
           ) : (
             <></>
           )}
-          {player.name}
+          <span className="truncate text-left">{player.name}</span>
         </button>
       ))}
     </div>

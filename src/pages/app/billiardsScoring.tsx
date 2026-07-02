@@ -49,6 +49,7 @@ export function BilliardsScoring() {
     handlePlayerConfirm,
     handleSettingsUpdate,
     handleTeamClick,
+    handleBreakOffTeamSelect,
     setOpenSettingsDrawer,
     setOpenPlayerSelectCard,
     selectedPlayerIndex,
@@ -67,6 +68,7 @@ export function BilliardsScoring() {
     handleBilliardsSelectColorBall,
     handleEndFrameButton,
     onBackInPlayerSelectModal,
+    onBackFromSettings,
     handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
@@ -83,7 +85,11 @@ export function BilliardsScoring() {
     const teamIdx = selectedTeamIndex;
     await handlePlayerConfirm(player);
     if (clubs.activeClub && player.id) {
-      selectPlayer({ venueId: clubs.activeClub.venueId, playerNumber: teamIdx + 1, userId: player.id });
+      try {
+        await selectPlayer({ venueId: clubs.activeClub.venueId, playerNumber: teamIdx + 1, userId: player.id });
+      } catch {
+        // Ignore "player already added" errors during back-navigation re-selection
+      }
     }
   };
 
@@ -128,7 +134,7 @@ export function BilliardsScoring() {
 
   const handleSettingsBack = () => {
     setOpenSettingsDrawer(false);
-    setOpenPlayerSelectCard(true);
+    onBackFromSettings();
   };
 
   const handleSettingsDrawerClose = () => {
@@ -188,7 +194,7 @@ export function BilliardsScoring() {
 
   const handleBreakOffBallConfirm = async () => {
     if (selectedBall === null || selectedBreakOffTeamIdx === null) return;
-    await handleTeamClick(selectedBreakOffTeamIdx);
+    await handleBreakOffTeamSelect(selectedBreakOffTeamIdx);
     await handleBilliardsSelectColorBall(selectedBall);
     setBreakOffStep(null);
     setSelectedBreakOffTeamIdx(null);
