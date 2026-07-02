@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
 import { convertHandicapToString, generatePlayerName } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
+import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { useFluidPx } from '@/hooks/useFluidPx';
-import { cn } from '@/lib/utils';
+import { cn, getRandomPlaceholderProfileImage } from '@/lib/utils';
 import clsx from 'clsx';
 
 interface GeneralTemplateProps {
@@ -27,10 +29,9 @@ const PINK_CARD_STYLE = {
 
 const NewGeneral = (props: GeneralTemplateProps) => {
   const { state, activeTurn, activeSet } = props;
-
   const isDoubles = !!state.sideOnePlayerTwo;
   const hasTeamName = !!(state.teamOneName || state.teamTwoName);
-
+  const isTournament = !!state.tournamentId;
   const isSideOneActive =
     !!state.activePlayerId &&
     (state.activePlayerId === state.sideOnePlayerOne.id || state.activePlayerId === state.sideOnePlayerTwo?.id);
@@ -40,6 +41,49 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     (state.activePlayerId === state.sideTwoPlayerOne.id || state.activePlayerId === state.sideTwoPlayerTwo?.id);
 
   const breakScore = activeTurn?.score ?? 0;
+
+  // Total frames for the format — for tournament matches this is the configured
+  // noOfFrames (e.g. "race to 4"), not the number of frames played so far.
+  const noOfFrames = state.tournamentId === null ? state.sets.length : state.noOfFrames || 0;
+  const teamScoreCenter =
+    state.tournamentId && state.tournamentSubItem && state.showFormatsAsGameNumber && state.eventFormat === 'TEAMS'
+      ? `${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}`
+      : noOfFrames
+        ? `${noOfFrames}`
+        : null;
+
+  // Tournament "frames won" score can be a combination score (cumulative across
+  // games in the combo) rather than this individual match's own teamOne/teamTwoScore.
+  const hasTournamentCombo = !!(state.tournamentId && state.tournamentSubItem);
+  const isTeamReveresed = hasTournamentCombo
+    ? state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== state.tournamentTeamOneId
+    : false;
+
+  const tournamentTeamOneScore = state.tournamentSubItem
+    ? state.showCummulativeScoreInCombination
+      ? isTeamReveresed
+        ? (state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0)
+        : (state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0)
+      : isTeamReveresed
+        ? state.tournamentSubItem.tournamentItem.teamTwoScore
+        : state.tournamentSubItem.tournamentItem.teamOneScore
+    : null;
+
+  const tournamentTeamTwoScore = state.tournamentSubItem
+    ? state.showCummulativeScoreInCombination
+      ? isTeamReveresed
+        ? (state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0)
+        : (state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0)
+      : isTeamReveresed
+        ? state.tournamentSubItem.tournamentItem.teamOneScore
+        : state.tournamentSubItem.tournamentItem.teamTwoScore
+    : null;
+
+  const displayTeamOneScore = hasTournamentCombo ? tournamentTeamOneScore : state.teamOneScore;
+  const displayTeamTwoScore = hasTournamentCombo ? tournamentTeamTwoScore : state.teamTwoScore;
+
+  // Stable per-slot fallback avatars — one each for sideOnePlayerOne/Two, sideTwoPlayerOne/Two
+  const [defaultImages] = useState(() => Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()));
 
   // Fluid px for ProfileCard — mirrors min(Xvh, Xvw) via the shared hook
   const profileSize = useFluidPx(0.067); // ≈ 72px at 1080p, matches size-[min(6.7vh,6.7vw)]
@@ -55,21 +99,44 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     : 'shadow-[0px_2px_5px_0px_rgba(227,139,249,0.25)]';
 
   // ── Left card inner content ─────────────────────────────────────────────────
-  const leftCardContent = isDoubles ? (
+  const leftCardContent = isTournament ? (
+    /* Tournament layout — team logo instead of player photo(s) */
+    <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
+      <div className="shrink-0 size-[min(6.7vh,6.7vw)] rounded-full overflow-hidden">
+        <ImageWithFallback
+          className="object-cover w-full h-full"
+          fallback="/images/empty-user.svg"
+          src={state.teamOneLogo ?? ''}
+        />
+      </div>
+      <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
+        <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
+          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
+            {generatePlayerName(state.sideOnePlayerOne.name, isDoubles ? state.sideOnePlayerTwo?.name : undefined)}
+          </p>
+          {isSideOneActive ? (
+            <YellowHandicapPill handicap={state.teamOneHandicap} />
+          ) : (
+            <VioletHandicapPill handicap={state.teamOneHandicap} />
+          )}
+        </div>
+        {isSideOneActive ? <YellowDivider /> : <VioletDivider />}
+        <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
+          <p className="uppercase font-medium text-[min(2.2vh,2.2vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
+            {state.teamOneName}
+          </p>
+        </div>
+      </div>
+    </div>
+  ) : isDoubles ? (
     /* Double layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="relative shrink-0 size-[min(6.7vh,6.7vw)]">
         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
-          <ProfileCard
-            imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'}
-            size={profileSizeSm}
-          />
+          <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? defaultImages[0]} size={profileSizeSm} />
         </div>
         <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
-          <ProfileCard
-            imageUrl={state.sideOnePlayerTwo?.profilePhoto ?? '/images/empty-user.svg'}
-            size={profileSizeSm}
-          />
+          <ProfileCard imageUrl={state.sideOnePlayerTwo?.profilePhoto ?? defaultImages[1]} size={profileSizeSm} />
         </div>
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
@@ -90,7 +157,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Team Tournament layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0">
-        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
+        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? defaultImages[0]} size={profileSize} />
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -115,7 +182,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Single player layout */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0">
-        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
+        <ProfileCard imageUrl={state.sideOnePlayerOne.profilePhoto ?? defaultImages[0]} size={profileSize} />
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -134,21 +201,44 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   // ── Right card inner content ────────────────────────────────────────────────
-  const rightCardContent = isDoubles ? (
+  const rightCardContent = isTournament ? (
+    /* Tournament layout — team logo instead of player photo(s) */
+    <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
+      <div className="shrink-0 size-[min(6.7vh,6.7vw)] rounded-full overflow-hidden">
+        <ImageWithFallback
+          className="object-cover w-full h-full"
+          fallback="/images/empty-user.svg"
+          src={state.teamTwoLogo ?? ''}
+        />
+      </div>
+      <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
+        <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
+          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
+            {generatePlayerName(state.sideTwoPlayerOne.name, isDoubles ? state.sideTwoPlayerTwo?.name : undefined)}
+          </p>
+          {isSideTwoActive ? (
+            <YellowHandicapPill handicap={state.teamTwoHandicap} />
+          ) : (
+            <VioletHandicapPill handicap={state.teamTwoHandicap} />
+          )}
+        </div>
+        {isSideTwoActive ? <YellowDivider /> : <VioletDivider />}
+        <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
+          <p className="uppercase font-medium text-[min(2.2vh,2.2vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
+            {state.teamTwoName}
+          </p>
+        </div>
+      </div>
+    </div>
+  ) : isDoubles ? (
     /* Double layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="relative shrink-0 size-[min(6.7vh,6.7vw)]">
         <div className="absolute top-0 left-0" style={{ zIndex: 1 }}>
-          <ProfileCard
-            imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'}
-            size={profileSizeSm}
-          />
+          <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? defaultImages[2]} size={profileSizeSm} />
         </div>
         <div className="absolute bottom-0 right-0" style={{ zIndex: 2 }}>
-          <ProfileCard
-            imageUrl={state.sideTwoPlayerTwo?.profilePhoto ?? '/images/empty-user.svg'}
-            size={profileSizeSm}
-          />
+          <ProfileCard imageUrl={state.sideTwoPlayerTwo?.profilePhoto ?? defaultImages[3]} size={profileSizeSm} />
         </div>
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
@@ -169,7 +259,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Team Tournament layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0">
-        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
+        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? defaultImages[2]} size={profileSize} />
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -194,7 +284,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     /* Single player layout */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0">
-        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? '/images/empty-user.svg'} size={profileSize} />
+        <ProfileCard imageUrl={state.sideTwoPlayerOne.profilePhoto ?? defaultImages[2]} size={profileSize} />
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
@@ -213,13 +303,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   return (
-    <div className="absolute bottom-0 mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] mb-2 bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
+    <div className="absolute bottom-0 mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.5vh,1.5vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
           <div
             className={[
-              'absolute -top-[min(3.5vh,3.5vw)]',
+              'absolute -top-[min(3.5vh,3.5vw)] z-40',
               isSideOneActive ? 'left-[min(4.4vh,4.4vw)]' : 'right-[min(4.4vh,4.4vw)]',
             ].join(' ')}
           >
@@ -354,7 +444,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           }}
         >
           {/* Top Banner — tournament name, centered on this panel */}
-          <div className="absolute pointer-events-none left-1/2 -translate-x-1/2 -top-1/2 flex justify-center items-center z-20">
+          <div className="absolute pointer-events-none left-1/2 -translate-x-1/2 -top-1/2 flex justify-center items-center z-30">
             <div className="relative flex justify-center items-center w-[min(76.5vh,76.5vw)]">
               <img
                 src="/tournament-name-box.svg"
@@ -364,9 +454,16 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                   filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
                 }}
               />
-              <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate px-12 pb-1">
-                {(state.clubName || state.tournamentName) ?? ''}
-              </p>
+
+              {isTournament ? (
+                <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate px-12 pb-1">
+                  {state.tournamentName ?? ''} | {state.format}
+                </p>
+              ) : (
+                <p className="font-semibold text-white text-[min(2.2vh,2.2vw)] tracking-wider uppercase font-sans text-center absolute inset-x-0 pt-[min(1.1vh,1.1vw)] truncate px-12 pb-1">
+                  {state.clubName ?? ''}
+                </p>
+              )}
             </div>
           </div>
 
@@ -418,9 +515,19 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 </defs>
               </svg>
               <div className="absolute inset-0 flex justify-center items-center">
-                <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
-                  {state.sport === 'SNOOKER' ? 'Snooker' : 'Billiards'}
-                </span>
+                {isTournament ? (
+                  <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
+                    {state.tournamentSubItem?.tournamentItem?.tournamentPhase?.name
+                      ? state.tournamentSubItem.tournamentItem.tournamentPhase.name
+                      : state.sport === 'SNOOKER'
+                        ? 'Snooker'
+                        : 'Billiards'}
+                  </span>
+                ) : (
+                  <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
+                    {state.sport === 'SNOOKER' ? 'Snooker' : 'Billiards'}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -442,7 +549,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             </div>
 
             <div className="text-score-text font-semibold text-[min(4.7vh,4.7vw)] leading[130%]  border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
-              <p className="text-box-trim">{state.teamOneScore}</p>
+              <p className="text-box-trim">{displayTeamOneScore}</p>
             </div>
 
             {/* Total frames / break score */}
@@ -455,14 +562,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               }}
             >
               <span className="font-semibold text-[min(4.7vh,4.7vw)] leading-[130%] uppercase text-box-trim text-score-text text-box-trim">
-                {state.sets.length}
+                {teamScoreCenter}
               </span>
             </div>
 
             {/* Team 2 frame score (frames won) */}
 
             <div className="text-score-text font-semibold text-[min(4.7vh,4.7vw)] leading[130%]  border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
-              <p className="text-box-trim">{state.teamTwoScore}</p>
+              <p className="text-box-trim">{displayTeamTwoScore}</p>
             </div>
 
             {/* Team 2 game score (current frame points) */}

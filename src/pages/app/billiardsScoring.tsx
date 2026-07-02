@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import * as React from 'react';
+import { getRandomPlaceholderProfileImage } from '@/lib/utils';
 
 export function BilliardsScoring() {
   const {
@@ -48,6 +49,7 @@ export function BilliardsScoring() {
     handlePlayerConfirm,
     handleSettingsUpdate,
     handleTeamClick,
+    handleBreakOffTeamSelect,
     setOpenSettingsDrawer,
     setOpenPlayerSelectCard,
     selectedPlayerIndex,
@@ -66,6 +68,7 @@ export function BilliardsScoring() {
     handleBilliardsSelectColorBall,
     handleEndFrameButton,
     onBackInPlayerSelectModal,
+    onBackFromSettings,
     handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
@@ -73,12 +76,20 @@ export function BilliardsScoring() {
   } = useBilliardsScoring();
 
   const { selectPlayer } = useSelectPlayer();
+  const [defaultImages] = React.useState(() => [
+    getRandomPlaceholderProfileImage(),
+    getRandomPlaceholderProfileImage(),
+  ]);
 
   const handlePlayerConfirmWithApi = async (player: Player) => {
     const teamIdx = selectedTeamIndex;
     await handlePlayerConfirm(player);
     if (clubs.activeClub && player.id) {
-      selectPlayer({ venueId: clubs.activeClub.venueId, playerNumber: teamIdx + 1, userId: player.id });
+      try {
+        await selectPlayer({ venueId: clubs.activeClub.venueId, playerNumber: teamIdx + 1, userId: player.id });
+      } catch {
+        // Ignore "player already added" errors during back-navigation re-selection
+      }
     }
   };
 
@@ -123,7 +134,7 @@ export function BilliardsScoring() {
 
   const handleSettingsBack = () => {
     setOpenSettingsDrawer(false);
-    setOpenPlayerSelectCard(true);
+    onBackFromSettings();
   };
 
   const handleSettingsDrawerClose = () => {
@@ -183,7 +194,7 @@ export function BilliardsScoring() {
 
   const handleBreakOffBallConfirm = async () => {
     if (selectedBall === null || selectedBreakOffTeamIdx === null) return;
-    await handleTeamClick(selectedBreakOffTeamIdx);
+    await handleBreakOffTeamSelect(selectedBreakOffTeamIdx);
     await handleBilliardsSelectColorBall(selectedBall);
     setBreakOffStep(null);
     setSelectedBreakOffTeamIdx(null);
@@ -297,10 +308,10 @@ export function BilliardsScoring() {
               onCancel={() => handleTimerButtonAction('CANCEL')}
               onContinue={() => handleTimerButtonAction('CONFIRM')}
             />
-            <div className="flex gap-2 mt-4 mb-4 px-4">
-              <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
+            <div className="flex gap-2 mt-4 mb-4 px-4 container">
+              {/* <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
                 End Frame
-              </Button>
+              </Button> */}
               <Button onClick={() => setShowEndGameAlert(true)} variant="destructive" className="flex-1">
                 End Match
               </Button>
@@ -375,7 +386,7 @@ export function BilliardsScoring() {
                         }`}
                       >
                         <img
-                          src={player.profilePhoto ?? '/images/user-dummy-pic.jpg'}
+                          src={player.profilePhoto ?? defaultImages[idx]}
                           className="h-16 w-16 rounded-full object-cover"
                         />
                         <span className="text-sm font-medium text-center leading-tight">

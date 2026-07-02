@@ -37,6 +37,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { getRandomPlaceholderProfileImage } from '@/lib/utils';
 
 export function SnookerScoring() {
   const {
@@ -62,6 +63,7 @@ export function SnookerScoring() {
     snookerButtonDisabledState,
     numberOfRedsOnTable,
     handleTeamClick,
+    handleBreakOffTeamSelect,
     setOpenFoulDrawer,
     setOpenSettingsDrawer,
     setOpenPlayerSelectCard,
@@ -91,6 +93,7 @@ export function SnookerScoring() {
     handleEndFrameButton,
     teamActiveSetPoints,
     onBackInPlayerSelectModal,
+    onBackFromSettings,
     handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
@@ -100,6 +103,9 @@ export function SnookerScoring() {
   const [searchParams] = useSearchParams();
   const playerCount = Number(searchParams.get('playerCount') ?? '2') as 2 | 4;
   const { selectPlayer } = useSelectPlayer();
+  const [defaultImages] = React.useState(() =>
+    Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()),
+  );
 
   const handlePlayerConfirmWithApi = async (player: Player) => {
     const teamIdx = selectedTeamIndex;
@@ -107,7 +113,11 @@ export function SnookerScoring() {
     await handlePlayerConfirm(player);
     if (clubs.activeClub && player.id) {
       const playerNumber = playerCount === 2 ? teamIdx + 1 : teamIdx * 2 + playerIdx + 1;
-      selectPlayer({ venueId: clubs.activeClub.venueId, playerNumber, userId: player.id });
+      try {
+        await selectPlayer({ venueId: clubs.activeClub.venueId, playerNumber, userId: player.id });
+      } catch {
+        // Ignore "player already added" errors during back-navigation re-selection
+      }
     }
   };
 
@@ -115,6 +125,33 @@ export function SnookerScoring() {
   const [showEndGameAlert, setShowEndGameAlert] = React.useState(false);
   const [showCloseConfirmDialog, setShowCloseConfirmDialog] = React.useState(false);
   const closeConfirmSource = React.useRef<'player' | 'settings' | null>(null);
+
+  // ── Settings drawer source tracking (Back button support) ─────────────
+  const [settingsHasBack, setSettingsHasBack] = React.useState(false);
+
+  const handleSettingsClickIntercepted = () => {
+    if (openPlayerSelectCard) {
+      setOpenPlayerSelectCard(false);
+      setSettingsHasBack(true);
+    } else {
+      setSettingsHasBack(false);
+    }
+    handleSettingsClick();
+  };
+
+  const handleSettingsBackClick = () => {
+    setOpenSettingsDrawer(false);
+    onBackFromSettings();
+  };
+
+  // Detect when the hook auto-transitions from player select → settings
+  const prevOpenPlayerSelectRef = React.useRef(openPlayerSelectCard);
+  React.useEffect(() => {
+    if (openSettingsDrawer && prevOpenPlayerSelectRef.current) {
+      setSettingsHasBack(true);
+    }
+    prevOpenPlayerSelectRef.current = openPlayerSelectCard;
+  }, [openSettingsDrawer, openPlayerSelectCard]);
 
   const handlePlayerDrawerClose = () => {
     const allRequired =
@@ -161,12 +198,18 @@ export function SnookerScoring() {
     }
   }, [snookerScoring.team1, snookerScoring.team2]);
 
-  const handleScoringButtonClickWithGuard = (buttonType: SnookerScoringButtonEnum) => {
+  const handleScoringButtonClickWithGuard = async (buttonType: SnookerScoringButtonEnum) => {
     if (
       buttonType === SnookerScoringButtonEnum.BREAK_OFF &&
       snookerScoring.scoreHistory.length === 0 &&
       getActiveTeam(snookerScoring.team1, snookerScoring.team2) === null
     ) {
+      if (playerCount === 4) {
+        // 4-player: skip "Who is breaking off?" dialog, go directly to player order modal
+        pendingBreakOff.current = true;
+        await handleBreakOffTeamSelect(0);
+        return;
+      }
       setSelectedBreakOffTeamIdx(null);
       setShowBreakOffDialog(true);
       return;
@@ -178,7 +221,7 @@ export function SnookerScoring() {
     if (selectedBreakOffTeamIdx === null) return;
     setShowBreakOffDialog(false);
     pendingBreakOff.current = true;
-    await handleTeamClick(selectedBreakOffTeamIdx);
+    await handleBreakOffTeamSelect(selectedBreakOffTeamIdx);
   };
 
   // PARENT UI
@@ -199,7 +242,7 @@ export function SnookerScoring() {
               <ScoringHeader
                 onBackClick={handleBackClick}
                 onMenuClick={() => setShowMenuDrawer(true)}
-                onSettingsClick={handleSettingsClick}
+                onSettingsClick={handleSettingsClickIntercepted}
                 showMenu={getActiveSet(snookerScoring.scoreHistory) !== undefined || snookerScoring.matchId !== null}
                 showUndo={snookerScoring.matchId !== null}
                 onUndoClick={() => handleUndoButtonClick()}
@@ -241,6 +284,8 @@ export function SnookerScoring() {
                 defaultNoOfPlayers={defaultNoOfPlayers}
                 teamOneLabel={getTeamLabel(snookerScoring.team1.players)}
                 teamTwoLabel={getTeamLabel(snookerScoring.team2.players)}
+                showBack={settingsHasBack}
+                onBack={handleSettingsBackClick}
                 onClose={handleSettingsDrawerClose}
               />
               <SelectPlayerDrawer
@@ -257,8 +302,8 @@ export function SnookerScoring() {
                   selectedTeamIndex,
                   selectedPlayerIndex,
                 )}
-                showCancel={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id !== null}
-                showBack={snookerScoring.team1.players[0].id !== null && snookerScoring.team2.players[0].id === null}
+                showCancel={snookerScoring.team1.players.every((p) => p.id !== null) && snookerScoring.team2.players.every((p) => p.id !== null)}
+                showBack={!(selectedTeamIndex === 0 && selectedPlayerIndex === 0)}
                 onBack={() => onBackInPlayerSelectModal()}
                 teamPlayers={[...snookerScoring.team1.players, ...snookerScoring.team2.players]}
                 onRemovePlayer={handleRemoveTeamPlayer}
@@ -309,10 +354,10 @@ export function SnookerScoring() {
                 onCancel={() => handleTimerButtonAction('CANCEL')}
                 onContinue={() => handleTimerButtonAction('CONFIRM')}
               />
-              <div className="flex gap-4 mt-4 mb-4 px-4">
-                <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
+              <div className="flex gap-4 mt-4 mb-4 px-4 container pb-4">
+                {/* <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
                   End Frame
-                </Button>
+                </Button> */}
                 <Button onClick={() => setShowEndGameAlert(true)} variant="destructive" className="flex-1">
                   End Match
                 </Button>
@@ -389,7 +434,7 @@ export function SnookerScoring() {
                       {players.map((p, i) => (
                         <img
                           key={i}
-                          src={p.profilePhoto ?? '/images/user-dummy-pic.jpg'}
+                          src={p.profilePhoto ?? defaultImages[idx * 2 + i]}
                           className="h-14 w-14 rounded-full object-cover"
                         />
                       ))}

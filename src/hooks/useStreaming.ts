@@ -145,7 +145,12 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       fetchMatchData(matchId);
     } else if (venueId) {
       fetchActiveMatchForVenue(venueId);
-      const topics = [`${venueId}/send-data`, `${venueId}/match-start`, `${venueId}/match-end`];
+      const topics = [
+        `${venueId}/send-data`,
+        `${venueId}/match-start`,
+        `${venueId}/match-end`,
+        `${venueId}/timer-updated`,
+      ];
       connectToMqtt(topics);
     }
 
@@ -224,7 +229,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         setViewershipData(initialData);
 
         if (res.matchStatus === 'LIVE' && !venueId) {
-          const venueTopics = [`${res.venueId}/send-data`, `${res.venueId}/match-end`];
+          const venueTopics = [`${res.venueId}/send-data`, `${res.venueId}/match-end`, `${res.venueId}/timer-updated`];
           connectToMqtt(venueTopics);
         }
       } else {
@@ -288,6 +293,15 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         break;
       case 'match-start':
         fetchActiveMatchForVenue(venueId!);
+        break;
+      case 'timer-updated':
+        setStreamingData((prevData) => {
+          if (prevData === null) return null;
+          return {
+            ...prevData,
+            expectedEndTimeDate: parsedMessage.expectedEndTimeDate,
+          };
+        });
         break;
       case 'match-end':
         if (currentStreamingData!.streams.find((stream) => stream.streamType === StreamType.CLOUD_PROVIDER)) {

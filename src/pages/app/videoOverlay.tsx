@@ -60,7 +60,6 @@ export function VideoOverlay() {
   if (streamingLoading || viewershipData === null || streamingData === null) {
     return <></>;
   }
-
   const activeSet = getActiveSet(viewershipData ? viewershipData.sets : []);
   const activeTurn = getActiveTurn(activeSet);
 
@@ -167,7 +166,7 @@ export function VideoOverlay() {
               <IGTemplate isTv={false} state={viewershipData} activeTurn={activeTurn} activeSet={activeSet} />
             ),
           }[viewershipData.tournamentId] || (
-            <IGTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+            <NewGeneral state={streamingData} activeSet={liveActiveSet} activeTurn={liveActiveTurn} isTv={false} />
           )
         ) : (
           // <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
