@@ -303,7 +303,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   return (
-    <div className="absolute bottom-0 mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
+    <div className="absolute bottom-[min(2vh,2vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.5vh,1.5vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
