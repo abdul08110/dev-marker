@@ -29,7 +29,6 @@ const PINK_CARD_STYLE = {
 
 const NewGeneral = (props: GeneralTemplateProps) => {
   const { state, activeTurn, activeSet } = props;
-  console.log(state);
   const isDoubles = !!state.sideOnePlayerTwo;
   const hasTeamName = !!(state.teamOneName || state.teamTwoName);
   const isTournament = !!state.tournamentId;
@@ -43,6 +42,46 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     (state.activePlayerId === state.sideTwoPlayerOne.id || state.activePlayerId === state.sideTwoPlayerTwo?.id);
 
   const breakScore = activeTurn?.score ?? 0;
+
+  // Total frames for the format — for tournament matches this is the configured
+  // noOfFrames (e.g. "race to 4"), not the number of frames played so far.
+  const noOfFrames = state.tournamentId === null ? state.sets.length : state.noOfFrames || 0;
+  const teamScoreCenter =
+    state.tournamentId && state.tournamentSubItem && state.showFormatsAsGameNumber && state.eventFormat === 'TEAMS'
+      ? `${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}`
+      : noOfFrames
+        ? `${noOfFrames}`
+        : null;
+
+  // Tournament "frames won" score can be a combination score (cumulative across
+  // games in the combo) rather than this individual match's own teamOne/teamTwoScore.
+  const hasTournamentCombo = !!(state.tournamentId && state.tournamentSubItem);
+  const isTeamReveresed = hasTournamentCombo
+    ? state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== state.tournamentTeamOneId
+    : false;
+
+  const tournamentTeamOneScore = state.tournamentSubItem
+    ? state.showCummulativeScoreInCombination
+      ? isTeamReveresed
+        ? (state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0)
+        : (state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0)
+      : isTeamReveresed
+        ? state.tournamentSubItem.tournamentItem.teamTwoScore
+        : state.tournamentSubItem.tournamentItem.teamOneScore
+    : null;
+
+  const tournamentTeamTwoScore = state.tournamentSubItem
+    ? state.showCummulativeScoreInCombination
+      ? isTeamReveresed
+        ? (state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0)
+        : (state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0)
+      : isTeamReveresed
+        ? state.tournamentSubItem.tournamentItem.teamOneScore
+        : state.tournamentSubItem.tournamentItem.teamTwoScore
+    : null;
+
+  const displayTeamOneScore = hasTournamentCombo ? tournamentTeamOneScore : state.teamOneScore;
+  const displayTeamTwoScore = hasTournamentCombo ? tournamentTeamTwoScore : state.teamTwoScore;
 
   // Stable per-slot fallback avatars — one each for sideOnePlayerOne/Two, sideTwoPlayerOne/Two
   const [defaultImages] = useState(() => Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()));
@@ -507,7 +546,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
             </div>
 
             <div className="text-score-text font-semibold text-[min(4.7vh,4.7vw)] leading[130%]  border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
-              <p className="text-box-trim">{state.teamOneScore}</p>
+              <p className="text-box-trim">{displayTeamOneScore}</p>
             </div>
 
             {/* Total frames / break score */}
@@ -520,14 +559,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               }}
             >
               <span className="font-semibold text-[min(4.7vh,4.7vw)] leading-[130%] uppercase text-box-trim text-score-text text-box-trim">
-                {state.sets.length}
+                {teamScoreCenter}
               </span>
             </div>
 
             {/* Team 2 frame score (frames won) */}
 
             <div className="text-score-text font-semibold text-[min(4.7vh,4.7vw)] leading[130%]  border-y text-center flex justify-center items-center px-[min(1.3vh,1.3vw)] bg-[#595959]/[.20] [border-image-source:linear-gradient(90deg,rgba(255,255,255,0.12)_14.82%,#FFFFFF_45%,rgba(255,255,255,0.12)_91.13%)] [border-image-slice:1] w-[min(8vh,8vw)]">
-              <p className="text-box-trim">{state.teamTwoScore}</p>
+              <p className="text-box-trim">{displayTeamTwoScore}</p>
             </div>
 
             {/* Team 2 game score (current frame points) */}
