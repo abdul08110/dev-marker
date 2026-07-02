@@ -146,7 +146,7 @@ export function Lineup({ data, isTv, clubName, clubLogo }: LineupProps) {
             className="flex-1 min-w-0 h-full flex flex-col justify-center"
             style={{ gap: 'min(1.5vw, 1.5vh)' }}
           >
-            {visibleGames.map((subItem, index) => (
+            {visibleGames.map((subItem) => (
               <GameRow key={subItem.id} subItem={subItem} />
             ))}
           </div>
@@ -194,9 +194,9 @@ function GameRow({ subItem }: { subItem: LineupSubItem }) {
           </>
         ) : (
           <>
-            <PlayerPanel name={subItem.teamOnePlayerOne?.name ?? 'TBD'} align="right" />
+            <PlayerPanel name={subItem.teamOnePlayerOne?.name ?? 'TBD'} />
             <ScorePill score={centerText} />
-            <PlayerPanel name={subItem.teamTwoPlayerOne?.name ?? 'TBD'} align="left" />
+            <PlayerPanel name={subItem.teamTwoPlayerOne?.name ?? 'TBD'} />
           </>
         )}
       </div>
@@ -204,7 +204,7 @@ function GameRow({ subItem }: { subItem: LineupSubItem }) {
   );
 }
 
-function PlayerPanel({ name, align }: { name: string; align: 'left' | 'right' }) {
+function PlayerPanel({ name }: { name: string }) {
   return (
     <div
       className="flex-1 min-w-0 flex items-center justify-center"
