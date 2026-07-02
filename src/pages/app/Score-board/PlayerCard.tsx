@@ -83,7 +83,9 @@ export function PlayerCard({
             <div className="">
               <div>
                 <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim truncate text-wrap line-clamp-2 font-medium pt-[min(1.2vh,1.2vh)]">
-                  {isDoubles ? (isPlayerOneActive ? playerOneName : playerTwoName)?.split(' ')[0] : playerOneName}
+                  {isDoubles
+                    ? (isPlayerOneActive ? playerOneName.trim() : playerTwoName?.trim())?.split(' ')[0]
+                    : playerOneName.trim()}
                 </p>
 
                 {isDoubles && (
@@ -104,10 +106,10 @@ export function PlayerCard({
                 <div className="flex items-center justify-between gap-[min(1.5vh,1.5vw)] w-full pt-[min(1.5vh,1.5vw)]">
                   <p className="font-medium text-[min(5.3vh,5.3vw)] leading-[130%] text-score-text text-box-trim truncate">
                     {isDoubles
-                      ? (isPlayerOneActive ? playerTwoName : playerOneName)?.split(' ')[0]
+                      ? (isPlayerOneActive ? playerTwoName.trim() : playerOneName.trim())?.split(' ')[0]
                       : isPlayerOneActive
-                        ? playerTwoName
-                        : playerOneName}
+                        ? playerTwoName.trim()
+                        : playerOneName.trim()}
                   </p>
                 </div>
               )}
