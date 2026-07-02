@@ -17,7 +17,7 @@ interface GeneralTemplateProps {
 
 const YELLOW_CARD_STYLE = {
   background:
-    'linear-gradient(90deg, #010305 0%, #19162B 36.51%, #18142E 103.21%) padding-box, linear-gradient(144.83deg, rgba(213, 255, 154, 0.02) -0.26%, #C1F052 34.38%, #AAEA4B 58.47%, #B7F47B 92.16%) border-box',
+    'radial-gradient(50% 50% at 50% 50%, #39205C 0%, #181332 100%) padding-box, linear-gradient(144.83deg, rgba(213, 255, 154, 0.02) -0.26%, #C1F052 34.38%, #AAEA4B 58.47%, #B7F47B 92.16%) border-box',
   border: '1px solid transparent',
 };
 
@@ -303,7 +303,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   return (
-    <div className="absolute bottom-0 mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
+    <div className="absolute bottom-[min(2vh,2vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.5vh,1.5vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
@@ -437,7 +437,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   linear-gradient(
     180deg,
     rgba(227, 169, 242, 1) 0%,
-    rgba(226, 179, 237, 0.6) 64%,
+    rgba(226, 179, 237, 0.6) 100%,
     rgba(17, 3, 15, 0.6) 100%
   ) border-box
 `,
