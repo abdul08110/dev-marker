@@ -262,7 +262,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
             }
 
             return (
-              <div className="grid grid-cols-2 w-full gap-2 py-4 pb-0 px-4">
+              <div className="grid grid-cols-2 w-full gap-3 py-4 pb-0 px-3">
                 <SnookerPointTypeDisplay
                   class={'gap-[0.3rem]'}
                   className={'text-[0.8rem] w-fit font-mono h-5 items-start'}
@@ -271,7 +271,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                   activeTurnPointTypes={teamOnePointTypes}
                 />
 
-                <div className="px-4">
+                <div className="">
                   <SnookerPointTypeDisplay
                     class={'gap-[0.3rem]'}
                     className={'text-[0.8rem] font-mono h-5 w-fit flex justify-center'}
@@ -283,7 +283,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
               </div>
             );
           })()}
-        <div className="p-4 space-y-2">
+        <div className="p-3 space-y-2">
           <div className="flex items-center gap-4 select-none">
             <p className="text-[#FFF2FD] text-[17px] shrink-0 font-medium">{props.state.teamOneScore}</p>
             <div className="bg-white/[.12] h-px w-full" />

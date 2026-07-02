@@ -120,11 +120,19 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       {/* Header */}
       <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
         <div className="flex items-center gap-[min(3vh,3vw)] py-[min(1.1vh,1.1vw)] w-fit justify-self-start">
-          <ImageWithFallback
-            className="object-cover size-[min(10vh,10vw)]"
-            fallback="/images/user-dummy-pic.jpg"
-            src={state.clubLogo ?? ''}
-          />
+          {state.tournamentLogo ? (
+            <ImageWithFallback
+              className="object-cover size-[min(12vh,12vw)] rounded-full"
+              fallback="/images/user-dummy-pic.jpg"
+              src={state.tournamentLogo || ''}
+            />
+          ) : (
+            <ImageWithFallback
+              className="object-cover size-[min(10vh,10vw)]"
+              fallback="/images/user-dummy-pic.jpg"
+              src={state.clubLogo || ''}
+            />
+          )}
           <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase">
             {state.tournamentId && state.tournamentSubItem ? state.tournamentName : state.clubName}
           </p>
@@ -206,7 +214,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               )} */}
 
               {isTournament && (
-                <div className="flex justify-center items-center py-4">
+                <div className="flex justify-center items-center py-5">
                   {/* <ImageWithFallback src={state.clubLogo} fallback="/images/user-dummy-pic.jpg" /> */}
                   <ImageWithFallback
                     className="object-cover size-[min(15vh,15vw)] rounded-full overflow-hidden"
