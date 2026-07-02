@@ -12,7 +12,7 @@ import useGetSponsorshipVideo from '@/api/app/useGetSponsorshipVideo';
 import useGetLineup from '@/api/app/useGetLineup';
 import { LineupResponse } from '@/api/app/types/lineup';
 
-const LINEUP_DISPLAY_MS = 15_000;
+const LINEUP_DISPLAY_MS = 30_000;
 
 export interface StreamState {
   streamType: StreamType;
@@ -95,6 +95,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const getLineupHook = useGetLineup();
   const [lineupData, setLineupData] = useState<LineupResponse | null>(null);
   const [showLineup, setShowLineup] = useState(false);
+  const [lineupClubInfo, setLineupClubInfo] = useState<{ clubName: string | null; clubLogo: string | null }>({ clubName: null, clubLogo: null });
   const lineupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
   const timeLeft = useTimer({
@@ -248,6 +249,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           const venueTopics = [`${res.venueId}/send-data`, `${res.venueId}/match-end`];
           connectToMqtt(venueTopics);
         }
+
+        if (res.matchStatus === 'COMPLETED') {
+          fetchLineupForCompletedMatch(initialData);
+        }
       } else {
         toast({
           title: 'Error',
@@ -351,6 +356,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
 
     if (lineup) {
       setLineupData(lineup);
+      setLineupClubInfo({ clubName: matchData.clubName, clubLogo: matchData.clubLogo });
       setShowLineup(true);
       lineupTimerRef.current = setTimeout(() => {
         setShowLineup(false);
@@ -476,6 +482,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
     sponsorshipVideoUrl,
     lineupData,
     showLineup,
+    lineupClubInfo,
   };
 };
 

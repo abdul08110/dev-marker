@@ -31,6 +31,7 @@ export function Tv() {
     sponsorshipVideoUrl,
     lineupData,
     showLineup,
+    lineupClubInfo,
   } = useStreaming(venueId || undefined);
 
   if (loading || streamingLoading) {
@@ -51,6 +52,7 @@ export function Tv() {
         sponsorshipVideoUrl={sponsorshipVideoUrl ?? undefined}
         lineupData={lineupData}
         showLineup={showLineup}
+        lineupClubInfo={lineupClubInfo}
       />
     </div>
   );

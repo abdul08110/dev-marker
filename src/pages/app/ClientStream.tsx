@@ -39,6 +39,7 @@ export function ClientStream() {
     sponsorshipVideoUrl,
     lineupData,
     showLineup,
+    lineupClubInfo,
   } = useStreaming(undefined, matchId ? matchId : undefined);
 
   if (loading || streamingLoading) {
@@ -61,6 +62,7 @@ export function ClientStream() {
           sponsorshipVideoUrl={sponsorshipVideoUrl ?? undefined}
           lineupData={lineupData}
           showLineup={showLineup}
+          lineupClubInfo={lineupClubInfo}
         />
         {isPortrait && streamingData && streamingData?.sets && streamingData?.sets.length > 0 && (
           <PortraitView timeLeft={timeLeft} state={viewershipData} />

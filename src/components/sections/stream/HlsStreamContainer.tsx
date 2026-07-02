@@ -14,6 +14,7 @@ interface HlsStreamContainerProps {
   updateTimer: (timeInMillseconds: number) => void;
   lineupData?: LineupResponse | null;
   showLineup?: boolean;
+  lineupClubInfo?: { clubName: string | null; clubLogo: string | null };
 }
 
 export function HlsStreamContainer(props: HlsStreamContainerProps) {
@@ -122,7 +123,7 @@ export function HlsStreamContainer(props: HlsStreamContainerProps) {
           )}
         </div>
       ) : props.showLineup && props.lineupData ? (
-        <Lineup data={props.lineupData} isTv />
+        <Lineup data={props.lineupData} isTv clubName={props.lineupClubInfo?.clubName ?? null} clubLogo={props.lineupClubInfo?.clubLogo ?? null} />
       ) : (
         <video
           autoPlay

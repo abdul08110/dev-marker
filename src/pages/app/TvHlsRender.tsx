@@ -19,6 +19,7 @@ export function TvHlsRender() {
     sponsorshipVideoUrl,
     lineupData,
     showLineup,
+    lineupClubInfo,
   } = useStreaming(venueId || undefined);
 
   const clubControllerHook = useGetClubController();
@@ -95,6 +96,7 @@ export function TvHlsRender() {
         state={viewershipData}
         lineupData={lineupData}
         showLineup={showLineup}
+        lineupClubInfo={lineupClubInfo}
       />
     </div>
   );

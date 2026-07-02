@@ -1,183 +1,202 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
-import { formatTimeMatchTime } from '@/utils/functions';
 import { LineupResponse, LineupSubItem } from '@/api/app/types/lineup';
 
 interface LineupProps {
   data: LineupResponse;
   isTv?: boolean;
+  clubName?: string | null;
+  clubLogo?: string | null;
 }
 
+function formatMatchDate(dateStr: string | null | undefined): string {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+  const day = date.getDate();
+  const suffix = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th';
+  const month = date.toLocaleString('en-US', { month: 'short' });
+  const year = date.getFullYear();
+  return `${day}${suffix} ${month}, ${year}`;
+}
+
+const MAX_VISIBLE_GAMES = 4;
 const PANEL_GRADIENT = 'radial-gradient(circle, rgba(71,43,108,0.5) 0%, rgba(47,31,79,0.75) 34%, rgba(24,19,50,1) 68%)';
+const BORDER_COLOR = 'rgba(227, 156, 245, 0.3)';
 
-const STATUS_STYLES: Record<LineupSubItem['status'], string> = {
-  COMPLETED: 'bg-emerald-500/20 border-emerald-400 text-emerald-300',
-  LIVE: 'bg-amber-500/20 border-amber-400 text-amber-300',
-  PENDING: 'bg-white/10 border-white/30 text-white/60',
-};
-
-export function Lineup({ data, isTv }: LineupProps) {
-  const [elapsed, setElapsed] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => setElapsed((prev) => prev + 1), 1000);
-    return () => clearInterval(id);
-  }, []);
+export function Lineup({ data, isTv, clubName, clubLogo }: LineupProps) {
+  const visibleGames = data.tournamentSubItems.slice(0, MAX_VISIBLE_GAMES);
 
   return (
     <motion.main
       initial={{ opacity: 0, y: isTv ? 40 : 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(3vh,3vw)] py-[min(2vh,2vw)] bg-no-repeat flex flex-col overflow-hidden"
+      className="h-screen w-screen flex flex-col overflow-hidden bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center bg-no-repeat"
+      style={{
+        padding: 'min(2vw, 2vh) min(4vw, 4vh)',
+      }}
     >
-      <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
-        <div className="flex items-center gap-[min(3vh,3vw)] py-[min(1.1vh,1.1vw)] w-fit justify-self-start">
-          <ImageWithFallback
-            className="object-cover size-[min(10vh,10vw)]"
-            fallback="/images/user-dummy-pic.jpg"
-            src={data.tournamentTeamOne.logo}
-          />
-          <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase">
-            {data.tournamentTeamOne.name}
-          </p>
+      {/* Top bar */}
+      <div className="flex items-center justify-between shrink-0" style={{ paddingBottom: 'min(1vw, 1vh)' }}>
+        <div className="flex items-center min-w-0 flex-1" style={{ gap: 'min(1.5vw, 1.5vh)' }}>
+          {clubLogo && (
+            <ImageWithFallback
+              className="object-cover rounded-full shrink-0"
+              style={{ width: 'min(7vw, 7vh)', height: 'min(7vw, 7vh)' }}
+              fallback="/images/user-dummy-pic.jpg"
+              src={clubLogo}
+            />
+          )}
+          {clubName && (
+            <p className="text-white font-medium uppercase truncate" style={{ fontSize: 'min(3vw, 3vh)' }}>
+              {clubName}
+            </p>
+          )}
         </div>
-
-        <ImageWithFallback
-          className="justify-self-center w-[min(37vh,37vw)] h-auto"
-          fallback="/images/clubliv-final-logo.png"
-          src="/images/logos/clubliv-logo.svg"
-        />
-
-        <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
-          match time {formatTimeMatchTime(elapsed)}
-        </p>
+        <div className="shrink-0">
+          <ImageWithFallback
+            className="h-auto"
+            style={{ width: 'min(25vw, 25vh)' }}
+            fallback="/images/clubliv-final-logo.png"
+            src="/images/logos/clubliv-logo.svg"
+          />
+        </div>
+        <div className="flex-1 flex justify-end">
+          {data.tournamentSubItems[0]?.dateScheduled && (
+            <p className="text-white font-medium" style={{ fontSize: 'min(2.5vw, 2.5vh)' }}>
+              {formatMatchDate(data.tournamentSubItems[0].dateScheduled)}
+            </p>
+          )}
+        </div>
       </div>
 
-      <FixtureHeader data={data} />
+      {/* Divider below top bar */}
+      <div className="shrink-0" style={{ height: '2px', background: `linear-gradient(to right, transparent, ${BORDER_COLOR} 15%, ${BORDER_COLOR} 85%, transparent)` }} />
 
-      <div className="flex-1 min-h-0 flex items-stretch gap-[min(2vh,2vw)] mt-[min(2.5vh,2.5vw)]">
-        <div className="shrink-0 size-[min(18vh,18vw)] self-center">
-          <ImageWithFallback
-            className="size-full object-cover rounded-full"
-            fallback="/images/user-dummy-pic.jpg"
-            src={data.tournamentTeamOne.logo}
-            alt={data.tournamentTeamOne.name}
-          />
+      {/* Content area — 90% height, centered */}
+      <div className="flex-1 flex flex-col justify-center items-center" style={{ height: '90%' }}>
+
+        {/* Fixture header with team logos — 20% */}
+        <div
+          className="w-full flex items-center justify-center"
+          style={{ height: '20%', gap: 'min(2vw, 2vh)' }}
+        >
+          {/* Left team logo */}
+          <div
+            className="shrink-0 rounded-full overflow-hidden"
+            style={{
+              width: 'min(18vw, 18vh)',
+              height: 'min(18vw, 18vh)',
+              border: '2px solid rgba(100, 70, 180, 0.5)',
+              boxShadow: '0 0 30px rgba(80, 50, 160, 0.4)',
+            }}
+          >
+            <ImageWithFallback className="size-full object-cover" fallback="/images/user-dummy-pic.jpg" src={data.tournamentTeamOne.logo} />
+          </div>
+
+          <div className="flex items-stretch overflow-hidden flex-1 min-w-0" style={{ maxHeight: 'min(7vw, 7vh)', height: '100%', border: `2px solid ${BORDER_COLOR}`, borderRadius: 'min(0.8vw, 0.8vh)' }}>
+            <div
+              className="flex-1 flex items-center justify-center min-w-0"
+              style={{ padding: '0 min(2vw, 2vh)', backgroundImage: PANEL_GRADIENT }}
+            >
+              <p className="font-bold text-white uppercase truncate" style={{ fontSize: 'min(2.8vw, 2.8vh)' }}>
+                {data.tournamentTeamOne.name}
+              </p>
+            </div>
+            <div
+              className="shrink-0 flex items-center justify-center bg-[#AB51C6]"
+              style={{ padding: '0 min(3vw, 3vh)' }}
+            >
+              <p className="font-bold text-white whitespace-nowrap" style={{ fontSize: 'min(2.8vw, 2.8vh)' }}>
+                VS
+              </p>
+            </div>
+            <div
+              className="flex-1 flex items-center justify-center min-w-0"
+              style={{ padding: '0 min(2vw, 2vh)', backgroundImage: PANEL_GRADIENT }}
+            >
+              <p className="font-bold text-white uppercase truncate" style={{ fontSize: 'min(2.8vw, 2.8vh)' }}>
+                {data.tournamentTeamTwo.name}
+              </p>
+            </div>
+          </div>
+
+          {/* Right team logo */}
+          <div
+            className="shrink-0 rounded-full overflow-hidden"
+            style={{
+              width: 'min(18vw, 18vh)',
+              height: 'min(18vw, 18vh)',
+              border: '2px solid rgba(100, 70, 180, 0.5)',
+              boxShadow: '0 0 30px rgba(80, 50, 160, 0.4)',
+            }}
+          >
+            <ImageWithFallback className="size-full object-cover" fallback="/images/user-dummy-pic.jpg" src={data.tournamentTeamTwo.logo} />
+          </div>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-[min(2vh,2vw)] px-[min(1vh,1vw)]">
-          {data.tournamentSubItems.map((subItem) => (
-            <GameRow key={subItem.id} subItem={subItem} />
-          ))}
-        </div>
-
-        <div className="shrink-0 size-[min(18vh,18vw)] self-center">
-          <ImageWithFallback
-            className="size-full object-cover rounded-full"
-            fallback="/images/user-dummy-pic.jpg"
-            src={data.tournamentTeamTwo.logo}
-            alt={data.tournamentTeamTwo.name}
-          />
+        {/* Lineup area — 75%, aligned with fixture header */}
+        <div
+          className="w-full flex items-center"
+          style={{ height: '75%', paddingLeft: 'calc(min(18vw, 18vh) + min(2vw, 2vh))', paddingRight: 'calc(min(18vw, 18vh) + min(2vw, 2vh))' }}
+        >
+          {/* Game rows */}
+          <div
+            className="flex-1 min-w-0 h-full flex flex-col justify-center"
+            style={{ gap: 'min(1.5vw, 1.5vh)' }}
+          >
+            {visibleGames.map((subItem, index) => (
+              <GameRow key={subItem.id} subItem={subItem} />
+            ))}
+          </div>
         </div>
       </div>
     </motion.main>
   );
 }
 
-function FixtureHeader({ data }: { data: LineupResponse }) {
-  return (
-    <div className="flex items-stretch h-[min(9vh,9vw)] border border-white/[0.12] overflow-hidden shrink-0 mt-[min(2vh,2vw)]">
-      <div className="flex-1 flex items-center gap-[min(1.3vh,1.3vw)] bg-[#AB51C6] border border-[#E3A9F2] rounded-l-[6px] px-[min(1.5vh,1.5vw)] min-w-0">
-        <ImageWithFallback
-          className="size-[min(6vh,6vw)] object-cover rounded-full shrink-0"
-          fallback="/images/user-dummy-pic.jpg"
-          src={data.tournamentTeamOne.logo}
-          alt={data.tournamentTeamOne.name}
-        />
-        <p className="font-bold text-[min(4vh,4vw)] leading-[130%] text-white text-box-trim uppercase truncate drop-shadow-[0px_1px_2px_rgba(0,0,0,0.98)]">
-          {data.tournamentTeamOne.name}
-        </p>
-      </div>
-      <div
-        className="shrink-0 flex items-center justify-center border border-[#E39CF5] px-[min(3.7vh,3.7vw)] py-[min(1.48vh,1.48vw)]"
-        style={{ backgroundImage: PANEL_GRADIENT }}
-      >
-        <p className="font-semibold text-[min(4.2vh,4.2vw)] leading-[130%] text-score-text text-box-trim">
-          {data.teamOneScore} — {data.teamTwoScore}
-        </p>
-      </div>
-      <div className="flex-1 flex items-center justify-end gap-[min(1.3vh,1.3vw)] bg-[#AB51C6] border border-[#E3A9F2] rounded-r-[6px] px-[min(1.5vh,1.5vw)] min-w-0">
-        <p className="font-bold text-[min(4vh,4vw)] leading-[130%] text-white text-box-trim uppercase truncate text-right drop-shadow-[0px_1px_2px_rgba(0,0,0,0.98)]">
-          {data.tournamentTeamTwo.name}
-        </p>
-        <ImageWithFallback
-          className="size-[min(6vh,6vw)] object-cover rounded-full shrink-0"
-          fallback="/images/user-dummy-pic.jpg"
-          src={data.tournamentTeamTwo.logo}
-          alt={data.tournamentTeamTwo.name}
-        />
-      </div>
-    </div>
-  );
-}
-
 function GameRow({ subItem }: { subItem: LineupSubItem }) {
   const { gameFormat } = subItem;
   const isDoubles = gameFormat.noOfPlayers > 2;
-  const score = subItem.match ? `${subItem.match.teamOneScore} - ${subItem.match.teamTwoScore}` : '— - —';
+  const isCompleted = subItem.status === 'COMPLETED' && subItem.match;
+  const centerText = isCompleted
+    ? `${subItem.match!.currentSetTeamOneScore} - ${subItem.match!.currentSetTeamTwoScore}`
+    : 'VS';
 
   return (
-    <div className="flex flex-col items-center w-full shrink-0">
-      <div className="relative h-[min(4.8vh,4.8vw)] w-[min(50vh,50vw)] shrink-0 flex items-center justify-center gap-[min(1vh,1vw)]">
-        <img src="/images/test/round-label-bg.svg" alt="" className="absolute inset-0 size-full" />
-        <p className="relative font-semibold text-[min(3.2vh,3.2vw)] leading-[130%] text-score-text text-box-trim uppercase">
-          Game {gameFormat.matchNo} · {gameFormat.categoryName} · {gameFormat.name}
-        </p>
-        <span
-          className={`relative shrink-0 border rounded-full px-[min(1vh,1vw)] py-[min(0.2vh,0.2vw)] text-[min(2.2vh,2.2vw)] font-semibold uppercase ${STATUS_STYLES[subItem.status]}`}
+    <div className="flex flex-col items-center w-full" style={{ flex: '0 0 auto' }}>
+      {/* Game label — trapezoid SVG background */}
+      <div className="relative flex items-center justify-center shrink-0" style={{ width: '60%' }}>
+        <img src="/images/test/round-label-bg.svg" alt="" className="absolute inset-0 w-full h-full" />
+        <p
+          className="relative font-medium text-white uppercase truncate text-center"
+          style={{ fontSize: 'min(2.8vw, 2.8vh)', padding: 'min(0.8vw, 0.8vh) 0' }}
         >
-          {subItem.status}
-        </span>
+          {gameFormat.name} {gameFormat.categoryName}
+        </p>
       </div>
 
-      <div className="flex w-full items-stretch border border-white/[0.12] overflow-hidden">
+      {/* Player row */}
+      <div
+        className="flex w-full items-stretch overflow-hidden"
+        style={{
+          border: `2px solid ${BORDER_COLOR}`,
+          borderRadius: 'min(0.8vw, 0.8vh)',
+          marginTop: 'min(0.1vw, 0.1vh)',
+        }}
+      >
         {isDoubles ? (
           <>
-            <PlayerPairPanel
-              top={subItem.teamOnePlayerOne?.name ?? 'TBD'}
-              bottom={subItem.teamOnePlayerTwo?.name ?? 'TBD'}
-              rounded="left"
-              handicap={gameFormat.isHandicapAllowed && subItem.teamOneHandicap > 0 ? subItem.teamOneHandicap : null}
-              isWinner={subItem.teamWinningIndex === 1}
-            />
-            <ScorePill score={score} tall />
-            <PlayerPairPanel
-              top={subItem.teamTwoPlayerOne?.name ?? 'TBD'}
-              bottom={subItem.teamTwoPlayerTwo?.name ?? 'TBD'}
-              rounded="right"
-              handicap={gameFormat.isHandicapAllowed && subItem.teamTwoHandicap > 0 ? subItem.teamTwoHandicap : null}
-              isWinner={subItem.teamWinningIndex === 2}
-            />
+            <PlayerPairPanel top={subItem.teamOnePlayerOne?.name ?? 'TBD'} bottom={subItem.teamOnePlayerTwo?.name ?? 'TBD'} />
+            <ScorePill score={centerText} tall />
+            <PlayerPairPanel top={subItem.teamTwoPlayerOne?.name ?? 'TBD'} bottom={subItem.teamTwoPlayerTwo?.name ?? 'TBD'} />
           </>
         ) : (
           <>
-            <PlayerPanel
-              name={subItem.teamOnePlayerOne?.name ?? 'TBD'}
-              align="right"
-              rounded="left"
-              handicap={gameFormat.isHandicapAllowed && subItem.teamOneHandicap > 0 ? subItem.teamOneHandicap : null}
-              isWinner={subItem.teamWinningIndex === 1}
-            />
-            <ScorePill score={score} />
-            <PlayerPanel
-              name={subItem.teamTwoPlayerOne?.name ?? 'TBD'}
-              align="left"
-              rounded="right"
-              handicap={gameFormat.isHandicapAllowed && subItem.teamTwoHandicap > 0 ? subItem.teamTwoHandicap : null}
-              isWinner={subItem.teamWinningIndex === 2}
-            />
+            <PlayerPanel name={subItem.teamOnePlayerOne?.name ?? 'TBD'} align="right" />
+            <ScorePill score={centerText} />
+            <PlayerPanel name={subItem.teamTwoPlayerOne?.name ?? 'TBD'} align="left" />
           </>
         )}
       </div>
@@ -185,92 +204,53 @@ function GameRow({ subItem }: { subItem: LineupSubItem }) {
   );
 }
 
-function PlayerPanel({
-  name,
-  align,
-  rounded,
-  handicap,
-  isWinner,
-}: {
-  name: string;
-  align: 'left' | 'right';
-  rounded: 'left' | 'right';
-  handicap: number | null;
-  isWinner: boolean;
-}) {
+function PlayerPanel({ name, align }: { name: string; align: 'left' | 'right' }) {
   return (
     <div
-      className={`flex-1 min-w-0 flex items-center gap-[min(1vh,1vw)] h-[min(6.5vh,6.5vw)] border py-[min(1.3vh,1.3vw)] px-[min(1.6vh,1.6vw)] ${
-        isWinner ? 'border-emerald-400' : 'border-[#E39CF5]'
-      } ${align === 'right' ? 'justify-end' : 'justify-start'} ${
-        rounded === 'left' ? 'rounded-l-[4px]' : 'rounded-r-[4px]'
-      }`}
-      style={{ backgroundImage: PANEL_GRADIENT }}
+      className="flex-1 min-w-0 flex items-center justify-center"
+      style={{
+        padding: 'min(1.5vw, 1.5vh) min(3vw, 3vh)',
+        backgroundImage: PANEL_GRADIENT,
+      }}
     >
-      {isWinner && <span className="text-emerald-400 shrink-0">●</span>}
-      <p className="font-semibold text-[min(3.2vh,3.2vw)] leading-[130%] text-score-text text-box-trim uppercase truncate drop-shadow-[0px_1px_2px_rgba(0,0,0,0.98)]">
+      <p className="font-medium text-white uppercase truncate" style={{ fontSize: 'min(2.8vw, 2.8vh)' }}>
         {name}
       </p>
-      {handicap !== null && <HandicapBadge value={handicap} />}
     </div>
   );
 }
 
-function PlayerPairPanel({
-  top,
-  bottom,
-  rounded,
-  handicap,
-  isWinner,
-}: {
-  top: string;
-  bottom: string;
-  rounded: 'left' | 'right';
-  handicap: number | null;
-  isWinner: boolean;
-}) {
+function PlayerPairPanel({ top, bottom }: { top: string; bottom: string }) {
   return (
     <div
-      className={`relative flex-1 min-w-0 flex flex-col items-center justify-center gap-[min(1.6vh,1.6vw)] h-[min(11.6vh,11.6vw)] border py-[min(1.8vh,1.8vw)] ${
-        isWinner ? 'border-emerald-400' : 'border-[#E39CF5]'
-      } ${rounded === 'left' ? 'rounded-l-[4px]' : 'rounded-r-[4px]'}`}
-      style={{ backgroundImage: PANEL_GRADIENT }}
+      className="flex-1 min-w-0 flex flex-col items-center justify-center"
+      style={{
+        padding: 'min(0.5vw, 0.5vh)',
+        gap: 'min(0.5vw, 0.5vh)',
+        backgroundImage: PANEL_GRADIENT,
+      }}
     >
-      {handicap !== null && (
-        <div className="absolute top-[min(0.5vh,0.5vw)] right-[min(0.5vh,0.5vw)]">
-          <HandicapBadge value={handicap} />
-        </div>
-      )}
-      <p className="w-full font-semibold text-[min(3.2vh,3.2vw)] leading-[130%] text-score-text text-box-trim uppercase text-center truncate drop-shadow-[0px_1px_2px_rgba(0,0,0,0.98)]">
+      <p className="w-full font-medium text-white uppercase text-center truncate" style={{ fontSize: 'min(2.8vw, 2.8vh)', padding: '0 min(2vw, 2vh)' }}>
         {top}
       </p>
-      <img src="/images/test/divider-line.svg" alt="" className="w-full h-[min(0.32vh,0.32vw)]" />
-      <p className="w-full font-semibold text-[min(3.2vh,3.2vw)] leading-[130%] text-score-text text-box-trim uppercase text-center truncate drop-shadow-[0px_1px_2px_rgba(0,0,0,0.98)]">
+      <div className="bg-gradient-to-r from-transparent via-[#AB51C6]/80 to-transparent" style={{ width: '80%', height: '1px' }} />
+      <p className="w-full font-medium text-white uppercase text-center truncate" style={{ fontSize: 'min(2.8vw, 2.8vh)', padding: '0 min(2vw, 2vh)' }}>
         {bottom}
       </p>
     </div>
   );
 }
 
-function ScorePill({ score, tall }: { score: string; tall?: boolean }) {
+function ScorePill({ score }: { score: string; tall?: boolean }) {
   return (
     <div
-      className={`shrink-0 flex items-center justify-center bg-[#AB51C6] border border-[#E3A9F2] px-[min(1.3vh,1.3vw)] ${
-        tall ? 'h-[min(11.6vh,11.6vw)]' : 'h-[min(6.5vh,6.5vw)]'
-      }`}
+      className="shrink-0 flex items-center justify-center bg-[#AB51C6]"
+      style={{ width: 'min(12vw, 12vh)', padding: '0 min(1vw, 1vh)' }}
     >
-      <p className="font-semibold text-[min(3.2vh,3.2vw)] leading-[130%] text-score-text text-box-trim uppercase">
+      <p className="font-bold text-white uppercase whitespace-nowrap" style={{ fontSize: 'min(3.2vw, 3.2vh)' }}>
         {score}
       </p>
     </div>
-  );
-}
-
-function HandicapBadge({ value }: { value: number }) {
-  return (
-    <span className="shrink-0 bg-black/40 border border-white/30 rounded-full px-[min(0.9vh,0.9vw)] text-[min(2.2vh,2.2vw)] font-semibold text-white">
-      +{value}
-    </span>
   );
 }
 

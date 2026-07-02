@@ -40,6 +40,7 @@ interface StreamContainerProps {
   sponsorshipVideoUrl?: string;
   lineupData?: LineupResponse | null;
   showLineup?: boolean;
+  lineupClubInfo?: { clubName: string | null; clubLogo: string | null };
 }
 
 export function StreamContainer(props: StreamContainerProps) {
@@ -568,7 +569,7 @@ export function StreamContainer(props: StreamContainerProps) {
           )}
         </div>
       ) : props.showLineup && props.lineupData ? (
-        <Lineup data={props.lineupData} isTv={props.isTv} />
+        <Lineup data={props.lineupData} isTv={props.isTv} clubName={props.lineupClubInfo?.clubName ?? null} clubLogo={props.lineupClubInfo?.clubLogo ?? null} />
       ) : (
         <video
           autoPlay
