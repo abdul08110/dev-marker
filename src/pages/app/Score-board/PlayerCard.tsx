@@ -100,7 +100,7 @@ export function PlayerCard({
                   </p>
                 </div>
               ) : (
-                <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim truncate font-medium pt-[min(1.2vh,1.2vh)]">
+                <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim text-wrap line-clamp-2 font-medium pt-[min(1.2vh,1.2vh)]">
                   {playerOneName.trim()}
                 </p>
               )}
