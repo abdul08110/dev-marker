@@ -185,9 +185,13 @@ const useBilliardsScoring = () => {
 
     if (activeSet) {
       await dispatch(handleTeamSwitch({ createUndoAndPushData: true }));
-    } else {
-      await dispatch(handleSelectionOfBreakOffTeam({ teamIndex }));
     }
+    // Break-off team selection is handled only via the break-off dialog
+  };
+
+  // Called from break-off dialog to set the active team
+  const handleBreakOffTeamSelect = async (teamIndex: number) => {
+    await dispatch(handleSelectionOfBreakOffTeam({ teamIndex }));
   };
 
   const handleUndoButtonClick = async () => {
@@ -248,6 +252,10 @@ const useBilliardsScoring = () => {
 
   const handlePlayerSelect = async (playerIndex: number, teamIndex: number) => {
     if (!billiardsScoring.matchId && !billiardsScoring.tournamentId) {
+      // Don't allow player selection during break-off waiting state
+      const allSelected = billiardsScoring.team1.players[0].id !== null &&
+        billiardsScoring.team2.players[0].id !== null;
+      if (allSelected) return;
       setSelectedTeamIndex(teamIndex);
       setSelectedPlayerIndex(playerIndex);
       setOpenPlayerSelectCard(true);
@@ -281,10 +289,32 @@ const useBilliardsScoring = () => {
 
   const onBackInPlayerSelectModal = async () => {
     if (billiardsScoring.team1.players[0].id !== null) {
+      // Clear player 1 so user must re-select
+      dispatch(
+        setTeamPlayer({
+          teamIndex: 0,
+          playerIndex: 0,
+          player: { id: null, name: 'Player 1', profilePhoto: null },
+        }),
+      );
       setSelectedTeamIndex(0);
       setSelectedPlayerIndex(0);
       setOpenPlayerSelectCard(true);
     }
+  };
+
+  const onBackFromSettings = () => {
+    // Clear player 2 so user must re-select
+    dispatch(
+      setTeamPlayer({
+        teamIndex: 1,
+        playerIndex: 0,
+        player: { id: null, name: 'Player 1', profilePhoto: null },
+      }),
+    );
+    setSelectedTeamIndex(1);
+    setSelectedPlayerIndex(0);
+    setOpenPlayerSelectCard(true);
   };
 
   const handleRemoveTeamPlayer = (globalIndex: number) => {
@@ -475,6 +505,7 @@ const useBilliardsScoring = () => {
     handleSettingsUpdate,
     handleGoToHome,
     handleTeamClick,
+    handleBreakOffTeamSelect,
     setOpenSettingsDrawer,
     setOpenPlayerSelectCard,
     selectedPlayerIndex,
@@ -497,6 +528,7 @@ const useBilliardsScoring = () => {
     handleBilliardsSelectColorBall,
     handleEndFrameButton,
     onBackInPlayerSelectModal,
+    onBackFromSettings,
     handleRemoveTeamPlayer,
     showTimerModal,
     handleTimerButtonAction,
