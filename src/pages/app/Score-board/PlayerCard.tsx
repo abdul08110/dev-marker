@@ -90,7 +90,7 @@ export function PlayerCard({
           <div className="flex flex-col justify-between gap-[min(1.3vh,1.3vw)] min-w-0 flex-1">
             <div>
               {isDoubles && playerTwoName ? (
-                <div className="space-y-3">
+                <div className="space-y-3 pr-4">
                   <p className="flex items-baseline gap-[0.3ch] text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim font-medium pt-[min(1.2vh,1.2vh)]">
                     <span className="min-w-0 truncate">{playerOneName.trim()}</span>
                     <span className="shrink-0">&</span>
