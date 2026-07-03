@@ -1,4 +1,5 @@
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
+import { getRandomPlaceholderProfileImage } from '@/lib/utils';
 
 type PropsType = {
   imageUrl: string;
@@ -11,6 +12,15 @@ type PropsType = {
 export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap, isActive }: PropsType) => {
   const borderClipId = useId();
   const cardClipId = useId();
+  const [resolvedImageUrl, setResolvedImageUrl] = useState(imageUrl);
+
+  useEffect(() => {
+    setResolvedImageUrl(imageUrl);
+    if (!imageUrl) return;
+    const img = new Image();
+    img.onerror = () => setResolvedImageUrl(getRandomPlaceholderProfileImage());
+    img.src = imageUrl;
+  }, [imageUrl]);
 
   return (
     <div className="flex justify-center items-center" style={{ width: `${size}px`, height: `${size}px` }}>
@@ -62,7 +72,7 @@ export const ProfileCard = ({ imageUrl, size = 100, color = 'white', handicap, i
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: `url(${imageUrl})`,
+            backgroundImage: `url(${resolvedImageUrl})`,
             backgroundPosition: 'center center',
             backgroundSize: 'cover',
             clipPath: `url(#${cardClipId})`,
