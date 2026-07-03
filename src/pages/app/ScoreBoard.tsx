@@ -31,7 +31,7 @@ export function ScoreBoard() {
             <section className="h-screen w-screen flex justify-center items-center">
               <div className="text-white flex flex-col items-center gap-4">
                 {activeClub?.clubLogo && (
-                  <img src={activeClub.clubLogo} alt="Club Logo" className="h-24 w-24 object-contain" />
+                  <img src={activeClub.clubLogo} alt="Club Logo" className="h-24 w-24 object-cover rounded-full overflow-hidden" />
                 )}
                 <h3 className="text-center text-2xl font-bold">Welcome to {activeClub?.clubName}</h3>
                 {activeClub?.venueNo && <h4 className="text-center text-xl">TABLE-{activeClub.venueNo}</h4>}
