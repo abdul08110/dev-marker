@@ -62,6 +62,7 @@ const useScoreboardRender = () => {
   const [scoreBoardData, setScoreboardData] = React.useState<ScoreBoardState | null>(null);
   const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('landscape');
   const [showTimeOverAlert, setShowTimeOverAlert] = React.useState<boolean>(false);
+  const [clubInfo, setClubInfo] = React.useState<{ clubName: string | null; clubPhoto: string | null }>({ clubName: null, clubPhoto: null });
   const { rotateBody } = useBodyRotation();
 
   const timeLeft = useTimer({
@@ -136,6 +137,7 @@ const useScoreboardRender = () => {
     if (venueId) {
       const liveMatchByVenueResponse = await getMarkerLiveMatchesByVenueHookData.getMarkerLiveMatchesByVenue(venueId);
       if (liveMatchByVenueResponse) {
+        setClubInfo({ clubName: liveMatchByVenueResponse.clubName, clubPhoto: liveMatchByVenueResponse.clubPhoto });
         localMatchId = liveMatchByVenueResponse.matchId!;
       }
     }
@@ -260,6 +262,7 @@ const useScoreboardRender = () => {
     setOrientation,
     rotateBody,
     showTimeOverAlert,
+    clubInfo,
   };
 };
 

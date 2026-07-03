@@ -5,7 +5,7 @@ import useScoreboardRender from '@/hooks/useScoreboardRender';
 import NewScoreBoard from './NewScoreBoard';
 
 export function ScoreBoardRender() {
-  const { loading, scoreBoardData, timeLeft, orientation, showTimeOverAlert } = useScoreboardRender();
+  const { loading, scoreBoardData, timeLeft, orientation, showTimeOverAlert, clubInfo } = useScoreboardRender();
 
   return (
     <section className="cursor-none">
@@ -21,9 +21,12 @@ export function ScoreBoardRender() {
               <NewScoreBoard timeLeft={timeLeft} state={scoreBoardData} />
             )
           ) : (
-            <section className="h-screen w-screen flex justify-center items-center">
-              <div className="text-white">
-                <h3 className="text-center">Waiting for Match to Start</h3>
+              <section className="h-screen w-screen flex justify-center items-center">
+              <div className="text-white flex flex-col items-center gap-4">
+                {clubInfo?.clubPhoto && (
+                  <img src={clubInfo.clubPhoto} alt="Club Logo" className="h-24 w-24 object-contain" />
+                )}
+                {clubInfo?.clubName && <h3 className="text-center text-2xl font-bold">Welcome to {clubInfo.clubName}</h3>}
               </div>
             </section>
           )}
