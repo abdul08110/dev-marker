@@ -103,9 +103,7 @@ export function SnookerScoring() {
   const [searchParams] = useSearchParams();
   const playerCount = Number(searchParams.get('playerCount') ?? '2') as 2 | 4;
   const { selectPlayer } = useSelectPlayer();
-  const [defaultImages] = React.useState(() =>
-    Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()),
-  );
+  const [defaultImages] = React.useState(() => Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()));
 
   const handlePlayerConfirmWithApi = async (player: Player) => {
     const teamIdx = selectedTeamIndex;
@@ -302,7 +300,10 @@ export function SnookerScoring() {
                   selectedTeamIndex,
                   selectedPlayerIndex,
                 )}
-                showCancel={snookerScoring.team1.players.every((p) => p.id !== null) && snookerScoring.team2.players.every((p) => p.id !== null)}
+                showCancel={
+                  snookerScoring.team1.players.every((p) => p.id !== null) &&
+                  snookerScoring.team2.players.every((p) => p.id !== null)
+                }
                 showBack={!(selectedTeamIndex === 0 && selectedPlayerIndex === 0)}
                 onBack={() => onBackInPlayerSelectModal()}
                 teamPlayers={[...snookerScoring.team1.players, ...snookerScoring.team2.players]}
@@ -323,7 +324,7 @@ export function SnookerScoring() {
                 showCorrection={getActiveSet(snookerScoring.scoreHistory) !== undefined}
                 showConcedeFrame={getActiveSet(snookerScoring.scoreHistory) !== undefined}
                 showRerack={getActiveSet(snookerScoring.scoreHistory) !== undefined}
-                showEndFrame={true}
+                showEndFrame={!snookerScoring.tournamentId}
                 showEndGame={true}
                 onConcedeFrame={() => setShowConcedeFrameDrawer(true)}
                 onEndGame={handleEndGame}
@@ -355,9 +356,11 @@ export function SnookerScoring() {
                 onContinue={() => handleTimerButtonAction('CONFIRM')}
               />
               <div className="flex gap-4 mt-4 mb-4 px-4 container pb-4">
-                {/* <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
-                  End Frame
-                </Button> */}
+                {!snookerScoring.tournamentId && (
+                  <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
+                    End Frame
+                  </Button>
+                )}
                 <Button onClick={() => setShowEndGameAlert(true)} variant="destructive" className="flex-1">
                   End Match
                 </Button>

@@ -309,9 +309,11 @@ export function BilliardsScoring() {
               onContinue={() => handleTimerButtonAction('CONFIRM')}
             />
             <div className="flex gap-2 mt-4 mb-4 px-4 container">
-              {/* <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
-                End Frame
-              </Button> */}
+              {!billiardsScoring.tournamentId && (
+                <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
+                  End Frame
+                </Button>
+              )}
               <Button onClick={() => setShowEndGameAlert(true)} variant="destructive" className="flex-1">
                 End Match
               </Button>
