@@ -63,10 +63,6 @@ export function VideoOverlay() {
   const activeSet = getActiveSet(viewershipData ? viewershipData.sets : []);
   const activeTurn = getActiveTurn(activeSet);
 
-  // streamingData updates in real-time via MQTT send-data; viewershipData only updates via video playback timer
-  const liveActiveSet = getActiveSet(streamingData.sets);
-  const liveActiveTurn = getActiveTurn(liveActiveSet);
-
   return (
     <div className="h-screen w-screen bg-transparent pointer-events-none bg-cover bg-center overflow-hidden">
       <TopOverlay
@@ -166,11 +162,10 @@ export function VideoOverlay() {
               <IGTemplate isTv={false} state={viewershipData} activeTurn={activeTurn} activeSet={activeSet} />
             ),
           }[viewershipData.tournamentId] || (
-            <NewGeneral state={viewershipData} activeSet={liveActiveSet} activeTurn={liveActiveTurn} isTv={false} />
+            <NewGeneral state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
           )
         ) : (
-          // <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
-          <NewGeneral state={viewershipData} activeSet={liveActiveSet} activeTurn={liveActiveTurn} isTv={false} />
+          <NewGeneral state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
         ))}
       {viewershipData && viewershipData.streams[0].overlayType === 'SOURCE_WITH_FINAL_SCORES' && (
         <SourceWithFinalScores state={viewershipData} />

@@ -18,7 +18,7 @@ export function LiveScoring() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const matchIdFromUrl = params.get('matchid');
+    const matchIdFromUrl = params.get('matchid') || params.get('matchId');
 
     if (matchIdFromUrl) {
       setMatchId(matchIdFromUrl);
