@@ -3,40 +3,40 @@ import axiosInstance from '../axios';
 import { handleApiResponse } from '@/utils/handlers';
 import { ApiResponse } from '@/types';
 
-
 interface MarkerMatchByVenueResponse {
-    matchId: string | null;
-    sport: 'BILLIARDS' | 'SNOOKER' | null;
-    clubName: string | null;
-    clubPhoto: string | null;
+  matchId: string | null;
+  sport: 'BILLIARDS' | 'SNOOKER' | null;
+  clubName: string | null;
+  clubPhoto: string | null;
+  venueNo: number | null;
 }
 
 const useMarkerGetLiveMatchByVenue = () => {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
-    const [data, setData] = useState<MarkerMatchByVenueResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<MarkerMatchByVenueResponse | null>(null);
 
-    const getMarkerLiveMatchesByVenue = async (id: string): Promise<MarkerMatchByVenueResponse | null> => {
-        setLoading(true);
-        setError(null);
+  const getMarkerLiveMatchesByVenue = async (id: string): Promise<MarkerMatchByVenueResponse | null> => {
+    setLoading(true);
+    setError(null);
 
-        try {
-            const data = await handleApiResponse(
-                axiosInstance.get<ApiResponse<MarkerMatchByVenueResponse>>(`match/marker/get-active-matches-by-venue-id/${id}`)
-            );
+    try {
+      const data = await handleApiResponse(
+        axiosInstance.get<ApiResponse<MarkerMatchByVenueResponse>>(`match/marker/get-active-matches-by-venue-id/${id}`),
+      );
 
-            setData(data);
+      setData(data);
 
-            return data;
-        } catch (err: any) {
-            setError(err.message);
-            return null;
-        } finally {
-            setLoading(false);
-        }
-    };
+      return data;
+    } catch (err: any) {
+      setError(err.message);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return { getMarkerLiveMatchesByVenue, loading, error, data };
+  return { getMarkerLiveMatchesByVenue, loading, error, data };
 };
 
 export default useMarkerGetLiveMatchByVenue;

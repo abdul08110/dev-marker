@@ -63,7 +63,11 @@ const useScoreboardRender = () => {
   const [scoreBoardData, setScoreboardData] = React.useState<ScoreBoardState | null>(null);
   const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('landscape');
   const [showTimeOverAlert, setShowTimeOverAlert] = React.useState<boolean>(false);
-  const [clubInfo, setClubInfo] = React.useState<{ clubName: string | null; clubPhoto: string | null }>({ clubName: null, clubPhoto: null });
+  const [clubInfo, setClubInfo] = React.useState<{
+    clubName: string | null;
+    clubPhoto: string | null;
+    venueNo: number | null;
+  }>({ clubName: null, clubPhoto: null, venueNo: null });
   const [qrFlowState, setQrFlowState] = React.useState<QrFlowState>({
     isActive: false,
     playerCount: 2,
@@ -77,7 +81,7 @@ const useScoreboardRender = () => {
         venueId: searchParamsVenueId,
         clubName: clubInfo.clubName,
         clubLogo: clubInfo.clubPhoto,
-        venueNo: null,
+        venueNo: clubInfo.venueNo,
       }
     : null;
 
@@ -156,7 +160,11 @@ const useScoreboardRender = () => {
     if (venueId) {
       const liveMatchByVenueResponse = await getMarkerLiveMatchesByVenueHookData.getMarkerLiveMatchesByVenue(venueId);
       if (liveMatchByVenueResponse) {
-        setClubInfo({ clubName: liveMatchByVenueResponse.clubName, clubPhoto: liveMatchByVenueResponse.clubPhoto });
+        setClubInfo({
+          clubName: liveMatchByVenueResponse.clubName,
+          clubPhoto: liveMatchByVenueResponse.clubPhoto,
+          venueNo: liveMatchByVenueResponse.venueNo,
+        });
         localMatchId = liveMatchByVenueResponse.matchId!;
       }
     }
@@ -228,9 +236,10 @@ const useScoreboardRender = () => {
 
   const handleNewMessage = async (topic: string, message: string) => {
     const parsedMessage = JSON.parse(message);
-    const topicWithoutId = searchParamsVenueId && topic.startsWith(`${searchParamsVenueId}/`)
-      ? topic.slice(searchParamsVenueId.length + 1)
-      : topic.split('/')[1];
+    const topicWithoutId =
+      searchParamsVenueId && topic.startsWith(`${searchParamsVenueId}/`)
+        ? topic.slice(searchParamsVenueId.length + 1)
+        : topic.split('/')[1];
 
     console.log(`THE TOPIC IS ${topic}`);
 

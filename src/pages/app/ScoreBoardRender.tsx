@@ -4,9 +4,10 @@ import { ScoreboardRender } from '@/components/sections/scoreboard/scoreBoardRen
 import { ScoreboardQrDisplay } from '@/components/sections/scoreboard/ScoreboardQrDisplay';
 import useScoreboardRender from '@/hooks/useScoreboardRender';
 import NewScoreBoard from './NewScoreBoard';
+import WelcomeScreen from './WelcomeScreen';
 
 export function ScoreBoardRender() {
-  const { loading, scoreBoardData, timeLeft, orientation, showTimeOverAlert, clubInfo, qrFlowState, activeClub } =
+  const { loading, scoreBoardData, timeLeft, orientation, showTimeOverAlert, qrFlowState, activeClub } =
     useScoreboardRender();
 
   return (
@@ -25,14 +26,11 @@ export function ScoreBoardRender() {
           ) : qrFlowState.isActive ? (
             <ScoreboardQrDisplay qrFlowState={qrFlowState} activeClub={activeClub} />
           ) : (
-              <section className="h-screen w-screen flex justify-center items-center">
-              <div className="text-white flex flex-col items-center gap-4">
-                {clubInfo?.clubPhoto && (
-                  <img src={clubInfo.clubPhoto} alt="Club Logo" className="h-24 w-24 object-cover rounded-full overflow-hidden" />
-                )}
-                {clubInfo?.clubName && <h3 className="text-center text-2xl font-bold">Welcome to {clubInfo.clubName}</h3>}
-              </div>
-            </section>
+            <WelcomeScreen
+              clubLogo={activeClub?.clubLogo ?? ''}
+              clubName={activeClub?.clubName ?? ''}
+              venue={activeClub?.venueNo}
+            />
           )}
         </section>
       )}
