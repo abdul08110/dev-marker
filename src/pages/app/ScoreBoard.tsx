@@ -6,6 +6,7 @@ import { ScoreboardQrDisplay } from '@/components/sections/scoreboard/Scoreboard
 import useScoreboard from '@/hooks/useScoreboard';
 import { useState } from 'react';
 import NewScoreBoard from './NewScoreBoard';
+import WelcomeScreen from './WelcomeScreen';
 
 export function ScoreBoard() {
   const { loading, scoreBoardData, timeLeft, orientation, setOrientation, showTimeOverAlert, activeClub, qrFlowState } =
@@ -28,15 +29,11 @@ export function ScoreBoard() {
           ) : qrFlowState.isActive ? (
             <ScoreboardQrDisplay qrFlowState={qrFlowState} activeClub={activeClub} />
           ) : (
-            <section className="h-screen w-screen flex justify-center items-center">
-              <div className="text-white flex flex-col items-center gap-4">
-                {activeClub?.clubLogo && (
-                  <img src={activeClub.clubLogo} alt="Club Logo" className="h-24 w-24 object-cover rounded-full overflow-hidden" />
-                )}
-                <h3 className="text-center text-2xl font-bold">Welcome to {activeClub?.clubName}</h3>
-                {activeClub?.venueNo && <h4 className="text-center text-xl">TABLE-{activeClub.venueNo}</h4>}
-              </div>
-            </section>
+            <WelcomeScreen
+              clubLogo={activeClub?.clubLogo ?? ''}
+              clubName={activeClub?.clubName ?? ''}
+              venue={activeClub?.venueNo}
+            />
           )}
         </section>
       )}
