@@ -21,7 +21,7 @@ const WelcomeScreen = ({ venue, clubLogo, clubName }: PropsType) => {
         <div className="space-y-[min(5vh,5vw)]">
           <div className="flex flex-col gap-[min(2.8vh,2.8vw)]">
             <ImageWithFallback
-              className="justify-self-center w-[min(28vh,28vw)] h-auto"
+              className="justify-self-center w-[min(28vh,28vw)] h-auto rounded-full overflow-hidden"
               fallback="/images/clubliv-final-logo.png"
               src={clubLogo}
             />
