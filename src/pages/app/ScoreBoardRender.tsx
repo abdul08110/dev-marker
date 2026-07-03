@@ -1,11 +1,13 @@
 import { SnookerMarkingLoading } from '@/components/loading/snookerMarkingLoading';
 import { TimeUpModal } from '@/components/modals/timeUpModal';
 import { ScoreboardRender } from '@/components/sections/scoreboard/scoreBoardRender';
+import { ScoreboardQrDisplay } from '@/components/sections/scoreboard/ScoreboardQrDisplay';
 import useScoreboardRender from '@/hooks/useScoreboardRender';
 import NewScoreBoard from './NewScoreBoard';
 
 export function ScoreBoardRender() {
-  const { loading, scoreBoardData, timeLeft, orientation, showTimeOverAlert, clubInfo } = useScoreboardRender();
+  const { loading, scoreBoardData, timeLeft, orientation, showTimeOverAlert, clubInfo, qrFlowState, activeClub } =
+    useScoreboardRender();
 
   return (
     <section className="cursor-none">
@@ -20,6 +22,8 @@ export function ScoreBoardRender() {
               // <LegacyScoreboard timeLeft={timeLeft} state={scoreBoardData} />
               <NewScoreBoard timeLeft={timeLeft} state={scoreBoardData} />
             )
+          ) : qrFlowState.isActive ? (
+            <ScoreboardQrDisplay qrFlowState={qrFlowState} activeClub={activeClub} />
           ) : (
               <section className="h-screen w-screen flex justify-center items-center">
               <div className="text-white flex flex-col items-center gap-4">

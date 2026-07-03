@@ -4,9 +4,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import useTimer from './useTimer';
 import { toast } from '@/components/ui/use-toast';
-import { Player, Set, TournamentItem, TournamentSubItem } from '@/stores/types';
+import { ClubData, Player, Set, TournamentItem, TournamentSubItem } from '@/stores/types';
 import useBodyRotation from './useBodyRotation';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
+import { QrFlowPlayer, QrFlowState } from './useScoreboard';
 
 export interface ScoreBoardState {
   matchId: string;
@@ -63,7 +64,22 @@ const useScoreboardRender = () => {
   const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('landscape');
   const [showTimeOverAlert, setShowTimeOverAlert] = React.useState<boolean>(false);
   const [clubInfo, setClubInfo] = React.useState<{ clubName: string | null; clubPhoto: string | null }>({ clubName: null, clubPhoto: null });
+  const [qrFlowState, setQrFlowState] = React.useState<QrFlowState>({
+    isActive: false,
+    playerCount: 2,
+    players: {},
+  });
   const { rotateBody } = useBodyRotation();
+
+  const activeClub: ClubData | null = searchParamsVenueId
+    ? {
+        clubId: '',
+        venueId: searchParamsVenueId,
+        clubName: clubInfo.clubName,
+        clubLogo: clubInfo.clubPhoto,
+        venueNo: null,
+      }
+    : null;
 
   const timeLeft = useTimer({
     endTime: scoreBoardData && scoreBoardData.expectedEndTimeDate ? new Date(scoreBoardData.expectedEndTimeDate) : null,
@@ -82,6 +98,9 @@ const useScoreboardRender = () => {
       `${searchParamsVenueId}/match-start`,
       `${searchParamsVenueId}/match-end`,
       `${searchParamsVenueId}/timer-updated`,
+      `${searchParamsVenueId}/scoreboard/initiate`,
+      `${searchParamsVenueId}/scoreboard/add-player`,
+      `${searchParamsVenueId}/scoreboard/cancel`,
     ];
 
     checkIfLiveMatchAndfetchMatchData(searchParamsVenueId, null);
@@ -209,7 +228,9 @@ const useScoreboardRender = () => {
 
   const handleNewMessage = async (topic: string, message: string) => {
     const parsedMessage = JSON.parse(message);
-    const topicWithoutId = topic.split('/')[1];
+    const topicWithoutId = searchParamsVenueId && topic.startsWith(`${searchParamsVenueId}/`)
+      ? topic.slice(searchParamsVenueId.length + 1)
+      : topic.split('/')[1];
 
     console.log(`THE TOPIC IS ${topic}`);
 
@@ -237,7 +258,27 @@ const useScoreboardRender = () => {
         break;
       case 'match-end':
         setScoreboardData(null);
+        setQrFlowState({ isActive: false, playerCount: 2, players: {} });
         setShowTimeOverAlert(false);
+        break;
+      case 'scoreboard/initiate':
+        setQrFlowState({
+          isActive: true,
+          playerCount: parsedMessage.playerCount as 2 | 4,
+          players: {},
+        });
+        break;
+      case 'scoreboard/add-player':
+        setQrFlowState((prev) => ({
+          ...prev,
+          players: {
+            ...prev.players,
+            [parsedMessage.playerNumber]: parsedMessage as QrFlowPlayer,
+          },
+        }));
+        break;
+      case 'scoreboard/cancel':
+        setQrFlowState({ isActive: false, playerCount: 2, players: {} });
         break;
       case 'timer-updated':
         const newExpectedEndDateTime = parsedMessage.expectedEndTimeDate;
@@ -263,6 +304,8 @@ const useScoreboardRender = () => {
     rotateBody,
     showTimeOverAlert,
     clubInfo,
+    qrFlowState,
+    activeClub,
   };
 };
 
