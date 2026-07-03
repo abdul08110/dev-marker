@@ -166,11 +166,11 @@ export function VideoOverlay() {
               <IGTemplate isTv={false} state={viewershipData} activeTurn={activeTurn} activeSet={activeSet} />
             ),
           }[viewershipData.tournamentId] || (
-            <NewGeneral state={streamingData} activeSet={liveActiveSet} activeTurn={liveActiveTurn} isTv={false} />
+            <NewGeneral state={viewershipData} activeSet={liveActiveSet} activeTurn={liveActiveTurn} isTv={false} />
           )
         ) : (
           // <GeneralTemplate state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
-          <NewGeneral state={streamingData} activeSet={liveActiveSet} activeTurn={liveActiveTurn} isTv={false} />
+          <NewGeneral state={viewershipData} activeSet={liveActiveSet} activeTurn={liveActiveTurn} isTv={false} />
         ))}
       {viewershipData && viewershipData.streams[0].overlayType === 'SOURCE_WITH_FINAL_SCORES' && (
         <SourceWithFinalScores state={viewershipData} />
