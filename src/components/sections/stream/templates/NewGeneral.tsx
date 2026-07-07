@@ -309,7 +309,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   return (
-    <div className="absolute bottom-[min(2vh,2vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
+    <div className="absolute bottom-[min(2.5vh,2.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.5vh,1.5vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
@@ -431,31 +431,31 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           style={leftCardStyle}
         >
           {leftCardContent}
-          {/* shot clock Player 1 — only while this side is actually on strike */}
-          {showStopClock && isSideOneActive && (
-            <div className="absolute pointer-events-none left-8 z-10 -bottom-[min(4.3vh,4.3vw)]">
-              <div className="relative flex justify-center items-center h-[min(5.7vh,4.7vw)] w-[min(35.2vh,35.2vw)]">
-                <img
-                  src="/shot-clock-bg.svg"
-                  alt="background pattern"
-                  className="w-full h-auto"
-                  style={{
-                    filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
-                  }}
+        </div>
+        {/* shot clock Player 1 — only while this side is actually on strike */}
+        {showStopClock && isSideOneActive && (
+          <div className="absolute pointer-events-none left-8 z-10 -bottom-[min(3.2vh,3.2vw)]">
+            <div className="relative flex justify-center items-center h-[min(5.7vh,4.7vw)] w-[min(35.2vh,35.2vw)]">
+              <img
+                src="/shot-clock-bg.svg"
+                alt="background pattern"
+                className="w-full h-auto"
+                style={{
+                  filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <ShotClockTicker
+                  remainingMs={stopClockTick.currentTurnRemainingTimeInMs}
+                  totalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
+                  barClassName="size-[min(1.8vh,1.8vw)]"
+                  textClassName="text-[min(2.2vh,2.2vw)]"
+                  gapClassName="gap-[min(0.3vh,0.3vw)]"
                 />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <ShotClockTicker
-                    remainingMs={stopClockTick.currentTurnRemainingTimeInMs}
-                    totalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
-                    barClassName="size-[min(1.8vh,1.8vw)]"
-                    textClassName="text-[min(2.2vh,2.2vw)]"
-                    gapClassName="gap-[min(0.3vh,0.3vw)]"
-                  />
-                </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Middle score panel */}
         <div
@@ -628,31 +628,31 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           style={rightCardStyle}
         >
           {rightCardContent}
-          {/* shot clock Player 2 — only while this side is actually on strike */}
-          {showStopClock && isSideTwoActive && (
-            <div className="absolute pointer-events-none right-8 z-10 -bottom-[min(4.3vh,4.3vw)]">
-              <div className="relative flex justify-center items-center h-[min(5.7vh,4.7vw)] w-[min(35.2vh,35.2vw)]">
-                <img
-                  src="/shot-clock-bg.svg"
-                  alt="background pattern"
-                  className="w-full h-auto"
-                  style={{
-                    filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
-                  }}
+        </div>
+        {/* shot clock Player 2 — only while this side is actually on strike */}
+        {showStopClock && isSideTwoActive && (
+          <div className="absolute pointer-events-none right-8 z-10 -bottom-[min(3.2vh,3.2vw)]">
+            <div className="relative flex justify-center items-center h-[min(5.7vh,4.7vw)] w-[min(35.2vh,35.2vw)]">
+              <img
+                src="/shot-clock-bg.svg"
+                alt="background pattern"
+                className="w-full h-auto"
+                style={{
+                  filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <ShotClockTicker
+                  remainingMs={stopClockTick.currentTurnRemainingTimeInMs}
+                  totalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
+                  barClassName="size-[min(1.8vh,1.8vw)]"
+                  textClassName="text-[min(2.2vh,2.2vw)]"
+                  gapClassName="gap-[min(0.3vh,0.3vw)]"
                 />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <ShotClockTicker
-                    remainingMs={stopClockTick.currentTurnRemainingTimeInMs}
-                    totalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
-                    barClassName="size-[min(1.8vh,1.8vw)]"
-                    textClassName="text-[min(2.2vh,2.2vw)]"
-                    gapClassName="gap-[min(0.3vh,0.3vw)]"
-                  />
-                </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
