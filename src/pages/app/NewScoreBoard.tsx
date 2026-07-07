@@ -149,7 +149,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         />
 
         <div className="flex items-center justify-end gap-7">
-          {isTournament && (
+          {isTournament && state.isStopClockEnabled && (
             <div className="flex justify-center items-center">
               <div className="bg-white/5 rounded-[8px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(4vh,4vw)] w-fit overflow-hidden shrink-0">
                 <div className="flex justify-center items-center bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] h-full">
@@ -250,7 +250,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
               {isTournament && state.isStopClockEnabled ? (
                 /* Frame Time (tournament, stop clock enabled) — replaces club logo + table number */
-                <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)] py-[min(3vh,3vw)] space-y-2">
+                <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)] pt-7 space-y-2">
                   <p className="text-score-text text-box-trim font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
                     {formatClockMs(stopClockTick.remainingFrameTimeInMs)}
                   </p>

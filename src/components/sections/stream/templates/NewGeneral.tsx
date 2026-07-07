@@ -434,7 +434,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
         </div>
         {/* shot clock Player 1 — only while this side is actually on strike */}
         {showStopClock && isSideOneActive && (
-          <div className="absolute pointer-events-none left-8 z-10 -bottom-[min(3.2vh,3.2vw)]">
+          <div className="absolute pointer-events-none left-8 z-10 -bottom-[min(2.5vh,2.5vw)]">
             <div className="relative flex justify-center items-center h-[min(5.7vh,4.7vw)] w-[min(35.2vh,35.2vw)]">
               <img
                 src="/shot-clock-bg.svg"
@@ -444,7 +444,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                   filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
                 }}
               />
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center pt-1.5">
                 <ShotClockTicker
                   remainingMs={stopClockTick.currentTurnRemainingTimeInMs}
                   totalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
@@ -631,7 +631,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
         </div>
         {/* shot clock Player 2 — only while this side is actually on strike */}
         {showStopClock && isSideTwoActive && (
-          <div className="absolute pointer-events-none right-8 z-10 -bottom-[min(3.2vh,3.2vw)]">
+          <div className="absolute pointer-events-none right-8 z-10 -bottom-[min(2.5vh,2.5vw)]">
             <div className="relative flex justify-center items-center h-[min(5.7vh,4.7vw)] w-[min(35.2vh,35.2vw)]">
               <img
                 src="/shot-clock-bg.svg"
@@ -641,7 +641,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                   filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
                 }}
               />
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center pt-1.5">
                 <ShotClockTicker
                   remainingMs={stopClockTick.currentTurnRemainingTimeInMs}
                   totalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}

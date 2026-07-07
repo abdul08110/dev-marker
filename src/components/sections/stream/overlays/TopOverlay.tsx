@@ -47,7 +47,7 @@ export function TopOverlay(props: TopOverlayProps) {
     <div className="absolute inset-0 w-full flex justify-between p-[min(1.5vh,1.5vw)] h-fit">
       <div className="flex flex-col gap-[min(1vh,1vw)] items-center h-fit">
         <img
-          src="/images/clublogo.png"
+          src="/images/clubliv-logo-v2.svg"
           className="size-[min(12vh,12vw)] rounded-full overflow-hidden object-cover"
         />
         {props.showOtherLogos && (
@@ -71,10 +71,7 @@ export function TopOverlay(props: TopOverlayProps) {
         )}
 
         {props.showIGLogo && (
-          <img
-            src="/images/logos/ig.png"
-            className="size-[min(12vh,12vw)] rounded-full overflow-hidden object-cover"
-          />
+          <img src="/images/logos/ig.png" className="size-[min(12vh,12vw)] rounded-full overflow-hidden object-cover" />
         )}
 
         {remaining !== null && (
