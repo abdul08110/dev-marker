@@ -179,6 +179,10 @@ export interface TournamentFormat {
   switchType?: 'FRAME' | 'VISIT';
   snookerHandicapType?: 'DIFFERENCE' | 'UPFRONT';
   categoryName?: string;
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
 }
 
 export interface TournamentPhase {

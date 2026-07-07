@@ -155,10 +155,10 @@ export const setStateTournament = createAsyncThunk<
     isRankingEvent: false,
     snookerHandicapType: data.format.snookerHandicapType ? data.format.snookerHandicapType : 'DIFFERENCE',
     phase: data.phase,
-    isStopClockEnabled: false,
-    stopClockFrameTimeInSeconds: 900,
-    stopClockTurnTimeInSeconds: 30,
-    stopClockVoiceEnabled: false,
+    isStopClockEnabled: data.format.isStopClockEnabled ?? false,
+    stopClockFrameTimeInSeconds: data.format.stopClockFrameTimeInSeconds ?? 900,
+    stopClockTurnTimeInSeconds: data.format.stopClockTurnTimeInSeconds ?? 30,
+    stopClockVoiceEnabled: data.format.stopClockVoiceEnabled ?? false,
     stopClockState: null,
   };
   await dispatch(
