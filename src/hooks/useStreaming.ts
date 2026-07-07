@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import mqtt from 'mqtt';
 import useGetMatchLiveData, { StreamType } from '@/api/app/useGetMatchData';
 import { toast } from '@/components/ui/use-toast';
-import { Player, Set, TournamentItem, TournamentPhase, TournamentSubItem } from '@/stores/types';
+import { Player, Set, StopClockState, TournamentItem, TournamentPhase, TournamentSubItem } from '@/stores/types';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useTimer from './useTimer';
 import { addMillisecondsToUTC } from '@/utils/functions';
@@ -82,6 +82,11 @@ export interface StreamingState {
   };
   phase: string | null;
   streams: StreamState[];
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
+  stopClockState?: StopClockState | null;
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -98,6 +103,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const [lineupClubInfo, setLineupClubInfo] = useState<{ clubName: string | null; clubLogo: string | null }>({ clubName: null, clubLogo: null });
   const lineupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
+  const lastStopClockTurnStartedAtRef = useRef<string | null>(null);
   const timeLeft = useTimer({
     endTime: streamingData && streamingData.expectedEndTimeDate ? new Date(streamingData.expectedEndTimeDate) : null,
     startTime:
@@ -171,6 +177,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         `${venueId}/match-start`,
         `${venueId}/match-end`,
         `${venueId}/timer-updated`,
+        `${venueId}/stop-clock`,
       ];
       connectToMqtt(topics);
     }
@@ -243,15 +250,27 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           phase: res.phase ? res.phase : null,
           showFormatsAsGameNumber: res.tournament ? res.tournament.showFormatsAsGameNumber : null,
           showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
-          showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null
+          showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null,
+          isStopClockEnabled: res.isStopClockEnabled,
+          stopClockFrameTimeInSeconds: res.stopClockFrameTimeInSeconds,
+          stopClockTurnTimeInSeconds: res.stopClockTurnTimeInSeconds,
+          stopClockVoiceEnabled: res.stopClockVoiceEnabled ?? false,
+          stopClockState: res.stopClockState ?? null
         };
+
+        lastStopClockTurnStartedAtRef.current = res.stopClockState?.turnStartedAt ?? null;
 
         setStreamingData(initialData);
 
         setViewershipData(initialData);
 
         if (res.matchStatus === 'LIVE' && !venueId) {
-          const venueTopics = [`${res.venueId}/send-data`, `${res.venueId}/match-end`, `${res.venueId}/timer-updated`];
+          const venueTopics = [
+            `${res.venueId}/send-data`,
+            `${res.venueId}/match-end`,
+            `${res.venueId}/timer-updated`,
+            `${res.venueId}/stop-clock`,
+          ];
           connectToMqtt(venueTopics);
         }
 
@@ -314,9 +333,38 @@ const useStreaming = (venueId?: string, matchId?: string) => {
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
             sets: parsedMessage.sets || prevData.sets,
+            stopClockState: parsedMessage.stopClockState ?? prevData.stopClockState,
+          };
+        });
+        if (parsedMessage.stopClockState?.turnStartedAt) {
+          lastStopClockTurnStartedAtRef.current = parsedMessage.stopClockState.turnStartedAt;
+        }
+        break;
+      case 'stop-clock': {
+        const incomingTurnStartedAt = parsedMessage.turnStartedAt as string | null;
+        const lastTurnStartedAt = lastStopClockTurnStartedAtRef.current;
+        const isStale =
+          !!incomingTurnStartedAt &&
+          !!lastTurnStartedAt &&
+          new Date(incomingTurnStartedAt).getTime() < new Date(lastTurnStartedAt).getTime();
+        if (isStale) break;
+
+        lastStopClockTurnStartedAtRef.current = incomingTurnStartedAt ?? lastTurnStartedAt;
+        setStreamingData((prevData) => {
+          if (prevData === null) return null;
+          return {
+            ...prevData,
+            stopClockState: {
+              activePlayerClock: parsedMessage.activePlayerClock,
+              remainingFrameTimeInMs: parsedMessage.remainingFrameTimeInMs,
+              currentTurnRemainingTimeInMs: parsedMessage.currentTurnRemainingTimeInMs,
+              turnStartedAt: incomingTurnStartedAt,
+            },
+            stopClockVoiceEnabled: parsedMessage.stopClockVoiceEnabled ?? prevData.stopClockVoiceEnabled,
           };
         });
         break;
+      }
       case 'match-start':
         clearLineup();
         fetchActiveMatchForVenue(venueId!);
