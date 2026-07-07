@@ -240,7 +240,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 <Timer timeLeft={timeLeft} isTournament={isTournament} />
               )}
 
-              {isTournament && (
+              {isTournament && !state.isStopClockEnabled && (
                 <div className="flex justify-center items-center py-5">
                   <ImageWithFallback
                     className="object-cover size-[min(15vh,15vw)] rounded-full overflow-hidden"
@@ -250,8 +250,10 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 </div>
               )}
 
-              {/* Table Number */}
-              <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
+              {/* Table Number — in tournament, only when stop clock is off (Frame Time takes its place above) */}
+              {(!isTournament || !state.isStopClockEnabled) && (
+                <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
+              )}
 
               {/* Game format */}
               <GameFormat
