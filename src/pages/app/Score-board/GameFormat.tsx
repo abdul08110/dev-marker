@@ -7,7 +7,7 @@ interface GameFormatProps {
   isStopClockEnabled: boolean | undefined;
 }
 
-export function GameFormat({ sport, format, isTournament, isStopClockEnabled }: GameFormatProps) {
+export function GameFormat({ sport, format, isTournament }: GameFormatProps) {
   const icon = (
     <div className={cn('flex flex-col justify-center items-center gap-1 py-5')}>
       {sport === 'SNOOKER' ? (
