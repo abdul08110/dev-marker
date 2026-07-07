@@ -19,13 +19,13 @@ const WelcomeScreen = ({ venue, clubLogo, clubName }: PropsType) => {
 
       <div className="flex flex-col justify-center items-center h-full">
         <div className="space-y-[min(5vh,5vw)]">
-          <div className="flex flex-col gap-[min(2.8vh,2.8vw)]">
+          <div className="flex flex-col items-center gap-[min(2.8vh,2.8vw)]">
             <ImageWithFallback
               className="justify-self-center w-[min(28vh,28vw)] h-auto rounded-full overflow-hidden"
               fallback="/images/clubliv-final-logo.png"
               src={clubLogo}
             />
-            <p className="font-semibold leading-[130%] text-score-text text-[min(5vh,5vw)] text-center"> {clubName} </p>
+            <p className="font-semibold leading-[130%] text-score-text text-[min(5vh,5vw)] text-center">{clubName}</p>
           </div>
           <div className="flex justify-center items-center">
             <div className="bg-white/5 rounded-[10px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(11vh,11vw)] w-fit overflow-hidden shrink-0">
