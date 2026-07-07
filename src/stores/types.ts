@@ -102,6 +102,13 @@ export interface Point {
 
 export type SportType = 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED';
 
+export interface StopClockState {
+  activePlayerClock: 'RUNNING' | 'STOPPED';
+  remainingFrameTimeInMs: number;
+  currentTurnRemainingTimeInMs: number;
+  turnStartedAt: string | null;
+}
+
 export interface GeneralScoringState {
   format: SportType;
   numberOn: number | null;
@@ -137,6 +144,11 @@ export interface GeneralScoringState {
   isRankingEvent: boolean;
   snookerHandicapType: 'DIFFERENCE' | 'UPFRONT';
   phase: string | null;
+  isStopClockEnabled: boolean;
+  stopClockFrameTimeInSeconds: number;
+  stopClockTurnTimeInSeconds: number;
+  stopClockVoiceEnabled: boolean;
+  stopClockState: StopClockState | null;
 }
 
 export interface ClubData {

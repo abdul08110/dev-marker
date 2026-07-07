@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import useTimer from './useTimer';
 import { toast } from '@/components/ui/use-toast';
-import { ClubData, Player, Set, TournamentItem, TournamentSubItem } from '@/stores/types';
+import { ClubData, Player, Set, StopClockState, TournamentItem, TournamentSubItem } from '@/stores/types';
 import useBodyRotation from './useBodyRotation';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import { QrFlowPlayer, QrFlowState } from './useScoreboard';
@@ -49,6 +49,11 @@ export interface ScoreBoardState {
   showCummulativeScoreInCombination: boolean | null;
   showLatestHandicapInCombination: boolean | null;
   tournamentLogo: string | null;
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
+  stopClockState?: StopClockState | null;
 }
 
 const useScoreboardRender = () => {
@@ -74,6 +79,7 @@ const useScoreboardRender = () => {
     players: {},
   });
   const { rotateBody } = useBodyRotation();
+  const lastStopClockTurnStartedAtRef = React.useRef<string | null>(null);
 
   const activeClub: ClubData | null = searchParamsVenueId
     ? {
@@ -102,6 +108,7 @@ const useScoreboardRender = () => {
       `${searchParamsVenueId}/match-start`,
       `${searchParamsVenueId}/match-end`,
       `${searchParamsVenueId}/timer-updated`,
+      `${searchParamsVenueId}/stop-clock`,
       `${searchParamsVenueId}/scoreboard/initiate`,
       `${searchParamsVenueId}/scoreboard/add-player`,
       `${searchParamsVenueId}/scoreboard/cancel`,
@@ -212,7 +219,13 @@ const useScoreboardRender = () => {
             showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
             showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null,
             tournamentLogo: res.tournament?.logo ? res.tournament.logo : null,
+            isStopClockEnabled: res.isStopClockEnabled,
+            stopClockFrameTimeInSeconds: res.stopClockFrameTimeInSeconds,
+            stopClockTurnTimeInSeconds: res.stopClockTurnTimeInSeconds,
+            stopClockVoiceEnabled: res.stopClockVoiceEnabled ?? false,
+            stopClockState: res.stopClockState ?? null,
           });
+          lastStopClockTurnStartedAtRef.current = res.stopClockState?.turnStartedAt ?? null;
         } else {
           toast({
             title: 'Error',
@@ -257,8 +270,12 @@ const useScoreboardRender = () => {
             sets: updatedSets,
             isTeamOneHandicapApplied: parsedMessage.isTeamOneHandicapApplied,
             isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied,
+            stopClockState: parsedMessage.stopClockState ?? prevData.stopClockState,
           };
         });
+        if (parsedMessage.stopClockState?.turnStartedAt) {
+          lastStopClockTurnStartedAtRef.current = parsedMessage.stopClockState.turnStartedAt;
+        }
         break;
       case 'match-start':
         const matchId = parsedMessage.matchId;
@@ -301,6 +318,32 @@ const useScoreboardRender = () => {
         });
         setShowTimeOverAlert(false);
         break;
+      case 'stop-clock': {
+        const incomingTurnStartedAt = parsedMessage.turnStartedAt as string | null;
+        const lastTurnStartedAt = lastStopClockTurnStartedAtRef.current;
+        const isStale =
+          !!incomingTurnStartedAt &&
+          !!lastTurnStartedAt &&
+          new Date(incomingTurnStartedAt).getTime() < new Date(lastTurnStartedAt).getTime();
+        if (isStale) break;
+
+        lastStopClockTurnStartedAtRef.current = incomingTurnStartedAt ?? lastTurnStartedAt;
+        setScoreboardData((prevData) => {
+          if (prevData === null) return null;
+
+          return {
+            ...prevData,
+            stopClockState: {
+              activePlayerClock: parsedMessage.activePlayerClock,
+              remainingFrameTimeInMs: parsedMessage.remainingFrameTimeInMs,
+              currentTurnRemainingTimeInMs: parsedMessage.currentTurnRemainingTimeInMs,
+              turnStartedAt: incomingTurnStartedAt,
+            },
+            stopClockVoiceEnabled: parsedMessage.stopClockVoiceEnabled ?? prevData.stopClockVoiceEnabled,
+          };
+        });
+        break;
+      }
     }
   };
 

@@ -4,6 +4,8 @@ import { convertHandicapToString } from '@/utils/functions';
 import { SnookerPointType } from '@/stores/types';
 import clsx from 'clsx';
 import { ProfilePicture } from './ProfilePicture';
+import { formatClockMs, getStopClockColor } from '@/utils/stopClock';
+import { cn } from '@/lib/utils';
 
 const BALL_IMAGE_MAP: Partial<Record<SnookerPointType, string>> = {
   [SnookerPointType.RED]: '/images/balls/red-ball.svg',
@@ -33,6 +35,9 @@ interface PlayerCardProps {
   breakSide: 'left' | 'right';
   tournamentName: string;
   isTournament: boolean;
+  isStopClockEnabled?: boolean;
+  turnClockMs?: number;
+  turnClockTotalMs?: number;
 }
 
 export function PlayerCard({
@@ -51,6 +56,9 @@ export function PlayerCard({
   balls,
   tournamentName,
   isTournament,
+  isStopClockEnabled,
+  turnClockMs,
+  turnClockTotalMs,
 }: PlayerCardProps) {
   // Active player's photo goes to the front
   const frontPhoto = isPlayerOneActive ? profilePhoto : profilePhoto2;
@@ -121,15 +129,21 @@ export function PlayerCard({
           >
             {score}
           </p>
-          <div className={clsx('flex flex-col items-center gap-3', breakScore != null ? 'visible' : 'invisible')}>
-            <div className="px-[min(1.9vh,1.9vw)] bg-[linear-gradient(69.46deg,rgba(172,236,84,0.078)_12.28%,rgba(111,255,0,0.6)_179.54%)] shadow-[0px_2px_4px_0px_#FFFFFF40_inset] break-card w-[min(26vh,26vw)] h-[min(11.5vh,11.5vw)] flex justify-center items-center pb-5 pt-5">
-              <p className="font-semibold text-[min(10.2vh,10.2vw)] leading-[130%] text-box-trim text-score-text">
+
+          <div
+            className={cn(
+              'rounded-lg bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] w-[min(12vh,12vh)]',
+              breakScore != null ? 'visible' : 'invisible',
+            )}
+          >
+            <p className="font-medium text-[min(2.7vh,2.7vw)] text-center text-box-trim leading-[130%] text-score-text px-[min(1.5vh,1.5vh)] py-[min(1.5vh,1.5vh)]">
+              break
+            </p>
+            <div className="bg-[#F5F85F] px-[min(1vh,1vh)] py-[min(1.2vh,1.2vh)] rounded-b-lg">
+              <p className="font-medium text-[min(5.6vh,5.6vw)] text-center text-box-trim leading-[130%] text-[#11030F]">
                 {breakScore ?? 0}
               </p>
             </div>
-            <p className="font-extrabold text-[min(3.7vh,3.7vw)] text-box-trim leading-[130%] uppercase text-sandy-yellow px-[min(1.5vh,1.5vw)] text-right">
-              Break
-            </p>
           </div>
         </div>
 
@@ -144,6 +158,44 @@ export function PlayerCard({
             }}
           >
             <BallGrid balls={balls} />
+          </div>
+        )}
+        <div className="flex items-center gap[min(1vh,1vw)]">
+          <img src="/images/timer-ticker/placeholder-ticker.svg" className="size-[min(4vh,4vw)] object-contain" />
+          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/placeholder-ticker.svg" />
+          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/red-ticker.svg" />
+          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/red-ticker.svg" />
+          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/red-ticker.svg" />
+          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
+          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
+          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
+          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
+          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
+          <p className="font-semibold text-white text-box-trim text-[min(2.6vh,2.6vw)] pl-2">20</p>
+        </div>
+
+        {/* Shot clock (snooker only, when stop clock enabled) */}
+        {isStopClockEnabled && sport === 'SNOOKER' && (
+          <div
+            className={clsx('px-[min(3vh,3vw)] pt-[min(1.2vh,1.2vw)]', turnClockMs != null ? 'visible' : 'invisible')}
+          >
+            <div className="flex justify-between items-baseline">
+              <p className="font-extrabold text-[min(2.3vh,2.3vw)] text-box-trim uppercase text-sandy-yellow">
+                Shot Clock
+              </p>
+              <p className="font-semibold text-[min(2.3vh,2.3vw)] text-box-trim text-score-text tabular-nums">
+                {formatClockMs(turnClockMs ?? 0)}
+              </p>
+            </div>
+            <div className="w-full h-[min(1vh,1vw)] rounded-full bg-white/10 overflow-hidden mt-[min(0.6vh,0.6vw)]">
+              <div
+                className="h-full rounded-full transition-[width] duration-200"
+                style={{
+                  width: `${Math.min(100, Math.max(0, ((turnClockMs ?? 0) / (turnClockTotalMs || 1)) * 100))}%`,
+                  backgroundColor: getStopClockColor((turnClockMs ?? 0) / (turnClockTotalMs || 1)),
+                }}
+              />
+            </div>
           </div>
         )}
       </div>

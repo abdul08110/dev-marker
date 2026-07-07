@@ -1,7 +1,7 @@
 import axiosInstance from '../axios';
 import { handleApiResponse } from '@/utils/handlers';
 import { ApiResponse } from '@/types';
-import { Set } from '@/stores/types';
+import { Set, StopClockState } from '@/stores/types';
 
 interface MatchPlayerReverseProps {
   id: string;
@@ -22,6 +22,7 @@ interface MatchUpdateDataProps {
   isTeamOneHandicapApplied?: boolean;
   isTeamTwoHandicapApplied?: boolean;
   currentVisitScore: number;
+  stopClockState?: Omit<StopClockState, 'turnStartedAt'> & { turnStartedAt?: string };
 }
 
 interface PlayerStats {
@@ -48,6 +49,17 @@ interface MarkerEndGameProps {
 interface MatchResetTimerRequestProps {
   matchId: string;
   expectedEndTimeDate: Date;
+}
+
+interface StopClockActionProps {
+  matchId: string;
+  action: 'START' | 'STOP';
+  remainingFrameTimeInMs: number;
+  currentTurnRemainingTimeInMs: number;
+}
+
+interface StopClockActionResponse {
+  stopClockState: StopClockState;
 }
 
 interface MarkerFrameEndSendNotificationProps {
@@ -104,6 +116,17 @@ export const matchResetTimerRequest = async (props: MatchResetTimerRequestProps)
     );
 
     return true;
+  } catch (err) {
+    return null;
+  }
+};
+
+export const stopClockActionRequest = async (props: StopClockActionProps): Promise<StopClockState | null> => {
+  try {
+    const response = await handleApiResponse(
+      axiosInstance.post<ApiResponse<StopClockActionResponse>>(`match/marker/stop-clock-action`, props),
+    );
+    return response.stopClockState;
   } catch (err) {
     return null;
   }

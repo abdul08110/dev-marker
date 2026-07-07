@@ -98,6 +98,9 @@ export function SnookerScoring() {
     showTimerModal,
     handleTimerButtonAction,
     defaultNoOfPlayers,
+    stopClockTick,
+    isStopClockActionPending,
+    handleStopClockToggle,
   } = useSnookerScoring();
 
   const [searchParams] = useSearchParams();
@@ -267,6 +270,14 @@ export function SnookerScoring() {
                 isBreakOff={!getActiveSet(snookerScoring.scoreHistory)}
                 disabledState={snookerButtonDisabledState}
                 onButtonClick={handleScoringButtonClickWithGuard}
+                isStopClockEnabled={snookerScoring.isStopClockEnabled}
+                activePlayerClock={snookerScoring.stopClockState?.activePlayerClock}
+                remainingFrameTimeInMs={stopClockTick.remainingFrameTimeInMs}
+                currentTurnRemainingTimeInMs={stopClockTick.currentTurnRemainingTimeInMs}
+                stopClockFrameTimeInSeconds={snookerScoring.stopClockFrameTimeInSeconds}
+                stopClockTurnTimeInSeconds={snookerScoring.stopClockTurnTimeInSeconds}
+                isStopClockActionPending={isStopClockActionPending}
+                onStopClockToggle={handleStopClockToggle}
               />
               <SnookerFoulDrawer
                 foulByPlayerName={getActivePlayer(snookerScoring.team1, snookerScoring.team2)}

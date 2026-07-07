@@ -9,6 +9,7 @@ import NumberOfPlayersSelector from '@/components/ui/noOfPlayersPicker';
 import HandicapSelector from '@/components/ui/handicapSelector';
 import StreamingSelector from '@/components/ui/streamingSelector';
 import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 
 export interface SnookerPracticeSettingsData {
   format: 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED';
@@ -18,6 +19,10 @@ export interface SnookerPracticeSettingsData {
   teamOneHandicap: number;
   teamTwoHandicap: number;
   isRankingEvent: boolean;
+  isStopClockEnabled: boolean;
+  stopClockFrameTimeInSeconds: number;
+  stopClockTurnTimeInSeconds: number;
+  stopClockVoiceEnabled: boolean;
 }
 
 export type NoOfPlayersDefault = '2' | '4';
@@ -31,6 +36,10 @@ const formSchema = z
     teamOneHandicap: z.number().min(0).max(147),
     teamTwoHandicap: z.number().min(0).max(147),
     isRankingEvent: z.boolean(),
+    isStopClockEnabled: z.boolean(),
+    stopClockFrameTimeInSeconds: z.number(),
+    stopClockTurnTimeInSeconds: z.number(),
+    stopClockVoiceEnabled: z.boolean(),
   })
   .refine(
     (data) => {
@@ -39,7 +48,38 @@ const formSchema = z
       return h > 0 || m > 0 || s > 0;
     },
     { message: 'Duration must be greater than 0', path: ['durationInMinutes'] },
-  );
+  )
+  .superRefine((data, ctx) => {
+    if (!data.isStopClockEnabled) return;
+
+    if (data.stopClockFrameTimeInSeconds <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Frame time must be greater than 0',
+        path: ['stopClockFrameTimeInSeconds'],
+      });
+    }
+
+    if (data.stopClockTurnTimeInSeconds <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Turn time must be greater than 0',
+        path: ['stopClockTurnTimeInSeconds'],
+      });
+    }
+
+    if (
+      data.stopClockFrameTimeInSeconds > 0 &&
+      data.stopClockTurnTimeInSeconds > 0 &&
+      data.stopClockTurnTimeInSeconds > data.stopClockFrameTimeInSeconds
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Turn time must be less than or equal to frame time',
+        path: ['stopClockTurnTimeInSeconds'],
+      });
+    }
+  });
 
 interface SnookerSettingsFormSchema {
   onSubmit: (values: z.infer<typeof formSchema>) => void;
@@ -59,8 +99,14 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
       teamOneHandicap: 0,
       teamTwoHandicap: 0,
       isRankingEvent: false,
+      isStopClockEnabled: false,
+      stopClockFrameTimeInSeconds: 900,
+      stopClockTurnTimeInSeconds: 30,
+      stopClockVoiceEnabled: false,
     },
   });
+
+  const isStopClockEnabled = form.watch('isStopClockEnabled');
 
   return (
     <Form {...form}>
@@ -158,6 +204,100 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="isStopClockEnabled"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-white text-sm">Stop Clock</FormLabel>
+              </div>
+              <FormControl>
+                <Switch className="w-14 h-6" checked={field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        {isStopClockEnabled && (
+          <>
+            <FormField
+              control={form.control}
+              name="stopClockFrameTimeInSeconds"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-white text-sm">Frame Time (seconds)</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={String(field.value)}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        if (raw === '') {
+                          field.onChange(0);
+                          return;
+                        }
+                        const parsed = parseInt(raw, 10);
+                        if (!isNaN(parsed) && parsed >= 0) field.onChange(parsed);
+                      }}
+                      className="w-44 text-white"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="stopClockTurnTimeInSeconds"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-white text-sm">Turn Time (seconds)</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={String(field.value)}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        if (raw === '') {
+                          field.onChange(0);
+                          return;
+                        }
+                        const parsed = parseInt(raw, 10);
+                        if (!isNaN(parsed) && parsed >= 0) field.onChange(parsed);
+                      }}
+                      className="w-44 text-white"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="stopClockVoiceEnabled"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-white text-sm">Voice Countdown</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Switch className="w-14 h-6" checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </>
+        )}
 
         <Button type="submit" className="mt-auto">
           Save changes
