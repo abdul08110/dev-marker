@@ -8,7 +8,21 @@ const TICKER_IMAGE_SRC: Record<'placeholder' | 'green' | 'red', string> = {
   red: '/images/timer-ticker/red-ticker.svg',
 };
 
-const ShotClockTicker = ({ remainingMs, totalMs }: { remainingMs?: number; totalMs: number }) => {
+interface ShotClockTickerProps {
+  remainingMs?: number;
+  totalMs: number;
+  barClassName?: string;
+  textClassName?: string;
+  gapClassName?: string;
+}
+
+const ShotClockTicker = ({
+  remainingMs,
+  totalMs,
+  barClassName = 'size-[min(4vh,4vw)]',
+  textClassName = 'text-[min(2.6vh,2.6vw)]',
+  gapClassName = 'gap-[min(0.5vh,0.5vw)]',
+}: ShotClockTickerProps) => {
   const total = totalMs > 0 ? totalMs : 1;
   const remaining = Math.max(0, remainingMs ?? total);
   const criticalMs = TICKER_CRITICAL_SECONDS * 1000;
@@ -36,19 +50,16 @@ const ShotClockTicker = ({ remainingMs, totalMs }: { remainingMs?: number; total
   });
 
   return (
-    <div className="flex items-center gap-[min(0.5vh,0.5vw)]">
+    <div className={clsx('flex items-center', gapClassName)}>
       {slots.map((state, i) => (
         <img
           key={i}
           src={TICKER_IMAGE_SRC[state]}
-          className={clsx('size-[min(4vh,4vw)] object-contain', state === 'red' && 'animate-blink')}
+          className={clsx(barClassName, 'object-contain', state === 'red' && 'animate-blink')}
         />
       ))}
       <p
-        className={clsx(
-          'font-semibold text-white text-box-trim text-[min(2.6vh,2.6vw)] pl-2',
-          isCritical && 'animate-blink',
-        )}
+        className={clsx('font-semibold text-white text-box-trim pl-2', textClassName, isCritical && 'animate-blink')}
       >
         {secondsLeft}
       </p>
