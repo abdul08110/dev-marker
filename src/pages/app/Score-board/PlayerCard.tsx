@@ -4,8 +4,8 @@ import { convertHandicapToString } from '@/utils/functions';
 import { SnookerPointType } from '@/stores/types';
 import clsx from 'clsx';
 import { ProfilePicture } from './ProfilePicture';
-import { formatClockMs, getStopClockColor } from '@/utils/stopClock';
 import { cn } from '@/lib/utils';
+import ShotClockTicker from './ShotClockTicker';
 
 const BALL_IMAGE_MAP: Partial<Record<SnookerPointType, string>> = {
   [SnookerPointType.RED]: '/images/balls/red-ball.svg',
@@ -147,7 +147,7 @@ export function PlayerCard({
           </div>
         </div>
 
-        {/* Balls (snooker only) */}
+        {/* Balls (snooker only) — replaced by the shot-clock ticker when stop clock is enabled */}
         {sport === 'SNOOKER' && (
           <div
             className="border-t-2 [border-image-slice:1] py-[min(1.4vh,1.4vw)] flex flex-col items-center gap-[min(0.7vh,0.7vw)]"
@@ -157,45 +157,11 @@ export function PlayerCard({
                 : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
             }}
           >
-            <BallGrid balls={balls} />
-          </div>
-        )}
-        <div className="flex items-center gap[min(1vh,1vw)]">
-          <img src="/images/timer-ticker/placeholder-ticker.svg" className="size-[min(4vh,4vw)] object-contain" />
-          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/placeholder-ticker.svg" />
-          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/red-ticker.svg" />
-          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/red-ticker.svg" />
-          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/red-ticker.svg" />
-          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
-          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
-          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
-          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
-          <img className="size-[min(4vh,4vw)] object-contain" src="/images/timer-ticker/green-ticker.svg" />
-          <p className="font-semibold text-white text-box-trim text-[min(2.6vh,2.6vw)] pl-2">20</p>
-        </div>
-
-        {/* Shot clock (snooker only, when stop clock enabled) */}
-        {isStopClockEnabled && sport === 'SNOOKER' && (
-          <div
-            className={clsx('px-[min(3vh,3vw)] pt-[min(1.2vh,1.2vw)]', turnClockMs != null ? 'visible' : 'invisible')}
-          >
-            <div className="flex justify-between items-baseline">
-              <p className="font-extrabold text-[min(2.3vh,2.3vw)] text-box-trim uppercase text-sandy-yellow">
-                Shot Clock
-              </p>
-              <p className="font-semibold text-[min(2.3vh,2.3vw)] text-box-trim text-score-text tabular-nums">
-                {formatClockMs(turnClockMs ?? 0)}
-              </p>
-            </div>
-            <div className="w-full h-[min(1vh,1vw)] rounded-full bg-white/10 overflow-hidden mt-[min(0.6vh,0.6vw)]">
-              <div
-                className="h-full rounded-full transition-[width] duration-200"
-                style={{
-                  width: `${Math.min(100, Math.max(0, ((turnClockMs ?? 0) / (turnClockTotalMs || 1)) * 100))}%`,
-                  backgroundColor: getStopClockColor((turnClockMs ?? 0) / (turnClockTotalMs || 1)),
-                }}
-              />
-            </div>
+            {isStopClockEnabled ? (
+              <ShotClockTicker remainingMs={turnClockMs} totalMs={turnClockTotalMs ?? 0} />
+            ) : (
+              <BallGrid balls={balls} />
+            )}
           </div>
         )}
       </div>
