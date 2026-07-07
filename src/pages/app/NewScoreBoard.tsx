@@ -4,6 +4,7 @@ import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import { formatTimeMatchTime } from '@/utils/functions';
+import { formatClockMs } from '@/utils/stopClock';
 import { cn } from '@/lib/utils';
 import { Timer } from './Score-board/Timer';
 import { useStopClockTick } from '@/hooks/useStopClockTick';
@@ -118,7 +119,6 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       : noOfFrames
         ? `${noOfFrames}`
         : null;
-
   return (
     <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(3vh,3vw)] bg-no-repeat flex flex-col overflow-hidden">
       {/* Header */}
@@ -148,9 +148,28 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           src="/images/logos/clubliv-logo.svg"
         />
 
-        <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
-          match time {formatTimeMatchTime(elapsed)}
-        </p>
+        <div className="flex items-center justify-end gap-7">
+          {isTournament && (
+            <div className="flex justify-center items-center">
+              <div className="bg-white/5 rounded-[8px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(4vh,4vw)] w-fit overflow-hidden shrink-0">
+                <div className="flex justify-center items-center bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] h-full">
+                  <p className="font-medium uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)]  text-center text-[min(2.6vh,2.6vw)]">
+                    t
+                  </p>
+                </div>
+                <div className=" bg-white flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full">
+                  <p className="font-medium leading-[130%] text-[min(2.6vh,2.6vw)] text-black text-box-trim py-[min(0.9vh,0.9vw)]">
+                    {state.venueNo}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
+            match time {formatTimeMatchTime(elapsed)}
+          </p>
+        </div>
       </div>
 
       {/* Cards + Center */}
@@ -229,19 +248,30 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 />
               )} */}
 
-              {isTournament && (
-                <div className="flex justify-center items-center py-5">
-                  {/* <ImageWithFallback src={state.clubLogo} fallback="/images/user-dummy-pic.jpg" /> */}
-                  <ImageWithFallback
-                    className="object-cover size-[min(15vh,15vw)] rounded-full overflow-hidden"
-                    fallback="/images/user-dummy-pic.jpg"
-                    src={state.clubLogo ?? ''}
-                  />
+              {isTournament && state.isStopClockEnabled ? (
+                /* Frame Time (tournament, stop clock enabled) — replaces club logo + table number */
+                <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)] py-[min(3vh,3vw)] space-y-2">
+                  <p className="text-score-text text-box-trim font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
+                    {formatClockMs(stopClockTick.remainingFrameTimeInMs)}
+                  </p>
+                  <p className="text-text-light font-medium text-[min(4vh,4vw)]">Remaining</p>
                 </div>
-              )}
+              ) : (
+                <>
+                  {isTournament && (
+                    <div className="flex justify-center items-center py-5">
+                      <ImageWithFallback
+                        className="object-cover size-[min(15vh,15vw)] rounded-full overflow-hidden"
+                        fallback="/images/user-dummy-pic.jpg"
+                        src={state.clubLogo ?? ''}
+                      />
+                    </div>
+                  )}
 
-              {/* Table Number */}
-              <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
+                  {/* Table Number */}
+                  <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
+                </>
+              )}
 
               {/* Game format */}
               <GameFormat sport={state.sport} format={state.format} isTournament={isTournament} />
