@@ -6,6 +6,8 @@ import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector'
 import { formatTimeMatchTime } from '@/utils/functions';
 import { cn } from '@/lib/utils';
 import { Timer } from './Score-board/Timer';
+import { useStopClockTick } from '@/hooks/useStopClockTick';
+import { useStopClockVoice } from '@/hooks/useStopClockVoice';
 import { TableNumber } from './Score-board/TableNumber';
 import { GameFormat } from './Score-board/GameFormat';
 import { TeamScore } from './Score-board/FrameScore';
@@ -31,6 +33,8 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
   const activeSet = getActiveSet(state.sets);
   const activeTurn = getActiveTurn(activeSet);
+  const stopClockTick = useStopClockTick(state.stopClockState);
+  useStopClockVoice({ stopClockState: state.stopClockState, stopClockVoiceEnabled: state.stopClockVoiceEnabled });
   const isTeamOneActive =
     state.sideOnePlayerOne?.id === state.activePlayerId || state.sideOnePlayerTwo?.id === state.activePlayerId;
   const isTeamTwoActive =
@@ -170,6 +174,9 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           breakSide="right"
           tournamentName={state.tournamentTeamOneName ?? ''}
           isTournament={isTournament}
+          isStopClockEnabled={state.isStopClockEnabled}
+          turnClockMs={isTeamOneActive ? stopClockTick.currentTurnRemainingTimeInMs : undefined}
+          turnClockTotalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
         />
 
         {/* Center Panel */}
@@ -204,6 +211,15 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
               {/* Timer (non-tournament only) */}
               <Timer timeLeft={timeLeft} isTournament={isTournament} />
+              {/* Stop Clock (SNOOKER only, when enabled for this match) */}
+              {/* <StopClock
+                stopClockState={state.stopClockState}
+                isStopClockEnabled={state.isStopClockEnabled}
+                stopClockVoiceEnabled={state.stopClockVoiceEnabled}
+                stopClockFrameTimeInSeconds={state.stopClockFrameTimeInSeconds}
+                stopClockTurnTimeInSeconds={state.stopClockTurnTimeInSeconds}
+                sport={state.sport}
+              /> */}
               {/* Frame Score (tournament only) */}
               {/* {isTournament && (
                 <FrameScorePanel
@@ -251,6 +267,9 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           breakSide="left"
           tournamentName={state.tournamentTeamTwoName ?? ''}
           isTournament={isTournament}
+          isStopClockEnabled={state.isStopClockEnabled}
+          turnClockMs={isTeamTwoActive ? stopClockTick.currentTurnRemainingTimeInMs : undefined}
+          turnClockTotalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
         />
       </div>
     </main>

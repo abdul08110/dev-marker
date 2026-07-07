@@ -42,13 +42,15 @@ import { SnookerFoulData } from '@/components/forms/app/snookerFoul';
 import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
 import useInterval from './useInterval';
-import { matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
+import { matchResetTimerRequest, stopClockActionRequest } from '@/api/scoring/scoringFunctions';
 import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { NoOfPlayersDefault, SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
-import { addPlayer, setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
+import { addPlayer, setExpectedEndTimeDate, setStopClockState, setTeamPlayer } from '@/stores/slices/sportSlice';
 import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
+import { computeLiveStopClockMs } from '@/utils/stopClock';
+import { useStopClockTick } from './useStopClockTick';
 import mqtt from 'mqtt';
 
 function playerSlot(playerNumber: number, playerCount: number): { teamIndex: number; playerIndex: number } {
@@ -116,6 +118,10 @@ const useSnookerScoring = () => {
   const [showConcedeFrameDrawer, setShowConcedeFrameDrawer] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [showTimerModal, setShowTimeModal] = React.useState(false);
+  const [isStopClockActionPending, setIsStopClockActionPending] = React.useState(false);
+
+  // STOP CLOCK LIVE DISPLAY (ticks locally off turnStartedAt, no per-second MQTT/API calls)
+  const stopClockTick = useStopClockTick(snookerScoring.stopClockState);
 
   // TIMER HOOKS
   // const { timeLeft, startTimer, setTimeLeft } = useTimer(snookerScoring.timeInMinutes, () => {
@@ -364,6 +370,16 @@ const useSnookerScoring = () => {
       switchType: snookerScoring.switchType ? snookerScoring.switchType : null,
       isRankingEvent: currentImplementationSnookerScoring.isRankingEvent,
       phase: currentImplementationSnookerScoring.phase,
+      isStopClockEnabled: currentImplementationSnookerScoring.isStopClockEnabled,
+      stopClockFrameTimeInSeconds: currentImplementationSnookerScoring.isStopClockEnabled
+        ? currentImplementationSnookerScoring.stopClockFrameTimeInSeconds
+        : undefined,
+      stopClockTurnTimeInSeconds: currentImplementationSnookerScoring.isStopClockEnabled
+        ? currentImplementationSnookerScoring.stopClockTurnTimeInSeconds
+        : undefined,
+      stopClockVoiceEnabled: currentImplementationSnookerScoring.isStopClockEnabled
+        ? currentImplementationSnookerScoring.stopClockVoiceEnabled
+        : undefined,
     });
 
     if (matchId) {
@@ -745,6 +761,29 @@ const useSnookerScoring = () => {
     setShowTimeModal(false);
   };
 
+  const handleStopClockToggle = async () => {
+    if (!snookerScoring.matchId || isStopClockActionPending) return;
+
+    const isRunning = snookerScoring.stopClockState?.activePlayerClock === 'RUNNING';
+    setIsStopClockActionPending(true);
+
+    const payload = isRunning
+      ? { action: 'STOP' as const, ...computeLiveStopClockMs(snookerScoring.stopClockState) }
+      : {
+          action: 'START' as const,
+          remainingFrameTimeInMs:
+            snookerScoring.stopClockState?.remainingFrameTimeInMs ?? snookerScoring.stopClockFrameTimeInSeconds * 1000,
+          currentTurnRemainingTimeInMs: snookerScoring.stopClockTurnTimeInSeconds * 1000,
+        };
+
+    const result = await stopClockActionRequest({ matchId: snookerScoring.matchId, ...payload });
+    if (result) {
+      dispatch(setStopClockState({ stopClockState: result }));
+    }
+
+    setIsStopClockActionPending(false);
+  };
+
   return {
     snookerScoring,
     clubs,
@@ -809,6 +848,9 @@ const useSnookerScoring = () => {
     showTimerModal,
     handleTimerButtonAction,
     defaultNoOfPlayers,
+    stopClockTick,
+    isStopClockActionPending,
+    handleStopClockToggle,
   };
 };
 

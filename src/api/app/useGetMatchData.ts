@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axiosInstance from '../axios';
 import { handleApiResponse } from '@/utils/handlers';
 import { ApiResponse } from '@/types';
-import { Set, TournamentItem, TournamentPhase, TournamentSubItem } from '@/stores/types';
+import { Set, StopClockState, TournamentItem, TournamentPhase, TournamentSubItem } from '@/stores/types';
 
 interface MatchGetLiveDataProps {
   matchId: string;
@@ -123,6 +123,11 @@ export interface MatchStartResponse {
       };
     };
   };
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
+  stopClockState?: StopClockState;
 }
 
 const useGetMatchLiveData = () => {

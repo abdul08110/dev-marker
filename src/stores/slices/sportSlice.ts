@@ -3,7 +3,7 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GeneralScoringState, Player, Point } from '../types';
+import { GeneralScoringState, Player, Point, StopClockState } from '../types';
 import { getTeamKey } from '../selectors/commonSport';
 
 const initialState: GeneralScoringState = {
@@ -61,6 +61,11 @@ const initialState: GeneralScoringState = {
   isRankingEvent: false,
   snookerHandicapType: 'DIFFERENCE',
   phase: null,
+  isStopClockEnabled: false,
+  stopClockFrameTimeInSeconds: 900,
+  stopClockTurnTimeInSeconds: 30,
+  stopClockVoiceEnabled: false,
+  stopClockState: null,
 };
 
 const sportSlice = createSlice({
@@ -127,6 +132,11 @@ const sportSlice = createSlice({
         formatName: null,
         switchType: 'VISIT',
         isRankingEvent: false,
+        isStopClockEnabled: false,
+        stopClockFrameTimeInSeconds: 900,
+        stopClockTurnTimeInSeconds: 30,
+        stopClockVoiceEnabled: false,
+        stopClockState: null,
       });
     },
     resetStateBilliards(state) {
@@ -182,6 +192,8 @@ const sportSlice = createSlice({
         formatName: null,
         switchType: null,
         isRankingEvent: false,
+        isStopClockEnabled: false,
+        stopClockState: null,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
@@ -234,6 +246,15 @@ const sportSlice = createSlice({
         scoreOrder: scoreOrder,
         setConcededTo: null,
       });
+
+      if (state.isStopClockEnabled) {
+        state.stopClockState = {
+          activePlayerClock: 'STOPPED',
+          remainingFrameTimeInMs: state.stopClockFrameTimeInSeconds * 1000,
+          currentTurnRemainingTimeInMs: state.stopClockTurnTimeInSeconds * 1000,
+          turnStartedAt: null,
+        };
+      }
     },
     createSnookerCorrection(
       state,
@@ -337,6 +358,23 @@ const sportSlice = createSlice({
     updateIsRankingEvent(state, action: PayloadAction<{ isRankingEvent: boolean }>) {
       state.isRankingEvent = action.payload.isRankingEvent;
     },
+    updateStopClockSettings(
+      state,
+      action: PayloadAction<{
+        isStopClockEnabled: boolean;
+        stopClockFrameTimeInSeconds: number;
+        stopClockTurnTimeInSeconds: number;
+        stopClockVoiceEnabled: boolean;
+      }>,
+    ) {
+      state.isStopClockEnabled = action.payload.isStopClockEnabled;
+      state.stopClockFrameTimeInSeconds = action.payload.stopClockFrameTimeInSeconds;
+      state.stopClockTurnTimeInSeconds = action.payload.stopClockTurnTimeInSeconds;
+      state.stopClockVoiceEnabled = action.payload.stopClockVoiceEnabled;
+    },
+    setStopClockState(state, action: PayloadAction<{ stopClockState: StopClockState | null }>) {
+      state.stopClockState = action.payload.stopClockState;
+    },
     updateMaxScorePerSet(state, action: PayloadAction<{ maxScorePerSet: number }>) {
       state.maxScorePerSet = action.payload.maxScorePerSet;
     },
@@ -423,5 +461,7 @@ export const {
   setExpectedEndTimeDate,
   updateIsRankingEvent,
   setFormatName,
+  updateStopClockSettings,
+  setStopClockState,
 } = sportSlice.actions;
 export default sportSlice.reducer;

@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { StopClockControl } from './stopClockControl';
 
 export enum SnookerScoringButtonEnum {
   BREAK_OFF = 'BREAK_OFF',
@@ -36,6 +37,14 @@ interface SnookerScoringProps {
   isBreakOff: boolean;
   isLongEnabled: boolean;
   onLongClick: () => void;
+  isStopClockEnabled?: boolean;
+  activePlayerClock?: 'RUNNING' | 'STOPPED';
+  remainingFrameTimeInMs: number;
+  currentTurnRemainingTimeInMs: number;
+  stopClockFrameTimeInSeconds: number;
+  stopClockTurnTimeInSeconds: number;
+  isStopClockActionPending: boolean;
+  onStopClockToggle: () => void;
 }
 
 export function SnookerScoringButtons(props: SnookerScoringProps) {
@@ -47,6 +56,17 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
 
   return (
     <div className="w-full container flex flex-col gap-2 mt-auto">
+      <StopClockControl
+        isStopClockEnabled={props.isStopClockEnabled}
+        sport="SNOOKER"
+        activePlayerClock={props.activePlayerClock}
+        remainingFrameTimeInMs={props.remainingFrameTimeInMs}
+        currentTurnRemainingTimeInMs={props.currentTurnRemainingTimeInMs}
+        stopClockFrameTimeInSeconds={props.stopClockFrameTimeInSeconds}
+        stopClockTurnTimeInSeconds={props.stopClockTurnTimeInSeconds}
+        isPending={props.isStopClockActionPending}
+        onToggle={props.onStopClockToggle}
+      />
       <div className="flex justify-end">
         {/* <button
           onClick={() => props.onLongClick()}

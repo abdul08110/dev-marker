@@ -36,6 +36,8 @@ import {
   setExpectedEndTimeDate,
   updateIsRankingEvent,
   setFormatName,
+  updateStopClockSettings,
+  setStopClockState,
 } from '../slices/sportSlice';
 import { BilliardPointType, Player, SnookerPointType, SportType, TournamentFormat } from '../types';
 import {
@@ -67,6 +69,7 @@ import {
   matchEndGameRequest,
   matchUpdateDataRequest,
   reversePlayersRequest,
+  stopClockActionRequest,
 } from '@/api/scoring/scoringFunctions';
 import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
@@ -152,6 +155,11 @@ export const setStateTournament = createAsyncThunk<
     isRankingEvent: false,
     snookerHandicapType: data.format.snookerHandicapType ? data.format.snookerHandicapType : 'DIFFERENCE',
     phase: data.phase,
+    isStopClockEnabled: false,
+    stopClockFrameTimeInSeconds: 900,
+    stopClockTurnTimeInSeconds: 30,
+    stopClockVoiceEnabled: false,
+    stopClockState: null,
   };
   await dispatch(
     setState({
@@ -163,6 +171,10 @@ export const setStateTournament = createAsyncThunk<
 export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStartResponse }, { dispatch: AppDispatch }>(
   'sport/matchSyncDataFromBackend',
   async ({ data }, { dispatch }) => {
+    const isStopClockEnabled = data.isStopClockEnabled ?? false;
+    const stopClockFrameTimeInSeconds = data.stopClockFrameTimeInSeconds ?? 900;
+    const stopClockTurnTimeInSeconds = data.stopClockTurnTimeInSeconds ?? 30;
+
     let newState = {
       format: data.sportType,
       matchId: data.id,
@@ -220,6 +232,20 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       isRankingEvent: false,
       snookerHandicapType: 'DIFFERENCE' as 'DIFFERENCE' | 'UPFRONT',
       phase: data.phase,
+      isStopClockEnabled,
+      stopClockFrameTimeInSeconds,
+      stopClockTurnTimeInSeconds,
+      stopClockVoiceEnabled: data.stopClockVoiceEnabled ?? false,
+      stopClockState:
+        data.stopClockState ??
+        (isStopClockEnabled
+          ? {
+              activePlayerClock: 'STOPPED' as const,
+              remainingFrameTimeInMs: stopClockFrameTimeInSeconds * 1000,
+              currentTurnRemainingTimeInMs: stopClockTurnTimeInSeconds * 1000,
+              turnStartedAt: null,
+            }
+          : null),
     };
 
     if (data.sideTwoPlayerTwo !== null) {
@@ -256,6 +282,28 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
   },
 );
 
+// Auto-starts the stop clock for a fresh frame's first turn (break off). Relies on `createSet`
+// having already reset `stopClockState` to a fresh STOPPED state at full frame/turn time.
+export const handleAutoStartStopClock = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
+  'sport/handleAutoStartStopClock',
+  async ({}, { dispatch, getState }) => {
+    const state = getState();
+
+    if (!state.sport.isStopClockEnabled || !state.sport.matchId || state.sport.sport !== 'SNOOKER') return;
+
+    const result = await stopClockActionRequest({
+      matchId: state.sport.matchId,
+      action: 'START',
+      remainingFrameTimeInMs: state.sport.stopClockFrameTimeInSeconds * 1000,
+      currentTurnRemainingTimeInMs: state.sport.stopClockTurnTimeInSeconds * 1000,
+    });
+
+    if (result) {
+      await dispatch(setStopClockState({ stopClockState: result }));
+    }
+  },
+);
+
 export const handleStartTournamentMatch = createAsyncThunk<
   void,
   { scoreOrder: string[] },
@@ -274,6 +322,7 @@ export const handleStartTournamentMatch = createAsyncThunk<
 
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
+  await dispatch(handleAutoStartStopClock({}));
 
   // if (state.sport.sport === 'SNOOKER') {
   //   await dispatch(handleSelectionOfOnAndAheadScores({}));
@@ -308,6 +357,7 @@ export const handleMatchStart = createAsyncThunk<
   );
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
+  await dispatch(handleAutoStartStopClock({}));
 
   // if (state.sport.sport === 'SNOOKER') {
   //   await dispatch(handleSelectionOfOnAndAheadScores({}));
@@ -370,6 +420,7 @@ export const handleBreakOff = createAsyncThunk<
   await dispatch(setActivePlayer({ playerId: scoreOrder[0] }));
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: state.sport.scoreHistory.length, playerId: scoreOrder[0] }));
+  await dispatch(handleAutoStartStopClock({}));
   // await dispatch(handleSelectionOfOnAndAheadScores({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));
@@ -676,11 +727,30 @@ export const handleSettingsStateUpdate = createAsyncThunk<
     teamOneHandicap: number;
     teamTwoHandicap: number;
     isRankingEvent: boolean;
+    isStopClockEnabled: boolean;
+    stopClockFrameTimeInSeconds: number;
+    stopClockTurnTimeInSeconds: number;
+    stopClockVoiceEnabled: boolean;
   },
   { state: RootState; dispatch: AppDispatch }
 >(
   'sport/handleSettingsUpdate',
-  async ({ format, durationInMinutes, noOfPlayers, streaming, teamOneHandicap, teamTwoHandicap, isRankingEvent }, { dispatch, getState }) => {
+  async (
+    {
+      format,
+      durationInMinutes,
+      noOfPlayers,
+      streaming,
+      teamOneHandicap,
+      teamTwoHandicap,
+      isRankingEvent,
+      isStopClockEnabled,
+      stopClockFrameTimeInSeconds,
+      stopClockTurnTimeInSeconds,
+      stopClockVoiceEnabled,
+    },
+    { dispatch, getState },
+  ) => {
     await dispatch(
       updateTimeInMinutes({ timeInMinutes: isRankingEvent ? 0 : timeStringToDecimalMinutes(durationInMinutes) }),
     );
@@ -688,6 +758,14 @@ export const handleSettingsStateUpdate = createAsyncThunk<
     await dispatch(updateStreaming({ streaming }));
     await dispatch(updateTeamHandicaps({ teamOneHandicap, teamTwoHandicap }));
     await dispatch(updateIsRankingEvent({ isRankingEvent }));
+    await dispatch(
+      updateStopClockSettings({
+        isStopClockEnabled,
+        stopClockFrameTimeInSeconds,
+        stopClockTurnTimeInSeconds,
+        stopClockVoiceEnabled,
+      }),
+    );
 
     if (isRankingEvent) {
       await dispatch(setFormatName({ formatName: '6 Red Handicap' }));
@@ -816,6 +894,15 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
         isTeamOneHandicapApplied: state.sport.isTeamOneHandicapApplied,
         isTeamTwoHandicapApplied: state.sport.isTeamTwoHandicapApplied,
         currentVisitScore: activeTurn ? activeTurn.score : 0,
+        stopClockState:
+          state.sport.isStopClockEnabled && state.sport.stopClockState
+            ? {
+                activePlayerClock: state.sport.stopClockState.activePlayerClock,
+                remainingFrameTimeInMs: state.sport.stopClockState.remainingFrameTimeInMs,
+                currentTurnRemainingTimeInMs: state.sport.stopClockState.currentTurnRemainingTimeInMs,
+                turnStartedAt: state.sport.stopClockState.turnStartedAt ?? undefined,
+              }
+            : undefined,
       });
     }
   },
