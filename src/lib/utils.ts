@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-const PLACEHOLDER_PROFILE_IMAGE_COUNT = 5;
+const PLACEHOLDER_PROFILE_IMAGE_COUNT = 2;
 
 export function getRandomPlaceholderProfileImage(): string {
   const index = Math.floor(Math.random() * PLACEHOLDER_PROFILE_IMAGE_COUNT) + 1;
