@@ -8,7 +8,7 @@ interface GameFormatProps {
 
 export function GameFormat({ sport, format, isTournament }: GameFormatProps) {
   const icon = (
-    <div className={cn('flex flex-col justify-center items-center gap-1', isTournament ? 'pt-5 pb-0' : 'pb-5 pt-5')}>
+    <div className={cn('flex flex-col justify-center items-center gap-1', isTournament ? 'pt-5 pb-5' : 'pb-5 pt-5')}>
       {sport === 'SNOOKER' ? (
         <>
           <img src="/images/snooker.svg" alt="" className="size-[min(7vh,7vw)]" />
