@@ -228,53 +228,38 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 teamScoreCenter={teamScoreCenter}
               />
 
-              {/* Timer (non-tournament only) */}
-              <Timer timeLeft={timeLeft} isTournament={isTournament} />
-              {/* Stop Clock (SNOOKER only, when enabled for this match) */}
-              {/* <StopClock
-                stopClockState={state.stopClockState}
-                isStopClockEnabled={state.isStopClockEnabled}
-                stopClockVoiceEnabled={state.stopClockVoiceEnabled}
-                stopClockFrameTimeInSeconds={state.stopClockFrameTimeInSeconds}
-                stopClockTurnTimeInSeconds={state.stopClockTurnTimeInSeconds}
-                sport={state.sport}
-              /> */}
-              {/* Frame Score (tournament only) */}
-              {/* {isTournament && (
-                <FrameScorePanel
-                  teamOneScore={state.teamOneScore}
-                  teamTwoScore={state.teamTwoScore}
-                  teamScoreCenter={state.sets.length}
-                />
-              )} */}
-
-              {isTournament && state.isStopClockEnabled ? (
-                /* Frame Time (tournament, stop clock enabled) — replaces club logo + table number */
-                <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)] pt-7 space-y-2">
+              {/* Timer — Frame Time when stop clock is enabled (practice + tournament), else match time left (non-tournament only) */}
+              {state.isStopClockEnabled ? (
+                <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)] pt-[min(7.4vh,7.4vw)] space-y-2">
                   <p className="text-score-text text-box-trim font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
                     {formatClockMs(stopClockTick.remainingFrameTimeInMs)}
                   </p>
                   <p className="text-text-light font-medium text-[min(4vh,4vw)]">Remaining</p>
                 </div>
               ) : (
-                <>
-                  {isTournament && (
-                    <div className="flex justify-center items-center py-5">
-                      <ImageWithFallback
-                        className="object-cover size-[min(15vh,15vw)] rounded-full overflow-hidden"
-                        fallback="/images/user-dummy-pic.jpg"
-                        src={state.clubLogo ?? ''}
-                      />
-                    </div>
-                  )}
-
-                  {/* Table Number */}
-                  <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
-                </>
+                <Timer timeLeft={timeLeft} isTournament={isTournament} />
               )}
 
+              {isTournament && (
+                <div className="flex justify-center items-center py-5">
+                  <ImageWithFallback
+                    className="object-cover size-[min(15vh,15vw)] rounded-full overflow-hidden"
+                    fallback="/images/user-dummy-pic.jpg"
+                    src={state.clubLogo ?? ''}
+                  />
+                </div>
+              )}
+
+              {/* Table Number */}
+              <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
+
               {/* Game format */}
-              <GameFormat sport={state.sport} format={state.format} isTournament={isTournament} />
+              <GameFormat
+                sport={state.sport}
+                format={state.format}
+                isTournament={isTournament}
+                isStopClockEnabled={state.isStopClockEnabled}
+              />
             </div>
           </div>
         </div>
