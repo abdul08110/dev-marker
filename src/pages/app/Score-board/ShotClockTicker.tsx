@@ -55,11 +55,11 @@ const ShotClockTicker = ({
         <img
           key={i}
           src={TICKER_IMAGE_SRC[state]}
-          className={clsx(barClassName, 'object-contain', state === 'red' && 'animate-blink')}
+          className={clsx(barClassName, 'object-contain', state === 'red' && 'animate-pulse-glow')}
         />
       ))}
       <p
-        className={clsx('font-semibold text-white text-box-trim pl-2', textClassName, isCritical && 'animate-blink')}
+        className={clsx('font-semibold text-white text-box-trim pl-2', textClassName, isCritical && 'animate-pulse-glow')}
       >
         {secondsLeft}
       </p>
