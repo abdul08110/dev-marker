@@ -38,12 +38,12 @@ interface SnookerScoringProps {
   isLongEnabled: boolean;
   onLongClick: () => void;
   isStopClockEnabled?: boolean;
-  activePlayerClock?: 'RUNNING' | 'STOPPED';
+  isStopClockRunning: boolean;
   remainingFrameTimeInMs: number;
   currentTurnRemainingTimeInMs: number;
   stopClockFrameTimeInSeconds: number;
   stopClockTurnTimeInSeconds: number;
-  isStopClockActionPending: boolean;
+  isStopClockToggleDisabled: boolean;
   onStopClockToggle: () => void;
 }
 
@@ -59,12 +59,12 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
       <StopClockControl
         isStopClockEnabled={props.isStopClockEnabled}
         sport="SNOOKER"
-        activePlayerClock={props.activePlayerClock}
+        isRunning={props.isStopClockRunning}
         remainingFrameTimeInMs={props.remainingFrameTimeInMs}
         currentTurnRemainingTimeInMs={props.currentTurnRemainingTimeInMs}
         stopClockFrameTimeInSeconds={props.stopClockFrameTimeInSeconds}
         stopClockTurnTimeInSeconds={props.stopClockTurnTimeInSeconds}
-        isPending={props.isStopClockActionPending}
+        disabled={props.isStopClockToggleDisabled}
         onToggle={props.onStopClockToggle}
       />
       <div className="flex justify-end">

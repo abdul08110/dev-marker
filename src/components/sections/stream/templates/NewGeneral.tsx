@@ -16,6 +16,10 @@ interface GeneralTemplateProps {
   activeTurn: Turn | null;
   activeSet: Set | undefined;
   isTv: boolean;
+  // Current YouTube video position in ms — when supplied (video-embedded overlay), the stop
+  // clock is computed against the video's own real-world-equivalent time instead of Date.now(),
+  // so it only moves once the (delayed) video itself reaches that point.
+  currentVideoTimeMs?: number;
 }
 
 const YELLOW_CARD_STYLE = {
@@ -31,7 +35,7 @@ const PINK_CARD_STYLE = {
 };
 
 const NewGeneral = (props: GeneralTemplateProps) => {
-  const { state, activeTurn, activeSet } = props;
+  const { state, activeTurn, activeSet, currentVideoTimeMs } = props;
   const isDoubles = !!state.sideOnePlayerTwo;
   const hasTeamName = !!(state.teamOneName || state.teamTwoName);
   const isTournament = !!state.tournamentId;
@@ -43,7 +47,16 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     !!state.activePlayerId &&
     (state.activePlayerId === state.sideTwoPlayerOne.id || state.activePlayerId === state.sideTwoPlayerTwo?.id);
 
-  const stopClockTick = useStopClockTick(state.stopClockState, state.stopClockFrameTimeInSeconds);
+  const referenceTimeMs =
+    currentVideoTimeMs !== undefined ? new Date(state.actualStartTimeDate).getTime() + currentVideoTimeMs : undefined;
+
+  const stopClockTick = useStopClockTick(
+    state.stopClockState?.frameStartedAt,
+    state.stopClockFrameTimeInSeconds,
+    activeTurn?.startShotTime,
+    state.stopClockTurnTimeInSeconds,
+    referenceTimeMs,
+  );
   const showStopClock = !!state.isStopClockEnabled && state.sport === 'SNOOKER';
 
   const breakScore = activeTurn?.score ?? 0;

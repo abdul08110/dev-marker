@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { StopClockState } from '@/stores/types';
-import { computeLiveStopClockMs } from '@/utils/stopClock';
+import { computeTurnRemainingMs } from '@/utils/stopClock';
 
 interface UseStopClockVoiceParams {
-  stopClockState?: StopClockState | null;
+  startedTurnTime?: string | null;
+  stopClockTurnTimeInSeconds?: number;
   stopClockVoiceEnabled?: boolean;
 }
 
@@ -12,9 +12,9 @@ interface UseStopClockVoiceParams {
  * unconditionally wherever the scoreboard renders, independent of any visual stop-clock panel,
  * so the voice keeps working even if that panel is hidden/redesigned.
  */
-export function useStopClockVoice({ stopClockState, stopClockVoiceEnabled }: UseStopClockVoiceParams) {
+export function useStopClockVoice({ startedTurnTime, stopClockTurnTimeInSeconds, stopClockVoiceEnabled }: UseStopClockVoiceParams) {
   const spokenSecondsRef = useRef<Set<number>>(new Set());
-  const lastTurnStartedAtRef = useRef<string | null>(null);
+  const lastTurnStartedAtRef = useRef<string | null | undefined>(undefined);
 
   // Defensive: if something external (or a browser quirk) ever leaves the engine paused,
   // clear it. Never call pause() ourselves here — pausing an idle engine is what was
@@ -36,20 +36,12 @@ export function useStopClockVoice({ stopClockState, stopClockVoiceEnabled }: Use
   }, []);
 
   useEffect(() => {
-    console.debug('[StopClockVoice] stopClockState changed:', stopClockState, '| voiceEnabled:', stopClockVoiceEnabled);
-
-    if (!stopClockState) {
-      console.debug('[StopClockVoice] no stopClockState yet — nothing to do (marker probably hasn\'t pressed Start, or MQTT/stop-clock message never arrived)');
-      return;
-    }
-
-    if (stopClockState.turnStartedAt !== lastTurnStartedAtRef.current) {
+    if (startedTurnTime !== lastTurnStartedAtRef.current) {
       spokenSecondsRef.current = new Set();
-      lastTurnStartedAtRef.current = stopClockState.turnStartedAt;
+      lastTurnStartedAtRef.current = startedTurnTime;
     }
 
-    if (stopClockState.activePlayerClock === 'STOPPED') {
-      console.debug('[StopClockVoice] clock is STOPPED, not ticking');
+    if (!startedTurnTime) {
       window.speechSynthesis?.cancel();
       return;
     }
@@ -57,7 +49,7 @@ export function useStopClockVoice({ stopClockState, stopClockVoiceEnabled }: Use
     const tick = () => {
       if (!stopClockVoiceEnabled) return;
 
-      const { currentTurnRemainingTimeInMs } = computeLiveStopClockMs(stopClockState);
+      const currentTurnRemainingTimeInMs = computeTurnRemainingMs(startedTurnTime, stopClockTurnTimeInSeconds);
       const turnSecondsLeft = Math.ceil(currentTurnRemainingTimeInMs / 1000);
 
       if (turnSecondsLeft < 1 || turnSecondsLeft > 5 || spokenSecondsRef.current.has(turnSecondsLeft)) return;
@@ -70,21 +62,11 @@ export function useStopClockVoice({ stopClockState, stopClockVoiceEnabled }: Use
 
       const utterance = new SpeechSynthesisUtterance(String(turnSecondsLeft));
       utterance.onerror = (e) => console.warn('[StopClockVoice] speechSynthesis error:', e.error);
-      console.debug(
-        '[StopClockVoice] speaking',
-        turnSecondsLeft,
-        '| voices loaded:',
-        window.speechSynthesis.getVoices().length,
-        '| speaking:',
-        window.speechSynthesis.speaking,
-        '| pending:',
-        window.speechSynthesis.pending,
-      );
       window.speechSynthesis.speak(utterance);
     };
 
     tick();
     const id = setInterval(tick, 200);
     return () => clearInterval(id);
-  }, [stopClockState, stopClockVoiceEnabled]);
+  }, [startedTurnTime, stopClockTurnTimeInSeconds, stopClockVoiceEnabled]);
 }

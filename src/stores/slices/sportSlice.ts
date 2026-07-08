@@ -373,6 +373,32 @@ const sportSlice = createSlice({
       state.stopClockTurnTimeInSeconds = action.payload.stopClockTurnTimeInSeconds;
       state.stopClockVoiceEnabled = action.payload.stopClockVoiceEnabled;
     },
+    // Purely local — no backend call for the toggle itself. stopClockState.turnStartedAt is set
+    // purely as the TRANSPORT value (it's the only field that already rides end-to-end through
+    // the existing update-match-data echo + MQTT relay, the same way frameStartedAt does for
+    // frame time). The actual DISPLAY value is mirrored onto the active turn's startShotTime, so
+    // the shot clock is scoped to whichever turn is active — a new turn always reads as
+    // not-started even if the previous turn's clock was left running.
+    toggleTurnClock(state) {
+      if (!state.stopClockState) return;
+
+      const setIndex = state.scoreHistory.findIndex((set) => set.status === 'ONGOING');
+      const turns = setIndex !== -1 ? state.scoreHistory[setIndex].turns : [];
+      const activeTurn = turns[turns.length - 1];
+
+      const isRunning = state.stopClockState.activePlayerClock === 'RUNNING';
+      if (isRunning) {
+        state.stopClockState.activePlayerClock = 'STOPPED';
+        state.stopClockState.turnStartedAt = null;
+        if (activeTurn) activeTurn.startShotTime = null;
+      } else {
+        const now = new Date().toISOString();
+        state.stopClockState.activePlayerClock = 'RUNNING';
+        state.stopClockState.turnStartedAt = now;
+        state.stopClockState.currentTurnRemainingTimeInMs = state.stopClockTurnTimeInSeconds * 1000;
+        if (activeTurn) activeTurn.startShotTime = now;
+      }
+    },
     setStopClockState(state, action: PayloadAction<{ stopClockState: StopClockState | null }>) {
       state.stopClockState = action.payload.stopClockState;
     },
@@ -464,5 +490,6 @@ export const {
   setFormatName,
   updateStopClockSettings,
   setStopClockState,
+  toggleTurnClock,
 } = sportSlice.actions;
 export default sportSlice.reducer;

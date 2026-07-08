@@ -1,39 +1,50 @@
-import { StopClockState } from '@/stores/types';
-
 /**
- * Frame time and turn time are independent clocks. Frame time runs continuously from
- * `frameStartedAt` for the whole frame (no pause/resume), so it's derived purely from that
- * timestamp plus the match's configured total — never from the `remainingFrameTimeInMs`
- * snapshot, which the backend now recomputes fresh at send-time (using it as an elapsed-since
- * anchor would double-count that elapsed time). Turn time keeps the original snapshot + anchor
- * model since it genuinely pauses/resumes across Start/Stop presses.
+ * Frame time and turn time are independent clocks, each derived purely from its own start
+ * timestamp plus the match's configured total — never from a stored partial-remaining
+ * snapshot, since every Start always resets to the full duration.
+ *
+ * Frame time runs continuously from `frameStartedAt` for the whole frame (no pause/resume),
+ * set once per frame by the backend at Break Off. Turn (shot) time is anchored to the active
+ * turn's `startedTurnTime`, set/cleared entirely client-side by the marker's Start/Stop toggle.
  */
-export const computeLiveStopClockMs = (
-  stopClockState: StopClockState | null | undefined,
+// `now` defaults to real wall-clock time (marker, venue scoreboard) but callers rendering a
+// YouTube-embedded overlay should pass the video's own real-world-equivalent time instead
+// (actualStartTimeDate + player.getCurrentTime()), so the clock only appears to move once the
+// video itself has reached that point, instead of jumping the instant the live data arrives.
+export const computeFrameRemainingMs = (
+  frameStartedAt: string | null | undefined,
   stopClockFrameTimeInSeconds?: number,
+  now: number = Date.now(),
 ) => {
-  if (!stopClockState) {
-    return { remainingFrameTimeInMs: 0, currentTurnRemainingTimeInMs: 0 };
-  }
-
   const frameTotalMs = (stopClockFrameTimeInSeconds ?? 0) * 1000;
-  const remainingFrameTimeInMs = stopClockState.frameStartedAt
-    ? Math.max(0, frameTotalMs - (Date.now() - new Date(stopClockState.frameStartedAt).getTime()))
-    : Math.max(0, stopClockState.remainingFrameTimeInMs);
-
-  if (stopClockState.activePlayerClock === 'STOPPED' || !stopClockState.turnStartedAt) {
-    return {
-      remainingFrameTimeInMs,
-      currentTurnRemainingTimeInMs: Math.max(0, stopClockState.currentTurnRemainingTimeInMs),
-    };
-  }
-
-  const elapsed = Date.now() - new Date(stopClockState.turnStartedAt).getTime();
-  return {
-    remainingFrameTimeInMs,
-    currentTurnRemainingTimeInMs: Math.max(0, stopClockState.currentTurnRemainingTimeInMs - elapsed),
-  };
+  if (!frameStartedAt) return frameTotalMs;
+  const start = new Date(frameStartedAt).getTime();
+  if (now < start) return frameTotalMs;
+  return Math.max(0, frameTotalMs - (now - start));
 };
+
+export const computeTurnRemainingMs = (
+  startedTurnTime: string | null | undefined,
+  stopClockTurnTimeInSeconds?: number,
+  now: number = Date.now(),
+) => {
+  const turnTotalMs = (stopClockTurnTimeInSeconds ?? 0) * 1000;
+  if (!startedTurnTime) return turnTotalMs;
+  const start = new Date(startedTurnTime).getTime();
+  if (now < start) return turnTotalMs;
+  return Math.max(0, turnTotalMs - (now - start));
+};
+
+export const computeLiveStopClockMs = (
+  frameStartedAt: string | null | undefined,
+  stopClockFrameTimeInSeconds: number | undefined,
+  startedTurnTime: string | null | undefined,
+  stopClockTurnTimeInSeconds: number | undefined,
+  now: number = Date.now(),
+) => ({
+  remainingFrameTimeInMs: computeFrameRemainingMs(frameStartedAt, stopClockFrameTimeInSeconds, now),
+  currentTurnRemainingTimeInMs: computeTurnRemainingMs(startedTurnTime, stopClockTurnTimeInSeconds, now),
+});
 
 export const formatClockMs = (ms: number) => {
   const totalSeconds = Math.ceil(ms / 1000);

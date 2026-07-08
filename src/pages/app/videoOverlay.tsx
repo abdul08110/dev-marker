@@ -33,6 +33,7 @@ export function VideoOverlay() {
     viewershipData,
     updateTime,
     streamingData,
+    currentTime,
   } = useStreaming(undefined, matchId ? matchId : undefined);
 
   useEffect(() => {
@@ -162,10 +163,22 @@ export function VideoOverlay() {
               <IGTemplate isTv={false} state={viewershipData} activeTurn={activeTurn} activeSet={activeSet} />
             ),
           }[viewershipData.tournamentId] || (
-            <NewGeneral state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+            <NewGeneral
+              state={viewershipData}
+              activeSet={activeSet}
+              activeTurn={activeTurn}
+              isTv={false}
+              currentVideoTimeMs={currentTime}
+            />
           )
         ) : (
-          <NewGeneral state={viewershipData} activeSet={activeSet} activeTurn={activeTurn} isTv={false} />
+          <NewGeneral
+            state={viewershipData}
+            activeSet={activeSet}
+            activeTurn={activeTurn}
+            isTv={false}
+            currentVideoTimeMs={currentTime}
+          />
         ))}
       {viewershipData && viewershipData.streams[0].overlayType === 'SOURCE_WITH_FINAL_SCORES' && (
         <SourceWithFinalScores state={viewershipData} />
