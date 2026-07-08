@@ -253,6 +253,7 @@ const sportSlice = createSlice({
           remainingFrameTimeInMs: state.stopClockFrameTimeInSeconds * 1000,
           currentTurnRemainingTimeInMs: state.stopClockTurnTimeInSeconds * 1000,
           turnStartedAt: null,
+          frameStartedAt: null,
         };
       }
     },

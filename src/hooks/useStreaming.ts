@@ -359,6 +359,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
               remainingFrameTimeInMs: parsedMessage.remainingFrameTimeInMs,
               currentTurnRemainingTimeInMs: parsedMessage.currentTurnRemainingTimeInMs,
               turnStartedAt: incomingTurnStartedAt,
+              frameStartedAt: parsedMessage.frameStartedAt ?? prevData.stopClockState?.frameStartedAt ?? null,
             },
             stopClockVoiceEnabled: parsedMessage.stopClockVoiceEnabled ?? prevData.stopClockVoiceEnabled,
           };

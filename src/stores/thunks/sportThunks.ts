@@ -244,6 +244,7 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
               remainingFrameTimeInMs: stopClockFrameTimeInSeconds * 1000,
               currentTurnRemainingTimeInMs: stopClockTurnTimeInSeconds * 1000,
               turnStartedAt: null,
+              frameStartedAt: null,
             }
           : null),
     };
@@ -282,7 +283,8 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
   },
 );
 
-// Auto-starts the stop clock for a fresh frame's first turn (break off). Relies on `createSet`
+// Starts the FRAME clock only for a fresh frame (break off) — the shot clock stays dormant
+// (STOPPED, full turn time) until the marker separately presses Start. Relies on `createSet`
 // having already reset `stopClockState` to a fresh STOPPED state at full frame/turn time.
 export const handleAutoStartStopClock = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
   'sport/handleAutoStartStopClock',
@@ -293,9 +295,7 @@ export const handleAutoStartStopClock = createAsyncThunk<void, {}, { state: Root
 
     const result = await stopClockActionRequest({
       matchId: state.sport.matchId,
-      action: 'START',
-      remainingFrameTimeInMs: state.sport.stopClockFrameTimeInSeconds * 1000,
-      currentTurnRemainingTimeInMs: state.sport.stopClockTurnTimeInSeconds * 1000,
+      action: 'START_FRAME',
     });
 
     if (result) {
@@ -901,6 +901,7 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
                 remainingFrameTimeInMs: state.sport.stopClockState.remainingFrameTimeInMs,
                 currentTurnRemainingTimeInMs: state.sport.stopClockState.currentTurnRemainingTimeInMs,
                 turnStartedAt: state.sport.stopClockState.turnStartedAt ?? undefined,
+                frameStartedAt: state.sport.stopClockState.frameStartedAt ?? undefined,
               }
             : undefined,
       });

@@ -22,7 +22,10 @@ interface MatchUpdateDataProps {
   isTeamOneHandicapApplied?: boolean;
   isTeamTwoHandicapApplied?: boolean;
   currentVisitScore: number;
-  stopClockState?: Omit<StopClockState, 'turnStartedAt'> & { turnStartedAt?: string };
+  stopClockState?: Omit<StopClockState, 'turnStartedAt' | 'frameStartedAt'> & {
+    turnStartedAt?: string;
+    frameStartedAt?: string;
+  };
 }
 
 interface PlayerStats {
@@ -53,9 +56,10 @@ interface MatchResetTimerRequestProps {
 
 interface StopClockActionProps {
   matchId: string;
-  action: 'START' | 'STOP';
-  remainingFrameTimeInMs: number;
-  currentTurnRemainingTimeInMs: number;
+  action: 'START' | 'STOP' | 'START_FRAME';
+  // Only meaningful (and required) for START/STOP — frame time is now purely server-computed
+  // from frameStartedAt, never client-supplied, and START_FRAME takes no extra params at all.
+  currentTurnRemainingTimeInMs?: number;
 }
 
 interface StopClockActionResponse {

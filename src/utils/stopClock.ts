@@ -1,20 +1,36 @@
 import { StopClockState } from '@/stores/types';
 
-export const computeLiveStopClockMs = (stopClockState: StopClockState | null | undefined) => {
+/**
+ * Frame time and turn time are independent clocks. Frame time runs continuously from
+ * `frameStartedAt` for the whole frame (no pause/resume), so it's derived purely from that
+ * timestamp plus the match's configured total — never from the `remainingFrameTimeInMs`
+ * snapshot, which the backend now recomputes fresh at send-time (using it as an elapsed-since
+ * anchor would double-count that elapsed time). Turn time keeps the original snapshot + anchor
+ * model since it genuinely pauses/resumes across Start/Stop presses.
+ */
+export const computeLiveStopClockMs = (
+  stopClockState: StopClockState | null | undefined,
+  stopClockFrameTimeInSeconds?: number,
+) => {
   if (!stopClockState) {
     return { remainingFrameTimeInMs: 0, currentTurnRemainingTimeInMs: 0 };
   }
 
+  const frameTotalMs = (stopClockFrameTimeInSeconds ?? 0) * 1000;
+  const remainingFrameTimeInMs = stopClockState.frameStartedAt
+    ? Math.max(0, frameTotalMs - (Date.now() - new Date(stopClockState.frameStartedAt).getTime()))
+    : Math.max(0, stopClockState.remainingFrameTimeInMs);
+
   if (stopClockState.activePlayerClock === 'STOPPED' || !stopClockState.turnStartedAt) {
     return {
-      remainingFrameTimeInMs: Math.max(0, stopClockState.remainingFrameTimeInMs),
+      remainingFrameTimeInMs,
       currentTurnRemainingTimeInMs: Math.max(0, stopClockState.currentTurnRemainingTimeInMs),
     };
   }
 
   const elapsed = Date.now() - new Date(stopClockState.turnStartedAt).getTime();
   return {
-    remainingFrameTimeInMs: Math.max(0, stopClockState.remainingFrameTimeInMs - elapsed),
+    remainingFrameTimeInMs,
     currentTurnRemainingTimeInMs: Math.max(0, stopClockState.currentTurnRemainingTimeInMs - elapsed),
   };
 };
