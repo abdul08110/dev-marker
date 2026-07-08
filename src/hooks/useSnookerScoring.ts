@@ -769,21 +769,41 @@ const useSnookerScoring = () => {
   const handleStopClockToggle = async () => {
     if (!snookerScoring.matchId || isStopClockActionPending || !isStopClockFrameStarted) return;
 
-    const isRunning = snookerScoring.stopClockState?.activePlayerClock === 'RUNNING';
+    const currentStopClockState = snookerScoring.stopClockState;
+    const isRunning = currentStopClockState?.activePlayerClock === 'RUNNING';
     setIsStopClockActionPending(true);
 
-    const payload = isRunning
-      ? {
-          action: 'STOP' as const,
-          currentTurnRemainingTimeInMs: computeLiveStopClockMs(
-            snookerScoring.stopClockState,
-            snookerScoring.stopClockFrameTimeInSeconds,
-          ).currentTurnRemainingTimeInMs,
-        }
-      : {
-          action: 'START' as const,
-          currentTurnRemainingTimeInMs: snookerScoring.stopClockTurnTimeInSeconds * 1000,
-        };
+    let payload: { action: 'START' | 'STOP'; currentTurnRemainingTimeInMs: number };
+    let optimisticState: typeof currentStopClockState;
+
+    if (isRunning) {
+      const live = computeLiveStopClockMs(currentStopClockState, snookerScoring.stopClockFrameTimeInSeconds);
+      payload = { action: 'STOP', currentTurnRemainingTimeInMs: live.currentTurnRemainingTimeInMs };
+      optimisticState = {
+        activePlayerClock: 'STOPPED',
+        remainingFrameTimeInMs: live.remainingFrameTimeInMs,
+        currentTurnRemainingTimeInMs: live.currentTurnRemainingTimeInMs,
+        turnStartedAt: null,
+        frameStartedAt: currentStopClockState?.frameStartedAt ?? null,
+      };
+    } else {
+      const fullTurnMs = snookerScoring.stopClockTurnTimeInSeconds * 1000;
+      payload = { action: 'START', currentTurnRemainingTimeInMs: fullTurnMs };
+      optimisticState = {
+        activePlayerClock: 'RUNNING',
+        remainingFrameTimeInMs:
+          currentStopClockState?.remainingFrameTimeInMs ?? snookerScoring.stopClockFrameTimeInSeconds * 1000,
+        currentTurnRemainingTimeInMs: fullTurnMs,
+        turnStartedAt: new Date().toISOString(),
+        frameStartedAt: currentStopClockState?.frameStartedAt ?? null,
+      };
+    }
+
+    // Freeze/start the visible clock immediately instead of waiting on the round trip —
+    // otherwise the display keeps ticking for the duration of the network call, which reads
+    // as lag on Stop. The button itself stays disabled via isStopClockActionPending so a
+    // second tap can't fire before the server confirms.
+    dispatch(setStopClockState({ stopClockState: optimisticState }));
 
     const result = await stopClockActionRequest({ matchId: snookerScoring.matchId, ...payload });
     if (result) {
@@ -794,7 +814,7 @@ const useSnookerScoring = () => {
         setStopClockState({
           stopClockState: {
             ...result,
-            frameStartedAt: result.frameStartedAt ?? snookerScoring.stopClockState?.frameStartedAt ?? null,
+            frameStartedAt: result.frameStartedAt ?? currentStopClockState?.frameStartedAt ?? null,
           },
         }),
       );
