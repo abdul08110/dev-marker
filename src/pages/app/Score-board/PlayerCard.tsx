@@ -72,12 +72,17 @@ export function PlayerCard({
         {tournamentName && (
           // <div className="relative py-[min(2vh,2vw)] text-center border-b border-white/10 mx-3 flex items-center px-[min(3vh,3vw)]">
           <div className="relative py-[min(2vh,2vw)] text-center border-b border-white/10 mx-3 grid grid-cols-3 px-[min(3vh,3vh)]">
-            <div className="w-fit col-span-1">
-              {isTournament && handicap != null && (
+            {isTournament && handicap != null && (
+              <div className="w-fit col-span-1 flex justify-center items-center">
                 <HandicapPill handicap={handicap} isApplied={isHandicapApplied} isActive={isActive} />
+              </div>
+            )}
+            <p
+              className={cn(
+                'font-semibold text-[min(4vh,4vw)] text-box-trim text-score-text truncate',
+                handicap === null ? 'text-center col-span-3' : 'text-left col-span-2',
               )}
-            </div>
-            <p className="font-semibold text-[min(4vh,4vw)] text-box-trim text-score-text col-span-2 text-left truncate">
+            >
               {tournamentName}
             </p>
           </div>
