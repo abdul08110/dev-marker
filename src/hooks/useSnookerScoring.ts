@@ -120,8 +120,8 @@ const useSnookerScoring = () => {
   const [showTimerModal, setShowTimeModal] = React.useState(false);
   const [isStopClockActionPending, setIsStopClockActionPending] = React.useState(false);
 
-  // STOP CLOCK LIVE DISPLAY (ticks locally off turnStartedAt, no per-second MQTT/API calls)
-  const stopClockTick = useStopClockTick(snookerScoring.stopClockState);
+  // STOP CLOCK LIVE DISPLAY (ticks locally off turnStartedAt/frameStartedAt, no per-second MQTT/API calls)
+  const stopClockTick = useStopClockTick(snookerScoring.stopClockState, snookerScoring.stopClockFrameTimeInSeconds);
 
   // TIMER HOOKS
   // const { timeLeft, startTimer, setTimeLeft } = useTimer(snookerScoring.timeInMinutes, () => {
@@ -761,24 +761,43 @@ const useSnookerScoring = () => {
     setShowTimeModal(false);
   };
 
+  // Frame must have started (Break Off already pressed, which fires START_FRAME) before the
+  // shot clock is allowed to start — otherwise the shot clock would be running against a frame
+  // that hasn't officially begun.
+  const isStopClockFrameStarted = !!snookerScoring.stopClockState?.frameStartedAt;
+
   const handleStopClockToggle = async () => {
-    if (!snookerScoring.matchId || isStopClockActionPending) return;
+    if (!snookerScoring.matchId || isStopClockActionPending || !isStopClockFrameStarted) return;
 
     const isRunning = snookerScoring.stopClockState?.activePlayerClock === 'RUNNING';
     setIsStopClockActionPending(true);
 
     const payload = isRunning
-      ? { action: 'STOP' as const, ...computeLiveStopClockMs(snookerScoring.stopClockState) }
+      ? {
+          action: 'STOP' as const,
+          currentTurnRemainingTimeInMs: computeLiveStopClockMs(
+            snookerScoring.stopClockState,
+            snookerScoring.stopClockFrameTimeInSeconds,
+          ).currentTurnRemainingTimeInMs,
+        }
       : {
           action: 'START' as const,
-          remainingFrameTimeInMs:
-            snookerScoring.stopClockState?.remainingFrameTimeInMs ?? snookerScoring.stopClockFrameTimeInSeconds * 1000,
           currentTurnRemainingTimeInMs: snookerScoring.stopClockTurnTimeInSeconds * 1000,
         };
 
     const result = await stopClockActionRequest({ matchId: snookerScoring.matchId, ...payload });
     if (result) {
-      dispatch(setStopClockState({ stopClockState: result }));
+      // START/STOP only ever affect the shot clock — never let the response regress the
+      // independently-running frame clock, even if the backend omits/nulls frameStartedAt
+      // on these two actions because it considers it "unchanged".
+      dispatch(
+        setStopClockState({
+          stopClockState: {
+            ...result,
+            frameStartedAt: result.frameStartedAt ?? snookerScoring.stopClockState?.frameStartedAt ?? null,
+          },
+        }),
+      );
     }
 
     setIsStopClockActionPending(false);
@@ -850,6 +869,7 @@ const useSnookerScoring = () => {
     defaultNoOfPlayers,
     stopClockTick,
     isStopClockActionPending,
+    isStopClockFrameStarted,
     handleStopClockToggle,
   };
 };

@@ -43,7 +43,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     !!state.activePlayerId &&
     (state.activePlayerId === state.sideTwoPlayerOne.id || state.activePlayerId === state.sideTwoPlayerTwo?.id);
 
-  const stopClockTick = useStopClockTick(state.stopClockState);
+  const stopClockTick = useStopClockTick(state.stopClockState, state.stopClockFrameTimeInSeconds);
   const showStopClock = !!state.isStopClockEnabled && state.sport === 'SNOOKER';
 
   const breakScore = activeTurn?.score ?? 0;

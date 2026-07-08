@@ -107,6 +107,7 @@ export interface StopClockState {
   remainingFrameTimeInMs: number;
   currentTurnRemainingTimeInMs: number;
   turnStartedAt: string | null;
+  frameStartedAt: string | null;
 }
 
 export interface GeneralScoringState {
