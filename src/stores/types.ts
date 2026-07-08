@@ -80,6 +80,7 @@ export interface Turn {
   score: number;
   timeScored: string;
   points: Point[];
+  startShotTime?: string | null;
 }
 
 export interface Point {
@@ -100,7 +101,12 @@ export interface Point {
   timeScored: string;
 }
 
-export type SportType = 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED';
+export type SportType =
+  | 'SNOOKER_15_RED'
+  | 'SNOOKER_10_RED'
+  | 'SNOOKER_6_RED'
+  | 'BILLIARDS_RACE_TO'
+  | 'BILLIARDS_TIME_BASED';
 
 export interface StopClockState {
   activePlayerClock: 'RUNNING' | 'STOPPED';
@@ -193,9 +199,8 @@ export interface TournamentPhase {
   tournament: Tournament;
   tournamentFormats: TournamentFormat[];
   phaseStatus: 'ACTIVE' | 'COMPLETED' | 'INACTIVE';
-  phaseType: 'SINGLES' | 'TEAMS'
+  phaseType: 'SINGLES' | 'TEAMS';
 }
-
 
 export interface TournamentItem {
   id: string;

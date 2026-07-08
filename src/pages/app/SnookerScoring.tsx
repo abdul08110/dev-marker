@@ -99,7 +99,7 @@ export function SnookerScoring() {
     handleTimerButtonAction,
     defaultNoOfPlayers,
     stopClockTick,
-    isStopClockActionPending,
+    isStopClockRunning,
     isStopClockFrameStarted,
     handleStopClockToggle,
   } = useSnookerScoring();
@@ -272,12 +272,12 @@ export function SnookerScoring() {
                 disabledState={snookerButtonDisabledState}
                 onButtonClick={handleScoringButtonClickWithGuard}
                 isStopClockEnabled={snookerScoring.isStopClockEnabled}
-                activePlayerClock={snookerScoring.stopClockState?.activePlayerClock}
+                isStopClockRunning={isStopClockRunning}
                 remainingFrameTimeInMs={stopClockTick.remainingFrameTimeInMs}
                 currentTurnRemainingTimeInMs={stopClockTick.currentTurnRemainingTimeInMs}
                 stopClockFrameTimeInSeconds={snookerScoring.stopClockFrameTimeInSeconds}
                 stopClockTurnTimeInSeconds={snookerScoring.stopClockTurnTimeInSeconds}
-                isStopClockActionPending={isStopClockActionPending || !isStopClockFrameStarted}
+                isStopClockToggleDisabled={!isStopClockFrameStarted}
                 onStopClockToggle={handleStopClockToggle}
               />
               <SnookerFoulDrawer

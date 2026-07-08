@@ -4,12 +4,12 @@ import { formatClockMs, getStopClockColor } from '@/utils/stopClock';
 interface StopClockControlProps {
   isStopClockEnabled?: boolean;
   sport: 'SNOOKER' | 'BILLIARDS';
-  activePlayerClock?: 'RUNNING' | 'STOPPED';
+  isRunning: boolean;
   remainingFrameTimeInMs: number;
   currentTurnRemainingTimeInMs: number;
   stopClockFrameTimeInSeconds: number;
   stopClockTurnTimeInSeconds: number;
-  isPending: boolean;
+  disabled: boolean;
   onToggle: () => void;
 }
 
@@ -41,17 +41,15 @@ function ClockMeter({ label, ms, totalMs }: { label: string; ms: number; totalMs
 export function StopClockControl({
   isStopClockEnabled,
   sport,
-  activePlayerClock,
+  isRunning,
   remainingFrameTimeInMs,
   currentTurnRemainingTimeInMs,
   stopClockFrameTimeInSeconds,
   stopClockTurnTimeInSeconds,
-  isPending,
+  disabled,
   onToggle,
 }: StopClockControlProps) {
   if (!isStopClockEnabled || sport !== 'SNOOKER') return null;
-
-  const isRunning = activePlayerClock === 'RUNNING';
 
   return (
     <div className="w-full flex flex-col gap-2">
@@ -59,24 +57,14 @@ export function StopClockControl({
         <ClockMeter label="Frame" ms={remainingFrameTimeInMs} totalMs={stopClockFrameTimeInSeconds * 1000} />
         <ClockMeter label="Turn" ms={currentTurnRemainingTimeInMs} totalMs={stopClockTurnTimeInSeconds * 1000} />
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          disabled={isRunning || isPending}
-          onClick={onToggle}
-          className={clsx('bg-markerButton relative h-14', buttonClasses)}
-        >
-          Start
-        </button>
-        <button
-          type="button"
-          disabled={!isRunning || isPending}
-          onClick={onToggle}
-          className={clsx('bg-markerButton relative', buttonClasses)}
-        >
-          Stop
-        </button>
-      </div>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={onToggle}
+        className={clsx('bg-markerButton relative h-14 w-full', buttonClasses)}
+      >
+        {isRunning ? 'Stop' : 'Start'}
+      </button>
     </div>
   );
 }

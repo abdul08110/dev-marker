@@ -34,8 +34,17 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
   const activeSet = getActiveSet(state.sets);
   const activeTurn = getActiveTurn(activeSet);
-  const stopClockTick = useStopClockTick(state.stopClockState, state.stopClockFrameTimeInSeconds);
-  useStopClockVoice({ stopClockState: state.stopClockState, stopClockVoiceEnabled: state.stopClockVoiceEnabled });
+  const stopClockTick = useStopClockTick(
+    state.stopClockState?.frameStartedAt,
+    state.stopClockFrameTimeInSeconds,
+    activeTurn?.startShotTime,
+    state.stopClockTurnTimeInSeconds,
+  );
+  useStopClockVoice({
+    startedTurnTime: activeTurn?.startShotTime,
+    stopClockTurnTimeInSeconds: state.stopClockTurnTimeInSeconds,
+    stopClockVoiceEnabled: state.stopClockVoiceEnabled,
+  });
   const isTeamOneActive =
     state.sideOnePlayerOne?.id === state.activePlayerId || state.sideOnePlayerTwo?.id === state.activePlayerId;
   const isTeamTwoActive =

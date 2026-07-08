@@ -505,7 +505,13 @@ export function StreamContainer(props: StreamContainerProps) {
                     ),
                   }[props.state.tournamentId] || (
                     // <IGTemplate state={props.state} activeSet={activeSet} activeTurn={activeTurn} isTv={props.isTv} />
-                    <NewGeneral state={props.state} activeSet={activeSet} activeTurn={activeTurn} isTv={props.isTv} />
+                    <NewGeneral
+                      state={props.state}
+                      activeSet={activeSet}
+                      activeTurn={activeTurn}
+                      isTv={props.isTv}
+                      currentVideoTimeMs={props.stopWatchTime}
+                    />
                   )
                 ) : (
                   // <GeneralTemplate
@@ -514,7 +520,13 @@ export function StreamContainer(props: StreamContainerProps) {
                   //   activeTurn={activeTurn}
                   //   isTv={props.isTv}
                   // />
-                  <NewGeneral state={props.state} activeSet={activeSet} activeTurn={activeTurn} isTv={props.isTv} />
+                  <NewGeneral
+                    state={props.state}
+                    activeSet={activeSet}
+                    activeTurn={activeTurn}
+                    isTv={props.isTv}
+                    currentVideoTimeMs={props.stopWatchTime}
+                  />
                 ))}
               {stream.overlayType === 'SOURCE_WITH_FINAL_SCORES' && !props.isPortrait && (
                 <SourceWithFinalScores state={props.state} />

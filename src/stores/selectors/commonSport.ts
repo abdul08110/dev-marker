@@ -23,6 +23,27 @@ export const getLastTurn = (set: Set): Turn | null => getSecondLastElement(set.t
 export const getActiveTurnIndex = (set: Set | null): number =>
   set && set.turns.length > 0 ? set.turns.length - 1 : -1;
 
+// Immutable helper for plain useState-driven stores (scoreboard/streaming hooks) — mirrors a
+// received stopClockState.turnStartedAt onto whichever turn is currently active, so the shot
+// clock display reads off the turn (self-resetting per turn) rather than the raw anchor.
+export const withTurnStartShotTime = (sets: Set[], startShotTime: string | null): Set[] => {
+  const setIndex = getActiveSetIndex(sets);
+  if (setIndex === -1) return sets;
+
+  const turns = sets[setIndex].turns;
+  if (turns.length === 0) return sets;
+  const turnIndex = turns.length - 1;
+
+  return sets.map((set, sIdx) =>
+    sIdx !== setIndex
+      ? set
+      : {
+          ...set,
+          turns: set.turns.map((turn, tIdx) => (tIdx !== turnIndex ? turn : { ...turn, startShotTime })),
+        },
+  );
+};
+
 export const getTeamTurnsForSet = (
   set: Set | null,
   teamPlayerOneId: string | null,

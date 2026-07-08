@@ -8,6 +8,7 @@ import { ClubData, Player, Set, StopClockState, TournamentItem, TournamentSubIte
 import useBodyRotation from './useBodyRotation';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import { QrFlowPlayer, QrFlowState } from './useScoreboard';
+import { withTurnStartShotTime } from '@/stores/selectors/commonSport';
 
 export interface ScoreBoardState {
   matchId: string;
@@ -191,7 +192,7 @@ const useScoreboardRender = () => {
             activePlayerId: res.activePlayerId,
             teamOneScore: res.teamOneScore,
             teamTwoScore: res.teamTwoScore,
-            sets: res.sets,
+            sets: withTurnStartShotTime(res.sets, res.stopClockState?.turnStartedAt ?? null),
             actualStartTime: res.actualStartTimeDate,
             expectedEndTimeDate: res.expectedEndTimeDate ? res.expectedEndTimeDate : null,
             teamOneLogo: res.tournamentTeamOne ? res.tournamentTeamOne.logo : null,
@@ -261,16 +262,17 @@ const useScoreboardRender = () => {
         setScoreboardData((prevData) => {
           if (prevData === null) return null;
           const updatedSets = parsedMessage.sets ? [...parsedMessage.sets] : prevData.sets;
+          const stopClockState = parsedMessage.stopClockState ?? prevData.stopClockState;
 
           return {
             ...prevData,
             activePlayerId: parsedMessage.activePlayerId,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-            sets: updatedSets,
+            sets: withTurnStartShotTime(updatedSets, stopClockState?.turnStartedAt ?? null),
             isTeamOneHandicapApplied: parsedMessage.isTeamOneHandicapApplied,
             isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied,
-            stopClockState: parsedMessage.stopClockState ?? prevData.stopClockState,
+            stopClockState,
           };
         });
         if (parsedMessage.stopClockState?.turnStartedAt) {
@@ -333,6 +335,7 @@ const useScoreboardRender = () => {
 
           return {
             ...prevData,
+            sets: withTurnStartShotTime(prevData.sets, incomingTurnStartedAt),
             stopClockState: {
               activePlayerClock: parsedMessage.activePlayerClock,
               remainingFrameTimeInMs: parsedMessage.remainingFrameTimeInMs,
