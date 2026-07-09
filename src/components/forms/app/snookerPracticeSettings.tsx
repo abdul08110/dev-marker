@@ -86,6 +86,7 @@ interface SnookerSettingsFormSchema {
   defaultNoOfPlayers?: NoOfPlayersDefault;
   teamOneLabel?: string;
   teamTwoLabel?: string;
+  currentValues?: Partial<SnookerPracticeSettingsData>;
 }
 
 export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
@@ -103,6 +104,7 @@ export function SnookerPracticeSettingsForm(props: SnookerSettingsFormSchema) {
       stopClockFrameTimeInSeconds: 900,
       stopClockTurnTimeInSeconds: 30,
       stopClockVoiceEnabled: false,
+      ...props.currentValues,
     },
   });
 

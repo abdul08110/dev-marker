@@ -14,6 +14,7 @@ interface SnookerMarkerSettingsDrawerProps {
   showBack?: boolean;
   onBack?: () => void;
   onClose?: () => void;
+  currentValues?: Partial<SnookerPracticeSettingsData>;
 }
 
 export function SnookerPracticeSettingsDrawer(props: SnookerMarkerSettingsDrawerProps) {
@@ -67,6 +68,7 @@ export function SnookerPracticeSettingsDrawer(props: SnookerMarkerSettingsDrawer
             defaultNoOfPlayers={props.defaultNoOfPlayers}
             teamOneLabel={props.teamOneLabel}
             teamTwoLabel={props.teamTwoLabel}
+            currentValues={props.currentValues}
           />
         </div>
         <DrawerFooter className="pt-2">

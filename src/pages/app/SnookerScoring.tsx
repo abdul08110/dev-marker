@@ -38,6 +38,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { getRandomPlaceholderProfileImage } from '@/lib/utils';
+import { decimalMinutesToTimeString } from '@/utils/functions';
 
 export function SnookerScoring() {
   const {
@@ -128,7 +129,6 @@ export function SnookerScoring() {
   const [showCloseConfirmDialog, setShowCloseConfirmDialog] = React.useState(false);
   const closeConfirmSource = React.useRef<'player' | 'settings' | null>(null);
 
-  // ── Settings drawer source tracking (Back button support) ─────────────
   const [settingsHasBack, setSettingsHasBack] = React.useState(false);
 
   const handleSettingsClickIntercepted = () => {
@@ -146,7 +146,6 @@ export function SnookerScoring() {
     onBackFromSettings();
   };
 
-  // Detect when the hook auto-transitions from player select → settings
   const prevOpenPlayerSelectRef = React.useRef(openPlayerSelectCard);
   React.useEffect(() => {
     if (openSettingsDrawer && prevOpenPlayerSelectRef.current) {
@@ -160,7 +159,6 @@ export function SnookerScoring() {
       snookerScoring.team1.players.every((p) => p.id !== null) &&
       snookerScoring.team2.players.every((p) => p.id !== null);
     if (allRequired) {
-      // All slots filled → auto-close after last player confirm, not a user gesture
       return;
     }
     if (snookerScoring.team1.players[0].id !== null) {
@@ -183,7 +181,6 @@ export function SnookerScoring() {
     return names.length > 0 ? names.join(' / ') : undefined;
   };
 
-  // ── Break-off player selection dialog ────────────────────────────────────
   const [showBreakOffDialog, setShowBreakOffDialog] = React.useState(false);
   const [selectedBreakOffTeamIdx, setSelectedBreakOffTeamIdx] = React.useState<number | null>(null);
 
@@ -297,6 +294,18 @@ export function SnookerScoring() {
                 showBack={settingsHasBack}
                 onBack={handleSettingsBackClick}
                 onClose={handleSettingsDrawerClose}
+                currentValues={{
+                  format: snookerScoring.format as 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED',
+                  durationInMinutes: decimalMinutesToTimeString(snookerScoring.timeInMinutes),
+                  streaming: snookerScoring.streaming,
+                  teamOneHandicap: snookerScoring.teamOneHandicap ?? 0,
+                  teamTwoHandicap: snookerScoring.teamTwoHandicap ?? 0,
+                  isRankingEvent: snookerScoring.isRankingEvent,
+                  isStopClockEnabled: snookerScoring.isStopClockEnabled,
+                  stopClockFrameTimeInSeconds: snookerScoring.stopClockFrameTimeInSeconds,
+                  stopClockTurnTimeInSeconds: snookerScoring.stopClockTurnTimeInSeconds,
+                  stopClockVoiceEnabled: snookerScoring.stopClockVoiceEnabled,
+                }}
               />
               <SelectPlayerDrawer
                 onSubmit={handlePlayerConfirmWithApi}

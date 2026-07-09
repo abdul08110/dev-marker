@@ -8,6 +8,16 @@ export function timeStringToDecimalMinutes(timeString: string): number {
   return minutes + seconds / 60;
 }
 
+// Inverse of timeStringToDecimalMinutes — used to re-seed the settings form's duration field
+// with the currently saved value (hh:mm:ss) instead of always resetting to a hardcoded default.
+export function decimalMinutesToTimeString(decimalMinutes: number): string {
+  const totalSeconds = Math.round(decimalMinutes * 60);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
 export function getTimeInMinutes(actualStart: string, expectedEnd: string): number {
   const startTime = new Date(actualStart).getTime();
   const endTime = new Date(expectedEnd).getTime();
