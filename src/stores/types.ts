@@ -60,6 +60,11 @@ export interface Set {
   snookerCorrections: SnookerCorrection[];
   billiardsCorrections: BilliardsCorrection[];
   setConcededTo: 0 | 1 | null;
+  // Matches the backend's Set.frameStartedAt column — the frame-clock anchor for THIS frame
+  // specifically, as opposed to StopClockState.frameStartedAt which is only the live/current one.
+  // Having it per-Set is what lets a replayed/delayed video show the correct frame countdown for
+  // whichever frame it's actually displaying, not whatever frame is live right now.
+  frameStartedAt?: string | null;
 }
 
 export interface SnookerCorrection {
@@ -80,7 +85,9 @@ export interface Turn {
   score: number;
   timeScored: string;
   points: Point[];
-  startShotTime?: string | null;
+  // Matches the backend's Turn.turnStartedAt field — must keep this exact name so it round-trips
+  // through matchUpdateDataRequest/get-live-match-data instead of being silently dropped.
+  turnStartedAt?: string | null;
 }
 
 export interface Point {

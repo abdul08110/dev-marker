@@ -1,4 +1,4 @@
-import { type Set, TeamDetails, Turn, Point, Player } from '../types';
+import { type Set, TeamDetails, Turn, Point, Player, StopClockState } from '../types';
 
 const getLastElement = <T>(array: T[]): T | null => (array.length > 0 ? array[array.length - 1] : null);
 
@@ -23,15 +23,26 @@ export const getLastTurn = (set: Set): Turn | null => getSecondLastElement(set.t
 export const getActiveTurnIndex = (set: Set | null): number =>
   set && set.turns.length > 0 ? set.turns.length - 1 : -1;
 
-// Immutable helper for plain useState-driven stores (scoreboard/streaming hooks) — mirrors a
-// received stopClockState.turnStartedAt onto whichever turn is currently active, so the shot
-// clock display reads off the turn (self-resetting per turn) rather than the raw anchor.
-export const withTurnStartShotTime = (sets: Set[], startShotTime: string | null): Set[] => {
+// Immutable helper for plain useState-driven stores (scoreboard/streaming hooks) — mirrors the
+// received stopClockState's two anchors onto the active frame/turn themselves:
+//   - frameStartedAt onto the active Set (Set.frameStartedAt)
+//   - turnStartedAt onto the active Set's last Turn (Turn.turnStartedAt)
+// so the shot-clock/frame-clock display reads off the set/turn (self-scoping per frame/turn)
+// rather than the raw transport anchor. This is a fallback for the live-active frame/turn only —
+// historical frames/turns should already carry their own Set.frameStartedAt / Turn.turnStartedAt
+// from the backend (set via the marker's setStopClockState/toggleTurnClock reducers and synced
+// through matchUpdateDataRequest), which is what makes stop-clock replay for past frames/turns
+// possible in the first place.
+export const withStopClockAnchors = (
+  sets: Set[],
+  stopClockState: Pick<StopClockState, 'turnStartedAt' | 'frameStartedAt'> | null | undefined,
+): Set[] => {
   const setIndex = getActiveSetIndex(sets);
   if (setIndex === -1) return sets;
 
+  const frameStartedAt = stopClockState?.frameStartedAt ?? null;
+  const turnStartedAt = stopClockState?.turnStartedAt ?? null;
   const turns = sets[setIndex].turns;
-  if (turns.length === 0) return sets;
   const turnIndex = turns.length - 1;
 
   return sets.map((set, sIdx) =>
@@ -39,7 +50,11 @@ export const withTurnStartShotTime = (sets: Set[], startShotTime: string | null)
       ? set
       : {
           ...set,
-          turns: set.turns.map((turn, tIdx) => (tIdx !== turnIndex ? turn : { ...turn, startShotTime })),
+          frameStartedAt,
+          turns:
+            turnIndex === -1
+              ? set.turns
+              : set.turns.map((turn, tIdx) => (tIdx !== turnIndex ? turn : { ...turn, turnStartedAt })),
         },
   );
 };

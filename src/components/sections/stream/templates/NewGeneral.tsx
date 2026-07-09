@@ -53,7 +53,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const stopClockTick = useStopClockTick(
     state.stopClockState?.frameStartedAt,
     state.stopClockFrameTimeInSeconds,
-    activeTurn?.startShotTime,
+    activeTurn?.turnStartedAt,
     state.stopClockTurnTimeInSeconds,
     referenceTimeMs,
   );
