@@ -10,7 +10,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Player, Set, StopClockState, TournamentItem, TournamentSubItem } from '@/stores/types';
 import useBodyRotation from './useBodyRotation';
 import { setActiveClub, setClubs } from '@/stores/slices/clubSlice';
-import { withTurnStartShotTime } from '@/stores/selectors/commonSport';
+import { withStopClockAnchors } from '@/stores/selectors/commonSport';
 
 export interface QrFlowPlayer {
   playerNumber: number;
@@ -196,7 +196,7 @@ const useScoreboard = () => {
             activePlayerId: res.activePlayerId,
             teamOneScore: res.teamOneScore,
             teamTwoScore: res.teamTwoScore,
-            sets: withTurnStartShotTime(res.sets, res.stopClockState?.turnStartedAt ?? null),
+            sets: withStopClockAnchors(res.sets, res.stopClockState),
             actualStartTime: res.actualStartTimeDate,
             expectedEndTimeDate: res.expectedEndTimeDate ? res.expectedEndTimeDate : null,
             teamOneLogo: res.tournamentTeamOne ? res.tournamentTeamOne.logo : null,
@@ -271,7 +271,7 @@ const useScoreboard = () => {
             activePlayerId: parsedMessage.activePlayerId,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-            sets: withTurnStartShotTime(updatedSets, stopClockState?.turnStartedAt ?? null),
+            sets: withStopClockAnchors(updatedSets, stopClockState),
             isTeamOneHandicapApplied: parsedMessage.isTeamOneHandicapApplied,
             isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied,
             stopClockState,
@@ -318,16 +318,18 @@ const useScoreboard = () => {
         setScoreboardData((prevData) => {
           if (prevData === null) return null;
 
+          const newStopClockState = {
+            activePlayerClock: parsedMessage.activePlayerClock,
+            remainingFrameTimeInMs: parsedMessage.remainingFrameTimeInMs,
+            currentTurnRemainingTimeInMs: parsedMessage.currentTurnRemainingTimeInMs,
+            turnStartedAt: incomingTurnStartedAt,
+            frameStartedAt: parsedMessage.frameStartedAt ?? prevData.stopClockState?.frameStartedAt ?? null,
+          };
+
           return {
             ...prevData,
-            sets: withTurnStartShotTime(prevData.sets, incomingTurnStartedAt),
-            stopClockState: {
-              activePlayerClock: parsedMessage.activePlayerClock,
-              remainingFrameTimeInMs: parsedMessage.remainingFrameTimeInMs,
-              currentTurnRemainingTimeInMs: parsedMessage.currentTurnRemainingTimeInMs,
-              turnStartedAt: incomingTurnStartedAt,
-              frameStartedAt: parsedMessage.frameStartedAt ?? prevData.stopClockState?.frameStartedAt ?? null,
-            },
+            sets: withStopClockAnchors(prevData.sets, newStopClockState),
+            stopClockState: newStopClockState,
             stopClockVoiceEnabled: parsedMessage.stopClockVoiceEnabled ?? prevData.stopClockVoiceEnabled,
           };
         });

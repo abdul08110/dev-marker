@@ -6,7 +6,7 @@ import { Player, Set, StopClockState, TournamentItem, TournamentPhase, Tournamen
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useTimer from './useTimer';
 import { addMillisecondsToUTC } from '@/utils/functions';
-import { calculatePointsBySide, calculateTotalTeamScore, withTurnStartShotTime } from '@/stores/selectors/commonSport';
+import { calculatePointsBySide, calculateTotalTeamScore, withStopClockAnchors } from '@/stores/selectors/commonSport';
 import useGetMatchStreams from '@/api/app/useGetStreamInfoMarker';
 import useGetSponsorshipVideo from '@/api/app/useGetSponsorshipVideo';
 import useGetLineup from '@/api/app/useGetLineup';
@@ -216,7 +216,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           activePlayerId: res.activePlayerId,
           teamOneScore: res.teamOneScore,
           teamTwoScore: res.teamTwoScore,
-          sets: withTurnStartShotTime(res.sets, res.stopClockState?.turnStartedAt ?? null),
+          sets: withStopClockAnchors(res.sets, res.stopClockState),
           matchStatus: res.matchStatus,
           venueNo: res.venue ? res.venue.no : null,
           clubName: res.club ? res.club.name : null,
@@ -337,7 +337,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
             activePlayerId: parsedMessage.activePlayerId,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-            sets: withTurnStartShotTime(updatedSets, stopClockState?.turnStartedAt ?? null),
+            sets: withStopClockAnchors(updatedSets, stopClockState),
             stopClockState,
           };
         });
@@ -490,10 +490,25 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         }
       }
 
+      // stopClockState must be re-derived for the REPLAYED frame/turn (lastSet/lastTurn above),
+      // not left as the live one — otherwise a delayed/scrubbed video shows the frame/shot clock
+      // for whatever is live right now instead of whatever frame/turn is actually on screen.
+      // Set.frameStartedAt and Turn.turnStartedAt are per-frame/per-turn anchors persisted by the
+      // backend (unlike the live-only StopClockState.frameStartedAt/turnStartedAt), so they stay
+      // correct even after the real match has moved on to a later frame/turn.
+      const replayStopClockState = currentStreamingData.stopClockState
+        ? {
+            ...currentStreamingData.stopClockState,
+            frameStartedAt: lastSet.frameStartedAt ?? null,
+            turnStartedAt: lastTurn.turnStartedAt ?? null,
+          }
+        : currentStreamingData.stopClockState;
+
       setViewershipData({
         ...currentStreamingData,
         activePlayerId: activePlayerId,
         sets: consideredSets,
+        stopClockState: replayStopClockState,
         isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== teamScoresForCurrentSet.side1,
         isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== teamScoresForCurrentSet.side2,
         teamOneScore: totalTeamScores.side1,

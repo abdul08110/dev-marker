@@ -37,11 +37,11 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
   const stopClockTick = useStopClockTick(
     state.stopClockState?.frameStartedAt,
     state.stopClockFrameTimeInSeconds,
-    activeTurn?.startShotTime,
+    activeTurn?.turnStartedAt,
     state.stopClockTurnTimeInSeconds,
   );
   useStopClockVoice({
-    startedTurnTime: activeTurn?.startShotTime,
+    startedTurnTime: activeTurn?.turnStartedAt,
     stopClockTurnTimeInSeconds: state.stopClockTurnTimeInSeconds,
     stopClockVoiceEnabled: state.stopClockVoiceEnabled,
   });

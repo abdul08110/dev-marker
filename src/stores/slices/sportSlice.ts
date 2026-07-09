@@ -245,6 +245,9 @@ const sportSlice = createSlice({
         billiardsCorrections: [],
         scoreOrder: scoreOrder,
         setConcededTo: null,
+        // Filled in once the backend confirms frame start (see setStopClockState) — not guessed
+        // client-side, since frame time is authoritative from the server.
+        frameStartedAt: null,
       });
 
       if (state.isStopClockEnabled) {
@@ -373,12 +376,15 @@ const sportSlice = createSlice({
       state.stopClockTurnTimeInSeconds = action.payload.stopClockTurnTimeInSeconds;
       state.stopClockVoiceEnabled = action.payload.stopClockVoiceEnabled;
     },
-    // Purely local — no backend call for the toggle itself. stopClockState.turnStartedAt is set
-    // purely as the TRANSPORT value (it's the only field that already rides end-to-end through
-    // the existing update-match-data echo + MQTT relay, the same way frameStartedAt does for
-    // frame time). The actual DISPLAY value is mirrored onto the active turn's startShotTime, so
-    // the shot clock is scoped to whichever turn is active — a new turn always reads as
-    // not-started even if the previous turn's clock was left running.
+    // Purely local — no backend call for the toggle itself. stopClockState.turnStartedAt is the
+    // TRANSPORT value (it rides end-to-end through the update-match-data echo + MQTT relay, the
+    // same way frameStartedAt does for frame time). The DISPLAY value is mirrored onto the active
+    // turn's own turnStartedAt field, so the shot clock is scoped to whichever turn is active — a
+    // new turn always reads as not-started even if the previous turn's clock was left running.
+    // This per-turn field must stay named turnStartedAt to match the backend's Turn.turnStartedAt
+    // column — it's sent as part of the full scoreHistory on every sync (handleBackendUpdateOfData)
+    // and is what lets a *historical* turn (not just the live one) show a correct shot clock when
+    // replayed later (VOD scrubbing, stream overlay catch-up, etc.).
     toggleTurnClock(state) {
       if (!state.stopClockState) return;
 
@@ -390,17 +396,26 @@ const sportSlice = createSlice({
       if (isRunning) {
         state.stopClockState.activePlayerClock = 'STOPPED';
         state.stopClockState.turnStartedAt = null;
-        if (activeTurn) activeTurn.startShotTime = null;
+        if (activeTurn) activeTurn.turnStartedAt = null;
       } else {
         const now = new Date().toISOString();
         state.stopClockState.activePlayerClock = 'RUNNING';
         state.stopClockState.turnStartedAt = now;
         state.stopClockState.currentTurnRemainingTimeInMs = state.stopClockTurnTimeInSeconds * 1000;
-        if (activeTurn) activeTurn.startShotTime = now;
+        if (activeTurn) activeTurn.turnStartedAt = now;
       }
     },
     setStopClockState(state, action: PayloadAction<{ stopClockState: StopClockState | null }>) {
       state.stopClockState = action.payload.stopClockState;
+
+      // Mirror the frame anchor onto the active Set itself (Set.frameStartedAt), not just the
+      // transport-level stopClockState — this is what lets a *historical* frame (once completed
+      // and no longer "live") retain its own correct frame-start time for later replay/streaming,
+      // instead of only ever reflecting whatever frame happens to be live right now.
+      const setIndex = state.scoreHistory.findIndex((set) => set.status === 'ONGOING');
+      if (setIndex !== -1) {
+        state.scoreHistory[setIndex].frameStartedAt = action.payload.stopClockState?.frameStartedAt ?? null;
+      }
     },
     updateMaxScorePerSet(state, action: PayloadAction<{ maxScorePerSet: number }>) {
       state.maxScorePerSet = action.payload.maxScorePerSet;

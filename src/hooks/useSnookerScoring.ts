@@ -135,16 +135,16 @@ const useSnookerScoring = () => {
   const [showTimerModal, setShowTimeModal] = React.useState(false);
 
   // The shot clock's toggle is local (no backend round trip). stopClockState.turnStartedAt is
-  // only the transport value; the display reads off the active turn's mirrored startShotTime so
-  // it's correctly scoped to whichever turn is currently active.
+  // only the transport value; the display reads off the active turn's own turnStartedAt so it's
+  // correctly scoped to whichever turn is currently active.
   const activeTurn = getActiveTurn(getActiveSet(snookerScoring.scoreHistory));
-  const isStopClockRunning = !!activeTurn?.startShotTime;
+  const isStopClockRunning = !!activeTurn?.turnStartedAt;
 
-  // STOP CLOCK LIVE DISPLAY (ticks locally off frameStartedAt/startShotTime, no per-second MQTT/API calls)
+  // STOP CLOCK LIVE DISPLAY (ticks locally off frameStartedAt/turnStartedAt, no per-second MQTT/API calls)
   const stopClockTick = useStopClockTick(
     snookerScoring.stopClockState?.frameStartedAt,
     snookerScoring.stopClockFrameTimeInSeconds,
-    activeTurn?.startShotTime,
+    activeTurn?.turnStartedAt,
     snookerScoring.stopClockTurnTimeInSeconds,
   );
 
