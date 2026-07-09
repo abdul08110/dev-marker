@@ -253,8 +253,8 @@ const useBilliardsScoring = () => {
   const handlePlayerSelect = async (playerIndex: number, teamIndex: number) => {
     if (!billiardsScoring.matchId && !billiardsScoring.tournamentId) {
       // Don't allow player selection during break-off waiting state
-      const allSelected = billiardsScoring.team1.players[0].id !== null &&
-        billiardsScoring.team2.players[0].id !== null;
+      const allSelected =
+        billiardsScoring.team1.players[0].id !== null && billiardsScoring.team2.players[0].id !== null;
       if (allSelected) return;
       setSelectedTeamIndex(teamIndex);
       setSelectedPlayerIndex(playerIndex);
@@ -357,6 +357,12 @@ const useBilliardsScoring = () => {
 
   const handleEndGame = async () => {
     setShowLoadingModal(true);
+    if (billiardsScoring.matchId === null) {
+      await handleGoToHome();
+      setShowLoadingModal(false);
+      return;
+    }
+
     try {
       await dispatch(handleEndGameThrunk({})).unwrap();
 
