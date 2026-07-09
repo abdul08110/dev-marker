@@ -443,8 +443,8 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               </svg>
 
               <div className="flex justify-center items-center gap-[min(0.7vh,0.7vw)] py-[min(0.9vh,0.9vw)] relative">
-                <p className="font-semibold text-[min(2.8vh,2.8vw)] leading-[130%] text-sandy-yellow">Break</p>
-                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] text-sandy-yellow">{breakScore}</p>
+                <p className="font-semibold text-[min(2.8vh,2.8vw)] leading-[130%] text-score-text">Break</p>
+                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] text-score-text">{breakScore}</p>
               </div>
             </div>
           </div>
