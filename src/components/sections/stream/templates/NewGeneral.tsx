@@ -414,7 +414,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                     y2="-159.989"
                     gradientUnits="userSpaceOnUse"
                   >
-                    <stop stopColor="#ACEC54" stopOpacity="0.13" />
+                    <stop stopColor="#ACEC54" stopOpacity="0.40" />
                     <stop offset="1" stopColor="#6FFF00" />
                   </linearGradient>
                   <linearGradient
