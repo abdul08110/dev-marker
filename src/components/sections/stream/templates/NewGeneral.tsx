@@ -10,6 +10,7 @@ import clsx from 'clsx';
 import { useStopClockTick } from '@/hooks/useStopClockTick';
 import ShotClockTicker from '@/pages/app/Score-board/ShotClockTicker';
 import { formatClockMs } from '@/utils/stopClock';
+import { getFrameStartedAt } from '@/stores/selectors/commonSport';
 
 interface GeneralTemplateProps {
   state: StreamingState;
@@ -62,7 +63,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   })();
 
   const stopClockTick = useStopClockTick(
-    activeSet?.frameStartedAt,
+    getFrameStartedAt(activeSet),
     state.stopClockFrameTimeInSeconds,
     activeTurn?.stopClockStartedAt,
     state.stopClockTurnTimeInSeconds,

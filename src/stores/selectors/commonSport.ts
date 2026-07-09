@@ -23,26 +23,10 @@ export const getLastTurn = (set: Set): Turn | null => getSecondLastElement(set.t
 export const getActiveTurnIndex = (set: Set | null): number =>
   set && set.turns.length > 0 ? set.turns.length - 1 : -1;
 
-// Mirrors the backend's stopClockState anchors onto the active set/turn for live display.
-// The stop clock data now lives directly on Turn (stopClockStartedAt/stopClockEndedAt) and
-// Set (frameStartedAt), so this only needs to backfill the live frame's frameStartedAt from
-// the transport-level stopClockState when the set itself doesn't have it yet.
-export const withStopClockAnchors = (
-  sets: Set[],
-  stopClockState: { frameStartedAt?: string | null; turnStartedAt?: string | null } | null | undefined,
-): Set[] => {
-  const setIndex = getActiveSetIndex(sets);
-  if (setIndex === -1) return sets;
-
-  const frameStartedAt = stopClockState?.frameStartedAt ?? sets[setIndex].frameStartedAt ?? null;
-
-  // If the set already has the correct frameStartedAt, no clone needed
-  if (sets[setIndex].frameStartedAt === frameStartedAt) return sets;
-
-  return sets.map((set, sIdx) =>
-    sIdx !== setIndex ? set : { ...set, frameStartedAt },
-  );
-};
+// The frame clock anchor. Derived from the set's first turn's timeScored — a core field that's
+// always set at turn creation and reliably round-trips through the backend — rather than a
+// bolt-on Set.frameStartedAt field the backend doesn't guarantee to persist/return.
+export const getFrameStartedAt = (set: Set | null | undefined): string | null => set?.turns[0]?.timeScored ?? null;
 
 export const getTeamTurnsForSet = (
   set: Set | null,

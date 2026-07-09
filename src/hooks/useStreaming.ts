@@ -6,7 +6,7 @@ import { Player, Set, TournamentItem, TournamentPhase, TournamentSubItem } from 
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useTimer from './useTimer';
 import { addMillisecondsToUTC } from '@/utils/functions';
-import { calculatePointsBySide, calculateTotalTeamScore, withStopClockAnchors } from '@/stores/selectors/commonSport';
+import { calculatePointsBySide, calculateTotalTeamScore } from '@/stores/selectors/commonSport';
 import useGetMatchStreams from '@/api/app/useGetStreamInfoMarker';
 import useGetSponsorshipVideo from '@/api/app/useGetSponsorshipVideo';
 import useGetLineup from '@/api/app/useGetLineup';
@@ -178,7 +178,6 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         `${venueId}/match-start`,
         `${venueId}/match-end`,
         `${venueId}/timer-updated`,
-        `${venueId}/stop-clock`,
       ];
       connectToMqtt(topics);
     }
@@ -214,7 +213,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           activePlayerId: res.activePlayerId,
           teamOneScore: res.teamOneScore,
           teamTwoScore: res.teamTwoScore,
-          sets: withStopClockAnchors(res.sets, res.stopClockState ?? null),
+          sets: res.sets,
           matchStatus: res.matchStatus,
           venueNo: res.venue ? res.venue.no : null,
           clubName: res.club ? res.club.name : null,
@@ -267,7 +266,6 @@ const useStreaming = (venueId?: string, matchId?: string) => {
             `${res.venueId}/send-data`,
             `${res.venueId}/match-end`,
             `${res.venueId}/timer-updated`,
-            `${res.venueId}/stop-clock`,
           ];
           connectToMqtt(venueTopics);
         }
@@ -331,7 +329,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
             activePlayerId: parsedMessage.activePlayerId,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-            sets: withStopClockAnchors(updatedSets, parsedMessage.stopClockState ?? null),
+            sets: updatedSets,
           };
         });
         break;

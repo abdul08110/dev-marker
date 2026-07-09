@@ -37,7 +37,6 @@ import {
   updateIsRankingEvent,
   setFormatName,
   updateStopClockSettings,
-  setFrameStartedAt,
 } from '../slices/sportSlice';
 import { BilliardPointType, Player, SnookerPointType, SportType, TournamentFormat } from '../types';
 import {
@@ -69,7 +68,6 @@ import {
   matchEndGameRequest,
   matchUpdateDataRequest,
   reversePlayersRequest,
-  stopClockActionRequest,
 } from '@/api/scoring/scoringFunctions';
 import { SnookerScoreCorrectionData } from '@/components/forms/app/snookerScoreCorrection';
 import { SnookerConcedeFrameData } from '@/components/forms/app/snookerConcedeFrame';
@@ -271,26 +269,6 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
   },
 );
 
-// Starts the FRAME clock only for a fresh frame (break off) — the shot clock stays dormant
-// until the marker separately presses Start.
-export const handleAutoStartStopClock = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
-  'sport/handleAutoStartStopClock',
-  async ({}, { dispatch, getState }) => {
-    const state = getState();
-
-    if (!state.sport.isStopClockEnabled || !state.sport.matchId || state.sport.sport !== 'SNOOKER') return;
-
-    const result = await stopClockActionRequest({
-      matchId: state.sport.matchId,
-      action: 'START_FRAME',
-    });
-
-    if (result) {
-      await dispatch(setFrameStartedAt({ frameStartedAt: result.frameStartedAt }));
-    }
-  },
-);
-
 export const handleStartTournamentMatch = createAsyncThunk<
   void,
   { scoreOrder: string[] },
@@ -309,7 +287,6 @@ export const handleStartTournamentMatch = createAsyncThunk<
 
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
-  await dispatch(handleAutoStartStopClock({}));
 
   // if (state.sport.sport === 'SNOOKER') {
   //   await dispatch(handleSelectionOfOnAndAheadScores({}));
@@ -344,7 +321,6 @@ export const handleMatchStart = createAsyncThunk<
   );
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: 0, playerId: activePlayer.id }));
-  await dispatch(handleAutoStartStopClock({}));
 
   // if (state.sport.sport === 'SNOOKER') {
   //   await dispatch(handleSelectionOfOnAndAheadScores({}));
@@ -381,7 +357,9 @@ export const handleEndGameThrunk = createAsyncThunk<void, {}, { state: RootState
       ? await calculateStatsForPlayer(state.sport.team2.players[1].id!, state.sport.scoreHistory)
       : null;
 
-    await matchEndGameRequest({
+    const lastSet = state.sport.scoreHistory[state.sport.scoreHistory.length - 1];
+
+    const result = await matchEndGameRequest({
       matchId: state.sport.matchId!,
       teamWinningIndex: state.sport.team1Score > state.sport.team2Score ? 0 : 1,
       sideOnePlayerOneStats: sideOnePlayerOneStats,
@@ -391,9 +369,13 @@ export const handleEndGameThrunk = createAsyncThunk<void, {}, { state: RootState
       sets: state.sport.scoreHistory,
       teamOneScore: state.sport.team1Score,
       teamTwoScore: state.sport.team2Score,
-      currentSetTeamOneScore: state.sport.scoreHistory[state.sport.scoreHistory.length - 1].teamOneScore,
-      currentSetTeamTwoScore: state.sport.scoreHistory[state.sport.scoreHistory.length - 1].teamTwoScore,
+      currentSetTeamOneScore: lastSet ? lastSet.teamOneScore : 0,
+      currentSetTeamTwoScore: lastSet ? lastSet.teamTwoScore : 0,
     });
+
+    if (!result) {
+      throw new Error('Failed to end match');
+    }
   },
 );
 
@@ -407,7 +389,6 @@ export const handleBreakOff = createAsyncThunk<
   await dispatch(setActivePlayer({ playerId: scoreOrder[0] }));
   await dispatch(handleCreateSet({ scoreOrder: scoreOrder }));
   await dispatch(handleCreateTurn({ setIndex: state.sport.scoreHistory.length, playerId: scoreOrder[0] }));
-  await dispatch(handleAutoStartStopClock({}));
   // await dispatch(handleSelectionOfOnAndAheadScores({}));
 
   await dispatch(changeBackendUpdatedState({ value: false }));

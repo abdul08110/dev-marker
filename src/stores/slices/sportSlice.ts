@@ -242,7 +242,6 @@ const sportSlice = createSlice({
         billiardsCorrections: [],
         scoreOrder: scoreOrder,
         setConcededTo: null,
-        frameStartedAt: null,
       });
     },
     createSnookerCorrection(
@@ -389,12 +388,6 @@ const sportSlice = createSlice({
         activeTurn.stopClockEndedAt = null;
       }
     },
-    setFrameStartedAt(state, action: PayloadAction<{ frameStartedAt: string | null }>) {
-      const setIndex = state.scoreHistory.findIndex((set) => set.status === 'ONGOING');
-      if (setIndex !== -1) {
-        state.scoreHistory[setIndex].frameStartedAt = action.payload.frameStartedAt;
-      }
-    },
     updateMaxScorePerSet(state, action: PayloadAction<{ maxScorePerSet: number }>) {
       state.maxScorePerSet = action.payload.maxScorePerSet;
     },
@@ -482,7 +475,6 @@ export const {
   updateIsRankingEvent,
   setFormatName,
   updateStopClockSettings,
-  setFrameStartedAt,
   toggleTurnClock,
 } = sportSlice.actions;
 export default sportSlice.reducer;

@@ -60,8 +60,6 @@ export interface Set {
   snookerCorrections: SnookerCorrection[];
   billiardsCorrections: BilliardsCorrection[];
   setConcededTo: 0 | 1 | null;
-  // Frame-clock anchor for this frame — set when the frame starts.
-  frameStartedAt?: string | null;
 }
 
 export interface SnookerCorrection {

@@ -8,7 +8,6 @@ import { ClubData, Player, Set, TournamentItem, TournamentSubItem } from '@/stor
 import useBodyRotation from './useBodyRotation';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import { QrFlowPlayer, QrFlowState } from './useScoreboard';
-import { withStopClockAnchors } from '@/stores/selectors/commonSport';
 
 export interface ScoreBoardState {
   matchId: string;
@@ -106,7 +105,6 @@ const useScoreboardRender = () => {
       `${searchParamsVenueId}/match-start`,
       `${searchParamsVenueId}/match-end`,
       `${searchParamsVenueId}/timer-updated`,
-      `${searchParamsVenueId}/stop-clock`,
       `${searchParamsVenueId}/scoreboard/initiate`,
       `${searchParamsVenueId}/scoreboard/add-player`,
       `${searchParamsVenueId}/scoreboard/cancel`,
@@ -189,7 +187,7 @@ const useScoreboardRender = () => {
             activePlayerId: res.activePlayerId,
             teamOneScore: res.teamOneScore,
             teamTwoScore: res.teamTwoScore,
-            sets: withStopClockAnchors(res.sets, res.stopClockState ?? null),
+            sets: res.sets,
             actualStartTime: res.actualStartTimeDate,
             expectedEndTimeDate: res.expectedEndTimeDate ? res.expectedEndTimeDate : null,
             teamOneLogo: res.tournamentTeamOne ? res.tournamentTeamOne.logo : null,
@@ -263,7 +261,7 @@ const useScoreboardRender = () => {
             activePlayerId: parsedMessage.activePlayerId,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-            sets: withStopClockAnchors(updatedSets, parsedMessage.stopClockState ?? null),
+            sets: updatedSets,
             isTeamOneHandicapApplied: parsedMessage.isTeamOneHandicapApplied,
             isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied,
           };
@@ -310,20 +308,6 @@ const useScoreboardRender = () => {
         });
         setShowTimeOverAlert(false);
         break;
-      case 'stop-clock': {
-        setScoreboardData((prevData) => {
-          if (prevData === null) return null;
-
-          const frameStartedAt = parsedMessage.frameStartedAt ?? null;
-
-          return {
-            ...prevData,
-            sets: withStopClockAnchors(prevData.sets, { frameStartedAt }),
-            stopClockVoiceEnabled: parsedMessage.stopClockVoiceEnabled ?? prevData.stopClockVoiceEnabled,
-          };
-        });
-        break;
-      }
     }
   };
 
