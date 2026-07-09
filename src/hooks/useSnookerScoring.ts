@@ -51,7 +51,7 @@ import { NoOfPlayersDefault, SnookerPracticeSettingsData } from '@/components/fo
 import {
   addPlayer,
   setExpectedEndTimeDate,
-  setStopClockState,
+  setFrameStartedAt,
   setTeamPlayer,
   toggleTurnClock,
 } from '@/stores/slices/sportSlice';
@@ -94,12 +94,12 @@ const useSnookerScoring = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   // Never trust a client-side guess about the stop clock's state after a dropped request —
-  // pull the authoritative activePlayerClock/turnStartedAt/frameStartedAt from the server instead.
+  // pull the authoritative frameStartedAt from the server instead.
   const resyncStopClockState = async () => {
     if (!snookerScoring.matchId) return;
     const res = await getLiveMatchHook.getLiveMatchData({ matchId: snookerScoring.matchId });
-    if (res?.stopClockState) {
-      dispatch(setStopClockState({ stopClockState: res.stopClockState }));
+    if (res?.stopClockState?.frameStartedAt) {
+      dispatch(setFrameStartedAt({ frameStartedAt: res.stopClockState.frameStartedAt }));
     }
   };
   const isOnline = useOnlineStatus({ onOnline: resyncStopClockState });
@@ -134,17 +134,17 @@ const useSnookerScoring = () => {
   const [loading, setLoading] = React.useState(false);
   const [showTimerModal, setShowTimeModal] = React.useState(false);
 
-  // The shot clock's toggle is local (no backend round trip). stopClockState.turnStartedAt is
-  // only the transport value; the display reads off the active turn's own turnStartedAt so it's
-  // correctly scoped to whichever turn is currently active.
-  const activeTurn = getActiveTurn(getActiveSet(snookerScoring.scoreHistory));
-  const isStopClockRunning = !!activeTurn?.turnStartedAt;
+  // The shot clock's toggle is local (no backend round trip). The display reads off the active
+  // turn's own stopClockStartedAt/stopClockEndedAt so it's correctly scoped per turn.
+  const activeSet = getActiveSet(snookerScoring.scoreHistory);
+  const activeTurn = getActiveTurn(activeSet ?? null);
+  const isStopClockRunning = !!activeTurn?.stopClockStartedAt && !activeTurn?.stopClockEndedAt;
 
-  // STOP CLOCK LIVE DISPLAY (ticks locally off frameStartedAt/turnStartedAt, no per-second MQTT/API calls)
+  // STOP CLOCK LIVE DISPLAY (ticks locally off frameStartedAt/stopClockStartedAt)
   const stopClockTick = useStopClockTick(
-    snookerScoring.stopClockState?.frameStartedAt,
+    activeSet?.frameStartedAt,
     snookerScoring.stopClockFrameTimeInSeconds,
-    activeTurn?.turnStartedAt,
+    isStopClockRunning ? activeTurn?.stopClockStartedAt : null,
     snookerScoring.stopClockTurnTimeInSeconds,
   );
 
@@ -789,7 +789,7 @@ const useSnookerScoring = () => {
   // Frame must have started (Break Off already pressed, which fires START_FRAME) before the
   // shot clock is allowed to start — otherwise the shot clock would be running against a frame
   // that hasn't officially begun.
-  const isStopClockFrameStarted = !!snookerScoring.stopClockState?.frameStartedAt;
+  const isStopClockFrameStarted = !!activeSet?.frameStartedAt;
 
   // Purely local — no API call, no network round trip. The button disables only while the
   // frame hasn't started yet (Break Off not pressed); once it's clickable, the toggle is instant.

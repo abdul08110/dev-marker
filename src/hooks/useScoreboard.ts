@@ -7,7 +7,7 @@ import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import useMarkerClubs from '@/api/home/useMarkerClubs';
 import useTimer from './useTimer';
 import { toast } from '@/components/ui/use-toast';
-import { Player, Set, StopClockState, TournamentItem, TournamentSubItem } from '@/stores/types';
+import { Player, Set, TournamentItem, TournamentSubItem } from '@/stores/types';
 import useBodyRotation from './useBodyRotation';
 import { setActiveClub, setClubs } from '@/stores/slices/clubSlice';
 import { withStopClockAnchors } from '@/stores/selectors/commonSport';
@@ -25,8 +25,6 @@ export interface QrFlowState {
   playerCount: 2 | 4;
   players: Record<number, QrFlowPlayer>;
 }
-
-export type { StopClockState };
 
 export interface ScoreBoardState {
   matchId: string;
@@ -72,7 +70,6 @@ export interface ScoreBoardState {
   stopClockFrameTimeInSeconds?: number;
   stopClockTurnTimeInSeconds?: number;
   stopClockVoiceEnabled?: boolean;
-  stopClockState?: StopClockState | null;
 }
 
 const useScoreboard = () => {
@@ -94,8 +91,6 @@ const useScoreboard = () => {
   const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('landscape');
   const [showTimeOverAlert, setShowTimeOverAlert] = React.useState<boolean>(false);
   const { rotateBody } = useBodyRotation();
-  const lastStopClockTurnStartedAtRef = React.useRef<string | null>(null);
-
   const timeLeft = useTimer({
     endTime: scoreBoardData && scoreBoardData.expectedEndTimeDate ? new Date(scoreBoardData.expectedEndTimeDate) : null,
     startTime: null,
@@ -196,7 +191,7 @@ const useScoreboard = () => {
             activePlayerId: res.activePlayerId,
             teamOneScore: res.teamOneScore,
             teamTwoScore: res.teamTwoScore,
-            sets: withStopClockAnchors(res.sets, res.stopClockState),
+            sets: withStopClockAnchors(res.sets, res.stopClockState ?? null),
             actualStartTime: res.actualStartTimeDate,
             expectedEndTimeDate: res.expectedEndTimeDate ? res.expectedEndTimeDate : null,
             teamOneLogo: res.tournamentTeamOne ? res.tournamentTeamOne.logo : null,
@@ -228,9 +223,7 @@ const useScoreboard = () => {
             stopClockFrameTimeInSeconds: res.stopClockFrameTimeInSeconds,
             stopClockTurnTimeInSeconds: res.stopClockTurnTimeInSeconds,
             stopClockVoiceEnabled: res.stopClockVoiceEnabled ?? false,
-            stopClockState: res.stopClockState ?? null,
           });
-          lastStopClockTurnStartedAtRef.current = res.stopClockState?.turnStartedAt ?? null;
         } else {
           toast({
             title: 'Error',
@@ -264,22 +257,17 @@ const useScoreboard = () => {
         setScoreboardData((prevData) => {
           if (prevData === null) return null;
           const updatedSets = parsedMessage.sets ? [...parsedMessage.sets] : prevData.sets;
-          const stopClockState = parsedMessage.stopClockState ?? prevData.stopClockState;
 
           return {
             ...prevData,
             activePlayerId: parsedMessage.activePlayerId,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-            sets: withStopClockAnchors(updatedSets, stopClockState),
+            sets: withStopClockAnchors(updatedSets, parsedMessage.stopClockState ?? null),
             isTeamOneHandicapApplied: parsedMessage.isTeamOneHandicapApplied,
             isTeamTwoHandicapApplied: parsedMessage.isTeamTwoHandicapApplied,
-            stopClockState,
           };
         });
-        if (parsedMessage.stopClockState?.turnStartedAt) {
-          lastStopClockTurnStartedAtRef.current = parsedMessage.stopClockState.turnStartedAt;
-        }
         break;
       case 'match-start':
         const matchId = parsedMessage.matchId;
@@ -306,30 +294,14 @@ const useScoreboard = () => {
         break;
       case 'stop-clock': {
         console.log('[useScoreboard] stop-clock message received:', parsedMessage);
-        const incomingTurnStartedAt = parsedMessage.turnStartedAt as string | null;
-        const lastTurnStartedAt = lastStopClockTurnStartedAtRef.current;
-        const isStale =
-          !!incomingTurnStartedAt &&
-          !!lastTurnStartedAt &&
-          new Date(incomingTurnStartedAt).getTime() < new Date(lastTurnStartedAt).getTime();
-        if (isStale) break;
-
-        lastStopClockTurnStartedAtRef.current = incomingTurnStartedAt ?? lastTurnStartedAt;
         setScoreboardData((prevData) => {
           if (prevData === null) return null;
 
-          const newStopClockState = {
-            activePlayerClock: parsedMessage.activePlayerClock,
-            remainingFrameTimeInMs: parsedMessage.remainingFrameTimeInMs,
-            currentTurnRemainingTimeInMs: parsedMessage.currentTurnRemainingTimeInMs,
-            turnStartedAt: incomingTurnStartedAt,
-            frameStartedAt: parsedMessage.frameStartedAt ?? prevData.stopClockState?.frameStartedAt ?? null,
-          };
+          const frameStartedAt = parsedMessage.frameStartedAt ?? null;
 
           return {
             ...prevData,
-            sets: withStopClockAnchors(prevData.sets, newStopClockState),
-            stopClockState: newStopClockState,
+            sets: withStopClockAnchors(prevData.sets, { frameStartedAt }),
             stopClockVoiceEnabled: parsedMessage.stopClockVoiceEnabled ?? prevData.stopClockVoiceEnabled,
           };
         });
