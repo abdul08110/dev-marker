@@ -544,7 +544,8 @@ const useSnookerScoring = () => {
   const handlePlayerSelect = async (playerIndex: number, teamIndex: number) => {
     if (!snookerScoring.matchId && !snookerScoring.tournamentId) {
       // Don't allow player selection during break-off waiting state
-      const allSelected = snookerScoring.team1.players.every((p) => p.id !== null) &&
+      const allSelected =
+        snookerScoring.team1.players.every((p) => p.id !== null) &&
         snookerScoring.team2.players.every((p) => p.id !== null);
       if (allSelected) return;
       setSelectedTeamIndex(teamIndex);
@@ -559,24 +560,32 @@ const useSnookerScoring = () => {
       // Current selection is the slot being filled; go back to the previous one
       if (selectedTeamIndex === 0 && selectedPlayerIndex === 1) {
         // On T1P2 → go back to T1P1
-        dispatch(setTeamPlayer({ teamIndex: 0, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }));
+        dispatch(
+          setTeamPlayer({ teamIndex: 0, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }),
+        );
         setSelectedTeamIndex(0);
         setSelectedPlayerIndex(0);
       } else if (selectedTeamIndex === 1 && selectedPlayerIndex === 0) {
         // On T2P1 → go back to T1P2
-        dispatch(setTeamPlayer({ teamIndex: 0, playerIndex: 1, player: { id: null, name: 'Player 2', profilePhoto: null } }));
+        dispatch(
+          setTeamPlayer({ teamIndex: 0, playerIndex: 1, player: { id: null, name: 'Player 2', profilePhoto: null } }),
+        );
         setSelectedTeamIndex(0);
         setSelectedPlayerIndex(1);
       } else if (selectedTeamIndex === 1 && selectedPlayerIndex === 1) {
         // On T2P2 → go back to T2P1
-        dispatch(setTeamPlayer({ teamIndex: 1, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }));
+        dispatch(
+          setTeamPlayer({ teamIndex: 1, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }),
+        );
         setSelectedTeamIndex(1);
         setSelectedPlayerIndex(0);
       }
     } else {
       // 2-player: on T2P1 → go back to T1P1
       if (snookerScoring.team1.players[0].id !== null) {
-        dispatch(setTeamPlayer({ teamIndex: 0, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }));
+        dispatch(
+          setTeamPlayer({ teamIndex: 0, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }),
+        );
         setSelectedTeamIndex(0);
         setSelectedPlayerIndex(0);
       }
@@ -706,6 +715,11 @@ const useSnookerScoring = () => {
   const handleEndGame = async () => {
     setShowLoadingModal(true);
     setShowMenuDrawer(false);
+    if (snookerScoring.matchId === null) {
+      await handleGoToHome();
+      setShowLoadingModal(false);
+      return;
+    }
 
     try {
       await dispatch(handleEndGameThrunk({})).unwrap();
