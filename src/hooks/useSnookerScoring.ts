@@ -35,7 +35,7 @@ import {
   handleUndoScoreClicked,
   matchSyncDataFromBackend,
 } from '@/stores/thunks/sportThunks';
-import { getActiveTeam, getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
+import { getActiveTeam, getActiveSet, getActiveTurn, getFrameStartedAt } from '@/stores/selectors/commonSport';
 import useTimer from '@/hooks/useTimer';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 import useOnlineStatus from './useOnlineStatus';
@@ -48,13 +48,7 @@ import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { NoOfPlayersDefault, SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
-import {
-  addPlayer,
-  setExpectedEndTimeDate,
-  setFrameStartedAt,
-  setTeamPlayer,
-  toggleTurnClock,
-} from '@/stores/slices/sportSlice';
+import { addPlayer, setExpectedEndTimeDate, setTeamPlayer, toggleTurnClock } from '@/stores/slices/sportSlice';
 import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
 import { useStopClockTick } from './useStopClockTick';
 import mqtt from 'mqtt';
@@ -93,16 +87,7 @@ const useSnookerScoring = () => {
   // HOOKS
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  // Never trust a client-side guess about the stop clock's state after a dropped request —
-  // pull the authoritative frameStartedAt from the server instead.
-  const resyncStopClockState = async () => {
-    if (!snookerScoring.matchId) return;
-    const res = await getLiveMatchHook.getLiveMatchData({ matchId: snookerScoring.matchId });
-    if (res?.stopClockState?.frameStartedAt) {
-      dispatch(setFrameStartedAt({ frameStartedAt: res.stopClockState.frameStartedAt }));
-    }
-  };
-  const isOnline = useOnlineStatus({ onOnline: resyncStopClockState });
+  const isOnline = useOnlineStatus();
   useInterval(handleUpdateToServer, 1000);
   const [searchParams] = useSearchParams();
   const matchId = searchParams.get('matchId');
@@ -140,9 +125,9 @@ const useSnookerScoring = () => {
   const activeTurn = getActiveTurn(activeSet ?? null);
   const isStopClockRunning = !!activeTurn?.stopClockStartedAt && !activeTurn?.stopClockEndedAt;
 
-  // STOP CLOCK LIVE DISPLAY (ticks locally off frameStartedAt/stopClockStartedAt)
+  // STOP CLOCK LIVE DISPLAY (ticks locally off the first turn's timeScored/stopClockStartedAt)
   const stopClockTick = useStopClockTick(
-    activeSet?.frameStartedAt,
+    getFrameStartedAt(activeSet),
     snookerScoring.stopClockFrameTimeInSeconds,
     isStopClockRunning ? activeTurn?.stopClockStartedAt : null,
     snookerScoring.stopClockTurnTimeInSeconds,
@@ -723,7 +708,7 @@ const useSnookerScoring = () => {
     setShowMenuDrawer(false);
 
     try {
-      await dispatch(handleEndGameThrunk({}));
+      await dispatch(handleEndGameThrunk({})).unwrap();
 
       await handleGoToHome();
     } catch (error) {
@@ -786,10 +771,10 @@ const useSnookerScoring = () => {
     setShowTimeModal(false);
   };
 
-  // Frame must have started (Break Off already pressed, which fires START_FRAME) before the
-  // shot clock is allowed to start — otherwise the shot clock would be running against a frame
-  // that hasn't officially begun.
-  const isStopClockFrameStarted = !!activeSet?.frameStartedAt;
+  // Frame must have started (Break Off already pressed, which creates the frame's first turn)
+  // before the shot clock is allowed to start — otherwise the shot clock would be running
+  // against a frame that hasn't officially begun.
+  const isStopClockFrameStarted = !!getFrameStartedAt(activeSet);
 
   // Purely local — no API call, no network round trip. The button disables only while the
   // frame hasn't started yet (Break Off not pressed); once it's clickable, the toggle is instant.

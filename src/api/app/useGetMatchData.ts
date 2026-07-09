@@ -127,10 +127,6 @@ export interface MatchStartResponse {
   stopClockFrameTimeInSeconds?: number;
   stopClockTurnTimeInSeconds?: number;
   stopClockVoiceEnabled?: boolean;
-  stopClockState?: {
-    frameStartedAt: string | null;
-    turnStartedAt: string | null;
-  };
 }
 
 const useGetMatchLiveData = () => {

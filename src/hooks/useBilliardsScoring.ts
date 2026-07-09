@@ -358,7 +358,7 @@ const useBilliardsScoring = () => {
   const handleEndGame = async () => {
     setShowLoadingModal(true);
     try {
-      await dispatch(handleEndGameThrunk({}));
+      await dispatch(handleEndGameThrunk({})).unwrap();
 
       await handleGoToHome();
     } catch (error) {

@@ -50,24 +50,6 @@ interface MatchResetTimerRequestProps {
   expectedEndTimeDate: Date;
 }
 
-interface StopClockActionProps {
-  matchId: string;
-  action: 'START' | 'STOP' | 'START_FRAME';
-  // Only meaningful (and required) for START/STOP — frame time is now purely server-computed
-  // from frameStartedAt, never client-supplied, and START_FRAME takes no extra params at all.
-  currentTurnRemainingTimeInMs?: number;
-}
-
-interface StopClockActionResponse {
-  stopClockState: {
-    frameStartedAt: string | null;
-    turnStartedAt: string | null;
-    activePlayerClock: string;
-    remainingFrameTimeInMs: number;
-    currentTurnRemainingTimeInMs: number;
-  };
-}
-
 interface MarkerFrameEndSendNotificationProps {
   matchId: string;
   achievements: {
@@ -122,17 +104,6 @@ export const matchResetTimerRequest = async (props: MatchResetTimerRequestProps)
     );
 
     return true;
-  } catch (err) {
-    return null;
-  }
-};
-
-export const stopClockActionRequest = async (props: StopClockActionProps): Promise<StopClockActionResponse['stopClockState'] | null> => {
-  try {
-    const response = await handleApiResponse(
-      axiosInstance.post<ApiResponse<StopClockActionResponse>>(`match/marker/stop-clock-action`, props),
-    );
-    return response.stopClockState;
   } catch (err) {
     return null;
   }
