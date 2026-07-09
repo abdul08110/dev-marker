@@ -33,9 +33,17 @@ const YouTubePlayer = ({ videoId }: { videoId: string }) => {
           showinfo: 0,
           iv_load_policy: 3,
           mute: 1,
+          vq: 'hd1080',
         },
         events: {
           onReady: (event: any) => {
+            // Force 1080p quality minimum
+            if (event.target.setPlaybackQuality) {
+              event.target.setPlaybackQuality('hd1080');
+            }
+            if (event.target.setPlaybackQualityRange) {
+              event.target.setPlaybackQualityRange('hd1080', 'highres');
+            }
             event.target.playVideo();
           },
           onError: (event: any) => {

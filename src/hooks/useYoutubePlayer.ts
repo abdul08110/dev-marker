@@ -39,8 +39,17 @@ export function useYouTubePlayer({
     youTubePlayerRef.current = event.target;
     setVideoDuration(event.target.getDuration() * 1000);
     event.target.mute();
+
+    // Force 1080p quality minimum
+    if (event.target.setPlaybackQuality) {
+      event.target.setPlaybackQuality('hd1080');
+    }
+    if (event.target.setPlaybackQualityRange) {
+      event.target.setPlaybackQualityRange('hd1080', 'highres');
+    }
+
     event.target.playVideo();
-  
+
     setIsVideoPlaying(true);
     onLoadingStateChange?.(false);
   };
@@ -57,6 +66,17 @@ export function useYouTubePlayer({
       // Video is playing
       setIsVideoPlaying(true);
       console.log('video has starting playing');
+
+      // Re-enforce 1080p quality on every play state
+      if (youTubePlayerRef.current) {
+        const player = youTubePlayerRef.current as any;
+        if (player.setPlaybackQuality) {
+          player.setPlaybackQuality('hd1080');
+        }
+        if (player.setPlaybackQualityRange) {
+          player.setPlaybackQualityRange('hd1080', 'highres');
+        }
+      }
       
       // Handle seeking if needed when player is ready and playing
       if (switchTimeStampRef.current > 0 && youTubePlayerRef.current) {

@@ -354,6 +354,7 @@ export function StreamContainer(props: StreamContainerProps) {
                       rel: 0,
                       fs: 0,
                       modestbranding: 1,
+                      vq: 'hd1080',
                     },
                   }}
                 />
