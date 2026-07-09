@@ -34,14 +34,15 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
   const activeSet = getActiveSet(state.sets);
   const activeTurn = getActiveTurn(activeSet);
+  const isClockRunning = !!activeTurn?.stopClockStartedAt && !activeTurn?.stopClockEndedAt;
   const stopClockTick = useStopClockTick(
-    state.stopClockState?.frameStartedAt,
+    activeSet?.frameStartedAt,
     state.stopClockFrameTimeInSeconds,
-    activeTurn?.turnStartedAt,
+    isClockRunning ? activeTurn?.stopClockStartedAt : null,
     state.stopClockTurnTimeInSeconds,
   );
   useStopClockVoice({
-    startedTurnTime: activeTurn?.turnStartedAt,
+    startedTurnTime: isClockRunning ? activeTurn?.stopClockStartedAt : null,
     stopClockTurnTimeInSeconds: state.stopClockTurnTimeInSeconds,
     stopClockVoiceEnabled: state.stopClockVoiceEnabled,
   });

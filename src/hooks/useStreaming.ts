@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import mqtt from 'mqtt';
 import useGetMatchLiveData, { StreamType } from '@/api/app/useGetMatchData';
 import { toast } from '@/components/ui/use-toast';
-import { Player, Set, StopClockState, TournamentItem, TournamentPhase, TournamentSubItem } from '@/stores/types';
+import { Player, Set, TournamentItem, TournamentPhase, TournamentSubItem } from '@/stores/types';
 import useMarkerGetLiveMatchByVenue from '@/api/home/useGetLiveMatchByVenueId';
 import useTimer from './useTimer';
 import { addMillisecondsToUTC } from '@/utils/functions';
@@ -86,7 +86,6 @@ export interface StreamingState {
   stopClockFrameTimeInSeconds?: number;
   stopClockTurnTimeInSeconds?: number;
   stopClockVoiceEnabled?: boolean;
-  stopClockState?: StopClockState | null;
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -106,7 +105,6 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   });
   const lineupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
-  const lastStopClockTurnStartedAtRef = useRef<string | null>(null);
   const timeLeft = useTimer({
     endTime: streamingData && streamingData.expectedEndTimeDate ? new Date(streamingData.expectedEndTimeDate) : null,
     startTime:
@@ -216,7 +214,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           activePlayerId: res.activePlayerId,
           teamOneScore: res.teamOneScore,
           teamTwoScore: res.teamTwoScore,
-          sets: withStopClockAnchors(res.sets, res.stopClockState),
+          sets: withStopClockAnchors(res.sets, res.stopClockState ?? null),
           matchStatus: res.matchStatus,
           venueNo: res.venue ? res.venue.no : null,
           clubName: res.club ? res.club.name : null,
@@ -258,10 +256,7 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           stopClockFrameTimeInSeconds: res.stopClockFrameTimeInSeconds,
           stopClockTurnTimeInSeconds: res.stopClockTurnTimeInSeconds,
           stopClockVoiceEnabled: res.stopClockVoiceEnabled ?? false,
-          stopClockState: res.stopClockState ?? null,
         };
-
-        lastStopClockTurnStartedAtRef.current = res.stopClockState?.turnStartedAt ?? null;
 
         setStreamingData(initialData);
 
@@ -331,19 +326,14 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         setStreamingData((prevData) => {
           if (prevData === null) return null;
           const updatedSets = parsedMessage.sets || prevData.sets;
-          const stopClockState = parsedMessage.stopClockState ?? prevData.stopClockState;
           return {
             ...prevData,
             activePlayerId: parsedMessage.activePlayerId,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-            sets: withStopClockAnchors(updatedSets, stopClockState),
-            stopClockState,
+            sets: withStopClockAnchors(updatedSets, parsedMessage.stopClockState ?? null),
           };
         });
-        if (parsedMessage.stopClockState?.turnStartedAt) {
-          lastStopClockTurnStartedAtRef.current = parsedMessage.stopClockState.turnStartedAt;
-        }
         break;
       case 'match-start':
         clearLineup();
@@ -490,25 +480,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         }
       }
 
-      // stopClockState must be re-derived for the REPLAYED frame/turn (lastSet/lastTurn above),
-      // not left as the live one — otherwise a delayed/scrubbed video shows the frame/shot clock
-      // for whatever is live right now instead of whatever frame/turn is actually on screen.
-      // Set.frameStartedAt and Turn.turnStartedAt are per-frame/per-turn anchors persisted by the
-      // backend (unlike the live-only StopClockState.frameStartedAt/turnStartedAt), so they stay
-      // correct even after the real match has moved on to a later frame/turn.
-      const replayStopClockState = currentStreamingData.stopClockState
-        ? {
-            ...currentStreamingData.stopClockState,
-            frameStartedAt: lastSet.frameStartedAt ?? null,
-            turnStartedAt: lastTurn.turnStartedAt ?? null,
-          }
-        : currentStreamingData.stopClockState;
-
       setViewershipData({
         ...currentStreamingData,
         activePlayerId: activePlayerId,
         sets: consideredSets,
-        stopClockState: replayStopClockState,
         isTeamOneHandicapApplied: handicapAdjustedScores.side1 !== teamScoresForCurrentSet.side1,
         isTeamTwoHandicapApplied: handicapAdjustedScores.side2 !== teamScoresForCurrentSet.side2,
         teamOneScore: totalTeamScores.side1,

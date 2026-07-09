@@ -37,7 +37,7 @@ import {
   updateIsRankingEvent,
   setFormatName,
   updateStopClockSettings,
-  setStopClockState,
+  setFrameStartedAt,
 } from '../slices/sportSlice';
 import { BilliardPointType, Player, SnookerPointType, SportType, TournamentFormat } from '../types';
 import {
@@ -159,7 +159,6 @@ export const setStateTournament = createAsyncThunk<
     stopClockFrameTimeInSeconds: data.format.stopClockFrameTimeInSeconds ?? 900,
     stopClockTurnTimeInSeconds: data.format.stopClockTurnTimeInSeconds ?? 30,
     stopClockVoiceEnabled: data.format.stopClockVoiceEnabled ?? false,
-    stopClockState: null,
   };
   await dispatch(
     setState({
@@ -236,17 +235,6 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       stopClockFrameTimeInSeconds,
       stopClockTurnTimeInSeconds,
       stopClockVoiceEnabled: data.stopClockVoiceEnabled ?? false,
-      stopClockState:
-        data.stopClockState ??
-        (isStopClockEnabled
-          ? {
-              activePlayerClock: 'STOPPED' as const,
-              remainingFrameTimeInMs: stopClockFrameTimeInSeconds * 1000,
-              currentTurnRemainingTimeInMs: stopClockTurnTimeInSeconds * 1000,
-              turnStartedAt: null,
-              frameStartedAt: null,
-            }
-          : null),
     };
 
     if (data.sideTwoPlayerTwo !== null) {
@@ -284,8 +272,7 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
 );
 
 // Starts the FRAME clock only for a fresh frame (break off) — the shot clock stays dormant
-// (STOPPED, full turn time) until the marker separately presses Start. Relies on `createSet`
-// having already reset `stopClockState` to a fresh STOPPED state at full frame/turn time.
+// until the marker separately presses Start.
 export const handleAutoStartStopClock = createAsyncThunk<void, {}, { state: RootState; dispatch: AppDispatch }>(
   'sport/handleAutoStartStopClock',
   async ({}, { dispatch, getState }) => {
@@ -299,7 +286,7 @@ export const handleAutoStartStopClock = createAsyncThunk<void, {}, { state: Root
     });
 
     if (result) {
-      await dispatch(setStopClockState({ stopClockState: result }));
+      await dispatch(setFrameStartedAt({ frameStartedAt: result.frameStartedAt }));
     }
   },
 );
@@ -894,16 +881,6 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
         isTeamOneHandicapApplied: state.sport.isTeamOneHandicapApplied,
         isTeamTwoHandicapApplied: state.sport.isTeamTwoHandicapApplied,
         currentVisitScore: activeTurn ? activeTurn.score : 0,
-        stopClockState:
-          state.sport.isStopClockEnabled && state.sport.stopClockState
-            ? {
-                activePlayerClock: state.sport.stopClockState.activePlayerClock,
-                remainingFrameTimeInMs: state.sport.stopClockState.remainingFrameTimeInMs,
-                currentTurnRemainingTimeInMs: state.sport.stopClockState.currentTurnRemainingTimeInMs,
-                turnStartedAt: state.sport.stopClockState.turnStartedAt ?? undefined,
-                frameStartedAt: state.sport.stopClockState.frameStartedAt ?? undefined,
-              }
-            : undefined,
       });
     }
   },

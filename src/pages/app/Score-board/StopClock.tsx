@@ -1,8 +1,6 @@
-import { StopClockState } from '@/stores/types';
 import { formatClockMs, getStopClockColor } from '@/utils/stopClock';
 
 interface StopClockProps {
-  stopClockState?: StopClockState | null;
   isStopClockEnabled?: boolean;
   stopClockFrameTimeInSeconds?: number;
   stopClockTurnTimeInSeconds?: number;
@@ -32,7 +30,6 @@ function ClockBar({ label, ms, totalMs }: { label: string; ms: number; totalMs: 
 }
 
 export function StopClock({
-  stopClockState,
   isStopClockEnabled,
   stopClockFrameTimeInSeconds,
   stopClockTurnTimeInSeconds,
@@ -40,7 +37,7 @@ export function StopClock({
   remainingTurnMs,
   sport,
 }: StopClockProps) {
-  if (!isStopClockEnabled || sport !== 'SNOOKER' || !stopClockState) return null;
+  if (!isStopClockEnabled || sport !== 'SNOOKER') return null;
 
   return (
     <div className="flex justify-center items-center gap-[min(2vh,2vw)] pt-[min(2vh,2vw)]">

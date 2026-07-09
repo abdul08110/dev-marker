@@ -60,10 +60,7 @@ export interface Set {
   snookerCorrections: SnookerCorrection[];
   billiardsCorrections: BilliardsCorrection[];
   setConcededTo: 0 | 1 | null;
-  // Matches the backend's Set.frameStartedAt column — the frame-clock anchor for THIS frame
-  // specifically, as opposed to StopClockState.frameStartedAt which is only the live/current one.
-  // Having it per-Set is what lets a replayed/delayed video show the correct frame countdown for
-  // whichever frame it's actually displaying, not whatever frame is live right now.
+  // Frame-clock anchor for this frame — set when the frame starts.
   frameStartedAt?: string | null;
 }
 
@@ -85,9 +82,8 @@ export interface Turn {
   score: number;
   timeScored: string;
   points: Point[];
-  // Matches the backend's Turn.turnStartedAt field — must keep this exact name so it round-trips
-  // through matchUpdateDataRequest/get-live-match-data instead of being silently dropped.
-  turnStartedAt?: string | null;
+  stopClockStartedAt?: string | null;
+  stopClockEndedAt?: string | null;
 }
 
 export interface Point {
@@ -114,14 +110,6 @@ export type SportType =
   | 'SNOOKER_6_RED'
   | 'BILLIARDS_RACE_TO'
   | 'BILLIARDS_TIME_BASED';
-
-export interface StopClockState {
-  activePlayerClock: 'RUNNING' | 'STOPPED';
-  remainingFrameTimeInMs: number;
-  currentTurnRemainingTimeInMs: number;
-  turnStartedAt: string | null;
-  frameStartedAt: string | null;
-}
 
 export interface GeneralScoringState {
   format: SportType;
@@ -162,7 +150,6 @@ export interface GeneralScoringState {
   stopClockFrameTimeInSeconds: number;
   stopClockTurnTimeInSeconds: number;
   stopClockVoiceEnabled: boolean;
-  stopClockState: StopClockState | null;
 }
 
 export interface ClubData {

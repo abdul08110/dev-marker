@@ -50,12 +50,23 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const referenceTimeMs =
     currentVideoTimeMs !== undefined ? new Date(state.actualStartTimeDate).getTime() + currentVideoTimeMs : undefined;
 
+  // When the turn clock was stopped, cap the reference time at stopClockEndedAt so the display
+  // shows the frozen remaining time instead of resetting to full. For a running clock or one
+  // that hasn't started yet, pass the reference time (or undefined for wall-clock) as-is.
+  const turnClockRefMs = (() => {
+    if (!activeTurn?.stopClockStartedAt) return referenceTimeMs;
+    if (!activeTurn.stopClockEndedAt) return referenceTimeMs;
+    const endedMs = new Date(activeTurn.stopClockEndedAt).getTime();
+    if (referenceTimeMs !== undefined) return Math.min(referenceTimeMs, endedMs);
+    return endedMs;
+  })();
+
   const stopClockTick = useStopClockTick(
-    state.stopClockState?.frameStartedAt,
+    activeSet?.frameStartedAt,
     state.stopClockFrameTimeInSeconds,
-    activeTurn?.turnStartedAt,
+    activeTurn?.stopClockStartedAt,
     state.stopClockTurnTimeInSeconds,
-    referenceTimeMs,
+    turnClockRefMs,
   );
   const showStopClock = !!state.isStopClockEnabled && state.sport === 'SNOOKER';
 
