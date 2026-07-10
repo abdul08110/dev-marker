@@ -365,17 +365,16 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 <g filter="url(#filter0_i)">
                   <path
                     d="M10.9493 13.9524C12.5076 7.13086 18.5754 2.29297 25.5726 2.29297H184.179C191.177 2.29297 197.244 7.13087 198.803 13.9524L206.876 49.293H2.87598L10.9493 13.9524Z"
-                    fill="url(#paint0_linear)"
-                    fillOpacity="1"
+                    fill="#AB51C6"
                   />
                   <path
                     d="M184.18 1.14648C191.712 1.14663 198.243 6.35448 199.92 13.6973L207.994 49.0381L208.313 50.4395H1.43848L1.75781 49.0381L9.83203 13.6973C11.5094 6.35448 18.0403 1.14664 25.5723 1.14648H184.18Z"
-                    stroke="url(#paint1_linear)"
+                    stroke="url(#paint0_linear_74_11418)"
                     strokeWidth="2.29299"
                   />
                   <path
                     d="M184.18 1.14648C191.712 1.14663 198.243 6.35448 199.92 13.6973L207.994 49.0381L208.313 50.4395H1.43848L1.75781 49.0381L9.83203 13.6973C11.5094 6.35448 18.0403 1.14664 25.5723 1.14648H184.18Z"
-                    stroke="url(#paint2_linear)"
+                    stroke="url(#paint1_linear_74_11418)"
                     strokeWidth="2.29299"
                   />
                 </g>
@@ -402,42 +401,31 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                     <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
                     <feColorMatrix
                       type="matrix"
-                      values="0 0 0 0 0.690196 0 0 0 0 0.937255 0 0 0 0 0.384314 0 0 0 0.6 0"
+                      values="0 0 0 0 0.670588 0 0 0 0 0.317647 0 0 0 0 0.776471 0 0 0 0.6 0"
                     />
                     <feBlend mode="normal" in2="shape" result="effect1_innerShadow" />
                   </filter>
                   <linearGradient
-                    id="paint0_linear"
-                    x1="37.3175"
-                    y1="49.293"
-                    x2="165.984"
-                    y2="-159.989"
-                    gradientUnits="userSpaceOnUse"
+                    id="paint0_linear_74_11418"
+                    gradientUnits="objectBoundingBox"
+                    x1="1.2267"
+                    y1="0"
+                    x2="1.0611"
+                    y2="2.3726"
                   >
-                    <stop stopColor="#ACEC54" stopOpacity="0.40" />
-                    <stop offset="1" stopColor="#6FFF00" />
+                    <stop stopColor="#FFECFF" />
+                    <stop offset="0.586615" stopColor="white" stopOpacity="0" />
                   </linearGradient>
                   <linearGradient
-                    id="paint1_linear"
-                    x1="-32.2964"
-                    y1="-8.20218"
-                    x2="30.9889"
-                    y2="184.38"
-                    gradientUnits="userSpaceOnUse"
+                    id="paint1_linear_74_11418"
+                    gradientUnits="objectBoundingBox"
+                    x1="0.5"
+                    y1="0.9588"
+                    x2="0.4873"
+                    y2="-0.1999"
                   >
-                    <stop offset="0.0897938" stopColor="#D7FFA9" />
-                    <stop offset="1" stopColor="#80EF00" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient
-                    id="paint2_linear"
-                    x1="89.6346"
-                    y1="-62.9595"
-                    x2="112.535"
-                    y2="222.965"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop offset="0.108869" stopColor="#8FFF00" />
-                    <stop offset="0.368867" stopColor="#8FFF00" stopOpacity="0" />
+                    <stop stopColor="#D29AF5" stopOpacity="0" />
+                    <stop offset="1" stopColor="#F4D3F2" />
                   </linearGradient>
                 </defs>
               </svg>
