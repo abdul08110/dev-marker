@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ScoreBoardState } from '@/hooks/useScoreboard';
-import { getActiveSet, getActiveTurn, getFrameStartedAt } from '@/stores/selectors/commonSport';
+import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import { formatTimeMatchTime } from '@/utils/functions';
 import { formatClockMs } from '@/utils/stopClock';
@@ -36,7 +36,8 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
   const activeTurn = getActiveTurn(activeSet);
   const isClockRunning = !!activeTurn?.stopClockStartedAt && !activeTurn?.stopClockEndedAt;
   const stopClockTick = useStopClockTick(
-    getFrameStartedAt(activeSet),
+    activeSet?.frameClockStartedAt,
+    activeSet?.frameClockElapsedMs,
     state.stopClockFrameTimeInSeconds,
     isClockRunning ? activeTurn?.stopClockStartedAt : null,
     state.stopClockTurnTimeInSeconds,

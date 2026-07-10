@@ -11,16 +11,21 @@
 // YouTube-embedded overlay should pass the video's own real-world-equivalent time instead
 // (actualStartTimeDate + player.getCurrentTime()), so the clock only appears to move once the
 // video itself has reached that point, instead of jumping the instant the live data arrives.
+//
+// Frame time is pause/resume-able and never resets: frameClockStartedAt is the current running
+// segment's start (null while paused), frameClockElapsedMs is the banked total from every
+// previous segment. Not-started, running, and paused are all handled by the same formula —
+// no separate branches needed.
 export const computeFrameRemainingMs = (
-  frameStartedAt: string | null | undefined,
+  frameClockStartedAt: string | null | undefined,
+  frameClockElapsedMs: number | undefined,
   stopClockFrameTimeInSeconds?: number,
   now: number = Date.now(),
 ) => {
   const frameTotalMs = (stopClockFrameTimeInSeconds ?? 0) * 1000;
-  if (!frameStartedAt) return frameTotalMs;
-  const start = new Date(frameStartedAt).getTime();
-  if (now < start) return frameTotalMs;
-  return Math.max(0, frameTotalMs - (now - start));
+  const bankedMs = frameClockElapsedMs ?? 0;
+  const currentSegmentMs = frameClockStartedAt ? Math.max(0, now - new Date(frameClockStartedAt).getTime()) : 0;
+  return Math.max(0, frameTotalMs - bankedMs - currentSegmentMs);
 };
 
 export const computeTurnRemainingMs = (
@@ -35,15 +40,22 @@ export const computeTurnRemainingMs = (
   return Math.max(0, turnTotalMs - (now - start));
 };
 
+// Frame and turn each get their OWN "now" reference, independently defaulted to real time — they
+// must never fall back to EACH OTHER's value. The overlay caps the turn's reference at
+// stopClockEndedAt so the turn clock freezes correctly once stopped; that capped value is a
+// fixed, non-advancing timestamp that would make frame look permanently stuck if it were ever
+// used (directly or as a fallback) for frame's calculation.
 export const computeLiveStopClockMs = (
-  frameStartedAt: string | null | undefined,
+  frameClockStartedAt: string | null | undefined,
+  frameClockElapsedMs: number | undefined,
   stopClockFrameTimeInSeconds: number | undefined,
   startedTurnTime: string | null | undefined,
   stopClockTurnTimeInSeconds: number | undefined,
-  now: number = Date.now(),
+  turnNow: number = Date.now(),
+  frameNow: number = Date.now(),
 ) => ({
-  remainingFrameTimeInMs: computeFrameRemainingMs(frameStartedAt, stopClockFrameTimeInSeconds, now),
-  currentTurnRemainingTimeInMs: computeTurnRemainingMs(startedTurnTime, stopClockTurnTimeInSeconds, now),
+  remainingFrameTimeInMs: computeFrameRemainingMs(frameClockStartedAt, frameClockElapsedMs, stopClockFrameTimeInSeconds, frameNow),
+  currentTurnRemainingTimeInMs: computeTurnRemainingMs(startedTurnTime, stopClockTurnTimeInSeconds, turnNow),
 });
 
 export const formatClockMs = (ms: number) => {
@@ -51,6 +63,15 @@ export const formatClockMs = (ms: number) => {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
+// HH:MM:SS — frame time can exceed 60 minutes, unlike the shot clock.
+export const formatClockHms = (ms: number) => {
+  const totalSeconds = Math.ceil(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
 const interpolateColor = (from: [number, number, number], to: [number, number, number], t: number) => {

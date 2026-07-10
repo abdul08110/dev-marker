@@ -101,8 +101,10 @@ export function SnookerScoring() {
     defaultNoOfPlayers,
     stopClockTick,
     isStopClockRunning,
-    isStopClockFrameStarted,
     handleStopClockToggle,
+    isFrameClockRunning,
+    isFrameClockAvailable,
+    handleFrameClockToggle,
   } = useSnookerScoring();
 
   const [searchParams] = useSearchParams();
@@ -270,12 +272,13 @@ export function SnookerScoring() {
                 onButtonClick={handleScoringButtonClickWithGuard}
                 isStopClockEnabled={snookerScoring.isStopClockEnabled}
                 isStopClockRunning={isStopClockRunning}
-                remainingFrameTimeInMs={stopClockTick.remainingFrameTimeInMs}
-                currentTurnRemainingTimeInMs={stopClockTick.currentTurnRemainingTimeInMs}
-                stopClockFrameTimeInSeconds={snookerScoring.stopClockFrameTimeInSeconds}
-                stopClockTurnTimeInSeconds={snookerScoring.stopClockTurnTimeInSeconds}
-                isStopClockToggleDisabled={!isStopClockFrameStarted}
+                shotRemainingSeconds={Math.ceil(stopClockTick.currentTurnRemainingTimeInMs / 1000)}
+                isStopClockToggleDisabled={!isFrameClockRunning}
                 onStopClockToggle={handleStopClockToggle}
+                frameRemainingMs={stopClockTick.remainingFrameTimeInMs}
+                isFrameClockRunning={isFrameClockRunning}
+                isFrameClockToggleDisabled={!isFrameClockAvailable}
+                onFrameClockToggle={handleFrameClockToggle}
               />
               <SnookerFoulDrawer
                 foulByPlayerName={getActivePlayer(snookerScoring.team1, snookerScoring.team2)}

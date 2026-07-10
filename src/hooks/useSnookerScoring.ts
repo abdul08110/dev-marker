@@ -35,7 +35,7 @@ import {
   handleUndoScoreClicked,
   matchSyncDataFromBackend,
 } from '@/stores/thunks/sportThunks';
-import { getActiveTeam, getActiveSet, getActiveTurn, getFrameStartedAt } from '@/stores/selectors/commonSport';
+import { getActiveTeam, getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import useTimer from '@/hooks/useTimer';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 import useOnlineStatus from './useOnlineStatus';
@@ -48,7 +48,13 @@ import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { NoOfPlayersDefault, SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
-import { addPlayer, setExpectedEndTimeDate, setTeamPlayer, toggleTurnClock } from '@/stores/slices/sportSlice';
+import {
+  addPlayer,
+  setExpectedEndTimeDate,
+  setTeamPlayer,
+  toggleFrameClock,
+  toggleTurnClock,
+} from '@/stores/slices/sportSlice';
 import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
 import { useStopClockTick } from './useStopClockTick';
 import mqtt from 'mqtt';
@@ -119,15 +125,21 @@ const useSnookerScoring = () => {
   const [loading, setLoading] = React.useState(false);
   const [showTimerModal, setShowTimeModal] = React.useState(false);
 
-  // The shot clock's toggle is local (no backend round trip). The display reads off the active
-  // turn's own stopClockStartedAt/stopClockEndedAt so it's correctly scoped per turn.
+  // Both clocks toggle locally (no backend round trip). Shot clock reads off the active turn's
+  // own stopClockStartedAt/stopClockEndedAt (scoped per turn). Frame clock reads off the active
+  // set's frameClockStartedAt/frameClockElapsedMs (pause/resume, never resets).
   const activeSet = getActiveSet(snookerScoring.scoreHistory);
   const activeTurn = getActiveTurn(activeSet ?? null);
   const isStopClockRunning = !!activeTurn?.stopClockStartedAt && !activeTurn?.stopClockEndedAt;
+  const isFrameClockRunning = !!activeSet?.frameClockStartedAt;
+  // Frame Start/Pause button just needs an active frame to exist — it doesn't require the frame
+  // clock to have started yet, since the marker's first press of it *is* what starts it.
+  const isFrameClockAvailable = !!activeSet;
 
-  // STOP CLOCK LIVE DISPLAY (ticks locally off the first turn's timeScored/stopClockStartedAt)
+  // STOP CLOCK LIVE DISPLAY (ticks locally off frameClockStartedAt/stopClockStartedAt)
   const stopClockTick = useStopClockTick(
-    getFrameStartedAt(activeSet),
+    activeSet?.frameClockStartedAt,
+    activeSet?.frameClockElapsedMs,
     snookerScoring.stopClockFrameTimeInSeconds,
     isStopClockRunning ? activeTurn?.stopClockStartedAt : null,
     snookerScoring.stopClockTurnTimeInSeconds,
@@ -785,19 +797,23 @@ const useSnookerScoring = () => {
     setShowTimeModal(false);
   };
 
-  // Frame must have started (Break Off already pressed, which creates the frame's first turn)
-  // before the shot clock is allowed to start — otherwise the shot clock would be running
-  // against a frame that hasn't officially begun.
-  const isStopClockFrameStarted = !!getFrameStartedAt(activeSet);
-
-  // Purely local — no API call, no network round trip. The button disables only while the
-  // frame hasn't started yet (Break Off not pressed); once it's clickable, the toggle is instant.
-  // Still has to mark the state dirty so the existing 1s poll (handleBackendUpdateOfData) picks
-  // up the changed turn and pushes it on — otherwise the venue scoreboard/stream overlay, which
-  // only learn about turn changes via that sync, would never see the shot clock start/stop.
+  // Purely local — no API call, no network round trip. Only usable while the frame clock is
+  // actively running — paused (or not yet started) disables it, since pausing the frame already
+  // auto-stops the shot clock (see toggleFrameClock). Still has to mark the state dirty so the
+  // existing 1s poll (handleBackendUpdateOfData) picks up the changed turn and pushes it on —
+  // otherwise the venue scoreboard/stream overlay, which only learn about turn changes via that
+  // sync, would never see the shot clock start/stop.
   const handleStopClockToggle = () => {
-    if (!isStopClockFrameStarted) return;
+    if (!isFrameClockRunning) return;
     dispatch(toggleTurnClock());
+    dispatch(changeBackendUpdatedState({ value: false }));
+  };
+
+  // Pause/Resume the frame clock. No API call — same dirty-flag push as the shot clock, so the
+  // venue scoreboard/stream overlay pick up the pause/resume via the existing sync.
+  const handleFrameClockToggle = () => {
+    if (!activeSet) return;
+    dispatch(toggleFrameClock());
     dispatch(changeBackendUpdatedState({ value: false }));
   };
 
@@ -867,8 +883,10 @@ const useSnookerScoring = () => {
     defaultNoOfPlayers,
     stopClockTick,
     isStopClockRunning,
-    isStopClockFrameStarted,
     handleStopClockToggle,
+    isFrameClockRunning,
+    isFrameClockAvailable,
+    handleFrameClockToggle,
   };
 };
 
