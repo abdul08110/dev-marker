@@ -242,6 +242,8 @@ const sportSlice = createSlice({
         billiardsCorrections: [],
         scoreOrder: scoreOrder,
         setConcededTo: null,
+        frameClockStartedAt: null,
+        frameClockElapsedMs: 0,
       });
     },
     createSnookerCorrection(
@@ -388,6 +390,27 @@ const sportSlice = createSlice({
         activeTurn.stopClockEndedAt = null;
       }
     },
+    // Pause/Resume the frame clock. Pausing banks the segment that just ran into
+    // frameClockElapsedMs; resuming starts a fresh segment on top of it — the total never resets.
+    toggleFrameClock(state) {
+      const setIndex = state.scoreHistory.findIndex((set) => set.status === 'ONGOING');
+      if (setIndex === -1) return;
+      const activeSet = state.scoreHistory[setIndex];
+
+      if (activeSet.frameClockStartedAt) {
+        const now = new Date().toISOString();
+        const elapsed = Date.now() - new Date(activeSet.frameClockStartedAt).getTime();
+        activeSet.frameClockElapsedMs = (activeSet.frameClockElapsedMs ?? 0) + elapsed;
+        activeSet.frameClockStartedAt = null;
+        const turns = activeSet.turns;
+        const activeTurn = turns[turns.length - 1];
+        if (activeTurn?.stopClockStartedAt && !activeTurn.stopClockEndedAt) {
+          activeTurn.stopClockEndedAt = now;
+        }
+      } else {
+        activeSet.frameClockStartedAt = new Date().toISOString();
+      }
+    },
     updateMaxScorePerSet(state, action: PayloadAction<{ maxScorePerSet: number }>) {
       state.maxScorePerSet = action.payload.maxScorePerSet;
     },
@@ -476,5 +499,6 @@ export const {
   setFormatName,
   updateStopClockSettings,
   toggleTurnClock,
+  toggleFrameClock,
 } = sportSlice.actions;
 export default sportSlice.reducer;

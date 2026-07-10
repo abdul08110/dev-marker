@@ -23,11 +23,6 @@ export const getLastTurn = (set: Set): Turn | null => getSecondLastElement(set.t
 export const getActiveTurnIndex = (set: Set | null): number =>
   set && set.turns.length > 0 ? set.turns.length - 1 : -1;
 
-// The frame clock anchor. Derived from the set's first turn's timeScored — a core field that's
-// always set at turn creation and reliably round-trips through the backend — rather than a
-// bolt-on Set.frameStartedAt field the backend doesn't guarantee to persist/return.
-export const getFrameStartedAt = (set: Set | null | undefined): string | null => set?.turns[0]?.timeScored ?? null;
-
 export const getTeamTurnsForSet = (
   set: Set | null,
   teamPlayerOneId: string | null,

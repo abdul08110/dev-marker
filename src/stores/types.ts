@@ -60,6 +60,8 @@ export interface Set {
   snookerCorrections: SnookerCorrection[];
   billiardsCorrections: BilliardsCorrection[];
   setConcededTo: 0 | 1 | null;
+  frameClockStartedAt?: string | null;
+  frameClockElapsedMs?: number;
 }
 
 export interface SnookerCorrection {
