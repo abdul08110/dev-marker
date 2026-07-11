@@ -1,18 +1,25 @@
 import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
-import { convertHandicapToString, generatePlayerName } from '@/utils/functions';
+import { convertHandicapToString, generatePlayerName, formatTime } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { useFluidPx } from '@/hooks/useFluidPx';
 import { cn, getRandomPlaceholderProfileImage } from '@/lib/utils';
 import clsx from 'clsx';
+import { useStopClockTick } from '@/hooks/useStopClockTick';
+import ShotClockTicker from '@/pages/app/Score-board/ShotClockTicker';
+import { formatClockMs } from '@/utils/stopClock';
 
 interface GeneralTemplateProps {
   state: StreamingState;
   activeTurn: Turn | null;
   activeSet: Set | undefined;
   isTv: boolean;
+  // Current YouTube video position in ms — when supplied (video-embedded overlay), the stop
+  // clock is computed against the video's own real-world-equivalent time instead of Date.now(),
+  // so it only moves once the (delayed) video itself reaches that point.
+  currentVideoTimeMs?: number;
 }
 
 const YELLOW_CARD_STYLE = {
@@ -28,7 +35,7 @@ const PINK_CARD_STYLE = {
 };
 
 const NewGeneral = (props: GeneralTemplateProps) => {
-  const { state, activeTurn, activeSet } = props;
+  const { state, activeTurn, activeSet, currentVideoTimeMs } = props;
   const isDoubles = !!state.sideOnePlayerTwo;
   const hasTeamName = !!(state.teamOneName || state.teamTwoName);
   const isTournament = !!state.tournamentId;
@@ -39,6 +46,31 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const isSideTwoActive =
     !!state.activePlayerId &&
     (state.activePlayerId === state.sideTwoPlayerOne.id || state.activePlayerId === state.sideTwoPlayerTwo?.id);
+
+  const referenceTimeMs =
+    currentVideoTimeMs !== undefined ? new Date(state.actualStartTimeDate).getTime() + currentVideoTimeMs : undefined;
+
+  // When the turn clock was stopped, cap the reference time at stopClockEndedAt so the display
+  // shows the frozen remaining time instead of resetting to full. For a running clock or one
+  // that hasn't started yet, pass the reference time (or undefined for wall-clock) as-is.
+  const turnClockRefMs = (() => {
+    if (!activeTurn?.stopClockStartedAt) return referenceTimeMs;
+    if (!activeTurn.stopClockEndedAt) return referenceTimeMs;
+    const endedMs = new Date(activeTurn.stopClockEndedAt).getTime();
+    if (referenceTimeMs !== undefined) return Math.min(referenceTimeMs, endedMs);
+    return endedMs;
+  })();
+
+  const stopClockTick = useStopClockTick(
+    activeSet?.frameClockStartedAt,
+    activeSet?.frameClockElapsedMs,
+    state.stopClockFrameTimeInSeconds,
+    activeTurn?.stopClockStartedAt,
+    state.stopClockTurnTimeInSeconds,
+    referenceTimeMs,
+    turnClockRefMs,
+  );
+  const showStopClock = !!state.isStopClockEnabled && state.sport === 'SNOOKER';
 
   const breakScore = activeTurn?.score ?? 0;
 
@@ -303,7 +335,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   return (
-    <div className="absolute bottom-[min(2vh,2vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
+    <div className="absolute bottom-[min(2.5vh,2.5vw)] mx-[min(1.5vh,1.5vw)] flex flex-col items-center w-[calc(100%-min(3vh,3vw))] bg-cover bg-center rounded-[min(3vh,3vw)] shadow-[0px_2px_10px_0px_rgba(186,145,200,0.25)] bg-[radial-gradient(50%_50%_at_50%_50%,#39205C_0%,#181332_100%)]">
       <div className="w-full h-auto flex justify-between items-stretch px-[min(1.5vh,1.5vw)] py-[min(1.5vh,1.5vw)] gap-[min(1.5vh,1.5vw)] relative">
         {/* Break banner — floats above the active player's card */}
         {(isSideOneActive || isSideTwoActive) && (
@@ -334,17 +366,16 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 <g filter="url(#filter0_i)">
                   <path
                     d="M10.9493 13.9524C12.5076 7.13086 18.5754 2.29297 25.5726 2.29297H184.179C191.177 2.29297 197.244 7.13087 198.803 13.9524L206.876 49.293H2.87598L10.9493 13.9524Z"
-                    fill="url(#paint0_linear)"
-                    fillOpacity="1"
+                    fill="#AB51C6"
                   />
                   <path
                     d="M184.18 1.14648C191.712 1.14663 198.243 6.35448 199.92 13.6973L207.994 49.0381L208.313 50.4395H1.43848L1.75781 49.0381L9.83203 13.6973C11.5094 6.35448 18.0403 1.14664 25.5723 1.14648H184.18Z"
-                    stroke="url(#paint1_linear)"
+                    stroke="url(#paint0_linear_74_11418)"
                     strokeWidth="2.29299"
                   />
                   <path
                     d="M184.18 1.14648C191.712 1.14663 198.243 6.35448 199.92 13.6973L207.994 49.0381L208.313 50.4395H1.43848L1.75781 49.0381L9.83203 13.6973C11.5094 6.35448 18.0403 1.14664 25.5723 1.14648H184.18Z"
-                    stroke="url(#paint2_linear)"
+                    stroke="url(#paint1_linear_74_11418)"
                     strokeWidth="2.29299"
                   />
                 </g>
@@ -371,49 +402,38 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                     <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
                     <feColorMatrix
                       type="matrix"
-                      values="0 0 0 0 0.690196 0 0 0 0 0.937255 0 0 0 0 0.384314 0 0 0 0.6 0"
+                      values="0 0 0 0 0.670588 0 0 0 0 0.317647 0 0 0 0 0.776471 0 0 0 0.6 0"
                     />
                     <feBlend mode="normal" in2="shape" result="effect1_innerShadow" />
                   </filter>
                   <linearGradient
-                    id="paint0_linear"
-                    x1="37.3175"
-                    y1="49.293"
-                    x2="165.984"
-                    y2="-159.989"
-                    gradientUnits="userSpaceOnUse"
+                    id="paint0_linear_74_11418"
+                    gradientUnits="objectBoundingBox"
+                    x1="1.2267"
+                    y1="0"
+                    x2="1.0611"
+                    y2="2.3726"
                   >
-                    <stop stopColor="#ACEC54" stopOpacity="0.13" />
-                    <stop offset="1" stopColor="#6FFF00" />
+                    <stop stopColor="#FFECFF" />
+                    <stop offset="0.586615" stopColor="white" stopOpacity="0" />
                   </linearGradient>
                   <linearGradient
-                    id="paint1_linear"
-                    x1="-32.2964"
-                    y1="-8.20218"
-                    x2="30.9889"
-                    y2="184.38"
-                    gradientUnits="userSpaceOnUse"
+                    id="paint1_linear_74_11418"
+                    gradientUnits="objectBoundingBox"
+                    x1="0.5"
+                    y1="0.9588"
+                    x2="0.4873"
+                    y2="-0.1999"
                   >
-                    <stop offset="0.0897938" stopColor="#D7FFA9" />
-                    <stop offset="1" stopColor="#80EF00" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient
-                    id="paint2_linear"
-                    x1="89.6346"
-                    y1="-62.9595"
-                    x2="112.535"
-                    y2="222.965"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop offset="0.108869" stopColor="#8FFF00" />
-                    <stop offset="0.368867" stopColor="#8FFF00" stopOpacity="0" />
+                    <stop stopColor="#D29AF5" stopOpacity="0" />
+                    <stop offset="1" stopColor="#F4D3F2" />
                   </linearGradient>
                 </defs>
               </svg>
 
               <div className="flex justify-center items-center gap-[min(0.7vh,0.7vw)] py-[min(0.9vh,0.9vw)] relative">
-                <p className="font-semibold text-[min(2.8vh,2.8vw)] leading-[130%] text-sandy-yellow">Break</p>
-                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] text-sandy-yellow">{breakScore}</p>
+                <p className="font-semibold text-[min(2.8vh,2.8vw)] leading-[130%] text-score-text">Break</p>
+                <p className="font-semibold text-[min(3.7vh,3.7vw)] leading-[130%] text-score-text">{breakScore}</p>
               </div>
             </div>
           </div>
@@ -421,15 +441,39 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         {/* Left player card */}
         <div
-          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${leftShadow} backdrop-blur-[24px] flex-1 min-w-0 flex items-center z-50`}
+          className={`relative isolate px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${leftShadow} backdrop-blur-[24px] flex-1 min-w-0 flex items-center z-50`}
           style={leftCardStyle}
         >
           {leftCardContent}
         </div>
+        {/* shot clock Player 1 — only while this side is actually on strike */}
+        {showStopClock && isSideOneActive && (
+          <div className="absolute pointer-events-none left-8 z-10 -bottom-[min(2.5vh,2.5vw)]">
+            <div className="relative flex justify-center items-center h-[min(5.7vh,4.7vw)] w-[min(35.2vh,35.2vw)]">
+              <img
+                src="/shot-clock-bg.svg"
+                alt="background pattern"
+                className="w-full h-auto"
+                style={{
+                  filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center pt-1.5">
+                <ShotClockTicker
+                  remainingMs={stopClockTick.currentTurnRemainingTimeInMs}
+                  totalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
+                  barClassName="size-[min(1.8vh,1.8vw)]"
+                  textClassName="text-[min(2.2vh,2.2vw)]"
+                  gapClassName="gap-[min(0.3vh,0.3vw)]"
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Middle score panel */}
         <div
-          className="shrink-0 grow-0 flex rounded-[min(1.9vh,1.9vw)] z-40 relative items-stretch"
+          className="shrink-0 grow-0 flex rounded-[min(1.9vh,1.9vw)] z-40 relative items-stretch "
           style={{
             border: '2px solid transparent',
             background: `
@@ -515,7 +559,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                 </defs>
               </svg>
               <div className="absolute inset-0 flex justify-center items-center">
-                {isTournament ? (
+                {showStopClock ? (
+                  <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate tabular-nums">
+                    {formatTime(formatClockMs(stopClockTick.remainingFrameTimeInMs))}
+                  </span>
+                ) : isTournament ? (
                   <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
                     {state.tournamentSubItem?.tournamentItem?.tournamentPhase?.name
                       ? state.tournamentSubItem.tournamentItem.tournamentPhase.name
@@ -590,11 +638,35 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
         {/* Right player card */}
         <div
-          className={`relative px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${rightShadow} backdrop-blur-[24px] flex-1 min-w-0 flex items-center z-50`}
+          className={`relative isolate px-[min(2.2vh,2.2vw)] py-[min(1.5vh,1.5vw)] rounded-[min(1.9vh,1.9vw)] ${rightShadow} backdrop-blur-[24px] flex-1 min-w-0 flex items-center z-50`}
           style={rightCardStyle}
         >
           {rightCardContent}
         </div>
+        {/* shot clock Player 2 — only while this side is actually on strike */}
+        {showStopClock && isSideTwoActive && (
+          <div className="absolute pointer-events-none right-8 z-10 -bottom-[min(2.5vh,2.5vw)]">
+            <div className="relative flex justify-center items-center h-[min(5.7vh,4.7vw)] w-[min(35.2vh,35.2vw)]">
+              <img
+                src="/shot-clock-bg.svg"
+                alt="background pattern"
+                className="w-full h-auto"
+                style={{
+                  filter: 'drop-shadow(0px -8px 5px rgba(186, 145, 200, 0.15))',
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center pt-1.5">
+                <ShotClockTicker
+                  remainingMs={stopClockTick.currentTurnRemainingTimeInMs}
+                  totalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
+                  barClassName="size-[min(1.8vh,1.8vw)]"
+                  textClassName="text-[min(2.2vh,2.2vw)]"
+                  gapClassName="gap-[min(0.3vh,0.3vw)]"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

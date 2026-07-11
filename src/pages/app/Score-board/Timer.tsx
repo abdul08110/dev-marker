@@ -11,11 +11,11 @@ export function Timer({ timeLeft, isTournament }: TimerProps) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)] pt-[min(7.4vh,7.4vw)] space-y-2">
+    <div className="flex flex-col items-center gap-[min(1.5vh,1.5vw)] space-y-2">
       <p className="text-score-text text-box-trim font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
         {formatTime(timeLeft)}
       </p>
-      <p className="text-text-light font-medium text-[min(4vh,4vw)]">Remaining</p>
+      <p className="text-text-light font-medium text-[min(4vh,4vw)] text-box-trim ">Remaining</p>
     </div>
   );
 }

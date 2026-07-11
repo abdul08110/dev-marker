@@ -65,6 +65,10 @@ export interface ScoreBoardState {
   };
   eventFormat: 'SINGLES' | 'TEAMS';
   noOfFrames: number | null;
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
 }
 
 const useScoreboard = () => {
@@ -86,7 +90,6 @@ const useScoreboard = () => {
   const [orientation, setOrientation] = React.useState<'portrait' | 'landscape'>('landscape');
   const [showTimeOverAlert, setShowTimeOverAlert] = React.useState<boolean>(false);
   const { rotateBody } = useBodyRotation();
-
   const timeLeft = useTimer({
     endTime: scoreBoardData && scoreBoardData.expectedEndTimeDate ? new Date(scoreBoardData.expectedEndTimeDate) : null,
     startTime: null,
@@ -214,6 +217,10 @@ const useScoreboard = () => {
             showFormatsAsGameNumber: res.tournament ? res.tournament.showFormatsAsGameNumber : null,
             showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
             showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null,
+            isStopClockEnabled: res.isStopClockEnabled,
+            stopClockFrameTimeInSeconds: res.stopClockFrameTimeInSeconds,
+            stopClockTurnTimeInSeconds: res.stopClockTurnTimeInSeconds,
+            stopClockVoiceEnabled: res.stopClockVoiceEnabled ?? false,
           });
         } else {
           toast({

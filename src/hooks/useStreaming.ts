@@ -75,13 +75,17 @@ export interface StreamingState {
         tournamentFormats: [
           {
             id: string;
-          }
-        ]
+          },
+        ];
       };
     };
   };
   phase: string | null;
   streams: StreamState[];
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
 }
 
 const useStreaming = (venueId?: string, matchId?: string) => {
@@ -95,7 +99,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   const getLineupHook = useGetLineup();
   const [lineupData, setLineupData] = useState<LineupResponse | null>(null);
   const [showLineup, setShowLineup] = useState(false);
-  const [lineupClubInfo, setLineupClubInfo] = useState<{ clubName: string | null; clubLogo: string | null }>({ clubName: null, clubLogo: null });
+  const [lineupClubInfo, setLineupClubInfo] = useState<{ clubName: string | null; clubLogo: string | null }>({
+    clubName: null,
+    clubLogo: null,
+  });
   const lineupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mqttClientRef = useRef<mqtt.MqttClient | null>(null);
   const timeLeft = useTimer({
@@ -243,7 +250,11 @@ const useStreaming = (venueId?: string, matchId?: string) => {
           phase: res.phase ? res.phase : null,
           showFormatsAsGameNumber: res.tournament ? res.tournament.showFormatsAsGameNumber : null,
           showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
-          showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null
+          showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null,
+          isStopClockEnabled: res.isStopClockEnabled,
+          stopClockFrameTimeInSeconds: res.stopClockFrameTimeInSeconds,
+          stopClockTurnTimeInSeconds: res.stopClockTurnTimeInSeconds,
+          stopClockVoiceEnabled: res.stopClockVoiceEnabled ?? false,
         };
 
         setStreamingData(initialData);
@@ -251,7 +262,11 @@ const useStreaming = (venueId?: string, matchId?: string) => {
         setViewershipData(initialData);
 
         if (res.matchStatus === 'LIVE' && !venueId) {
-          const venueTopics = [`${res.venueId}/send-data`, `${res.venueId}/match-end`, `${res.venueId}/timer-updated`];
+          const venueTopics = [
+            `${res.venueId}/send-data`,
+            `${res.venueId}/match-end`,
+            `${res.venueId}/timer-updated`,
+          ];
           connectToMqtt(venueTopics);
         }
 
@@ -308,12 +323,13 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       case 'send-data':
         setStreamingData((prevData) => {
           if (prevData === null) return null;
+          const updatedSets = parsedMessage.sets || prevData.sets;
           return {
             ...prevData,
             activePlayerId: parsedMessage.activePlayerId,
             teamOneScore: parsedMessage.teamOneScore,
             teamTwoScore: parsedMessage.teamTwoScore,
-            sets: parsedMessage.sets || prevData.sets,
+            sets: updatedSets,
           };
         });
         break;

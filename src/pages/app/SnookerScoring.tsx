@@ -12,9 +12,10 @@ import {
   getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex,
 } from '@/stores/selectors/commonSport';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { EndGameModal } from '@/components/modals/endGameModal';
 import { SelectPlayerDrawer } from '@/components/modals/selectPlayerDrawer';
+import { BreakOffPlayerStep } from '@/components/modals/breakOffPlayerStep';
 import useSnookerScoring from '@/hooks/useSnookerScoring';
 import useSelectPlayer from '@/api/app/useSelectPlayer';
 import { Player } from '@/stores/types';
@@ -38,6 +39,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { getRandomPlaceholderProfileImage } from '@/lib/utils';
+import { decimalMinutesToTimeString } from '@/utils/functions';
 
 export function SnookerScoring() {
   const {
@@ -98,6 +100,12 @@ export function SnookerScoring() {
     showTimerModal,
     handleTimerButtonAction,
     defaultNoOfPlayers,
+    stopClockTick,
+    isStopClockRunning,
+    handleStopClockToggle,
+    isFrameClockRunning,
+    isFrameClockAvailable,
+    handleFrameClockToggle,
   } = useSnookerScoring();
 
   const [searchParams] = useSearchParams();
@@ -124,7 +132,6 @@ export function SnookerScoring() {
   const [showCloseConfirmDialog, setShowCloseConfirmDialog] = React.useState(false);
   const closeConfirmSource = React.useRef<'player' | 'settings' | null>(null);
 
-  // ── Settings drawer source tracking (Back button support) ─────────────
   const [settingsHasBack, setSettingsHasBack] = React.useState(false);
 
   const handleSettingsClickIntercepted = () => {
@@ -142,7 +149,6 @@ export function SnookerScoring() {
     onBackFromSettings();
   };
 
-  // Detect when the hook auto-transitions from player select → settings
   const prevOpenPlayerSelectRef = React.useRef(openPlayerSelectCard);
   React.useEffect(() => {
     if (openSettingsDrawer && prevOpenPlayerSelectRef.current) {
@@ -156,7 +162,6 @@ export function SnookerScoring() {
       snookerScoring.team1.players.every((p) => p.id !== null) &&
       snookerScoring.team2.players.every((p) => p.id !== null);
     if (allRequired) {
-      // All slots filled → auto-close after last player confirm, not a user gesture
       return;
     }
     if (snookerScoring.team1.players[0].id !== null) {
@@ -179,7 +184,6 @@ export function SnookerScoring() {
     return names.length > 0 ? names.join(' / ') : undefined;
   };
 
-  // ── Break-off player selection dialog ────────────────────────────────────
   const [showBreakOffDialog, setShowBreakOffDialog] = React.useState(false);
   const [selectedBreakOffTeamIdx, setSelectedBreakOffTeamIdx] = React.useState<number | null>(null);
 
@@ -235,7 +239,7 @@ export function SnookerScoring() {
             closeModal={() => setShowEndGameModal(false)}
           />
           <ScoreUpdateLoadingModal isModalOpen={showLoadingModal} />
-          <div className="flex flex-col justify-start h-screen overflow-y-scroll">
+          <div className="flex flex-col justify-start h-dvh overflow-y-auto">
             <div className="flex flex-col gap-4 h-full">
               <ScoringHeader
                 onBackClick={handleBackClick}
@@ -267,6 +271,15 @@ export function SnookerScoring() {
                 isBreakOff={!getActiveSet(snookerScoring.scoreHistory)}
                 disabledState={snookerButtonDisabledState}
                 onButtonClick={handleScoringButtonClickWithGuard}
+                isStopClockEnabled={snookerScoring.isStopClockEnabled}
+                isStopClockRunning={isStopClockRunning}
+                shotRemainingSeconds={Math.ceil(stopClockTick.currentTurnRemainingTimeInMs / 1000)}
+                isStopClockToggleDisabled={!isFrameClockRunning}
+                onStopClockToggle={handleStopClockToggle}
+                frameRemainingMs={stopClockTick.remainingFrameTimeInMs}
+                isFrameClockRunning={isFrameClockRunning}
+                isFrameClockToggleDisabled={!isFrameClockAvailable}
+                onFrameClockToggle={handleFrameClockToggle}
               />
               <SnookerFoulDrawer
                 foulByPlayerName={getActivePlayer(snookerScoring.team1, snookerScoring.team2)}
@@ -285,6 +298,18 @@ export function SnookerScoring() {
                 showBack={settingsHasBack}
                 onBack={handleSettingsBackClick}
                 onClose={handleSettingsDrawerClose}
+                currentValues={{
+                  format: snookerScoring.format as 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED',
+                  durationInMinutes: decimalMinutesToTimeString(snookerScoring.timeInMinutes),
+                  streaming: snookerScoring.streaming,
+                  teamOneHandicap: snookerScoring.teamOneHandicap ?? 0,
+                  teamTwoHandicap: snookerScoring.teamTwoHandicap ?? 0,
+                  isRankingEvent: snookerScoring.isRankingEvent,
+                  isStopClockEnabled: snookerScoring.isStopClockEnabled,
+                  stopClockFrameTimeInSeconds: snookerScoring.stopClockFrameTimeInSeconds,
+                  stopClockTurnTimeInSeconds: snookerScoring.stopClockTurnTimeInSeconds,
+                  stopClockVoiceEnabled: snookerScoring.stopClockVoiceEnabled,
+                }}
               />
               <SelectPlayerDrawer
                 onSubmit={handlePlayerConfirmWithApi}
@@ -420,45 +445,21 @@ export function SnookerScoring() {
             }}
           >
             <DialogContent className="max-w-sm w-[90vw] bg-[#1a1a1a] border-white/10 text-white">
-              <DialogTitle className="text-lg font-semibold text-white">Who is breaking off?</DialogTitle>
-              <div className="grid grid-cols-2 gap-3 mt-2">
-                {[
-                  { idx: 0, players: snookerScoring.team1.players },
-                  { idx: 1, players: snookerScoring.team2.players },
-                ].map(({ idx, players }) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedBreakOffTeamIdx(idx)}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${
-                      selectedBreakOffTeamIdx === idx ? 'border-white bg-white/10' : 'border-white/20 bg-white/5'
-                    }`}
-                  >
-                    <div className="flex gap-1 justify-center">
-                      {players.map((p, i) => (
-                        <img
-                          key={i}
-                          src={p.profilePhoto ?? defaultImages[idx * 2 + i]}
-                          className="h-14 w-14 rounded-full object-cover"
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm font-medium text-center leading-tight">
-                      {players
-                        .map((p) => p.name)
-                        .filter(Boolean)
-                        .join(' / ') || `Team ${idx + 1}`}
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <div className="flex gap-2 mt-4">
-                <Button variant="secondary" className="flex-1" onClick={() => setShowBreakOffDialog(false)}>
-                  Cancel
-                </Button>
-                <Button className="flex-1" disabled={selectedBreakOffTeamIdx === null} onClick={handleBreakOffConfirm}>
-                  Confirm
-                </Button>
-              </div>
+              <BreakOffPlayerStep
+                teams={[snookerScoring.team1, snookerScoring.team2].map((team, idx) => ({
+                  photos: team.players.map((p, i) => p.profilePhoto ?? defaultImages[idx * 2 + i]),
+                  label:
+                    team.players
+                      .map((p) => p.name)
+                      .filter(Boolean)
+                      .join(' / ') || `Team ${idx + 1}`,
+                }))}
+                selectedIdx={selectedBreakOffTeamIdx}
+                onSelect={setSelectedBreakOffTeamIdx}
+                onCancel={() => setShowBreakOffDialog(false)}
+                onConfirm={handleBreakOffConfirm}
+                confirmLabel="Confirm"
+              />
             </DialogContent>
           </Dialog>
         </section>

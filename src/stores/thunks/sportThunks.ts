@@ -36,6 +36,7 @@ import {
   setExpectedEndTimeDate,
   updateIsRankingEvent,
   setFormatName,
+  updateStopClockSettings,
 } from '../slices/sportSlice';
 import { BilliardPointType, Player, SnookerPointType, SportType, TournamentFormat } from '../types';
 import {
@@ -152,6 +153,10 @@ export const setStateTournament = createAsyncThunk<
     isRankingEvent: false,
     snookerHandicapType: data.format.snookerHandicapType ? data.format.snookerHandicapType : 'DIFFERENCE',
     phase: data.phase,
+    isStopClockEnabled: data.format.isStopClockEnabled ?? false,
+    stopClockFrameTimeInSeconds: data.format.stopClockFrameTimeInSeconds ?? 900,
+    stopClockTurnTimeInSeconds: data.format.stopClockTurnTimeInSeconds ?? 30,
+    stopClockVoiceEnabled: data.format.stopClockVoiceEnabled ?? false,
   };
   await dispatch(
     setState({
@@ -163,6 +168,10 @@ export const setStateTournament = createAsyncThunk<
 export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStartResponse }, { dispatch: AppDispatch }>(
   'sport/matchSyncDataFromBackend',
   async ({ data }, { dispatch }) => {
+    const isStopClockEnabled = data.isStopClockEnabled ?? false;
+    const stopClockFrameTimeInSeconds = data.stopClockFrameTimeInSeconds ?? 900;
+    const stopClockTurnTimeInSeconds = data.stopClockTurnTimeInSeconds ?? 30;
+
     let newState = {
       format: data.sportType,
       matchId: data.id,
@@ -220,6 +229,10 @@ export const matchSyncDataFromBackend = createAsyncThunk<void, { data: MatchStar
       isRankingEvent: false,
       snookerHandicapType: 'DIFFERENCE' as 'DIFFERENCE' | 'UPFRONT',
       phase: data.phase,
+      isStopClockEnabled,
+      stopClockFrameTimeInSeconds,
+      stopClockTurnTimeInSeconds,
+      stopClockVoiceEnabled: data.stopClockVoiceEnabled ?? false,
     };
 
     if (data.sideTwoPlayerTwo !== null) {
@@ -344,7 +357,9 @@ export const handleEndGameThrunk = createAsyncThunk<void, {}, { state: RootState
       ? await calculateStatsForPlayer(state.sport.team2.players[1].id!, state.sport.scoreHistory)
       : null;
 
-    await matchEndGameRequest({
+    const lastSet = state.sport.scoreHistory[state.sport.scoreHistory.length - 1];
+
+    const result = await matchEndGameRequest({
       matchId: state.sport.matchId!,
       teamWinningIndex: state.sport.team1Score > state.sport.team2Score ? 0 : 1,
       sideOnePlayerOneStats: sideOnePlayerOneStats,
@@ -354,9 +369,13 @@ export const handleEndGameThrunk = createAsyncThunk<void, {}, { state: RootState
       sets: state.sport.scoreHistory,
       teamOneScore: state.sport.team1Score,
       teamTwoScore: state.sport.team2Score,
-      currentSetTeamOneScore: state.sport.scoreHistory[state.sport.scoreHistory.length - 1].teamOneScore,
-      currentSetTeamTwoScore: state.sport.scoreHistory[state.sport.scoreHistory.length - 1].teamTwoScore,
+      currentSetTeamOneScore: lastSet ? lastSet.teamOneScore : 0,
+      currentSetTeamTwoScore: lastSet ? lastSet.teamTwoScore : 0,
     });
+
+    if (!result) {
+      throw new Error('Failed to end match');
+    }
   },
 );
 
@@ -676,11 +695,30 @@ export const handleSettingsStateUpdate = createAsyncThunk<
     teamOneHandicap: number;
     teamTwoHandicap: number;
     isRankingEvent: boolean;
+    isStopClockEnabled: boolean;
+    stopClockFrameTimeInSeconds: number;
+    stopClockTurnTimeInSeconds: number;
+    stopClockVoiceEnabled: boolean;
   },
   { state: RootState; dispatch: AppDispatch }
 >(
   'sport/handleSettingsUpdate',
-  async ({ format, durationInMinutes, noOfPlayers, streaming, teamOneHandicap, teamTwoHandicap, isRankingEvent }, { dispatch, getState }) => {
+  async (
+    {
+      format,
+      durationInMinutes,
+      noOfPlayers,
+      streaming,
+      teamOneHandicap,
+      teamTwoHandicap,
+      isRankingEvent,
+      isStopClockEnabled,
+      stopClockFrameTimeInSeconds,
+      stopClockTurnTimeInSeconds,
+      stopClockVoiceEnabled,
+    },
+    { dispatch, getState },
+  ) => {
     await dispatch(
       updateTimeInMinutes({ timeInMinutes: isRankingEvent ? 0 : timeStringToDecimalMinutes(durationInMinutes) }),
     );
@@ -688,6 +726,14 @@ export const handleSettingsStateUpdate = createAsyncThunk<
     await dispatch(updateStreaming({ streaming }));
     await dispatch(updateTeamHandicaps({ teamOneHandicap, teamTwoHandicap }));
     await dispatch(updateIsRankingEvent({ isRankingEvent }));
+    await dispatch(
+      updateStopClockSettings({
+        isStopClockEnabled,
+        stopClockFrameTimeInSeconds,
+        stopClockTurnTimeInSeconds,
+        stopClockVoiceEnabled,
+      }),
+    );
 
     if (isRankingEvent) {
       await dispatch(setFormatName({ formatName: '6 Red Handicap' }));

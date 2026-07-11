@@ -16,6 +16,7 @@ import {
   snookerButtonsDisabledState,
 } from '@/stores/selectors/snookerSelector';
 import {
+  changeBackendUpdatedState,
   handleBackendUpdateOfData,
   handleBreakOff,
   handleChangeScoreOnTrigger,
@@ -34,7 +35,7 @@ import {
   handleUndoScoreClicked,
   matchSyncDataFromBackend,
 } from '@/stores/thunks/sportThunks';
-import { getActiveTeam, getActiveSet } from '@/stores/selectors/commonSport';
+import { getActiveTeam, getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import useTimer from '@/hooks/useTimer';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
 import useOnlineStatus from './useOnlineStatus';
@@ -47,8 +48,15 @@ import useGetMatchLiveData from '@/api/app/useGetMatchData';
 import { addMillisecondsToUTC } from '@/utils/functions';
 import useBackButtonHandler from './useOnBackButtonClick';
 import { NoOfPlayersDefault, SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
-import { addPlayer, setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
+import {
+  addPlayer,
+  setExpectedEndTimeDate,
+  setTeamPlayer,
+  toggleFrameClock,
+  toggleTurnClock,
+} from '@/stores/slices/sportSlice';
 import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
+import { useStopClockTick } from './useStopClockTick';
 import mqtt from 'mqtt';
 
 function playerSlot(playerNumber: number, playerCount: number): { teamIndex: number; playerIndex: number } {
@@ -116,6 +124,26 @@ const useSnookerScoring = () => {
   const [showConcedeFrameDrawer, setShowConcedeFrameDrawer] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [showTimerModal, setShowTimeModal] = React.useState(false);
+
+  // Both clocks toggle locally (no backend round trip). Shot clock reads off the active turn's
+  // own stopClockStartedAt/stopClockEndedAt (scoped per turn). Frame clock reads off the active
+  // set's frameClockStartedAt/frameClockElapsedMs (pause/resume, never resets).
+  const activeSet = getActiveSet(snookerScoring.scoreHistory);
+  const activeTurn = getActiveTurn(activeSet ?? null);
+  const isStopClockRunning = !!activeTurn?.stopClockStartedAt && !activeTurn?.stopClockEndedAt;
+  const isFrameClockRunning = !!activeSet?.frameClockStartedAt;
+  // Frame Start/Pause button just needs an active frame to exist — it doesn't require the frame
+  // clock to have started yet, since the marker's first press of it *is* what starts it.
+  const isFrameClockAvailable = !!activeSet;
+
+  // STOP CLOCK LIVE DISPLAY (ticks locally off frameClockStartedAt/stopClockStartedAt)
+  const stopClockTick = useStopClockTick(
+    activeSet?.frameClockStartedAt,
+    activeSet?.frameClockElapsedMs,
+    snookerScoring.stopClockFrameTimeInSeconds,
+    isStopClockRunning ? activeTurn?.stopClockStartedAt : null,
+    snookerScoring.stopClockTurnTimeInSeconds,
+  );
 
   // TIMER HOOKS
   // const { timeLeft, startTimer, setTimeLeft } = useTimer(snookerScoring.timeInMinutes, () => {
@@ -364,6 +392,16 @@ const useSnookerScoring = () => {
       switchType: snookerScoring.switchType ? snookerScoring.switchType : null,
       isRankingEvent: currentImplementationSnookerScoring.isRankingEvent,
       phase: currentImplementationSnookerScoring.phase,
+      isStopClockEnabled: currentImplementationSnookerScoring.isStopClockEnabled,
+      stopClockFrameTimeInSeconds: currentImplementationSnookerScoring.isStopClockEnabled
+        ? currentImplementationSnookerScoring.stopClockFrameTimeInSeconds
+        : undefined,
+      stopClockTurnTimeInSeconds: currentImplementationSnookerScoring.isStopClockEnabled
+        ? currentImplementationSnookerScoring.stopClockTurnTimeInSeconds
+        : undefined,
+      stopClockVoiceEnabled: currentImplementationSnookerScoring.isStopClockEnabled
+        ? currentImplementationSnookerScoring.stopClockVoiceEnabled
+        : undefined,
     });
 
     if (matchId) {
@@ -518,7 +556,8 @@ const useSnookerScoring = () => {
   const handlePlayerSelect = async (playerIndex: number, teamIndex: number) => {
     if (!snookerScoring.matchId && !snookerScoring.tournamentId) {
       // Don't allow player selection during break-off waiting state
-      const allSelected = snookerScoring.team1.players.every((p) => p.id !== null) &&
+      const allSelected =
+        snookerScoring.team1.players.every((p) => p.id !== null) &&
         snookerScoring.team2.players.every((p) => p.id !== null);
       if (allSelected) return;
       setSelectedTeamIndex(teamIndex);
@@ -533,24 +572,32 @@ const useSnookerScoring = () => {
       // Current selection is the slot being filled; go back to the previous one
       if (selectedTeamIndex === 0 && selectedPlayerIndex === 1) {
         // On T1P2 → go back to T1P1
-        dispatch(setTeamPlayer({ teamIndex: 0, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }));
+        dispatch(
+          setTeamPlayer({ teamIndex: 0, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }),
+        );
         setSelectedTeamIndex(0);
         setSelectedPlayerIndex(0);
       } else if (selectedTeamIndex === 1 && selectedPlayerIndex === 0) {
         // On T2P1 → go back to T1P2
-        dispatch(setTeamPlayer({ teamIndex: 0, playerIndex: 1, player: { id: null, name: 'Player 2', profilePhoto: null } }));
+        dispatch(
+          setTeamPlayer({ teamIndex: 0, playerIndex: 1, player: { id: null, name: 'Player 2', profilePhoto: null } }),
+        );
         setSelectedTeamIndex(0);
         setSelectedPlayerIndex(1);
       } else if (selectedTeamIndex === 1 && selectedPlayerIndex === 1) {
         // On T2P2 → go back to T2P1
-        dispatch(setTeamPlayer({ teamIndex: 1, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }));
+        dispatch(
+          setTeamPlayer({ teamIndex: 1, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }),
+        );
         setSelectedTeamIndex(1);
         setSelectedPlayerIndex(0);
       }
     } else {
       // 2-player: on T2P1 → go back to T1P1
       if (snookerScoring.team1.players[0].id !== null) {
-        dispatch(setTeamPlayer({ teamIndex: 0, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }));
+        dispatch(
+          setTeamPlayer({ teamIndex: 0, playerIndex: 0, player: { id: null, name: 'Player 1', profilePhoto: null } }),
+        );
         setSelectedTeamIndex(0);
         setSelectedPlayerIndex(0);
       }
@@ -680,9 +727,14 @@ const useSnookerScoring = () => {
   const handleEndGame = async () => {
     setShowLoadingModal(true);
     setShowMenuDrawer(false);
+    if (snookerScoring.matchId === null) {
+      await handleGoToHome();
+      setShowLoadingModal(false);
+      return;
+    }
 
     try {
-      await dispatch(handleEndGameThrunk({}));
+      await dispatch(handleEndGameThrunk({})).unwrap();
 
       await handleGoToHome();
     } catch (error) {
@@ -743,6 +795,26 @@ const useSnookerScoring = () => {
       await handleEndGame();
     }
     setShowTimeModal(false);
+  };
+
+  // Purely local — no API call, no network round trip. Only usable while the frame clock is
+  // actively running — paused (or not yet started) disables it, since pausing the frame already
+  // auto-stops the shot clock (see toggleFrameClock). Still has to mark the state dirty so the
+  // existing 1s poll (handleBackendUpdateOfData) picks up the changed turn and pushes it on —
+  // otherwise the venue scoreboard/stream overlay, which only learn about turn changes via that
+  // sync, would never see the shot clock start/stop.
+  const handleStopClockToggle = () => {
+    if (!isFrameClockRunning) return;
+    dispatch(toggleTurnClock());
+    dispatch(changeBackendUpdatedState({ value: false }));
+  };
+
+  // Pause/Resume the frame clock. No API call — same dirty-flag push as the shot clock, so the
+  // venue scoreboard/stream overlay pick up the pause/resume via the existing sync.
+  const handleFrameClockToggle = () => {
+    if (!activeSet) return;
+    dispatch(toggleFrameClock());
+    dispatch(changeBackendUpdatedState({ value: false }));
   };
 
   return {
@@ -809,6 +881,12 @@ const useSnookerScoring = () => {
     showTimerModal,
     handleTimerButtonAction,
     defaultNoOfPlayers,
+    stopClockTick,
+    isStopClockRunning,
+    handleStopClockToggle,
+    isFrameClockRunning,
+    isFrameClockAvailable,
+    handleFrameClockToggle,
   };
 };
 

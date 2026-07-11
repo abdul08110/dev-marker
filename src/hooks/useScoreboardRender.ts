@@ -49,6 +49,10 @@ export interface ScoreBoardState {
   showCummulativeScoreInCombination: boolean | null;
   showLatestHandicapInCombination: boolean | null;
   tournamentLogo: string | null;
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
 }
 
 const useScoreboardRender = () => {
@@ -74,7 +78,6 @@ const useScoreboardRender = () => {
     players: {},
   });
   const { rotateBody } = useBodyRotation();
-
   const activeClub: ClubData | null = searchParamsVenueId
     ? {
         clubId: '',
@@ -212,6 +215,10 @@ const useScoreboardRender = () => {
             showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
             showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null,
             tournamentLogo: res.tournament?.logo ? res.tournament.logo : null,
+            isStopClockEnabled: res.isStopClockEnabled,
+            stopClockFrameTimeInSeconds: res.stopClockFrameTimeInSeconds,
+            stopClockTurnTimeInSeconds: res.stopClockTurnTimeInSeconds,
+            stopClockVoiceEnabled: res.stopClockVoiceEnabled ?? false,
           });
         } else {
           toast({

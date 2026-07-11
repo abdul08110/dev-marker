@@ -4,10 +4,13 @@ import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import { formatTimeMatchTime } from '@/utils/functions';
+import { formatClockMs } from '@/utils/stopClock';
 import { cn } from '@/lib/utils';
 import { Timer } from './Score-board/Timer';
+import { useStopClockTick } from '@/hooks/useStopClockTick';
+import { useStopClockVoice } from '@/hooks/useStopClockVoice';
 import { TableNumber } from './Score-board/TableNumber';
-import { GameFormat } from './Score-board/GameFormat';
+import { SportIcon, FormatLabel } from './Score-board/GameFormat';
 import { TeamScore } from './Score-board/FrameScore';
 import { PlayerCard } from './Score-board/PlayerCard';
 
@@ -31,6 +34,19 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
   const activeSet = getActiveSet(state.sets);
   const activeTurn = getActiveTurn(activeSet);
+  const isClockRunning = !!activeTurn?.stopClockStartedAt && !activeTurn?.stopClockEndedAt;
+  const stopClockTick = useStopClockTick(
+    activeSet?.frameClockStartedAt,
+    activeSet?.frameClockElapsedMs,
+    state.stopClockFrameTimeInSeconds,
+    isClockRunning ? activeTurn?.stopClockStartedAt : null,
+    state.stopClockTurnTimeInSeconds,
+  );
+  useStopClockVoice({
+    startedTurnTime: isClockRunning ? activeTurn?.stopClockStartedAt : null,
+    stopClockTurnTimeInSeconds: state.stopClockTurnTimeInSeconds,
+    stopClockVoiceEnabled: state.stopClockVoiceEnabled,
+  });
   const isTeamOneActive =
     state.sideOnePlayerOne?.id === state.activePlayerId || state.sideOnePlayerTwo?.id === state.activePlayerId;
   const isTeamTwoActive =
@@ -114,11 +130,10 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       : noOfFrames
         ? `${noOfFrames}`
         : null;
-
   return (
     <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(3vh,3vw)] bg-no-repeat flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
+      <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_calc(50%_-_min(32vh,32vw)),rgba(227,139,249,0.8)_50%,rgba(227,139,249,0)_calc(50%_+_min(32vh,32vw)))] [border-image-slice:1]">
         <div className="flex items-center gap-[min(3vh,3vw)] py-[min(1.1vh,1.1vw)] w-fit justify-self-start">
           {state.tournamentLogo ? (
             <ImageWithFallback
@@ -144,13 +159,19 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           src="/images/logos/clubliv-logo.svg"
         />
 
-        <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
-          match time {formatTimeMatchTime(elapsed)}
-        </p>
+        <div className="flex items-center justify-end gap-[min(2.5vh,2.5vw)]">
+          {isTournament && state.isStopClockEnabled && (
+            <TableNumber venueNo={state.venueNo} size="small" />
+          )}
+
+          <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
+            match time {formatTimeMatchTime(elapsed)}
+          </p>
+        </div>
       </div>
 
       {/* Cards + Center */}
-      <div className="flex gap-[min(1.7vh,1.7vw)] pt-[min(1.5vh,1.5vw)] pb-[min(2vh,2vw)]">
+      <div className="flex flex-1 min-h-0 gap-[min(1.7vh,1.7vw)] pt-[min(1.5vh,1.5vw)] pb-[min(2vh,2vw)]">
         {/* <div className="grid grid-cols-[1fr_auto_1fr] gap-[min(1.7vh,1.7vw)] items-stretch px-[min(3vw,3vh)] pt-[min(5.1vh,5.1vw)] pb-[min(2.1vh,2.1vw)]"> */}
         {/* Card 1 - Team One */}
         <PlayerCard
@@ -170,6 +191,9 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           breakSide="right"
           tournamentName={state.tournamentTeamOneName ?? ''}
           isTournament={isTournament}
+          isStopClockEnabled={state.isStopClockEnabled}
+          turnClockMs={isTeamOneActive ? stopClockTick.currentTurnRemainingTimeInMs : undefined}
+          turnClockTotalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
         />
 
         {/* Center Panel */}
@@ -185,13 +209,13 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               linear-gradient(347.86deg,rgba(210,154,245,0) 13.85%,#F4D3F2 105.37%)
             `,
               boxShadow: `
-              0px 0px 10px 0px #FFEDFF,
+              0px 0px 6px 0px #FFEDFF40,
               10px 10px 10px 0px #0F0B23CC,
               -11px 0px 10px 0px #0E0B24CC
             `,
             }}
           >
-            <div className="rounded-[min(5.1vh,5.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col shrink-0 ">
+            <div className="rounded-[min(5.1vh,5.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col justify-between items-center gap-[min(2vh,2vw)] py-[min(2.2vh,2.2vw)] shrink-0 ">
               {/* Team / Tournament Score */}
               <TeamScore
                 hasTournamentCombo={!!(state.tournamentId && state.tournamentSubItem)}
@@ -201,21 +225,27 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 teamTwoScore={state.teamTwoScore}
                 teamScoreCenter={teamScoreCenter}
               />
+              {/* {state.isStopClockEnabled ? (
+                <div className="flex flex-col items-center gap-[min(1.5vh,1.5vw)] space-y-2">
+                  <p className="text-score-text text-box-trim font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
+                    {formatClockMs(stopClockTick.remainingFrameTimeInMs)}
+                  </p>
+                  <p className="text-text-light text-box-trim font-medium text-[min(4vh,4vw)] leading-none">Remaining</p>
+                </div>
+              ) : (
+                
+              )} */}  
 
-              {/* Timer (non-tournament only) */}
-              <Timer timeLeft={timeLeft} isTournament={isTournament} />
-              {/* Frame Score (tournament only) */}
-              {/* {isTournament && (
-                <FrameScorePanel
-                  teamOneScore={state.teamOneScore}
-                  teamTwoScore={state.teamTwoScore}
-                  teamScoreCenter={state.sets.length}
-                />
-              )} */}
 
-              {isTournament && (
-                <div className="flex justify-center items-center py-5">
-                  {/* <ImageWithFallback src={state.clubLogo} fallback="/images/user-dummy-pic.jpg" /> */}
+                       
+
+              <Timer
+                timeLeft={state.isStopClockEnabled ? formatClockMs(stopClockTick.remainingFrameTimeInMs) : timeLeft}
+                isTournament={isTournament && state.isStopClockEnabled ? false : isTournament}
+              />
+
+              {isTournament && !state.isStopClockEnabled && (
+                <div className="flex justify-center items-center">
                   <ImageWithFallback
                     className="object-cover size-[min(15vh,15vw)] rounded-full overflow-hidden"
                     fallback="/images/user-dummy-pic.jpg"
@@ -224,11 +254,14 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 </div>
               )}
 
-              {/* Table Number */}
-              <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
+              {/* Table Number — in tournament, only when stop clock is off (Frame Time takes its place above) */}
+              {(!isTournament || !state.isStopClockEnabled) && (
+                <TableNumber venueNo={state.venueNo} size="large" />
+              )}
 
-              {/* Game format */}
-              <GameFormat sport={state.sport} format={state.format} isTournament={isTournament} />
+              {/* Game format — icon and label are siblings so the panel's gap/justify-between spaces them */}
+              <SportIcon sport={state.sport} />
+              {isTournament && <FormatLabel format={state.format} />}
             </div>
           </div>
         </div>
@@ -251,6 +284,9 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           breakSide="left"
           tournamentName={state.tournamentTeamTwoName ?? ''}
           isTournament={isTournament}
+          isStopClockEnabled={state.isStopClockEnabled}
+          turnClockMs={isTeamTwoActive ? stopClockTick.currentTurnRemainingTimeInMs : undefined}
+          turnClockTotalMs={(state.stopClockTurnTimeInSeconds ?? 0) * 1000}
         />
       </div>
     </main>

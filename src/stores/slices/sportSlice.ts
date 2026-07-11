@@ -61,6 +61,10 @@ const initialState: GeneralScoringState = {
   isRankingEvent: false,
   snookerHandicapType: 'DIFFERENCE',
   phase: null,
+  isStopClockEnabled: false,
+  stopClockFrameTimeInSeconds: 900,
+  stopClockTurnTimeInSeconds: 30,
+  stopClockVoiceEnabled: false,
 };
 
 const sportSlice = createSlice({
@@ -127,6 +131,10 @@ const sportSlice = createSlice({
         formatName: null,
         switchType: 'VISIT',
         isRankingEvent: false,
+        isStopClockEnabled: false,
+        stopClockFrameTimeInSeconds: 900,
+        stopClockTurnTimeInSeconds: 30,
+        stopClockVoiceEnabled: false,
       });
     },
     resetStateBilliards(state) {
@@ -182,6 +190,7 @@ const sportSlice = createSlice({
         formatName: null,
         switchType: null,
         isRankingEvent: false,
+        isStopClockEnabled: false,
       });
     },
     setMatchId(state, action: PayloadAction<{ matchId: string }>) {
@@ -233,6 +242,8 @@ const sportSlice = createSlice({
         billiardsCorrections: [],
         scoreOrder: scoreOrder,
         setConcededTo: null,
+        frameClockStartedAt: null,
+        frameClockElapsedMs: 0,
       });
     },
     createSnookerCorrection(
@@ -278,11 +289,23 @@ const sportSlice = createSlice({
     createTurn(state, action: PayloadAction<{ setIndex: number; playerId: string }>) {
       const id = action.payload.playerId;
 
+      // If the stop clock is running on the previous turn (stopClockStartedAt set, stopClockEndedAt null),
+      // end it before creating the new turn.
+      const turns = state.scoreHistory[action.payload.setIndex].turns;
+      if (turns.length > 0) {
+        const prevTurn = turns[turns.length - 1];
+        if (prevTurn.stopClockStartedAt && !prevTurn.stopClockEndedAt) {
+          prevTurn.stopClockEndedAt = new Date().toISOString();
+        }
+      }
+
       state.scoreHistory[action.payload.setIndex].turns.push({
         timeScored: new Date().toISOString(),
         turnPlayerId: id,
         score: 0,
         points: [],
+        stopClockStartedAt: null,
+        stopClockEndedAt: null,
       });
     },
     createPoint(state, action: PayloadAction<{ point: Point; turnIndex: number; setIndex: number }>) {
@@ -336,6 +359,57 @@ const sportSlice = createSlice({
     },
     updateIsRankingEvent(state, action: PayloadAction<{ isRankingEvent: boolean }>) {
       state.isRankingEvent = action.payload.isRankingEvent;
+    },
+    updateStopClockSettings(
+      state,
+      action: PayloadAction<{
+        isStopClockEnabled: boolean;
+        stopClockFrameTimeInSeconds: number;
+        stopClockTurnTimeInSeconds: number;
+        stopClockVoiceEnabled: boolean;
+      }>,
+    ) {
+      state.isStopClockEnabled = action.payload.isStopClockEnabled;
+      state.stopClockFrameTimeInSeconds = action.payload.stopClockFrameTimeInSeconds;
+      state.stopClockTurnTimeInSeconds = action.payload.stopClockTurnTimeInSeconds;
+      state.stopClockVoiceEnabled = action.payload.stopClockVoiceEnabled;
+    },
+    // Toggle the stop clock on the active turn. Start sets stopClockStartedAt, Stop sets stopClockEndedAt.
+    toggleTurnClock(state) {
+      const setIndex = state.scoreHistory.findIndex((set) => set.status === 'ONGOING');
+      if (setIndex === -1) return;
+      const turns = state.scoreHistory[setIndex].turns;
+      if (turns.length === 0) return;
+      const activeTurn = turns[turns.length - 1];
+
+      const isRunning = !!activeTurn.stopClockStartedAt && !activeTurn.stopClockEndedAt;
+      if (isRunning) {
+        activeTurn.stopClockEndedAt = new Date().toISOString();
+      } else {
+        activeTurn.stopClockStartedAt = new Date().toISOString();
+        activeTurn.stopClockEndedAt = null;
+      }
+    },
+    // Pause/Resume the frame clock. Pausing banks the segment that just ran into
+    // frameClockElapsedMs; resuming starts a fresh segment on top of it — the total never resets.
+    toggleFrameClock(state) {
+      const setIndex = state.scoreHistory.findIndex((set) => set.status === 'ONGOING');
+      if (setIndex === -1) return;
+      const activeSet = state.scoreHistory[setIndex];
+
+      if (activeSet.frameClockStartedAt) {
+        const now = new Date().toISOString();
+        const elapsed = Date.now() - new Date(activeSet.frameClockStartedAt).getTime();
+        activeSet.frameClockElapsedMs = (activeSet.frameClockElapsedMs ?? 0) + elapsed;
+        activeSet.frameClockStartedAt = null;
+        const turns = activeSet.turns;
+        const activeTurn = turns[turns.length - 1];
+        if (activeTurn?.stopClockStartedAt && !activeTurn.stopClockEndedAt) {
+          activeTurn.stopClockEndedAt = now;
+        }
+      } else {
+        activeSet.frameClockStartedAt = new Date().toISOString();
+      }
     },
     updateMaxScorePerSet(state, action: PayloadAction<{ maxScorePerSet: number }>) {
       state.maxScorePerSet = action.payload.maxScorePerSet;
@@ -423,5 +497,8 @@ export const {
   setExpectedEndTimeDate,
   updateIsRankingEvent,
   setFormatName,
+  updateStopClockSettings,
+  toggleTurnClock,
+  toggleFrameClock,
 } = sportSlice.actions;
 export default sportSlice.reducer;

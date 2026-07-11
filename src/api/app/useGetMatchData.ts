@@ -123,6 +123,10 @@ export interface MatchStartResponse {
       };
     };
   };
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
 }
 
 const useGetMatchLiveData = () => {

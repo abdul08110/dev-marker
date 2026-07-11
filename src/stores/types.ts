@@ -60,6 +60,8 @@ export interface Set {
   snookerCorrections: SnookerCorrection[];
   billiardsCorrections: BilliardsCorrection[];
   setConcededTo: 0 | 1 | null;
+  frameClockStartedAt?: string | null;
+  frameClockElapsedMs?: number;
 }
 
 export interface SnookerCorrection {
@@ -80,6 +82,8 @@ export interface Turn {
   score: number;
   timeScored: string;
   points: Point[];
+  stopClockStartedAt?: string | null;
+  stopClockEndedAt?: string | null;
 }
 
 export interface Point {
@@ -100,7 +104,12 @@ export interface Point {
   timeScored: string;
 }
 
-export type SportType = 'SNOOKER_15_RED' | 'SNOOKER_10_RED' | 'SNOOKER_6_RED' | 'BILLIARDS_RACE_TO' | 'BILLIARDS_TIME_BASED';
+export type SportType =
+  | 'SNOOKER_15_RED'
+  | 'SNOOKER_10_RED'
+  | 'SNOOKER_6_RED'
+  | 'BILLIARDS_RACE_TO'
+  | 'BILLIARDS_TIME_BASED';
 
 export interface GeneralScoringState {
   format: SportType;
@@ -137,6 +146,10 @@ export interface GeneralScoringState {
   isRankingEvent: boolean;
   snookerHandicapType: 'DIFFERENCE' | 'UPFRONT';
   phase: string | null;
+  isStopClockEnabled: boolean;
+  stopClockFrameTimeInSeconds: number;
+  stopClockTurnTimeInSeconds: number;
+  stopClockVoiceEnabled: boolean;
 }
 
 export interface ClubData {
@@ -167,6 +180,10 @@ export interface TournamentFormat {
   switchType?: 'FRAME' | 'VISIT';
   snookerHandicapType?: 'DIFFERENCE' | 'UPFRONT';
   categoryName?: string;
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
 }
 
 export interface TournamentPhase {
@@ -176,9 +193,8 @@ export interface TournamentPhase {
   tournament: Tournament;
   tournamentFormats: TournamentFormat[];
   phaseStatus: 'ACTIVE' | 'COMPLETED' | 'INACTIVE';
-  phaseType: 'SINGLES' | 'TEAMS'
+  phaseType: 'SINGLES' | 'TEAMS';
 }
-
 
 export interface TournamentItem {
   id: string;

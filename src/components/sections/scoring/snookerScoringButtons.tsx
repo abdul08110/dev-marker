@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { FrameShotClock } from './frameShotClock';
 
 export enum SnookerScoringButtonEnum {
   BREAK_OFF = 'BREAK_OFF',
@@ -36,6 +37,17 @@ interface SnookerScoringProps {
   isBreakOff: boolean;
   isLongEnabled: boolean;
   onLongClick: () => void;
+  isStopClockEnabled?: boolean;
+
+  isStopClockRunning: boolean;
+  shotRemainingSeconds: number;
+  isStopClockToggleDisabled: boolean;
+  onStopClockToggle: () => void;
+
+  frameRemainingMs: number;
+  isFrameClockRunning: boolean;
+  isFrameClockToggleDisabled: boolean;
+  onFrameClockToggle: () => void;
 }
 
 export function SnookerScoringButtons(props: SnookerScoringProps) {
@@ -46,22 +58,19 @@ export function SnookerScoringButtons(props: SnookerScoringProps) {
   const buttonShineClass = clsx('absolute top-[10%] bg-gradient-to-b from-white h-[35%] w-[90%] rounded-md opacity-50');
 
   return (
-    <div className="w-full container flex flex-col gap-2 mt-auto">
-      <div className="flex justify-end">
-        {/* <button
-          onClick={() => props.onLongClick()}
-          disabled={props.disabledState[SnookerScoringButtonEnum.LONG_SHOT]}
-          className={clsx(
-            'relative p-0 disabled:opacity-20 active:opacity-50 outline-0 border-0 flex justify-center items-center bg-transparent',
-            {
-              'opacity-20': props.isLongEnabled === false,
-            },
-          )}
-        >
-          <ScaleLogo className="w-32 h-auto text-white" />
-          <small className="bg-black p-1 text-center absolute text-white text-xs">LONG</small>
-        </button> */}
-      </div>
+    <div className="w-full container flex flex-col gap-5 mt-auto">
+      <FrameShotClock
+        isStopClockEnabled={props.isStopClockEnabled}
+        sport="SNOOKER"
+        frameRemainingMs={props.frameRemainingMs}
+        isFrameClockRunning={props.isFrameClockRunning}
+        isFrameClockToggleDisabled={props.isFrameClockToggleDisabled}
+        onFrameClockToggle={props.onFrameClockToggle}
+        shotRemainingSeconds={props.shotRemainingSeconds}
+        isShotClockRunning={props.isStopClockRunning}
+        isShotClockToggleDisabled={props.isStopClockToggleDisabled}
+        onShotClockToggle={props.onStopClockToggle}
+      />
       <div className="grid grid-cols-5 grid-rows-2 gap-2">
         {props.isBreakOff ? (
           <button
