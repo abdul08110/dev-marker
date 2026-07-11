@@ -1,53 +1,39 @@
 import { cn } from '@/lib/utils';
 
-interface GameFormatProps {
+interface SportIconProps {
   sport: string;
-  format: string | null;
-  isTournament: boolean;
-  isStopClockEnabled: boolean | undefined;
 }
 
-export function GameFormat({ sport, format, isTournament }: GameFormatProps) {
-  const icon = (
-    <div className={cn('flex flex-col justify-center items-center gap-1 py-5')}>
-      {sport === 'SNOOKER' ? (
-        <>
-          <img src="/images/snooker.svg" alt="" className="size-[min(7vh,7vw)]" />
-          <p className="text-score-text leading-[130%] text-[min(3.24vh,3.24vw)] font-semibold drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
-            Snooker
-          </p>
-        </>
-      ) : (
-        <>
-          <img src="/images/billiards.svg" alt="" className="size-[min(7vh,7vw)]" />
-          <p className="text-score-text leading-[130%] text-[min(3.24vh,3.24vw)] font-semibold drop-shadow-[0px_4px_16px_0px_#FFFFFF40] pb-3">
-            Billiards
-          </p>
-        </>
-      )}
-    </div>
-  );
-
-  if (!isTournament) {
-    return icon;
-  }
-
+export function SportIcon({ sport }: SportIconProps) {
+  const isSnooker = sport === 'SNOOKER';
   return (
-    <div className={cn(isTournament ? '' : 'space-y-4')}>
-      {icon}
-      <div className={cn('text-center', isTournament ? 'pb-5' : 'pb-0')}>
-        <p className="text-score-text text-wrap whitespace-pre-line leading-[130%] text-[min(3.24vh,3.24vw)] font-semibold drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
-          {/* {format} */}
-          {format?.split(' ').map((word, index) => {
-            return (
-              <span key={index}>
-                {word}
-                {index === 1 ? <br /> : ' '}
-              </span>
-            );
-          })}
-        </p>
-      </div>
+    <div className="flex flex-col justify-center items-center gap-1">
+      <img src={isSnooker ? '/images/snooker.svg' : '/images/billiards.svg'} alt="" className="size-[min(8vh,8vw)]" />
+      <p className="text-score-text leading-[130%] text-[min(3.5vh,3.5vw)] font-semibold drop-shadow-[0px_4px_16px_0px_#FFFFFF40] text-box-trim">
+        {isSnooker ? 'Snooker' : 'Billiards'}
+      </p>
     </div>
   );
 }
+
+interface FormatLabelProps {
+  format: string | null;
+  className?: string;
+}
+
+export function FormatLabel({ format, className }: FormatLabelProps) {
+  if (!format) return null;
+  return (
+    <div className={cn('text-center', className)}>
+      <p className="text-score-text text-wrap whitespace-pre-line leading-[130%] text-[min(3.5vh,3.5vw)] font-semibold drop-shadow-[0px_4px_16px_0px_#FFFFFF40] text-box-trim">
+        {format.split(' ').map((word, index) => (
+          <span key={index}>
+            {word}
+            {index === 1 ? <br /> : ' '}
+          </span>
+        ))}
+      </p>
+    </div>
+  );
+}
+

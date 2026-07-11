@@ -1,3 +1,4 @@
+import { formatTime } from '@/utils/functions';
 import { formatClockMs, getStopClockColor } from '@/utils/stopClock';
 
 interface StopClockProps {
@@ -17,7 +18,7 @@ function ClockBar({ label, ms, totalMs }: { label: string; ms: number; totalMs: 
   return (
     <div className="flex flex-col items-center gap-[min(0.4vh,0.4vw)] w-[min(30vh,30vw)]">
       <p className="text-score-text font-semibold text-[min(2.6vh,2.6vw)]">
-        {label}: {formatClockMs(ms)}
+        {label}: {formatTime(formatClockMs(ms))}
       </p>
       <div className="w-full h-[min(1vh,1vw)] rounded-full bg-white/10 overflow-hidden">
         <div

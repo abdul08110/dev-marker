@@ -10,7 +10,7 @@ import { Timer } from './Score-board/Timer';
 import { useStopClockTick } from '@/hooks/useStopClockTick';
 import { useStopClockVoice } from '@/hooks/useStopClockVoice';
 import { TableNumber } from './Score-board/TableNumber';
-import { GameFormat } from './Score-board/GameFormat';
+import { SportIcon, FormatLabel } from './Score-board/GameFormat';
 import { TeamScore } from './Score-board/FrameScore';
 import { PlayerCard } from './Score-board/PlayerCard';
 
@@ -133,7 +133,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
   return (
     <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(3vh,3vw)] bg-no-repeat flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
+      <div className="grid grid-cols-3 items-center border-b-2 py-[min(1.9vh,1.9vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_calc(50%_-_min(32vh,32vw)),rgba(227,139,249,0.8)_50%,rgba(227,139,249,0)_calc(50%_+_min(32vh,32vw)))] [border-image-slice:1]">
         <div className="flex items-center gap-[min(3vh,3vw)] py-[min(1.1vh,1.1vw)] w-fit justify-self-start">
           {state.tournamentLogo ? (
             <ImageWithFallback
@@ -159,22 +159,9 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           src="/images/logos/clubliv-logo.svg"
         />
 
-        <div className="flex items-center justify-end gap-7">
+        <div className="flex items-center justify-end gap-[min(2.5vh,2.5vw)]">
           {isTournament && state.isStopClockEnabled && (
-            <div className="flex justify-center items-center">
-              <div className="bg-white/5 rounded-[8px] shadow-[inset_0px_2px_4px_0px_#FFFFFF40] flex items-center h-[min(4vh,4vw)] w-fit overflow-hidden shrink-0">
-                <div className="flex justify-center items-center bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] h-full">
-                  <p className="font-medium uppercase text-score-text text-box-trim px-[min(1.5vh,1.5vw)]  text-center text-[min(2.6vh,2.6vw)]">
-                    t
-                  </p>
-                </div>
-                <div className=" bg-white flex justify-center items-center px-[min(1.5vh,1.5vw)] h-full">
-                  <p className="font-medium leading-[130%] text-[min(2.6vh,2.6vw)] text-black text-box-trim py-[min(0.9vh,0.9vw)]">
-                    {state.venueNo}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <TableNumber venueNo={state.venueNo} size="small" />
           )}
 
           <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
@@ -184,7 +171,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       </div>
 
       {/* Cards + Center */}
-      <div className="flex gap-[min(1.7vh,1.7vw)] pt-[min(1.5vh,1.5vw)] pb-[min(2vh,2vw)]">
+      <div className="flex flex-1 min-h-0 gap-[min(1.7vh,1.7vw)] pt-[min(1.5vh,1.5vw)] pb-[min(2vh,2vw)]">
         {/* <div className="grid grid-cols-[1fr_auto_1fr] gap-[min(1.7vh,1.7vw)] items-stretch px-[min(3vw,3vh)] pt-[min(5.1vh,5.1vw)] pb-[min(2.1vh,2.1vw)]"> */}
         {/* Card 1 - Team One */}
         <PlayerCard
@@ -222,13 +209,13 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               linear-gradient(347.86deg,rgba(210,154,245,0) 13.85%,#F4D3F2 105.37%)
             `,
               boxShadow: `
-              0px 0px 10px 0px #FFEDFF,
+              0px 0px 6px 0px #FFEDFF40,
               10px 10px 10px 0px #0F0B23CC,
               -11px 0px 10px 0px #0E0B24CC
             `,
             }}
           >
-            <div className="rounded-[min(5.1vh,5.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col shrink-0 ">
+            <div className="rounded-[min(5.1vh,5.1vw)] bg-[linear-gradient(180deg,#371E56_0%,#0D0624_100%)] h-full flex flex-col justify-between items-center gap-[min(2vh,2vw)] py-[min(2.2vh,2.2vw)] shrink-0 ">
               {/* Team / Tournament Score */}
               <TeamScore
                 hasTournamentCombo={!!(state.tournamentId && state.tournamentSubItem)}
@@ -238,21 +225,27 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 teamTwoScore={state.teamTwoScore}
                 teamScoreCenter={teamScoreCenter}
               />
-
-              {/* Timer — Frame Time when stop clock is enabled (practice + tournament), else match time left (non-tournament only) */}
-              {state.isStopClockEnabled ? (
-                <div className="flex flex-col items-center gap-[min(0.5vh,0.5vw)] pt-[min(7.4vh,7.4vw)] space-y-2">
+              {/* {state.isStopClockEnabled ? (
+                <div className="flex flex-col items-center gap-[min(1.5vh,1.5vw)] space-y-2">
                   <p className="text-score-text text-box-trim font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
                     {formatClockMs(stopClockTick.remainingFrameTimeInMs)}
                   </p>
-                  <p className="text-text-light font-medium text-[min(4vh,4vw)]">Remaining</p>
+                  <p className="text-text-light text-box-trim font-medium text-[min(4vh,4vw)] leading-none">Remaining</p>
                 </div>
               ) : (
-                <Timer timeLeft={timeLeft} isTournament={isTournament} />
-              )}
+                
+              )} */}  
+
+
+                       
+
+              <Timer
+                timeLeft={state.isStopClockEnabled ? formatClockMs(stopClockTick.remainingFrameTimeInMs) : timeLeft}
+                isTournament={isTournament && state.isStopClockEnabled ? false : isTournament}
+              />
 
               {isTournament && !state.isStopClockEnabled && (
-                <div className="flex justify-center items-center py-5">
+                <div className="flex justify-center items-center">
                   <ImageWithFallback
                     className="object-cover size-[min(15vh,15vw)] rounded-full overflow-hidden"
                     fallback="/images/user-dummy-pic.jpg"
@@ -263,16 +256,12 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
 
               {/* Table Number — in tournament, only when stop clock is off (Frame Time takes its place above) */}
               {(!isTournament || !state.isStopClockEnabled) && (
-                <TableNumber venueNo={state.venueNo} isTournament={isTournament} />
+                <TableNumber venueNo={state.venueNo} size="large" />
               )}
 
-              {/* Game format */}
-              <GameFormat
-                sport={state.sport}
-                format={state.format}
-                isTournament={isTournament}
-                isStopClockEnabled={state.isStopClockEnabled}
-              />
+              {/* Game format — icon and label are siblings so the panel's gap/justify-between spaces them */}
+              <SportIcon sport={state.sport} />
+              {isTournament && <FormatLabel format={state.format} />}
             </div>
           </div>
         </div>
