@@ -9,7 +9,7 @@ const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
       "text-box-trim": ["text-box-trim"],
-    },
+    } as any,
   },
 })
 
