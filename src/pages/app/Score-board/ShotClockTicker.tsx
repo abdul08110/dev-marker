@@ -19,9 +19,9 @@ interface ShotClockTickerProps {
 const ShotClockTicker = ({
   remainingMs,
   totalMs,
-  barClassName = 'size-[min(4vh,4vw)]',
-  textClassName = 'text-[min(2.6vh,2.6vw)]',
-  gapClassName = 'gap-[min(0.5vh,0.5vw)]',
+  barClassName = 'h-[min(4vh,4vw)]',
+  textClassName = 'text-[min(3.5vh,3.5vw)]',
+  gapClassName = 'gap-[min(1vh,1vw)]',
 }: ShotClockTickerProps) => {
   const total = totalMs > 0 ? totalMs : 1;
   const remaining = Math.max(0, remainingMs ?? total);
@@ -59,7 +59,7 @@ const ShotClockTicker = ({
         />
       ))}
       <p
-        className={clsx('font-semibold text-white text-box-trim pl-2', textClassName, isCritical && 'animate-pulse-glow')}
+        className={clsx('font-semibold text-white text-box-trim pl-[min(0.4vh,0.4vw)]', textClassName, isCritical && 'animate-pulse-glow')}
       >
         {secondsLeft}
       </p>

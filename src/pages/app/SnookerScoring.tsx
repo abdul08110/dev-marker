@@ -12,9 +12,10 @@ import {
   getAllPlayerIdsSelectedApartFromThisParticularPlayerAndTeamIndex,
 } from '@/stores/selectors/commonSport';
 import { SnookerScoringButtonEnum } from '@/components/sections/scoring/snookerScoringButtons';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { EndGameModal } from '@/components/modals/endGameModal';
 import { SelectPlayerDrawer } from '@/components/modals/selectPlayerDrawer';
+import { BreakOffPlayerStep } from '@/components/modals/breakOffPlayerStep';
 import useSnookerScoring from '@/hooks/useSnookerScoring';
 import useSelectPlayer from '@/api/app/useSelectPlayer';
 import { Player } from '@/stores/types';
@@ -238,7 +239,7 @@ export function SnookerScoring() {
             closeModal={() => setShowEndGameModal(false)}
           />
           <ScoreUpdateLoadingModal isModalOpen={showLoadingModal} />
-          <div className="flex flex-col justify-start h-screen overflow-y-scroll">
+          <div className="flex flex-col justify-start h-dvh overflow-y-auto">
             <div className="flex flex-col gap-4 h-full">
               <ScoringHeader
                 onBackClick={handleBackClick}
@@ -444,45 +445,21 @@ export function SnookerScoring() {
             }}
           >
             <DialogContent className="max-w-sm w-[90vw] bg-[#1a1a1a] border-white/10 text-white">
-              <DialogTitle className="text-lg font-semibold text-white">Who is breaking off?</DialogTitle>
-              <div className="grid grid-cols-2 gap-3 mt-2">
-                {[
-                  { idx: 0, players: snookerScoring.team1.players },
-                  { idx: 1, players: snookerScoring.team2.players },
-                ].map(({ idx, players }) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedBreakOffTeamIdx(idx)}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${
-                      selectedBreakOffTeamIdx === idx ? 'border-white bg-white/10' : 'border-white/20 bg-white/5'
-                    }`}
-                  >
-                    <div className="flex gap-1 justify-center">
-                      {players.map((p, i) => (
-                        <img
-                          key={i}
-                          src={p.profilePhoto ?? defaultImages[idx * 2 + i]}
-                          className="h-14 w-14 rounded-full object-cover"
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm font-medium text-center leading-tight">
-                      {players
-                        .map((p) => p.name)
-                        .filter(Boolean)
-                        .join(' / ') || `Team ${idx + 1}`}
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <div className="flex gap-2 mt-4">
-                <Button variant="secondary" className="flex-1" onClick={() => setShowBreakOffDialog(false)}>
-                  Cancel
-                </Button>
-                <Button className="flex-1" disabled={selectedBreakOffTeamIdx === null} onClick={handleBreakOffConfirm}>
-                  Confirm
-                </Button>
-              </div>
+              <BreakOffPlayerStep
+                teams={[snookerScoring.team1, snookerScoring.team2].map((team, idx) => ({
+                  photos: team.players.map((p, i) => p.profilePhoto ?? defaultImages[idx * 2 + i]),
+                  label:
+                    team.players
+                      .map((p) => p.name)
+                      .filter(Boolean)
+                      .join(' / ') || `Team ${idx + 1}`,
+                }))}
+                selectedIdx={selectedBreakOffTeamIdx}
+                onSelect={setSelectedBreakOffTeamIdx}
+                onCancel={() => setShowBreakOffDialog(false)}
+                onConfirm={handleBreakOffConfirm}
+                confirmLabel="Confirm"
+              />
             </DialogContent>
           </Dialog>
         </section>

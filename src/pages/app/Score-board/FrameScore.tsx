@@ -17,7 +17,7 @@ export function TeamScore({
 }: TeamScoreProps) {
   if (hasTournamentCombo) {
     return (
-      <div className="space-y-[min(1vh,1vw)] pt-[min(5vh,5vw)]">
+      <div className="space-y-[min(1vh,1vw)]">
         <p className="text-text-light font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center px-[min(2vw,2vh)]">
           Team Score
         </p>
@@ -39,7 +39,7 @@ export function TeamScore({
   }
 
   return (
-    <div className="space-y-[min(1vh,1vw)] pt-[min(7vh,7vw)]">
+    <div className="space-y-[min(1vh,1vw)]">
       <p className="text-text-light font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase text-center px-[min(2vw,2vh)]">
         Frame Score
       </p>

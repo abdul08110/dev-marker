@@ -70,8 +70,7 @@ export function PlayerCard({
       {isActive ? <YellowBorderSVG /> : <PinkBorderSVG />}
       <div className="relative z-10 h-full flex flex-col px-[min(1vh,1vw)] py-[min(3.5vh,3.5vw)]">
         {tournamentName && (
-          // <div className="relative py-[min(2vh,2vw)] text-center border-b border-white/10 mx-3 flex items-center px-[min(3vh,3vw)]">
-          <div className="relative py-[min(2vh,2vw)] text-center border-b border-white/10 mx-3 grid grid-cols-3 px-[min(3vh,3vh)]">
+          <div className="relative text-center border-b border-white/10 mx-[min(1.9vh,1.9vw)] grid grid-cols-3 px-[min(3vh,3vh)] pb-[min(1.6vh,1.6vh)] pt-[min(0.8vh,0.8vh)]">
             {isTournament && handicap != null && (
               <div className="w-fit col-span-1 flex justify-center items-center">
                 <HandicapPill handicap={handicap} isApplied={isHandicapApplied} isActive={isActive} />
@@ -79,8 +78,8 @@ export function PlayerCard({
             )}
             <p
               className={cn(
-                'font-semibold text-[min(4vh,4vw)] text-box-trim text-score-text truncate',
-                handicap === null ? 'text-center col-span-3' : 'text-left col-span-2',
+                'font-semibold text-[min(4vh,4vw)] text-white  truncate',
+                handicap === null ? 'text-center col-span-3 text-box-trim' : 'text-left col-span-2 text-box-trim',
               )}
             >
               {tournamentName}
@@ -88,7 +87,7 @@ export function PlayerCard({
           </div>
         )}
         {/* Player info */}
-        <div className="border-b p-[min(2vh,2vw)] border-white/10 flex gap-[min(1.2vh,1.2vw)] mx-3">
+        <div className="border-b p-[min(2vh,2vw)] border-white/10 flex gap-[min(1.2vh,1.2vw)] mx-[min(1.9vh,1.9vw)]">
           {/* Profile image */}
           <ProfilePicture
             isDoubles={isDoubles}
@@ -128,24 +127,24 @@ export function PlayerCard({
         </div>
 
         {/* Score + Break */}
-        <div className="p-[min(2vh,2vw)] flex flex-col gap-[min(2.5vh,2.5vw)] justify-center items-center flex-1 ">
+        <div className="px-[min(2vh,2vw)] flex flex-col justify-evenly items-center flex-1 ">
           <p
-            className={`font-semibold text-[min(24vh,24vw)] text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
+            className={`font-semibold text-[min(26vh,26vw)] text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
           >
             {score}
           </p>
 
           <div
             className={cn(
-              'rounded-lg bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] w-[min(12vh,12vh)]',
+              'rounded-[min(1.2vh,1.2vw)] bg-white/5 shadow-[inset_0px_2px_4px_0px_#FFFFFF40] w-[min(17vh,17vh)]',
               breakScore != null ? 'visible' : 'invisible',
             )}
           >
-            <p className="font-medium text-[min(2.7vh,2.7vw)] text-center text-box-trim leading-[130%] text-score-text px-[min(1.5vh,1.5vh)] py-[min(1.5vh,1.5vh)]">
+            <p className="font-medium text-[min(3vh,3vw)] text-center text-box-trim leading-[130%] text-score-text px-[min(1.5vh,1.5vh)] py-[min(1.5vh,1.5vh)]">
               break
             </p>
-            <div className="bg-[#F5F85F] px-[min(1vh,1vh)] py-[min(1.2vh,1.2vh)] rounded-b-lg">
-              <p className="font-medium text-[min(5.6vh,5.6vw)] text-center text-box-trim leading-[130%] text-[#11030F]">
+            <div className="bg-[#F5F85F] px-[min(1vh,1vh)] py-[min(1.2vh,1.2vh)] rounded-b-[min(1.2vh,1.2vw)]">
+              <p className="font-medium text-[min(9vh,9vw)] text-center text-box-trim leading-[130%] text-[#11030F]">
                 {breakScore ?? 0}
               </p>
             </div>
@@ -155,11 +154,11 @@ export function PlayerCard({
         {/* Balls (snooker only) — replaced by the shot-clock ticker when stop clock is enabled */}
         {sport === 'SNOOKER' && (
           <div
-            className="border-t-2 [border-image-slice:1] py-[min(1.4vh,1.4vw)] flex flex-col items-center gap-[min(0.7vh,0.7vw)]"
+            className="border-t-[min(0.4vh,0.4vw)] [border-image-slice:1] py-[min(2vh,2vw)] flex flex-col items-center gap-[min(0.7vh,0.7vw)]"
             style={{
               borderImageSource: isActive
-                ? 'linear-gradient(90deg,rgba(223,227,115,0) 5%,rgba(223,227,115,0.7) 45%,rgba(223,227,115,0.7) 60%,rgba(223,227,115,0) 82.24%)'
-                : 'linear-gradient(90deg,rgba(227,139,249,0) 5%,rgba(227,139,249,0.7) 45%,rgba(227,139,249,0.7) 60%,rgba(227,139,249,0) 82.24%)',
+                ? 'linear-gradient(90deg,rgba(223,227,115,0) calc(50% - min(27vh,27vw)),rgba(223,227,115,0.7) calc(50% - min(12vh,12vw)),rgba(223,227,115,0.7) calc(50% + min(12vh,12vw)),rgba(223,227,115,0) calc(50% + min(27vh,27vw)))'
+                : 'linear-gradient(90deg,rgba(227,139,249,0) calc(50% - min(27vh,27vw)),rgba(227,139,249,0.7) calc(50% - min(12vh,12vw)),rgba(227,139,249,0.7) calc(50% + min(12vh,12vw)),rgba(227,139,249,0) calc(50% + min(27vh,27vw)))',
             }}
           >
             {isStopClockEnabled ? (
@@ -187,7 +186,7 @@ function HandicapPill({
     <div className="flex w-full">
       <div
         className={clsx(
-          'bg-white/5 rounded-[6px] flex items-center h-[min(3.5vh,3.5vw)] w-fit overflow-hidden shrink-0 shadow-[inset_0px_2px_4px_0px_#FFFFFF40]',
+          'bg-white/5 rounded-[min(0.7vh,0.7vw)] flex items-center h-[min(3.5vh,3.5vw)] w-fit overflow-hidden shrink-0 shadow-[inset_0px_2px_4px_0px_#FFFFFF40]',
         )}
       >
         <div className="bg-white/5 h-full flex justify-center items-center">

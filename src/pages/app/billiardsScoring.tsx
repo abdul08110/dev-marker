@@ -3,6 +3,7 @@ import { SnookerMenuDrawer } from '@/components/modals/SnookerMenuDrawer';
 import { BilliardsPracticeSettingsDrawer } from '@/components/modals/billiardsPracticeSettingsDrawer';
 import { ScoreUpdateLoadingModal } from '@/components/modals/scoreUpdateLoading';
 import { SelectPlayerDrawer } from '@/components/modals/selectPlayerDrawer';
+import { BreakOffPlayerStep } from '@/components/modals/breakOffPlayerStep';
 import { TimerContinueModal } from '@/components/modals/timerContinueModal';
 import {
   BilliardsScoringButtons,
@@ -369,51 +370,23 @@ export function BilliardsScoring() {
             }}
           >
             <DialogContent className="max-w-sm w-[90vw] bg-[#1a1a1a] border-white/10 text-white">
-              <DialogTitle className="text-lg font-semibold text-white">
-                {breakOffStep === 'player' ? 'Who is breaking off?' : 'Select your ball'}
-              </DialogTitle>
-
               {breakOffStep === 'player' && (
-                <>
-                  <div className="grid grid-cols-2 gap-3 mt-2">
-                    {[
-                      { idx: 0, player: billiardsScoring.team1.players[0] },
-                      { idx: 1, player: billiardsScoring.team2.players[0] },
-                    ].map(({ idx, player }) => (
-                      <button
-                        key={idx}
-                        onClick={() => setSelectedBreakOffTeamIdx(idx)}
-                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${
-                          selectedBreakOffTeamIdx === idx ? 'border-white bg-white/10' : 'border-white/20 bg-white/5'
-                        }`}
-                      >
-                        <img
-                          src={player.profilePhoto ?? defaultImages[idx]}
-                          className="h-16 w-16 rounded-full object-cover"
-                        />
-                        <span className="text-sm font-medium text-center leading-tight">
-                          {player.name ?? `Player ${idx + 1}`}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex gap-2 mt-4">
-                    <Button variant="secondary" className="flex-1" onClick={handleBreakOffCancel}>
-                      Cancel
-                    </Button>
-                    <Button
-                      className="flex-1"
-                      disabled={selectedBreakOffTeamIdx === null}
-                      onClick={handleBreakOffPlayerNext}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </>
+                <BreakOffPlayerStep
+                  teams={[billiardsScoring.team1, billiardsScoring.team2].map((team, idx) => ({
+                    photos: [team.players[0].profilePhoto ?? defaultImages[idx]],
+                    label: team.players[0].name ?? `Player ${idx + 1}`,
+                  }))}
+                  selectedIdx={selectedBreakOffTeamIdx}
+                  onSelect={setSelectedBreakOffTeamIdx}
+                  onCancel={handleBreakOffCancel}
+                  onConfirm={handleBreakOffPlayerNext}
+                  confirmLabel="Next"
+                />
               )}
 
               {breakOffStep === 'ball' && (
                 <>
+                  <DialogTitle className="text-lg font-semibold text-white">Select your ball</DialogTitle>
                   <div className="grid grid-cols-2 gap-4 mt-2">
                     {(['white', 'yellow'] as const).map((ball) => (
                       <button

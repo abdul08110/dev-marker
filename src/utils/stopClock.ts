@@ -58,12 +58,10 @@ export const computeLiveStopClockMs = (
   currentTurnRemainingTimeInMs: computeTurnRemainingMs(startedTurnTime, stopClockTurnTimeInSeconds, turnNow),
 });
 
-export const formatClockMs = (ms: number) => {
-  const totalSeconds = Math.ceil(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-};
+// Returns the remaining whole seconds (same unit as `timeLeft`), so callers can feed it to the
+// shared `formatTime`/`<Timer>` display used for match time-left. Ceil so a partial final second
+// still shows as "1" until it fully elapses.
+export const formatClockMs = (ms: number) => Math.ceil(ms / 1000);
 
 // HH:MM:SS — frame time can exceed 60 minutes, unlike the shot clock.
 export const formatClockHms = (ms: number) => {

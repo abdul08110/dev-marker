@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
-import { convertHandicapToString, generatePlayerName } from '@/utils/functions';
+import { convertHandicapToString, generatePlayerName, formatTime } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { useFluidPx } from '@/hooks/useFluidPx';
@@ -561,7 +561,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               <div className="absolute inset-0 flex justify-center items-center">
                 {showStopClock ? (
                   <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate tabular-nums">
-                    {formatClockMs(stopClockTick.remainingFrameTimeInMs)}
+                    {formatTime(formatClockMs(stopClockTick.remainingFrameTimeInMs))}
                   </span>
                 ) : isTournament ? (
                   <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
