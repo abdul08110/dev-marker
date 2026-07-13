@@ -35,6 +35,8 @@ import { resetStateBilliards, setExpectedEndTimeDate, setTeamPlayer } from '@/st
 import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
 import mqtt from 'mqtt';
 
+const MQTT_BROKER_URL = import.meta.env.VITE_MQTT_URL;
+
 function playerSlot(playerNumber: number): { teamIndex: number; playerIndex: number } {
   return { teamIndex: playerNumber - 1, playerIndex: 0 };
 }
@@ -161,8 +163,7 @@ const useBilliardsScoring = () => {
 
   useEffect(() => {
     if (!clubs.activeClub || billiardsScoring.matchId !== null) return;
-    const brokerUrl = import.meta.env.VITE_MQTT_URL;
-    const client = mqtt.connect(brokerUrl, { keepalive: 60, reconnectPeriod: 2000 });
+    const client = mqtt.connect(MQTT_BROKER_URL, { keepalive: 60, reconnectPeriod: 2000 });
     const topic = `${clubs.activeClub.venueId}/marker/add-player`;
     client.on('connect', () => client.subscribe(topic));
     client.on('message', (_t, msg) => {
@@ -178,8 +179,7 @@ const useBilliardsScoring = () => {
 
   useEffect(() => {
     if (!clubs.activeClub || billiardsScoring.matchId === null) return;
-    const brokerUrl = import.meta.env.VITE_MQTT_URL;
-    const client = mqtt.connect(brokerUrl, { keepalive: 60, reconnectPeriod: 2000 });
+    const client = mqtt.connect(MQTT_BROKER_URL, { keepalive: 60, reconnectPeriod: 2000 });
     const topic = `${clubs.activeClub.venueId}/match-end`;
     client.on('connect', () => client.subscribe(topic));
     client.on('message', () => {
