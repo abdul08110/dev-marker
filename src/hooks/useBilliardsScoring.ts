@@ -31,7 +31,7 @@ import { matchResetTimerRequest } from '@/api/scoring/scoringFunctions';
 import { getActiveTurnPointTypes, getActiveTurnScore, getTeamSetScores } from '@/stores/selectors/billiardsSelector';
 import { BilliardsPracticeSettingsData } from '@/components/forms/app/billiardsPracticeSettings';
 import { BilliardsScoringButtonEnum } from '@/components/sections/scoring/billiardsScoringButton';
-import { setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
+import { resetStateBilliards, setExpectedEndTimeDate, setTeamPlayer } from '@/stores/slices/sportSlice';
 import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
 import mqtt from 'mqtt';
 
@@ -169,6 +169,23 @@ const useBilliardsScoring = () => {
       try {
         onMqttPlayerRef.current?.(JSON.parse(msg.toString()));
       } catch {}
+    });
+    client.on('error', () => client.end());
+    return () => {
+      client.end();
+    };
+  }, [clubs.activeClub?.venueId, billiardsScoring.matchId]);
+
+  useEffect(() => {
+    if (!clubs.activeClub || billiardsScoring.matchId === null) return;
+    const brokerUrl = import.meta.env.VITE_MQTT_URL;
+    const client = mqtt.connect(brokerUrl, { keepalive: 60, reconnectPeriod: 2000 });
+    const topic = `${clubs.activeClub.venueId}/match-end`;
+    client.on('connect', () => client.subscribe(topic));
+    client.on('message', () => {
+      toast({ title: 'Match Ended', description: 'Match ended.' });
+      dispatch(resetStateBilliards());
+      handleGoToHome();
     });
     client.on('error', () => client.end());
     return () => {
