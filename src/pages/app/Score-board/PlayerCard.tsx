@@ -129,7 +129,7 @@ export function PlayerCard({
         {/* Score + Break */}
         <div className="px-[min(2vh,2vw)] flex flex-col justify-evenly items-center flex-1 ">
           <p
-            className={`font-semibold text-[min(26vh,26vw)] text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
+            className={`font-semibold text-[min(26vh,26vw)] text-box-trim ${isActive ? 'text-sandy-yellow' : 'text-score-text'}`}
           >
             {score}
           </p>
@@ -143,7 +143,7 @@ export function PlayerCard({
             <p className="font-medium text-[min(3vh,3vw)] text-center text-box-trim leading-[130%] text-score-text px-[min(1.5vh,1.5vh)] py-[min(1.5vh,1.5vh)]">
               break
             </p>
-            <div className="bg-[#F5F85F] px-[min(1vh,1vh)] py-[min(1.2vh,1.2vh)] rounded-b-[min(1.2vh,1.2vw)]">
+            <div className="bg-sandy-yellow px-[min(1vh,1vh)] py-[min(1.2vh,1.2vh)] rounded-b-[min(1.2vh,1.2vw)]">
               <p className="font-medium text-[min(9vh,9vw)] text-center text-box-trim leading-[130%] text-[#11030F]">
                 {breakScore ?? 0}
               </p>
