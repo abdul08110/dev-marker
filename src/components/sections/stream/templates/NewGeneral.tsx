@@ -143,7 +143,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-box-trim',
+              isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
             {generatePlayerName(state.sideOnePlayerOne.name, isDoubles ? state.sideOnePlayerTwo?.name : undefined)}
           </p>
           {isSideOneActive ? (
@@ -173,7 +178,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-box-trim',
+              isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
             {generatePlayerName(state.sideOnePlayerOne.name, state.sideOnePlayerTwo?.name)}
           </p>
           {isSideOneActive ? (
@@ -193,7 +203,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-box-trim',
+              isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
             {generatePlayerName(state.sideOnePlayerOne.name)}
           </p>
           {isSideOneActive ? (
@@ -218,7 +233,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-box-trim',
+              isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
             {generatePlayerName(state.sideOnePlayerOne.name)}
           </p>
           {isSideOneActive ? (
@@ -245,7 +265,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-right text-box-trim',
+              isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
             {generatePlayerName(state.sideTwoPlayerOne.name, isDoubles ? state.sideTwoPlayerTwo?.name : undefined)}
           </p>
           {isSideTwoActive ? (
@@ -275,7 +300,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-right text-box-trim',
+              isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
             {generatePlayerName(state.sideTwoPlayerOne.name, state.sideTwoPlayerTwo?.name)}
           </p>
           {isSideTwoActive ? (
@@ -295,7 +325,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-right text-box-trim',
+              isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
             {generatePlayerName(state.sideTwoPlayerOne.name)}
           </p>
           {isSideTwoActive ? (
@@ -320,7 +355,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-right text-box-trim',
+              isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
             {generatePlayerName(state.sideTwoPlayerOne.name)}
           </p>
           {isSideTwoActive ? (

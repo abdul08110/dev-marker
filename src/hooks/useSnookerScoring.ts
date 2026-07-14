@@ -50,6 +50,7 @@ import useBackButtonHandler from './useOnBackButtonClick';
 import { NoOfPlayersDefault, SnookerPracticeSettingsData } from '@/components/forms/app/snookerPracticeSettings';
 import {
   addPlayer,
+  resetStateSnooker,
   setExpectedEndTimeDate,
   setTeamPlayer,
   toggleFrameClock,
@@ -58,6 +59,8 @@ import {
 import useCancelScoreboardEntry from '@/api/app/useCancelScoreboardEntry';
 import { useStopClockTick } from './useStopClockTick';
 import mqtt from 'mqtt';
+
+const MQTT_BROKER_URL = import.meta.env.VITE_MQTT_URL;
 
 function playerSlot(playerNumber: number, playerCount: number): { teamIndex: number; playerIndex: number } {
   if (playerCount === 2) return { teamIndex: playerNumber - 1, playerIndex: 0 };
@@ -254,14 +257,29 @@ const useSnookerScoring = () => {
 
   useEffect(() => {
     if (!clubs.activeClub || snookerScoring.matchId !== null) return;
-    const brokerUrl = import.meta.env.VITE_MQTT_URL;
-    const client = mqtt.connect(brokerUrl, { keepalive: 60, reconnectPeriod: 2000 });
+    const client = mqtt.connect(MQTT_BROKER_URL, { keepalive: 60, reconnectPeriod: 2000 });
     const topic = `${clubs.activeClub.venueId}/marker/add-player`;
     client.on('connect', () => client.subscribe(topic));
     client.on('message', (_t, msg) => {
       try {
         onMqttPlayerRef.current?.(JSON.parse(msg.toString()));
       } catch {}
+    });
+    client.on('error', () => client.end());
+    return () => {
+      client.end();
+    };
+  }, [clubs.activeClub?.venueId, snookerScoring.matchId]);
+
+  useEffect(() => {
+    if (!clubs.activeClub || snookerScoring.matchId === null) return;
+    const client = mqtt.connect(MQTT_BROKER_URL, { keepalive: 60, reconnectPeriod: 2000 });
+    const topic = `${clubs.activeClub.venueId}/match-end`;
+    client.on('connect', () => client.subscribe(topic));
+    client.on('message', () => {
+      toast({ title: 'Match Ended', description: 'Match ended.' });
+      dispatch(resetStateSnooker());
+      handleGoToHome();
     });
     client.on('error', () => client.end());
     return () => {

@@ -120,7 +120,10 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 </div>
               </div>
               <PlayerNameDisplay
-                className="font-medium text-[17px] leading-[130%] uppercase text-white"
+                className={cn(
+                  'font-medium text-[17px] leading-[130%] uppercase',
+                  isTeamOneActive ? 'text-sandy-yellow' : 'text-score-text',
+                )}
                 playerOneName={props.state.sideOnePlayerOne.name}
                 playerTwoName={props.state.sideOnePlayerTwo?.name}
               />
@@ -205,13 +208,16 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 </div>
               </div>
               <PlayerNameDisplay
-                className="font-medium text-[17px] leading-[130%] uppercase text-white text-left"
+                className={cn(
+                  'font-medium text-[17px] leading-[130%] uppercase text-left',
+                  isTeamTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+                )}
                 playerOneName={props.state.sideTwoPlayerOne.name}
                 playerTwoName={props.state.sideTwoPlayerTwo?.name}
               />
             </div>
             {props.state.tournamentId && (
-              <div className="px-3 py-3 flex justify-end gap-3 items-center bg-[#272126]">
+              <div className="px-3 py-3 flex justify-start gap-3 items-center bg-[#272126]">
                 <ImageWithFallback
                   className="aspect-square overflow-hidden border-white size-8 object-cover shrink-0 rounded-full"
                   fallback="/images/user-dummy-pic.jpg"
