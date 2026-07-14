@@ -3,7 +3,7 @@ import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
-import { formatTimeMatchTime, getPlayerDisplayName } from '@/utils/functions';
+import { formatTimeMatchTime } from '@/utils/functions';
 import { formatClockMs } from '@/utils/stopClock';
 import { cn } from '@/lib/utils';
 import { Timer } from './Score-board/Timer';
@@ -178,8 +178,9 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           isActive={isTeamOneActive}
           profilePhoto={state.teamOneLogo ?? state.sideOnePlayerOne.profilePhoto ?? null}
           profilePhoto2={isDoubles ? (state.sideOnePlayerTwo?.profilePhoto ?? null) : undefined}
-          playerOneName={getPlayerDisplayName(state.sideOnePlayerOne, isDoubles)}
-          playerTwoName={state.sideOnePlayerTwo ? getPlayerDisplayName(state.sideOnePlayerTwo, isDoubles) : undefined}
+          playerOneName={state.sideOnePlayerOne.name}
+          playerOneLastName={isDoubles ? undefined : state.sideOnePlayerOne.lastName}
+          playerTwoName={state.sideOnePlayerTwo?.name}
           isDoubles={isDoubles}
           isPlayerOneActive={state.activePlayerId === state.sideOnePlayerOne.id}
           handicap={teamOneHandicap}
@@ -266,8 +267,9 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           isActive={isTeamTwoActive}
           profilePhoto={state.teamTwoLogo ?? state.sideTwoPlayerOne.profilePhoto ?? null}
           profilePhoto2={isDoubles ? (state.sideTwoPlayerTwo?.profilePhoto ?? null) : undefined}
-          playerOneName={getPlayerDisplayName(state.sideTwoPlayerOne, isDoubles)}
-          playerTwoName={state.sideTwoPlayerTwo ? getPlayerDisplayName(state.sideTwoPlayerTwo, isDoubles) : undefined}
+          playerOneName={state.sideTwoPlayerOne.name}
+          playerOneLastName={isDoubles ? undefined : state.sideTwoPlayerOne.lastName}
+          playerTwoName={state.sideTwoPlayerTwo?.name}
           isDoubles={isDoubles}
           isPlayerOneActive={state.activePlayerId === state.sideTwoPlayerOne.id}
           handicap={teamTwoHandicap}
