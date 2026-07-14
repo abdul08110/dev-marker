@@ -3,7 +3,7 @@ import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { ScoreBoardState } from '@/hooks/useScoreboard';
 import { getActiveSet, getActiveTurn } from '@/stores/selectors/commonSport';
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
-import { formatTimeMatchTime } from '@/utils/functions';
+import { formatTimeMatchTime, getPlayerDisplayName } from '@/utils/functions';
 import { formatClockMs } from '@/utils/stopClock';
 import { cn } from '@/lib/utils';
 import { Timer } from './Score-board/Timer';
@@ -130,6 +130,8 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
       : noOfFrames
         ? `${noOfFrames}`
         : null;
+
+  console.log(state);
   return (
     <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(3vh,3vw)] bg-no-repeat flex flex-col overflow-hidden">
       {/* Header */}
@@ -160,9 +162,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         />
 
         <div className="flex items-center justify-end gap-[min(2.5vh,2.5vw)]">
-          {isTournament && state.isStopClockEnabled && (
-            <TableNumber venueNo={state.venueNo} size="small" />
-          )}
+          {isTournament && state.isStopClockEnabled && <TableNumber venueNo={state.venueNo} size="small" />}
 
           <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
             match time {formatTimeMatchTime(elapsed)}
@@ -178,8 +178,8 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           isActive={isTeamOneActive}
           profilePhoto={state.teamOneLogo ?? state.sideOnePlayerOne.profilePhoto ?? null}
           profilePhoto2={isDoubles ? (state.sideOnePlayerTwo?.profilePhoto ?? null) : undefined}
-          playerOneName={state.sideOnePlayerOne.name}
-          playerTwoName={state.sideOnePlayerTwo?.name}
+          playerOneName={getPlayerDisplayName(state.sideOnePlayerOne, isDoubles)}
+          playerTwoName={state.sideOnePlayerTwo ? getPlayerDisplayName(state.sideOnePlayerTwo, isDoubles) : undefined}
           isDoubles={isDoubles}
           isPlayerOneActive={state.activePlayerId === state.sideOnePlayerOne.id}
           handicap={teamOneHandicap}
@@ -234,10 +234,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 </div>
               ) : (
                 
-              )} */}  
-
-
-                       
+              )} */}
 
               <Timer
                 timeLeft={state.isStopClockEnabled ? formatClockMs(stopClockTick.remainingFrameTimeInMs) : timeLeft}
@@ -255,9 +252,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               )}
 
               {/* Table Number — in tournament, only when stop clock is off (Frame Time takes its place above) */}
-              {(!isTournament || !state.isStopClockEnabled) && (
-                <TableNumber venueNo={state.venueNo} size="large" />
-              )}
+              {(!isTournament || !state.isStopClockEnabled) && <TableNumber venueNo={state.venueNo} size="large" />}
 
               {/* Game format — icon and label are siblings so the panel's gap/justify-between spaces them */}
               <SportIcon sport={state.sport} />
@@ -271,8 +266,8 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           isActive={isTeamTwoActive}
           profilePhoto={state.teamTwoLogo ?? state.sideTwoPlayerOne.profilePhoto ?? null}
           profilePhoto2={isDoubles ? (state.sideTwoPlayerTwo?.profilePhoto ?? null) : undefined}
-          playerOneName={state.sideTwoPlayerOne.name}
-          playerTwoName={state.sideTwoPlayerTwo?.name}
+          playerOneName={getPlayerDisplayName(state.sideTwoPlayerOne, isDoubles)}
+          playerTwoName={state.sideTwoPlayerTwo ? getPlayerDisplayName(state.sideTwoPlayerTwo, isDoubles) : undefined}
           isDoubles={isDoubles}
           isPlayerOneActive={state.activePlayerId === state.sideTwoPlayerOne.id}
           handicap={teamTwoHandicap}
