@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
 import { Set, Turn } from '@/stores/types';
-import { convertHandicapToString, generatePlayerName, formatTime } from '@/utils/functions';
+import { convertHandicapToString, generatePlayerName, getPlayerDisplayName, formatTime } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { useFluidPx } from '@/hooks/useFluidPx';
@@ -39,6 +39,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const isDoubles = !!state.sideOnePlayerTwo;
   const hasTeamName = !!(state.teamOneName || state.teamTwoName);
   const isTournament = !!state.tournamentId;
+
+  // Doubles show first names joined with "&"; singles show first + last name.
+  const sideOneDisplayName = isDoubles
+    ? generatePlayerName(state.sideOnePlayerOne.name, state.sideOnePlayerTwo?.name)
+    : getPlayerDisplayName(state.sideOnePlayerOne, false);
+  const sideTwoDisplayName = isDoubles
+    ? generatePlayerName(state.sideTwoPlayerOne.name, state.sideTwoPlayerTwo?.name)
+    : getPlayerDisplayName(state.sideTwoPlayerOne, false);
   const isSideOneActive =
     !!state.activePlayerId &&
     (state.activePlayerId === state.sideOnePlayerOne.id || state.activePlayerId === state.sideOnePlayerTwo?.id);
@@ -149,7 +157,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
             )}
           >
-            {generatePlayerName(state.sideOnePlayerOne.name, isDoubles ? state.sideOnePlayerTwo?.name : undefined)}
+            {sideOneDisplayName}
           </p>
           {isSideOneActive ? (
             <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -184,7 +192,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
             )}
           >
-            {generatePlayerName(state.sideOnePlayerOne.name, state.sideOnePlayerTwo?.name)}
+            {sideOneDisplayName}
           </p>
           {isSideOneActive ? (
             <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -209,7 +217,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
             )}
           >
-            {generatePlayerName(state.sideOnePlayerOne.name)}
+            {sideOneDisplayName}
           </p>
           {isSideOneActive ? (
             <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -239,7 +247,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
             )}
           >
-            {generatePlayerName(state.sideOnePlayerOne.name)}
+            {sideOneDisplayName}
           </p>
           {isSideOneActive ? (
             <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -271,7 +279,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
             )}
           >
-            {generatePlayerName(state.sideTwoPlayerOne.name, isDoubles ? state.sideTwoPlayerTwo?.name : undefined)}
+            {sideTwoDisplayName}
           </p>
           {isSideTwoActive ? (
             <YellowHandicapPill handicap={state.teamTwoHandicap} />
@@ -306,7 +314,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
             )}
           >
-            {generatePlayerName(state.sideTwoPlayerOne.name, state.sideTwoPlayerTwo?.name)}
+            {sideTwoDisplayName}
           </p>
           {isSideTwoActive ? (
             <YellowHandicapPill handicap={state.teamTwoHandicap} />
@@ -331,7 +339,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
             )}
           >
-            {generatePlayerName(state.sideTwoPlayerOne.name)}
+            {sideTwoDisplayName}
           </p>
           {isSideTwoActive ? (
             <YellowHandicapPill handicap={state.teamTwoHandicap} />
@@ -361,7 +369,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
             )}
           >
-            {generatePlayerName(state.sideTwoPlayerOne.name)}
+            {sideTwoDisplayName}
           </p>
           {isSideTwoActive ? (
             <YellowHandicapPill handicap={state.teamTwoHandicap} />

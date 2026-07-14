@@ -124,6 +124,10 @@ export const generatePlayerName = (playerOneName: string, playerTwoName?: string
   }
 };
 
+// Doubles show first name only; singles show first name + last name.
+export const getPlayerDisplayName = (player: { name: string; lastName?: string }, isDoubles: boolean) =>
+  isDoubles ? player.name : [player.name, player.lastName].filter(Boolean).join(' ');
+
 export function truncateText(text: string, limit = 20) {
   if (text.length > limit) {
     return text.slice(0, limit) + '...';

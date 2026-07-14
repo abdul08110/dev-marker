@@ -23,6 +23,7 @@ interface PlayerCardProps {
   profilePhoto: string | null;
   profilePhoto2?: string | null;
   playerOneName: string;
+  playerOneLastName?: string;
   playerTwoName?: string;
   isDoubles: boolean;
   isPlayerOneActive: boolean;
@@ -45,6 +46,7 @@ export function PlayerCard({
   profilePhoto,
   profilePhoto2,
   playerOneName,
+  playerOneLastName,
   playerTwoName,
   isDoubles,
   isPlayerOneActive,
@@ -114,6 +116,12 @@ export function PlayerCard({
               ) : (
                 <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim text-wrap line-clamp-2 font-medium pt-[min(1.2vh,1.2vh)]">
                   {playerOneName.trim()}
+                  {playerOneLastName && (
+                    <>
+                      <br />
+                      {playerOneLastName.trim()}
+                    </>
+                  )}
                 </p>
               )}
             </div>

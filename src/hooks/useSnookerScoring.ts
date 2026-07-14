@@ -222,7 +222,7 @@ const useSnookerScoring = () => {
     const { teamIndex, playerIndex } = playerSlot(data.playerNumber, count);
     const player: Player = {
       id: data.playerId,
-      name: `${data.playerName}`.trim(),
+      name: `${data.playerName} ${data?.playerLastName || ''}`.trim(),
       profilePhoto: data.profilePhoto ?? null,
     };
     dispatch(setTeamPlayer({ teamIndex, playerIndex, player }));
