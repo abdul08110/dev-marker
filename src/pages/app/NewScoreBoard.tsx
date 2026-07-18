@@ -52,15 +52,36 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
   const isTeamTwoActive =
     state.sideTwoPlayerOne?.id === state.activePlayerId || state.sideTwoPlayerTwo?.id === state.activePlayerId;
 
-  const teamOneFrameScore = activeSet ? activeSet.teamOneScore : 0;
-  const teamTwoFrameScore = activeSet ? activeSet.teamTwoScore : 0;
-
   const noOfFrames = state.tournamentId === null ? state.sets.length : state.noOfFrames || 0;
 
   const isTeamReveresed =
     state.tournamentId && state.tournamentSubItem
       ? state.tournamentSubItem?.tournamentItem.tournamentTeamOneId !== state.tournamentTeamOneId
       : false;
+
+  // Game score (current-frame points). For a relay game — a tournament match whose
+  // format carries a relayGroupIndex — the on-screen score is the running total
+  // across the relay group, so we add the matching relay aggregate's cumulative
+  // score (flipped when the teams are reversed).
+  const relayGroupIndex = state.tournamentSubItem?.gameFormat?.relayGroupIndex;
+  const relayAggregate =
+    state.tournamentId && state.tournamentSubItem && relayGroupIndex != null
+      ? state.tournamentSubItem.tournamentItem.relayAggregates?.find((a) => a.relayGroupIndex === relayGroupIndex)
+      : undefined;
+
+  const relayTeamOneScore = relayAggregate
+    ? isTeamReveresed
+      ? relayAggregate.teamTwoCumulativeScore
+      : relayAggregate.teamOneCumulativeScore
+    : 0;
+  const relayTeamTwoScore = relayAggregate
+    ? isTeamReveresed
+      ? relayAggregate.teamOneCumulativeScore
+      : relayAggregate.teamTwoCumulativeScore
+    : 0;
+
+  const teamOneFrameScore = (activeSet ? activeSet.teamOneScore : 0) + relayTeamOneScore;
+  const teamTwoFrameScore = (activeSet ? activeSet.teamTwoScore : 0) + relayTeamTwoScore;
 
   const tournamentTeamOneScore = state.tournamentSubItem
     ? state.showCummulativeScoreInCombination
@@ -124,14 +145,29 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
   //     ? `GAME #${state.tournamentSubItem.gameFormat.matchNo} | ${state.tournamentSubItem.gameFormat.name} | ${state.tournamentSubItem.tournamentItem.tournamentPhase.name}`
   //     : state.format;
 
+  // Number of games/formats in the phase. Relay formats sharing the same
+  // relayGroupIndex are a single game slot, so collapse each relay group to one
+  // instead of counting every relay leg as its own format.
+  const tournamentFormats = state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats ?? [];
+  const formatsCount = (() => {
+    const seenRelayGroups = new Set<number>();
+    let count = 0;
+    for (const format of tournamentFormats) {
+      if (format.relayGroupIndex != null) {
+        if (seenRelayGroups.has(format.relayGroupIndex)) continue;
+        seenRelayGroups.add(format.relayGroupIndex);
+      }
+      count++;
+    }
+    return count;
+  })();
+
   const teamScoreCenter =
     state.tournamentId && state.tournamentSubItem && state.showFormatsAsGameNumber && state.eventFormat === 'TEAMS'
-      ? `${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}`
+      ? `${formatsCount}`
       : noOfFrames
         ? `${noOfFrames}`
         : null;
-
-  console.log(state);
   return (
     <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(3vh,3vw)] bg-no-repeat flex flex-col overflow-hidden">
       {/* Header */}
@@ -225,6 +261,11 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 teamOneScore={state.teamOneScore}
                 teamTwoScore={state.teamTwoScore}
                 teamScoreCenter={teamScoreCenter}
+              />          
+
+              <Timer
+                timeLeft={state.isStopClockEnabled ? formatClockMs(stopClockTick.remainingFrameTimeInMs) : timeLeft}
+                isTournament={isTournament && state.isStopClockEnabled ? false : isTournament}
               />
               {/* {state.isStopClockEnabled ? (
                 <div className="flex flex-col items-center gap-[min(1.5vh,1.5vw)] space-y-2">

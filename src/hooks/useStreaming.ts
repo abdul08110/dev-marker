@@ -72,11 +72,10 @@ export interface StreamingState {
   tournamentSubItem?: TournamentSubItem & {
     tournamentItem: TournamentItem & {
       tournamentPhase: TournamentPhase & {
-        tournamentFormats: [
-          {
-            id: string;
-          },
-        ];
+        tournamentFormats: {
+          id: string;
+          relayGroupIndex?: number;
+        }[];
       };
     };
   };

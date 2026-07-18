@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
-import { Set, Turn } from '@/stores/types';
-import { convertHandicapToString, generatePlayerName, getPlayerDisplayName, formatTime } from '@/utils/functions';
+import { type Set, Turn } from '@/stores/types';
+import { convertHandicapToString, generatePlayerName, formatTime } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { useFluidPx } from '@/hooks/useFluidPx';
@@ -85,9 +85,27 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   // Total frames for the format — for tournament matches this is the configured
   // noOfFrames (e.g. "race to 4"), not the number of frames played so far.
   const noOfFrames = state.tournamentId === null ? state.sets.length : state.noOfFrames || 0;
+
+  // Number of games/formats in the phase. Relay formats sharing the same
+  // relayGroupIndex are a single game slot, so collapse each relay group to one
+  // instead of counting every relay leg as its own format.
+  const tournamentFormats = state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats ?? [];
+  const formatsCount = (() => {
+    const seenRelayGroups = new Set<number>();
+    let count = 0;
+    for (const format of tournamentFormats) {
+      if (format.relayGroupIndex != null) {
+        if (seenRelayGroups.has(format.relayGroupIndex)) continue;
+        seenRelayGroups.add(format.relayGroupIndex);
+      }
+      count++;
+    }
+    return count;
+  })();
+
   const teamScoreCenter =
     state.tournamentId && state.tournamentSubItem && state.showFormatsAsGameNumber && state.eventFormat === 'TEAMS'
-      ? `${state.tournamentSubItem.tournamentItem.tournamentPhase.tournamentFormats.length}`
+      ? `${formatsCount}`
       : noOfFrames
         ? `${noOfFrames}`
         : null;
@@ -121,6 +139,30 @@ const NewGeneral = (props: GeneralTemplateProps) => {
 
   const displayTeamOneScore = hasTournamentCombo ? tournamentTeamOneScore : state.teamOneScore;
   const displayTeamTwoScore = hasTournamentCombo ? tournamentTeamTwoScore : state.teamTwoScore;
+
+  // Game score (current-frame points shown in the outer cells). For a relay game
+  // — a tournament match whose format carries a relayGroupIndex — the on-screen
+  // score is the running total across the relay group, so we add the matching
+  // relay aggregate's cumulative score (flipped when the teams are reversed).
+  const relayGroupIndex = state.tournamentSubItem?.gameFormat?.relayGroupIndex;
+  const relayAggregate =
+    state.tournamentId && state.tournamentSubItem && relayGroupIndex != null
+      ? state.tournamentSubItem.tournamentItem.relayAggregates?.find((a) => a.relayGroupIndex === relayGroupIndex)
+      : undefined;
+
+  const relayTeamOneScore = relayAggregate
+    ? isTeamReveresed
+      ? relayAggregate.teamTwoCumulativeScore
+      : relayAggregate.teamOneCumulativeScore
+    : 0;
+  const relayTeamTwoScore = relayAggregate
+    ? isTeamReveresed
+      ? relayAggregate.teamOneCumulativeScore
+      : relayAggregate.teamTwoCumulativeScore
+    : 0;
+
+  const gameTeamOneScore = (activeSet?.teamOneScore ?? 0) + relayTeamOneScore;
+  const gameTeamTwoScore = (activeSet?.teamTwoScore ?? 0) + relayTeamTwoScore;
 
   // Stable per-slot fallback avatars — one each for sideOnePlayerOne/Two, sideTwoPlayerOne/Two
   const [defaultImages] = useState(() => Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()));
@@ -640,7 +682,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               }}
             >
               <span className="font-semibold text-[min(4.7vh,4.7vw)] leading-[130%] uppercase text-score-text text-box-trim">
-                {activeSet?.teamOneScore ?? 0}
+                {gameTeamOneScore}
               </span>
             </div>
 
@@ -678,7 +720,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
               }}
             >
               <span className="font-semibold text-[min(4.7vh,4.7vw)] leading-[130%] uppercase text-score-text text-box-trim">
-                {activeSet?.teamTwoScore ?? 0}
+                {gameTeamTwoScore}
               </span>
             </div>
           </div>

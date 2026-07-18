@@ -185,6 +185,7 @@ export interface TournamentFormat {
   stopClockFrameTimeInSeconds?: number;
   stopClockTurnTimeInSeconds?: number;
   stopClockVoiceEnabled?: boolean;
+  relayGroupIndex?: number;
 }
 
 export interface TournamentPhase {
@@ -213,6 +214,16 @@ export interface TournamentItem {
   teamTwoCumulativeFinalFrameScore?: number;
   teamOneLastestGameHandicap?: number;
   teamTwoLastestGameHandicap?: number;
+  relayAggregates: {
+    relayGroupIndex: number;
+    teamOneFramesWon: number;
+    teamTwoFramesWon: number;
+    teamOneCumulativeScore: number;
+    teamTwoCumulativeScore: number;
+    winCondition?: string;
+    status?: string;
+    teamWinningIndex?: number;
+  }[]
 }
 
 export interface TournamentSubItem {
