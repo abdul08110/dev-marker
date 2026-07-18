@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StreamingState } from '@/hooks/useStreaming';
 import { type Set, Turn } from '@/stores/types';
-import { convertHandicapToString, generatePlayerName, formatTime } from '@/utils/functions';
+import { convertHandicapToString, generatePlayerName, formatTime, getPlayerDisplayName } from '@/utils/functions';
 import { ProfileCard } from '@/components/ProfileCard';
 import ImageWithFallback from '@/components/ui/image-with-fallback';
 import { useFluidPx } from '@/hooks/useFluidPx';
