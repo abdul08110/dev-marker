@@ -198,9 +198,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         />
 
         <div className="flex items-center justify-end gap-[min(2.5vh,2.5vw)]">
-          {isTournament && state.isStopClockEnabled && (
-            <TableNumber venueNo={state.venueNo} size="small" />
-          )}
+          {isTournament && state.isStopClockEnabled && <TableNumber venueNo={state.venueNo} size="small" />}
 
           <p className="text-score-text font-semibold text-[min(4vh,4vw)] drop-shadow-[0px_4px_16px_0px_#FFFFFF40] leading-[130%] uppercase w-fit justify-self-end">
             match time {formatTimeMatchTime(elapsed)}
@@ -217,6 +215,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           profilePhoto={state.teamOneLogo ?? state.sideOnePlayerOne.profilePhoto ?? null}
           profilePhoto2={isDoubles ? (state.sideOnePlayerTwo?.profilePhoto ?? null) : undefined}
           playerOneName={state.sideOnePlayerOne.name}
+          playerOneLastName={isDoubles ? undefined : state.sideOnePlayerOne.lastName}
           playerTwoName={state.sideOnePlayerTwo?.name}
           isDoubles={isDoubles}
           isPlayerOneActive={state.activePlayerId === state.sideOnePlayerOne.id}
@@ -268,6 +267,21 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 timeLeft={state.isStopClockEnabled ? formatClockMs(stopClockTick.remainingFrameTimeInMs) : timeLeft}
                 isTournament={isTournament && state.isStopClockEnabled ? false : isTournament}
               />
+              {/* {state.isStopClockEnabled ? (
+                <div className="flex flex-col items-center gap-[min(1.5vh,1.5vw)] space-y-2">
+                  <p className="text-score-text text-box-trim font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
+                    {formatClockMs(stopClockTick.remainingFrameTimeInMs)}
+                  </p>
+                  <p className="text-text-light text-box-trim font-medium text-[min(4vh,4vw)] leading-none">Remaining</p>
+                </div>
+              ) : (
+                
+              )} */}
+
+              <Timer
+                timeLeft={state.isStopClockEnabled ? formatClockMs(stopClockTick.remainingFrameTimeInMs) : timeLeft}
+                isTournament={isTournament && state.isStopClockEnabled ? false : isTournament}
+              />
 
               {isTournament && !state.isStopClockEnabled && (
                 <div className="flex justify-center items-center">
@@ -280,9 +294,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               )}
 
               {/* Table Number — in tournament, only when stop clock is off (Frame Time takes its place above) */}
-              {(!isTournament || !state.isStopClockEnabled) && (
-                <TableNumber venueNo={state.venueNo} size="large" />
-              )}
+              {(!isTournament || !state.isStopClockEnabled) && <TableNumber venueNo={state.venueNo} size="large" />}
 
               {/* Game format — icon and label are siblings so the panel's gap/justify-between spaces them */}
               <SportIcon sport={state.sport} />
@@ -297,6 +309,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
           profilePhoto={state.teamTwoLogo ?? state.sideTwoPlayerOne.profilePhoto ?? null}
           profilePhoto2={isDoubles ? (state.sideTwoPlayerTwo?.profilePhoto ?? null) : undefined}
           playerOneName={state.sideTwoPlayerOne.name}
+          playerOneLastName={isDoubles ? undefined : state.sideTwoPlayerOne.lastName}
           playerTwoName={state.sideTwoPlayerTwo?.name}
           isDoubles={isDoubles}
           isPlayerOneActive={state.activePlayerId === state.sideTwoPlayerOne.id}

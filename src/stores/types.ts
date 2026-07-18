@@ -9,6 +9,7 @@ export interface PlayerDetails extends Player {
 
 export interface Player {
   name: string;
+  lastName?: string;
   profilePhoto?: string | null;
   id: string | null;
   phoneNumber?: string;

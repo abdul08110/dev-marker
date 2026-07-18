@@ -39,6 +39,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const isDoubles = !!state.sideOnePlayerTwo;
   const hasTeamName = !!(state.teamOneName || state.teamTwoName);
   const isTournament = !!state.tournamentId;
+
+  // Doubles show first names joined with "&"; singles show first + last name.
+  const sideOneDisplayName = isDoubles
+    ? generatePlayerName(state.sideOnePlayerOne.name, state.sideOnePlayerTwo?.name)
+    : getPlayerDisplayName(state.sideOnePlayerOne, false);
+  const sideTwoDisplayName = isDoubles
+    ? generatePlayerName(state.sideTwoPlayerOne.name, state.sideTwoPlayerTwo?.name)
+    : getPlayerDisplayName(state.sideTwoPlayerOne, false);
   const isSideOneActive =
     !!state.activePlayerId &&
     (state.activePlayerId === state.sideOnePlayerOne.id || state.activePlayerId === state.sideOnePlayerTwo?.id);
@@ -185,8 +193,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
-            {generatePlayerName(state.sideOnePlayerOne.name, isDoubles ? state.sideOnePlayerTwo?.name : undefined)}
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-box-trim',
+              isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
+            {sideOneDisplayName}
           </p>
           {isSideOneActive ? (
             <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -215,8 +228,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
-            {generatePlayerName(state.sideOnePlayerOne.name, state.sideOnePlayerTwo?.name)}
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-box-trim',
+              isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
+            {sideOneDisplayName}
           </p>
           {isSideOneActive ? (
             <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -235,8 +253,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
-            {generatePlayerName(state.sideOnePlayerOne.name)}
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-box-trim',
+              isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
+            {sideOneDisplayName}
           </p>
           {isSideOneActive ? (
             <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -260,8 +283,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-box-trim">
-            {generatePlayerName(state.sideOnePlayerOne.name)}
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-box-trim',
+              isSideOneActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
+            {sideOneDisplayName}
           </p>
           {isSideOneActive ? (
             <YellowHandicapPill handicap={state.teamOneHandicap} />
@@ -287,8 +315,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
-            {generatePlayerName(state.sideTwoPlayerOne.name, isDoubles ? state.sideTwoPlayerTwo?.name : undefined)}
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-right text-box-trim',
+              isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
+            {sideTwoDisplayName}
           </p>
           {isSideTwoActive ? (
             <YellowHandicapPill handicap={state.teamTwoHandicap} />
@@ -317,8 +350,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
-            {generatePlayerName(state.sideTwoPlayerOne.name, state.sideTwoPlayerTwo?.name)}
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-right text-box-trim',
+              isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
+            {sideTwoDisplayName}
           </p>
           {isSideTwoActive ? (
             <YellowHandicapPill handicap={state.teamTwoHandicap} />
@@ -337,8 +375,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
-            {generatePlayerName(state.sideTwoPlayerOne.name)}
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-right text-box-trim',
+              isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
+            {sideTwoDisplayName}
           </p>
           {isSideTwoActive ? (
             <YellowHandicapPill handicap={state.teamTwoHandicap} />
@@ -362,8 +405,13 @@ const NewGeneral = (props: GeneralTemplateProps) => {
       </div>
       <div className={cn('flex flex-col gap-y-[min(0.9vh,0.9vw)] min-w-0', state.teamOneHandicap ? 'w-full' : 'w-fit')}>
         <div className="flex flex-row-reverse justify-between items-center gap-[min(1.5vh,1.5vw)] min-w-0">
-          <p className="uppercase font-bold text-[min(3vh,3vw)] text-score-text truncate min-w-0 flex-1 text-right text-box-trim">
-            {generatePlayerName(state.sideTwoPlayerOne.name)}
+          <p
+            className={cn(
+              'uppercase font-bold text-[min(3vh,3vw)] truncate min-w-0 flex-1 text-right text-box-trim',
+              isSideTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+            )}
+          >
+            {sideTwoDisplayName}
           </p>
           {isSideTwoActive ? (
             <YellowHandicapPill handicap={state.teamTwoHandicap} />

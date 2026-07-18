@@ -64,7 +64,9 @@ export function PlayersList({ clubId, onPlayerSelect, disabledPlayerList }: Play
                           className="h-8 w-8 rounded-full object-cover"
                         />
                         <div className="flex flex-col justify-between">
-                          <span className="text-white">{player.name}</span>
+                          <span className="text-white">
+                            {player.name} {player?.lastName || ''}
+                          </span>
                           <small className="text-white/70">{player.phoneNumber}</small>
                         </div>
                       </div>

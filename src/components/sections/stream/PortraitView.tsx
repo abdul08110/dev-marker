@@ -7,6 +7,7 @@ import { SnookerPointTypeDisplay, hasVisibleSnookerPoints } from '../scoring/sno
 import { getSnookerPointTypesByTurns } from '@/stores/selectors/snookerSelector';
 import { cn, getRandomPlaceholderProfileImage } from '@/lib/utils';
 import ChevronIcon from '@/icons/chevron-icon';
+import { getPlayerDisplayName } from '@/utils/functions';
 
 interface PortraitStreamDataProps {
   state: StreamingState | null;
@@ -120,9 +121,16 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 </div>
               </div>
               <PlayerNameDisplay
-                className="font-medium text-[17px] leading-[130%] uppercase text-white"
-                playerOneName={props.state.sideOnePlayerOne.name}
-                playerTwoName={props.state.sideOnePlayerTwo?.name}
+                className={cn(
+                  'font-medium text-[17px] leading-[130%] uppercase',
+                  isTeamOneActive ? 'text-sandy-yellow' : 'text-score-text',
+                )}
+                playerOneName={getPlayerDisplayName(props.state.sideOnePlayerOne, isTeamOneDouble)}
+                playerTwoName={
+                  props.state.sideOnePlayerTwo
+                    ? getPlayerDisplayName(props.state.sideOnePlayerTwo, isTeamOneDouble)
+                    : undefined
+                }
               />
             </div>
             {props.state.tournamentId && (
@@ -140,7 +148,12 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 />
                 <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
                   {props.state.teamOneName ||
-                    joinPlayerNames(props.state.sideOnePlayerOne.name, props.state.sideOnePlayerTwo?.name)}
+                    joinPlayerNames(
+                      getPlayerDisplayName(props.state.sideOnePlayerOne, isTeamOneDouble),
+                      props.state.sideOnePlayerTwo
+                        ? getPlayerDisplayName(props.state.sideOnePlayerTwo, isTeamOneDouble)
+                        : undefined,
+                    )}
                 </p>
               </div>
             )}
@@ -205,13 +218,20 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 </div>
               </div>
               <PlayerNameDisplay
-                className="font-medium text-[17px] leading-[130%] uppercase text-white text-left"
-                playerOneName={props.state.sideTwoPlayerOne.name}
-                playerTwoName={props.state.sideTwoPlayerTwo?.name}
+                className={cn(
+                  'font-medium text-[17px] leading-[130%] uppercase text-left',
+                  isTeamTwoActive ? 'text-sandy-yellow' : 'text-score-text',
+                )}
+                playerOneName={getPlayerDisplayName(props.state.sideTwoPlayerOne, isTeamTwoDouble)}
+                playerTwoName={
+                  props.state.sideTwoPlayerTwo
+                    ? getPlayerDisplayName(props.state.sideTwoPlayerTwo, isTeamTwoDouble)
+                    : undefined
+                }
               />
             </div>
             {props.state.tournamentId && (
-              <div className="px-3 py-3 flex justify-end gap-3 items-center bg-[#272126]">
+              <div className="px-3 py-3 flex justify-start gap-3 items-center bg-[#272126]">
                 <ImageWithFallback
                   className="aspect-square overflow-hidden border-white size-8 object-cover shrink-0 rounded-full"
                   fallback="/images/user-dummy-pic.jpg"
@@ -225,7 +245,12 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 />
                 <p className="uppercase text-sm leading-[130%] text-white text-nowrap truncate">
                   {props.state.teamTwoName ||
-                    joinPlayerNames(props.state.sideTwoPlayerOne.name, props.state.sideTwoPlayerTwo?.name)}
+                    joinPlayerNames(
+                      getPlayerDisplayName(props.state.sideTwoPlayerOne, isTeamTwoDouble),
+                      props.state.sideTwoPlayerTwo
+                        ? getPlayerDisplayName(props.state.sideTwoPlayerTwo, isTeamTwoDouble)
+                        : undefined,
+                    )}
                 </p>
               </div>
             )}

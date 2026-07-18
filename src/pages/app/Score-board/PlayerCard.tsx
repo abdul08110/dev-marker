@@ -23,6 +23,7 @@ interface PlayerCardProps {
   profilePhoto: string | null;
   profilePhoto2?: string | null;
   playerOneName: string;
+  playerOneLastName?: string;
   playerTwoName?: string;
   isDoubles: boolean;
   isPlayerOneActive: boolean;
@@ -45,6 +46,7 @@ export function PlayerCard({
   profilePhoto,
   profilePhoto2,
   playerOneName,
+  playerOneLastName,
   playerTwoName,
   isDoubles,
   isPlayerOneActive,
@@ -114,6 +116,12 @@ export function PlayerCard({
               ) : (
                 <p className="text-[min(5.3vh,5.3vw)] leading-none text-score-text text-box-trim text-wrap line-clamp-2 font-medium pt-[min(1.2vh,1.2vh)]">
                   {playerOneName.trim()}
+                  {playerOneLastName && (
+                    <>
+                      <br />
+                      {playerOneLastName.trim()}
+                    </>
+                  )}
                 </p>
               )}
             </div>
@@ -129,7 +137,7 @@ export function PlayerCard({
         {/* Score + Break */}
         <div className="px-[min(2vh,2vw)] flex flex-col justify-evenly items-center flex-1 ">
           <p
-            className={`font-semibold text-[min(26vh,26vw)] text-box-trim ${isActive ? 'text-[#F5F85F]' : 'text-score-text'}`}
+            className={`font-semibold text-[min(26vh,26vw)] text-box-trim ${isActive ? 'text-sandy-yellow' : 'text-score-text'}`}
           >
             {score}
           </p>
@@ -143,7 +151,7 @@ export function PlayerCard({
             <p className="font-medium text-[min(3vh,3vw)] text-center text-box-trim leading-[130%] text-score-text px-[min(1.5vh,1.5vh)] py-[min(1.5vh,1.5vh)]">
               break
             </p>
-            <div className="bg-[#F5F85F] px-[min(1vh,1vh)] py-[min(1.2vh,1.2vh)] rounded-b-[min(1.2vh,1.2vw)]">
+            <div className="bg-sandy-yellow px-[min(1vh,1vh)] py-[min(1.2vh,1.2vh)] rounded-b-[min(1.2vh,1.2vw)]">
               <p className="font-medium text-[min(9vh,9vw)] text-center text-box-trim leading-[130%] text-[#11030F]">
                 {breakScore ?? 0}
               </p>
