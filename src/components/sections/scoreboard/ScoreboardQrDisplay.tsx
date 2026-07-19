@@ -88,7 +88,7 @@ function PlayerRowSingles({
         />
       </div>
       <p className="font-medium text-[min(3vh,3vw)] leading-[130%] uppercase text-score-text z-10 truncate">
-        {player ? `${player.playerName} ${player.playerLastName}` : `Player ${playerNumber}`}
+        {player ? `${player.playerName}${player.playerLastName ? ` ${player.playerLastName}` : ''}` : `Player ${playerNumber}`}
       </p>
     </div>
   );
@@ -114,7 +114,7 @@ function PlayerRowDoubles({
         />
       </div>
       <p className="font-medium text-[min(2.2vh,2.2vw)] leading-[130%] uppercase text-score-text z-10 line-clamp-2">
-        {player ? `${player.playerName} ${player.playerLastName}` : `Player ${playerNumber}`}
+        {player ? `${player.playerName}${player.playerLastName ? ` ${player.playerLastName}` : ''}` : `Player ${playerNumber}`}
       </p>
     </div>
   );
@@ -136,7 +136,7 @@ export function ScoreboardQrDisplay({ qrFlowState, activeClub }: Props) {
   const teamBQrValue = !players[3] ? `${venueId}_3` : `${venueId}_4`;
 
   return (
-    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen px-[min(4vh,4vw)] py-[min(2.6vh,2.6vw)] bg-no-repeat flex flex-col justify-between overflow-hidden gap-[min(4vh,4vw)]">
+    <main className="bg-[url(/score-card-bg-pattern.png)] bg-cover bg-center h-screen py-[min(2.6vh,2.6vw)] bg-no-repeat flex flex-col justify-between overflow-hidden gap-[min(4vh,4vw)]">
       {/* Header */}
       <div className="grid grid-cols-3 items-center border-b-2 py-[min(2vh,2vw)] [border-image-source:linear-gradient(90deg,rgba(227,139,249,0)_13.13%,rgba(227,139,249,0.8)_49.22%,rgba(227,139,249,0)_87.72%)] [border-image-slice:1]">
         <div className="flex items-center gap-[min(2vh,2vw)] py-[min(1.2vh,1.2vw)] w-fit justify-self-start">
