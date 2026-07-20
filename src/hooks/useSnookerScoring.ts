@@ -430,6 +430,7 @@ const useSnookerScoring = () => {
           expectedEndTimeDate,
         }),
       );
+      await dispatch(handleBackendUpdateOfData({}));
     } else {
       toast({
         title: 'Error',
@@ -503,6 +504,7 @@ const useSnookerScoring = () => {
                   ],
                 }),
               );
+              await dispatch(handleBackendUpdateOfData({}));
               setShowLoadingModal(false);
               return;
             }
@@ -522,6 +524,7 @@ const useSnookerScoring = () => {
                 ],
               }),
             );
+            await dispatch(handleBackendUpdateOfData({}));
           } else {
             setShowPlayerOrderModal(true);
           }
@@ -566,6 +569,7 @@ const useSnookerScoring = () => {
       await handleMatchCreation(playerOrder);
     } else {
       await dispatch(handleBreakOff({ scoreOrder: playerOrder }));
+      await dispatch(handleBackendUpdateOfData({}));
     }
 
     setShowLoadingModal(false);

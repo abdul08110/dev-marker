@@ -97,9 +97,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
     let teamOne = item?.teamOneScore ?? 0;
     let teamTwo = item?.teamTwoScore ?? 0;
     for (const aggregate of item?.relayAggregates ?? []) {
-      const totalLegs = tournamentFormats.filter(
-        (f) => f.relayGroupIndex === aggregate.relayGroupIndex,
-      ).length;
+      const totalLegs = tournamentFormats.filter((f) => f.relayGroupIndex === aggregate.relayGroupIndex).length;
       const legsPlayed = aggregate.teamOneFramesWon + aggregate.teamTwoFramesWon;
       // Remove the per-leg wins the backend already tallied into the team score.
       teamOne -= aggregate.teamOneFramesWon;
@@ -290,22 +288,7 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
                 teamOneScore={state.teamOneScore}
                 teamTwoScore={state.teamTwoScore}
                 teamScoreCenter={teamScoreCenter}
-              />          
-
-              <Timer
-                timeLeft={state.isStopClockEnabled ? formatClockMs(stopClockTick.remainingFrameTimeInMs) : timeLeft}
-                isTournament={isTournament && state.isStopClockEnabled ? false : isTournament}
               />
-              {/* {state.isStopClockEnabled ? (
-                <div className="flex flex-col items-center gap-[min(1.5vh,1.5vw)] space-y-2">
-                  <p className="text-score-text text-box-trim font-semibold text-[min(10vh,10vw)] leading-none tabular-nums drop-shadow-[0px_4px_16px_0px_#FFFFFF40]">
-                    {formatClockMs(stopClockTick.remainingFrameTimeInMs)}
-                  </p>
-                  <p className="text-text-light text-box-trim font-medium text-[min(4vh,4vw)] leading-none">Remaining</p>
-                </div>
-              ) : (
-                
-              )} */}
 
               <Timer
                 timeLeft={state.isStopClockEnabled ? formatClockMs(stopClockTick.remainingFrameTimeInMs) : timeLeft}

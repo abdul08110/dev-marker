@@ -261,6 +261,7 @@ const useBilliardsScoring = () => {
               ],
             }),
           );
+          await dispatch(handleBackendUpdateOfData({}));
         }
         setShowLoadingModal(false);
         break;
@@ -431,16 +432,15 @@ const useBilliardsScoring = () => {
   //   }
   // };
 
-  const handleBilliardsSelectColorBall = async (type: 'white' | 'yellow') => {
+  const handleBilliardsSelectColorBall = async (type: 'white' | 'yellow', breakingTeamIndex: number) => {
     setShowBallColorModal(false);
     setShowLoadingModal(true);
 
     const playerOne = billiardsScoring.team1.players[0].id!;
     const playerTwo = billiardsScoring.team2.players[0].id!;
 
-    const activeTeam = getActiveTeam(billiardsScoring.team1, billiardsScoring.team2);
     let isTeamReveresed = false;
-    if ((activeTeam === 1 && type === 'yellow') || (activeTeam === 0 && type === 'white')) {
+    if ((breakingTeamIndex === 1 && type === 'yellow') || (breakingTeamIndex === 0 && type === 'white')) {
       await dispatch(handleReversePlayersState({ reverseOnApi: false }));
       isTeamReveresed = true;
     }
@@ -503,6 +503,7 @@ const useBilliardsScoring = () => {
           expectedEndTimeDate,
         }),
       );
+      await dispatch(handleBackendUpdateOfData({}));
     } else {
       toast({
         title: 'Error',
