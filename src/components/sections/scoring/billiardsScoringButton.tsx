@@ -27,6 +27,13 @@ export function BilliardsScoringButtons(props: BilliardsScoringProps) {
 
   return (
     <div className="w-full container flex flex-col gap-2 mt-auto">
+      <button
+        disabled={!props.enableSwitchPlayer}
+        className={clsx('h-24 bg-white relative', commonClasses)}
+        onClick={props.handleSwitchPlayer}
+      >
+        Switch Player
+      </button>
       <div className="grid grid-cols-8 grid-rows-2 gap-2">
         {props.showBreakOff ? (
           <button
@@ -80,13 +87,6 @@ export function BilliardsScoringButtons(props: BilliardsScoringProps) {
           onClick={() => props.onButtonClick(BilliardsScoringButtonEnum.WHITE_POT)}
         >
           White Pot
-        </button>
-        <button
-          disabled={!props.enableSwitchPlayer}
-          className={clsx('col-span-8 h-14 row-span-1 bg-white relative', commonClasses)}
-          onClick={props.handleSwitchPlayer}
-        >
-          Switch Player
         </button>
       </div>
     </div>

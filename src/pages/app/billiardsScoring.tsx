@@ -196,7 +196,7 @@ export function BilliardsScoring() {
   const handleBreakOffBallConfirm = async () => {
     if (selectedBall === null || selectedBreakOffTeamIdx === null) return;
     await handleBreakOffTeamSelect(selectedBreakOffTeamIdx);
-    await handleBilliardsSelectColorBall(selectedBall);
+    await handleBilliardsSelectColorBall(selectedBall, selectedBreakOffTeamIdx);
     setBreakOffStep(null);
     setSelectedBreakOffTeamIdx(null);
     setSelectedBall(null);

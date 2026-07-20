@@ -849,9 +849,7 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
       const activeSet = getActiveSet(state.sport.scoreHistory);
       const activeTurn = getActiveTurn(activeSet ? activeSet : null);
 
-      await dispatch(changeBackendUpdatedState({ value: true }));
-
-      await matchUpdateDataRequest({
+      const result = await matchUpdateDataRequest({
         matchId: state.sport.matchId!,
         activePlayerId: activePlayer ? activePlayer.id : null,
         sets: state.sport.scoreHistory,
@@ -863,6 +861,12 @@ export const handleBackendUpdateOfData = createAsyncThunk<void, {}, { state: Roo
         isTeamTwoHandicapApplied: state.sport.isTeamTwoHandicapApplied,
         currentVisitScore: activeTurn ? activeTurn.score : 0,
       });
+
+      // Only clear the dirty flag on success — a failed request must stay dirty so
+      // the next poll tick retries it, instead of the write being silently lost.
+      if (result) {
+        await dispatch(changeBackendUpdatedState({ value: true }));
+      }
     }
   },
 );
