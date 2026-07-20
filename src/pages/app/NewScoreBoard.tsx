@@ -83,14 +83,44 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
   const teamOneFrameScore = (activeSet ? activeSet.teamOneScore : 0) + relayTeamOneScore;
   const teamTwoFrameScore = (activeSet ? activeSet.teamTwoScore : 0) + relayTeamTwoScore;
 
+  const tournamentFormats = state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats ?? [];
+
+  // Relay-aware tournament game score (games won by each team in the combination).
+  // The backend increments teamOneScore/teamTwoScore for EVERY relay leg won, but a
+  // relay group should count as a single game slot, awarded to whichever team wins
+  // the cumulative aggregate — and only once every leg in the group has been played.
+  // So we strip each group's per-leg contributions and re-add one point per fully
+  // played group to the cumulative winner (a tie awards nothing). Scores here are in
+  // the tournamentItem's own team1/team2 terms; the reversal is applied afterwards.
+  const relayAdjustedItemScores = (() => {
+    const item = state.tournamentSubItem?.tournamentItem;
+    let teamOne = item?.teamOneScore ?? 0;
+    let teamTwo = item?.teamTwoScore ?? 0;
+    for (const aggregate of item?.relayAggregates ?? []) {
+      const totalLegs = tournamentFormats.filter(
+        (f) => f.relayGroupIndex === aggregate.relayGroupIndex,
+      ).length;
+      const legsPlayed = aggregate.teamOneFramesWon + aggregate.teamTwoFramesWon;
+      // Remove the per-leg wins the backend already tallied into the team score.
+      teamOne -= aggregate.teamOneFramesWon;
+      teamTwo -= aggregate.teamTwoFramesWon;
+      // Award the group's single point only once all legs are played; ties award none.
+      if (totalLegs > 0 && legsPlayed === totalLegs) {
+        if (aggregate.teamOneCumulativeScore > aggregate.teamTwoCumulativeScore) teamOne += 1;
+        else if (aggregate.teamTwoCumulativeScore > aggregate.teamOneCumulativeScore) teamTwo += 1;
+      }
+    }
+    return { teamOne, teamTwo };
+  })();
+
   const tournamentTeamOneScore = state.tournamentSubItem
     ? state.showCummulativeScoreInCombination
       ? isTeamReveresed
         ? (state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0)
         : (state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0)
       : isTeamReveresed
-        ? state.tournamentSubItem.tournamentItem.teamTwoScore
-        : state.tournamentSubItem.tournamentItem.teamOneScore
+        ? relayAdjustedItemScores.teamTwo
+        : relayAdjustedItemScores.teamOne
     : null;
 
   const tournamentTeamTwoScore = state.tournamentSubItem
@@ -99,8 +129,8 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
         ? (state.tournamentSubItem.tournamentItem.teamOneCumulativeFinalFrameScore ?? 0)
         : (state.tournamentSubItem.tournamentItem.teamTwoCumulativeFinalFrameScore ?? 0)
       : isTeamReveresed
-        ? state.tournamentSubItem.tournamentItem.teamOneScore
-        : state.tournamentSubItem.tournamentItem.teamTwoScore
+        ? relayAdjustedItemScores.teamOne
+        : relayAdjustedItemScores.teamTwo
     : null;
 
   const teamOneHandicap =
@@ -148,7 +178,6 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
   // Number of games/formats in the phase. Relay formats sharing the same
   // relayGroupIndex are a single game slot, so collapse each relay group to one
   // instead of counting every relay leg as its own format.
-  const tournamentFormats = state.tournamentSubItem?.tournamentItem.tournamentPhase.tournamentFormats ?? [];
   const formatsCount = (() => {
     const seenRelayGroups = new Set<number>();
     let count = 0;
