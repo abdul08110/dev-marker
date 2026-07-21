@@ -13,6 +13,8 @@ import useGetLineup from '@/api/app/useGetLineup';
 import { LineupResponse } from '@/api/app/types/lineup';
 
 const LINEUP_DISPLAY_MS = 30_000;
+// Lineup is disabled until player/score reversal vs. tournament item teams is handled.
+const LINEUP_ENABLED = false;
 
 export interface StreamState {
   streamType: StreamType;
@@ -363,6 +365,10 @@ const useStreaming = (venueId?: string, matchId?: string) => {
   };
 
   const fetchLineupForCompletedMatch = async (matchData: StreamingState | null) => {
+    // Lineup display is temporarily disabled everywhere (player/score reversal
+    // relative to the tournament item teams is not yet handled).
+    if (!LINEUP_ENABLED) return;
+
     if (
       !matchData ||
       matchData.eventFormat !== 'TEAMS' ||
