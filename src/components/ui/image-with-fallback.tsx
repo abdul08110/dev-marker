@@ -7,20 +7,24 @@ interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElemen
   cutSize?: number; // Size of the cut corner as percentage of image width, defaults to 8
 }
 
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ 
-  src, 
-  fallback, 
-  alt, 
-  cutPosition, 
+const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
+  src,
+  fallback,
+  alt,
+  cutPosition,
   cutSize = 8,
   style,
-  ...props 
+  ...props
 }) => {
   const [imgSrc, setImgSrc] = useState<string>(src);
 
   useEffect(() => {
     setImgSrc(src);
-  }, [src]);
+    if (!src) return;
+    const img = new Image();
+    img.onerror = () => setImgSrc(fallback);
+    img.src = src;
+  }, [src, fallback]);
 
   const getClipPath = () => {
     if (!cutPosition) return undefined;
@@ -40,10 +44,6 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   return (
     <img
       src={imgSrc}
-      onError={(e) => {
-        e.currentTarget.onerror = null;
-        setImgSrc(fallback);
-      }}
       alt={alt}
       style={{
         ...style,
