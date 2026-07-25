@@ -230,7 +230,7 @@ export function PortraitView(props: PortraitStreamDataProps) {
                 }
               />
             </div>
-            {props.state.tournamentId && (
+            {props.state.tournamentId && props.state.eventFormat === 'TEAMS' && (
               <div className="px-3 py-3 flex justify-start gap-3 items-center bg-[#272126]">
                 <ImageWithFallback
                   className="aspect-square overflow-hidden border-white size-8 object-cover shrink-0 rounded-full"
