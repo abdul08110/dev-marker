@@ -65,6 +65,10 @@ export interface StreamingState {
   };
   streams: StreamState[];
   eventFormat: 'SINGLES' | 'TEAMS';
+  isStopClockEnabled?: boolean;
+  stopClockFrameTimeInSeconds?: number;
+  stopClockTurnTimeInSeconds?: number;
+  stopClockVoiceEnabled?: boolean;
 }
 
 const useLiveScoring = (matchId: string) => {
@@ -188,7 +192,11 @@ const useLiveScoring = (matchId: string) => {
           phase: res.phase ? res.phase : null,
           showFormatsAsGameNumber: res.tournament ? res.tournament.showFormatsAsGameNumber : null,
           showCummulativeScoreInCombination: res.tournament ? res.tournament.showCummulativeScoreInCombination : null,
-          showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null
+          showLatestHandicapInCombination: res.tournament ? res.tournament.showLatestHandicapInCombination : null,
+          isStopClockEnabled: res.isStopClockEnabled,
+          stopClockFrameTimeInSeconds: res.stopClockFrameTimeInSeconds,
+          stopClockTurnTimeInSeconds: res.stopClockTurnTimeInSeconds,
+          stopClockVoiceEnabled: res.stopClockVoiceEnabled ?? false,
         };
 
         setStreamingData(initialData);
