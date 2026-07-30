@@ -224,8 +224,6 @@ export function BilliardsScoring() {
             showCorrection={getActiveSet(billiardsScoring.scoreHistory) !== undefined}
             showConcedeFrame={getActiveSet(billiardsScoring.scoreHistory) !== undefined}
             showRerack={getActiveSet(billiardsScoring.scoreHistory) !== undefined}
-            showEndGame={true}
-            showEndFrame={true}
             onConcedeFrame={() => {}}
             onEndGame={handleEndGame}
             onRerack={() => {}}

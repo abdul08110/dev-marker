@@ -349,8 +349,6 @@ export function SnookerScoring() {
                 showCorrection={getActiveSet(snookerScoring.scoreHistory) !== undefined}
                 showConcedeFrame={getActiveSet(snookerScoring.scoreHistory) !== undefined}
                 showRerack={getActiveSet(snookerScoring.scoreHistory) !== undefined}
-                showEndFrame={!snookerScoring.tournamentId}
-                showEndGame={true}
                 onConcedeFrame={() => setShowConcedeFrameDrawer(true)}
                 onEndGame={handleEndGame}
                 onRerack={handleRerack}

@@ -16,9 +16,7 @@ interface SnookerMenuDrawerProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   showCorrection: boolean;
   showRerack: boolean;
-  showEndFrame: boolean;
   showConcedeFrame: boolean;
-  showEndGame: boolean;
   onCorrection?: () => void;
   onRerack?: () => void;
   onConcedeFrame?: () => void;
@@ -66,16 +64,14 @@ export function SnookerMenuDrawer(props: SnookerMenuDrawerProps) {
                   Concede Frame
                 </Button>
               )}
-              {props.showEndFrame && (
-                <Button variant="select" type='button' className="p-1 mt-8" onClick={() => setShowEndFrameAlert(true)}>
-                  End Frame
-                </Button>
-              )}
-              {props.showEndGame && (
-                <Button variant="select" type='button' className="p-1 mt-8" onClick={() => setShowEndGameAlert(true)}>
-                  End Match
-                </Button>
-              )}
+              {/* End Frame / End Match are always available from the menu,
+                  regardless of what the scoring screen shows. */}
+              <Button variant="select" type='button' className="p-1 mt-8" onClick={() => setShowEndFrameAlert(true)}>
+                End Frame
+              </Button>
+              <Button variant="select" type='button' className="p-1 mt-8" onClick={() => setShowEndGameAlert(true)}>
+                End Match
+              </Button>
             </div>
           </div>
           <DrawerFooter className="pt-2">
