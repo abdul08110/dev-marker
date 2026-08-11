@@ -308,8 +308,20 @@ const NewScoreBoard = ({ state, timeLeft }: NewScoreBoardProps) => {
               {/* Table Number — in tournament, only when stop clock is off (Frame Time takes its place above) */}
               {(!isTournament || !state.isStopClockEnabled) && <TableNumber venueNo={state.venueNo} size="large" />}
 
+
+              {isTournament && (
+                <TeamScore
+                  hasTournamentCombo={false}
+                  tournamentTeamOneScore={tournamentTeamOneScore}
+                  tournamentTeamTwoScore={tournamentTeamTwoScore}
+                  teamOneScore={state.teamOneScore}
+                  teamTwoScore={state.teamTwoScore}
+                  teamScoreCenter={`${noOfFrames}`}
+                />
+              )}
+
               {/* Game format — icon and label are siblings so the panel's gap/justify-between spaces them */}
-              <SportIcon sport={state.sport} />
+              {!isTournament && <SportIcon sport={state.sport} />}
               {isTournament && <FormatLabel format={state.format} />}
             </div>
           </div>
