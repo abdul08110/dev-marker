@@ -379,11 +379,9 @@ export function SnookerScoring() {
                 onContinue={() => handleTimerButtonAction('CONFIRM')}
               />
               <div className="flex gap-4 mt-4 mb-4 px-4 container pb-4">
-                {!snookerScoring.tournamentId && (
-                  <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
-                    End Frame
-                  </Button>
-                )}
+                <Button onClick={() => setShowEndFrameAlert(true)} variant="secondary" className="flex-1">
+                  End Frame
+                </Button>
                 <Button onClick={() => setShowEndGameAlert(true)} variant="destructive" className="flex-1">
                   End Match
                 </Button>
