@@ -192,6 +192,14 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const gameTeamOneScore = (activeSet?.teamOneScore ?? 0) + relayTeamOneScore;
   const gameTeamTwoScore = (activeSet?.teamTwoScore ?? 0) + relayTeamTwoScore;
 
+  // Frames won in THIS format, shown on the bottom flap either side of the phase
+  // name — the same pair the scoreboard renders below its center panel. Only
+  // meaningful for a multi-frame tournament format (e.g. "best of three"); for a
+  // single-frame format there is nothing to tally. The centre panel's frame cells
+  // may instead be showing the combination (games-won) score, which is why the
+  // per-format frames need their own slot.
+  const showFlapFrameScores = isTournament && noOfFrames > 1;
+
   // Stable per-slot fallback avatars — one each for sideOnePlayerOne/Two, sideTwoPlayerOne/Two
   const [defaultImages] = useState(() => Array.from({ length: 4 }, () => getRandomPlaceholderProfileImage()));
 
@@ -632,7 +640,12 @@ const NewGeneral = (props: GeneralTemplateProps) => {
           {/* Format tag below center panel */}
           <div className="absolute -bottom-[min(3.5vh,3.5vw)] w-full flex justify-center items-center z-0">
             <div
-              className="relative w-[min(25.2vh,25.2vw)] h-[min(4.7vh,4.7vw)]"
+              className={cn(
+                'relative h-[min(4.7vh,4.7vw)]',
+                // Wider flap when the frames-won pair flanks the label, so the
+                // phase name keeps its room instead of truncating.
+                showFlapFrameScores ? 'w-[min(32vh,32vw)]' : 'w-[min(25.2vh,25.2vw)]',
+              )}
               style={{
                 filter: 'drop-shadow(0px 8px 6px rgba(186, 145, 200, 0.15))',
               }}
@@ -676,23 +689,41 @@ const NewGeneral = (props: GeneralTemplateProps) => {
                   </linearGradient>
                 </defs>
               </svg>
-              <div className="absolute inset-0 flex justify-center items-center">
-                {showStopClock ? (
-                  <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate tabular-nums">
-                    {formatTime(formatClockMs(stopClockTick.remainingFrameTimeInMs))}
-                  </span>
-                ) : isTournament ? (
-                  <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
-                    {state.tournamentSubItem?.tournamentItem?.tournamentPhase?.name
-                      ? state.tournamentSubItem.tournamentItem.tournamentPhase.name
-                      : state.sport === 'SNOOKER'
-                        ? 'Snooker'
-                        : 'Billiards'}
-                  </span>
-                ) : (
-                  <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
-                    {state.sport === 'SNOOKER' ? 'Snooker' : 'Billiards'}
-                  </span>
+              <div className="absolute inset-0 flex justify-center items-center px-[min(2.2vh,2.2vw)]">
+                {showFlapFrameScores && (
+                  <>
+                    <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text shrink-0 tabular-nums">
+                      {state.teamOneScore}
+                    </span>
+                    <VerticalDivider isActive={isSideOneActive} />
+                  </>
+                )}
+                <div className="flex-1 min-w-0 flex justify-center items-center">
+                  {showStopClock ? (
+                    <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate tabular-nums">
+                      {formatTime(formatClockMs(stopClockTick.remainingFrameTimeInMs))}
+                    </span>
+                  ) : isTournament ? (
+                    <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
+                      {state.tournamentSubItem?.tournamentItem?.tournamentPhase?.name
+                        ? state.tournamentSubItem.tournamentItem.tournamentPhase.name
+                        : state.sport === 'SNOOKER'
+                          ? 'Snooker'
+                          : 'Billiards'}
+                    </span>
+                  ) : (
+                    <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text px-[min(1.3vh,1.3vw)] truncate ">
+                      {state.sport === 'SNOOKER' ? 'Snooker' : 'Billiards'}
+                    </span>
+                  )}
+                </div>
+                {showFlapFrameScores && (
+                  <>
+                    <VerticalDivider isActive={isSideTwoActive} />
+                    <span className="font-semibold text-[min(2.2vh,2.2vw)] leading-[130%] text-box-trim text-score-text shrink-0 tabular-nums">
+                      {state.teamTwoScore}
+                    </span>
+                  </>
                 )}
               </div>
             </div>
@@ -851,6 +882,20 @@ function VioletHandicapPill({ handicap }: { handicap: number | null }) {
 // Gradient divider line — left (yellow-toned)
 const YellowDivider = () => (
   <div className="border [border-image-source:linear-gradient(90deg,rgba(251,255,127,0)_5%,rgba(251,255,127,0.6)_51.16%,rgba(225,229,116,0)95%)] [border-image-slice:1]" />
+);
+
+// Gradient divider line — vertical, separating the flap's frames-won cells from
+// the label. Fades out at both ends like the card dividers, and turns yellow to
+// follow whichever side is on strike (white otherwise).
+const VerticalDivider = ({ isActive }: { isActive: boolean }) => (
+  <div
+    className={cn(
+      'shrink-0 self-stretch my-[min(0.5vh,0.5vw)] mx-[min(1.3vh,1.3vw)] border-l [border-image-slice:1]',
+      isActive
+        ? '[border-image-source:linear-gradient(180deg,rgba(251,255,127,0)_5%,rgba(251,255,127,0.6)_51.16%,rgba(225,229,116,0)_95%)]'
+        : '[border-image-source:linear-gradient(180deg,rgba(255,255,255,0)_5%,rgba(255,255,255,0.7)_51.16%,rgba(255,255,255,0)_95%)]',
+    )}
+  />
 );
 
 // Gradient divider line — right (violet-toned)
