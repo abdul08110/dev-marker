@@ -39,6 +39,11 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   const isDoubles = !!state.sideOnePlayerTwo;
   const hasTeamName = !!(state.teamOneName || state.teamTwoName);
   const isTournament = !!state.tournamentId;
+  // Only team-format tournaments swap the player photo(s) for the team logo. A
+  // SINGLES-format tournament shows player photos exactly like a non-tournament
+  // match — one profile card per side, or the stacked pair when the match itself
+  // is a doubles fixture (eventFormat SINGLES still allows two players a side).
+  const isTeamTournament = isTournament && state.eventFormat === 'TEAMS';
 
   // Doubles show first names joined with "&"; singles show first + last name.
   const sideOneDisplayName = isDoubles
@@ -217,7 +222,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
     : 'shadow-[0px_2px_5px_0px_rgba(227,139,249,0.25)]';
 
   // ── Left card inner content ─────────────────────────────────────────────────
-  const leftCardContent = isTournament ? (
+  const leftCardContent = isTeamTournament ? (
     /* Tournament layout — team logo instead of player photo(s) */
     <div className="flex items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0 size-[min(6.7vh,6.7vw)] rounded-full overflow-hidden">
@@ -339,7 +344,7 @@ const NewGeneral = (props: GeneralTemplateProps) => {
   );
 
   // ── Right card inner content ────────────────────────────────────────────────
-  const rightCardContent = isTournament ? (
+  const rightCardContent = isTeamTournament ? (
     /* Tournament layout — team logo instead of player photo(s) */
     <div className="flex flex-row-reverse items-center gap-[min(2.2vh,2.2vw)] w-full">
       <div className="shrink-0 size-[min(6.7vh,6.7vw)] rounded-full overflow-hidden">
