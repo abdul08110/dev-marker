@@ -279,13 +279,19 @@ export function PortraitView(props: PortraitStreamDataProps) {
 
             return (
               <div className="grid grid-cols-2 w-full gap-3 py-4 pb-0 px-3">
-                <SnookerPointTypeDisplay
-                  class={'gap-[0.3rem]'}
-                  className={'text-[0.8rem] w-fit font-mono h-5 items-start'}
-                  align="start"
-                  isActive={isTeamOneActive}
-                  activeTurnPointTypes={teamOnePointTypes}
-                />
+                {/* Wrap in a div so this grid cell ALWAYS renders an element. SnookerPointTypeDisplay
+                    returns null when a side has no balls yet; UNWRAPPED, that collapsed the grid to a
+                    single child and the OTHER player's rack slid into the left column (balls shown under
+                    the wrong player until both sides had potted). The wrapper keeps both columns fixed. */}
+                <div className="">
+                  <SnookerPointTypeDisplay
+                    class={'gap-[0.3rem]'}
+                    className={'text-[0.8rem] w-fit font-mono h-5 items-start'}
+                    align="start"
+                    isActive={isTeamOneActive}
+                    activeTurnPointTypes={teamOnePointTypes}
+                  />
+                </div>
 
                 <div className="">
                   <SnookerPointTypeDisplay

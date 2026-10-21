@@ -406,8 +406,52 @@ const useStreaming = (venueId?: string, matchId?: string) => {
       const currentScoreTime = addMillisecondsToUTC(currentStreamingData.actualStartTimeDate, currentTime);
 
       let consideredSets = currentStreamingData!.sets
-        .filter((value) => new Date(value.turns[0].timeScored) <= new Date(currentScoreTime))
+        // Guard sets that have no turns yet — `value.turns[0]` was undefined and THREW, aborting the
+        // whole rebuild (so the board kept its previous snapshot).
+        .filter((value) => value.turns?.[0] && new Date(value.turns[0].timeScored) <= new Date(currentScoreTime))
         .map((set) => ({ ...set, turns: [...set.turns] }));
+
+      // START OF VIDEO / before the first pot: no set qualifies yet. The old code then indexed
+      // consideredSets[-1] -> {} and called `.turns.filter` -> THREW, so setViewershipData never ran
+      // and the board stayed on the full live snapshot (final rack + no handicap, balls on the wrong
+      // side mid-scrub). Instead publish a clean frame start: empty rack, nobody at the table, and the
+      // handicap already on the board (e.g. 35-0; 0-0 when there is no handicap) — matching the burned
+      // video overlay at 0:00. This mirrors `calculatePointsBySide`'s handicap-difference seeding.
+      if (consideredSets.length === 0) {
+        const toH =
+          currentStreamingData.teamOneHandicap && currentStreamingData.sport === 'SNOOKER'
+            ? currentStreamingData.teamOneHandicap
+            : null;
+        const twH =
+          currentStreamingData.teamTwoHandicap && currentStreamingData.sport === 'SNOOKER'
+            ? currentStreamingData.teamTwoHandicap
+            : null;
+        const hDiff =
+          toH != null || twH != null ? (toH ?? 0) - (twH ?? 0) : currentStreamingData.handicap ?? 0;
+        const startSide1 = hDiff > 0 ? hDiff : 0;
+        const startSide2 = hDiff < 0 ? -hDiff : 0;
+        const firstSet = currentStreamingData.sets?.[0];
+        setViewershipData({
+          ...currentStreamingData,
+          activePlayerId: null,
+          sets: firstSet
+            ? [
+                {
+                  ...firstSet,
+                  status: 'ONGOING' as const,
+                  turns: [],
+                  teamOneScore: startSide1,
+                  teamTwoScore: startSide2,
+                },
+              ]
+            : [],
+          isTeamOneHandicapApplied: startSide1 > 0,
+          isTeamTwoHandicapApplied: startSide2 > 0,
+          teamOneScore: 0,
+          teamTwoScore: 0,
+        });
+        return;
+      }
 
       let lastSet = { ...consideredSets[consideredSets.length - 1] };
       lastSet.status = 'ONGOING';
